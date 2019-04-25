@@ -181,14 +181,14 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
   // If naming service is alive, add persistent name
   if ( !m_partNode->GetNaming().IsNull() )
   {
-    TCollection_AsciiString namingName;
+    /*TCollection_AsciiString namingName;
 
     if ( m_partNode->GetNaming()->FindName(F, namingName) )
     {
       TITLE += " [";
       TITLE += namingName;
       TITLE += "]";
-    }
+    }*/
   }
 
   // Add orientation of all wires. We are interested in relative orientations

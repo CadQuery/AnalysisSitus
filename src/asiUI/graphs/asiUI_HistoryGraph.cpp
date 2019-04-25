@@ -86,8 +86,7 @@ asiUI_HistoryGraph::asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
 : m_pWidget    ( NULL ),
   m_textWidget ( NULL ),
   m_model      ( model ),
-  m_naming     ( naming ),
-  m_history    ( naming->GetHistory() ),
+  m_history    ( naming ),
   m_progress   ( progress ),
   m_plotter    ( plotter )
 {}
@@ -236,7 +235,7 @@ void asiUI_HistoryGraph::RenderEventCallback()
 vtkSmartPointer<vtkGraph> asiUI_HistoryGraph::convertToGraph()
 {
   vtkSmartPointer<vtkGraph>
-    result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_naming, m_progress);
+    result = asiUI_HistoryGraphAdaptor::Convert(m_history, NULL,/*m_naming,*/ m_progress);
 
   return result;
 }

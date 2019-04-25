@@ -106,11 +106,11 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     //
     if ( !naming.IsNull() )
     {
-      TCollection_AsciiString shapeName;
-      naming->FindName(shape, shapeName);
-      //
-      label += " / ";
-      label += ( shapeName.IsEmpty() ? "<empty>" : shapeName.ToCString() );
+      //TCollection_AsciiString shapeName;
+      //naming->FindName(shape, shapeName);
+      ////
+      //label += " / ";
+      //label += ( shapeName.IsEmpty() ? "<empty>" : shapeName.ToCString() );
     }
 
     // Add label

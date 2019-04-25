@@ -33,7 +33,11 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_History::asiAlgo_History() : Standard_Transient()
+asiAlgo_History::asiAlgo_History(ActAPI_ProgressEntry progress,
+                                 ActAPI_PlotterEntry  plotter)
+: Standard_Transient (),
+  m_progress         (progress),
+  m_plotter          (plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -42,6 +46,18 @@ asiAlgo_History::~asiAlgo_History()
 {
   for ( size_t k = 0; k < m_roots.size(); ++k )
     delete m_roots[k];
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape,
+                                                  const int           rigidId)
+{
+  t_item* pRootItem = this->makeItem(shape, 0, rigidId);
+  //
+  m_roots.push_back(pRootItem);
+
+  return pRootItem;
 }
 
 //-----------------------------------------------------------------------------
@@ -64,19 +80,30 @@ void asiAlgo_History::GetRootsOfType(const TopAbs_ShapeEnum     type,
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_History::GetRootsOfType(const TopAbs_ShapeEnum type,
+                                     std::vector<t_item*>&  roots) const
+{
+  for ( size_t k = 0; k < m_roots.size(); ++k )
+    if ( m_roots[k]->TransientPtr.ShapeType() == type )
+      roots.push_back(m_roots[k]);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
                                   const TopoDS_Shape& after,
                                   const bool          create,
-                                  const int           opId)
+                                  const int           opId,
+                                  const int           rigidId)
 {
   // Get or create item.
-  t_item* pActiveItem = this->findItem(before, opId, create);
+  t_item* pActiveItem = this->findItem(before, opId, rigidId, create);
   //
   if ( !pActiveItem || pActiveItem->IsDeleted )
     return false;
 
   // Construct item for the modification.
-  t_item* pChildItem = this->makeItem(after, opId);
+  t_item* pChildItem = this->makeItem(after, opId, pActiveItem->RigidId);
   //
   pActiveItem->Modified.push_back(pChildItem);
 
@@ -181,16 +208,17 @@ bool asiAlgo_History::IsModified(const TopoDS_Shape& shape) const
 bool asiAlgo_History::AddGenerated(const TopoDS_Shape& source,
                                    const TopoDS_Shape& creation,
                                    const bool          create,
-                                   const int           opId)
+                                   const int           opId,
+                                   const int           rigidId)
 {
   // Get or create item.
-  t_item* pActiveItem = this->findItem(source, opId, create);
+  t_item* pActiveItem = this->findItem(source, opId, rigidId, create);
   //
   if ( !pActiveItem )
     return false;
 
   // Construct item for the creation.
-  t_item* pChildItem = this->makeItem(creation, opId);
+  t_item* pChildItem = this->makeItem(creation, opId, pActiveItem->RigidId);
   //
   pActiveItem->Generated.push_back(pChildItem);
 
@@ -321,6 +349,7 @@ asiAlgo_History::t_item*
 asiAlgo_History::t_item*
   asiAlgo_History::findItem(const TopoDS_Shape& shape,
                             const int           opId,
+                            const int           rigidId,
                             const bool          create)
 {
   // Check if there is any active item to continue growing a history on.
@@ -328,7 +357,7 @@ asiAlgo_History::t_item*
   {
     if ( create )
     {
-      t_item* pRootItem = this->makeItem(shape, opId);
+      t_item* pRootItem = this->makeItem(shape, opId, rigidId);
       //
       m_roots.push_back(pRootItem);
     }
@@ -342,11 +371,13 @@ asiAlgo_History::t_item*
 //-----------------------------------------------------------------------------
 
 asiAlgo_History::t_item* asiAlgo_History::makeItem(const TopoDS_Shape& shape,
-                                                   const int           opId)
+                                                   const int           opId,
+                                                   const int           rigidId)
 {
   t_item* pItem = new t_item;
   pItem->TransientPtr = shape;
   pItem->Op           = opId;
+  pItem->RigidId      = rigidId;
   //
   m_items.Add(shape, pItem);
 

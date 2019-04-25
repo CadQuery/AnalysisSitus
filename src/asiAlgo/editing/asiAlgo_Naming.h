@@ -33,10 +33,13 @@
 
 // asiAlgo includes
 #include <asiAlgo_History.h>
-#include <asiAlgo_TopoGraph.h>
 
-// Active Data includes
-#include <ActAPI_IProgressNotifier.h>
+// OpenCascade includes
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Vertex.hxx>
+
+class asiAlgo_AAG;
 
 //-----------------------------------------------------------------------------
 
@@ -61,30 +64,42 @@
 //! their persistent IDs, it is enough to give names to the root items
 //! of a history graph. All images can then be traced back to these roots
 //! and names can be propagated.
-class asiAlgo_Naming : public Standard_Transient
+class asiAlgo_Naming : public asiAlgo_History
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_Naming, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_Naming, asiAlgo_History)
 
 public:
 
-  //! \brief Constructs naming tool from topology graph.
-  //! \param[in] topograph topology graph which allows for a more formal
-  //!                      view on a CAD-model together with caching its
-  //!                      sub-shapes under serial indices.
-  //! \param[in] progress  progress notifier.
-  asiAlgo_EXPORT
-    asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
-                   ActAPI_ProgressEntry             progress = NULL);
+  //! \brief Constructs name for the given shape type and its index.
+  //!
+  //! E.g., this method will create name 'face_10' for the shape type
+  //! TopAbs_FACE and shape index 10.
+  //!
+  //! \param[in] shapeType  shape type.
+  //! \param[in] shapeIndex 1-based shape ID.
+  //! \return generated name as ASCII string.
+  asiAlgo_EXPORT static TCollection_AsciiString
+    PrepareName(const TopAbs_ShapeEnum shapeType,
+                const int              shapeIndex);
 
-  //! \brief Constructs naming tool from B-Rep shape.
-  //! \param[in] shape    master CAD shape to build topology graph from.
+  //! \brief Analyzes the passed name and returns the corresponding shape type.
+  //!
+  //! \param[in] name shape name in conventional form, e.g., 'face_10'.
+  //! \return shape type.
+  asiAlgo_EXPORT static TopAbs_ShapeEnum
+    ShapeTypeByName(const TCollection_AsciiString& name);
+
+public:
+
+  //! \brief Constructs naming tool.
   //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_Naming(const TopoDS_Shape&  shape,
-                   ActAPI_ProgressEntry progress = NULL);
+    asiAlgo_Naming(ActAPI_ProgressEntry progress = NULL,
+                   ActAPI_PlotterEntry  plotter  = NULL);
 
 public:
 
@@ -95,142 +110,43 @@ public:
   //! topological items and populates the working topology graph with
   //! dedicated name attributes.
   //!
+  //! \param[in] aag AAG for a B-Rep shape to generate names for. All sub-shapes
+  //!                will get names.
+  //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    InitNames();
+    InitNames(const Handle(asiAlgo_AAG)& aag);
 
-  //! \brief Constructs name for the given shape type and its index.
-  //!
-  //! E.g., this method will create name 'face_10' for the shape type
-  //! TopAbs_FACE and shape index 10. This method will not populate the
-  //! naming service internally but only generate a name for further
-  //! referencing.
-  //!
-  //! \param[in] shapeType  shape type.
-  //! \param[in] shapeIndex 1-based shape ID.
-  //! \return generated name as ASCII string.
-  //!
-  //! \sa GenerateName() method for indexing the working model with names
-  //!     and populating the service internally.
-  asiAlgo_EXPORT static TCollection_AsciiString
-    PrepareName(const TopAbs_ShapeEnum shapeType,
-                const int              shapeIndex);
+  //! Attempts to find the rigid index for the given shape.
+  //! \param[in] shape shape in question.
+  //! \return 1-based persistent index or null if such a shape cannot be found.
+  asiAlgo_EXPORT int
+    FindRigidId(const TopoDS_Shape& shape) const;
 
-  //! \brief Generates a unique name for the passed sub-shape.
-  //! \param[in] shape shape to generate a name for.
-  //! \return generated name as ASCII string.
-  asiAlgo_EXPORT TCollection_AsciiString
-    GenerateName(const TopoDS_Shape& shape);
+  //! Attempts to find an alive face given its rigid ID.
+  //! \param[in] rigidId ID in question.
+  //! \return found alive face.
+  asiAlgo_EXPORT TopoDS_Face
+    FindAliveFace(const int rigidId) const;
 
-  //! Actualizes the naming attributes stored in the topology graph according
-  //! to the current state of history. This method should be called in a
-  //! modeling algorithm which takes care of persistent naming.
-  //! \param[in] newShape modified shape to actualize naming on.
-  //! \return false if actualization is impossible (e.g. non-unique names are used).
-  asiAlgo_EXPORT bool
-    Actualize(const TopoDS_Shape& newShape);
+  //! Attempts to find an alive edge given its rigid ID.
+  //! \param[in] rigidId ID in question.
+  //! \return found alive edge.
+  asiAlgo_EXPORT TopoDS_Edge
+    FindAliveEdge(const int rigidId) const;
 
-public:
+  //! Attempts to find an alive vertex given its rigid ID.
+  //! \param[in] rigidId ID in question.
+  //! \return found alive vertex.
+  asiAlgo_EXPORT TopoDS_Vertex
+    FindAliveVertex(const int rigidId) const;
 
-  //! \return topology graph.
-  const Handle(asiAlgo_TopoGraph)& GetTopoGraph() const
-  {
-    return m_topograph;
-  }
-
-  //! \return history.
-  const Handle(asiAlgo_History)& GetHistory() const
-  {
-    return m_history;
-  }
-
-  //! Accessor for shape by its name.
-  //! \param[in] name name of the shape to find.
-  //! \return transient pointer by persistent name.
-  TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
-  {
-    if ( !m_namedAliveShapes.IsBound(name) )
-      return TopoDS_Shape();
-
-    return m_namedAliveShapes(name);
-  }
-
-  //! Attempts to find a name registered for the passed shape.
-  //! \param[in]  shape shape in question.
-  //! \param[out] name  found name.
-  //! \return false if name cannot be found.
-  bool FindName(const TopoDS_Shape&      shape,
-                TCollection_AsciiString& name) const
-  {
-    for ( NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape>::Iterator
-          it(m_namedAliveShapes); it.More(); it.Next() )
-    {
-      if ( it.Value().IsPartner(shape) )
-      {
-        name = it.Key();
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-protected:
-
-  //! Helper (internal) method to transfer naming attribute from old shape
-  //! to its images.
-  //! \param[in] images       images of the old shape to set naming attribute for.
-  //! \param[in] newTopograph topology graph where images can be found.
-  //! \param[in] attr2Pass    attribute to pass.
-  //! \param[in] isGenerated  whether "generated" evolution is processed.
-  asiAlgo_EXPORT void
-    actualizeImages(const std::vector<TopoDS_Shape>& images,
-                    const Handle(asiAlgo_TopoGraph)& newTopograph,
-                    const Handle(asiAlgo_TopoAttr)&  attr2Pass,
-                    const bool                       isGenerated);
-
-  //! Helper (internal) method to pass naming attribute to unmodified
-  //! topological entity.
-  //! \param[in] shape        (sub-)shape in question.
-  //! \param[in] newTopograph topology graph where images can be found.
-  //! \param[in] attr2Pass    attribute to pass.
-  asiAlgo_EXPORT void
-    passIntact(const TopoDS_Shape&              shape,
-               const Handle(asiAlgo_TopoGraph)& newTopograph,
-               const Handle(asiAlgo_TopoAttr)&  attr2Pass);
-
-  //! Adds named shape to the internal map for fast access.
-  //! \param[in] name  string to use as a name. This name should be unique.
-  //! \param[in] shape shape to register.
-  //! \return false if the passed name is not unique and cannot be added so.
-  asiAlgo_EXPORT bool
-    registerNamedShape(const TCollection_AsciiString& name,
-                       const TopoDS_Shape&            shape);
-
-protected:
-
-  /** @name Core members
-   *  Members constituting core of the naming service.
-   */
-  //@{
-
-  //! Formal topology graph.
-  Handle(asiAlgo_TopoGraph) m_topograph;
-
-  //! History of modification.
-  Handle(asiAlgo_History) m_history;
-
-  //! The used indices distributed by shape type.
-  NCollection_DataMap<TopAbs_ShapeEnum, int> m_nameIds;
-
-  //! Map of unique names and their corresponding shapes. This is actually
-  //! a collection of alive shapes.
-  NCollection_DataMap<TCollection_AsciiString, TopoDS_Shape> m_namedAliveShapes;
-
-  //! Progress notification tool.
-  ActAPI_ProgressEntry m_progress;
-
-  //@}
+  //! Attempts to find alive shape by its name.
+  //! \param[in] name conventional shape name which is composed of lowercase
+  //!                 shape type, then underscore, then rigid index.
+  //! \return shape.
+  asiAlgo_EXPORT TopoDS_Shape
+    FindAliveShape(const TCollection_AsciiString& name) const;
 
 };
 

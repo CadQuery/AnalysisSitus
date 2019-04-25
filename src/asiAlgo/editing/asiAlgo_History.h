@@ -34,6 +34,10 @@
 // asiAlgo includes
 #include <asiAlgo_ShapePartnerHasher.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // OCCT includes
 #include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS_Shape.hxx>
@@ -68,6 +72,7 @@ public:
   struct t_item
   {
     int                  Op;           //!< Operation index.
+    int                  RigidId;      //!< Optional rigid ID.
     TopoDS_Shape         TransientPtr; //!< Shape as a transient pointer.
     std::vector<t_item*> Generated;    //!< List of items generated from this one.
     std::vector<t_item*> Modified;     //!< List of items substituted this one.
@@ -75,7 +80,7 @@ public:
     bool                 IsActive;     //!< Indicates whether this sub-shape is alive in the model.
 
     //! Constructor.
-    t_item() : Op(0), IsDeleted(false), IsActive(false) {}
+    t_item() : Op(0), RigidId(0), IsDeleted(false), IsActive(false) {}
 
     //! Destructor.
     ~t_item()
@@ -274,8 +279,11 @@ public:
 public:
 
   //! \brief Initializes history graph.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_History();
+    asiAlgo_History(ActAPI_ProgressEntry progress = NULL,
+                    ActAPI_PlotterEntry  plotter  = NULL);
 
   //! \brief Releases occupied memory.
   asiAlgo_EXPORT
@@ -283,26 +291,44 @@ public:
 
 public:
 
-  //! Get root shapes from the history.
+  //! Add new root node to the history. Use this method to make origins in
+  //! the history graph without any succeeding evolution.
+  //! \param[in] shape   shape to add a root node for.
+  //! \param[in] rigidId optional rigid persistent ID.
+  //! \return created root node.
+  asiAlgo_EXPORT t_item*
+    AddRoot(const TopoDS_Shape& shape,
+            const int           rigidId = 0);
+
+  //! Returns root shapes from the history.
   //! \param[out] roots root shapes.
   asiAlgo_EXPORT void
     GetRoots(std::vector<TopoDS_Shape>& roots) const;
 
-  //! Get root shapes of a certain type from the history.
+  //! Returns root shapes of a certain type from the history.
+  //! \param[in]  type  shape type of interest.
   //! \param[out] roots root shapes of a certain type.
   asiAlgo_EXPORT void
     GetRootsOfType(const TopAbs_ShapeEnum     type,
                    std::vector<TopoDS_Shape>& roots) const;
 
+  //! Returns root nodes for the shapes of a certain type from the history.
+  //! \param[in]  type  shape type of interest.
+  //! \param[out] roots root nodes for the shapes of a certain type.
+  asiAlgo_EXPORT void
+    GetRootsOfType(const TopAbs_ShapeEnum type,
+                   std::vector<t_item*>&  roots) const;
+
   //! \brief Adds modification record to the history.
   //!
-  //! \param[in] before shape (transient pointer) before modification.
-  //! \param[in] after  shape (transient pointer) after modification.
-  //! \param[in] create Boolean flag indicating whether this function is
-  //!                   allowed to create another root node for the 'before'
-  //!                   shape in case it does not exist.
-  //! \param[in] opId   auxiliary operation ID which can be useful for
-  //!                   composing feature trees.
+  //! \param[in] before  shape (transient pointer) before modification.
+  //! \param[in] after   shape (transient pointer) after modification.
+  //! \param[in] create  Boolean flag indicating whether this function is
+  //!                    allowed to create another root node for the 'before'
+  //!                    shape in case it does not exist.
+  //! \param[in] opId    auxiliary operation ID which can be useful for
+  //!                    composing feature trees.
+  //! \param[in] rigidId auxiliary rigid ID.
   //!
   //! \return true in case of success, false -- otherwise. E.g., this function
   //!         may return false in case when modification record is requested
@@ -311,7 +337,8 @@ public:
     AddModified(const TopoDS_Shape& before,
                 const TopoDS_Shape& after,
                 const bool          create = true,
-                const int           opId = 0);
+                const int           opId = 0,
+                const int           rigidId = 0);
 
   //! \brief Gathers modifications of the given shape.
   //!
@@ -401,13 +428,15 @@ public:
   //!                     shape in case it does not exist.
   //! \param[in] opId     auxiliary operation ID which can be useful for
   //!                     composing feature trees.
+  //! \param[in] rigidId  auxiliary rigid ID.
   //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     AddGenerated(const TopoDS_Shape& source,
                  const TopoDS_Shape& creation,
                  const bool          create = true,
-                 const int           opId = 0);
+                 const int           opId = 0,
+                 const int           rigidId = 0);
 
   //! \brief Gathers generated (sub-)shapes for the given shape.
   //!
@@ -515,22 +544,26 @@ protected:
     findItem(const TopoDS_Shape& shape) const;
 
   //! Finds or creates history item for the given shape.
-  //! \param[in] shape  shape to create a history item for.
-  //! \param[in] opId   auxiliary operation ID.
-  //! \param[in] create whether to create a new item if it does not exist.
+  //! \param[in] shape   shape to create a history item for.
+  //! \param[in] opId    auxiliary operation ID.
+  //! \param[in] rigidId auxiliary persistent rigid ID.
+  //! \param[in] create  whether to create a new item if it does not exist.
   //! \return history item.
   asiAlgo_EXPORT t_item*
     findItem(const TopoDS_Shape& shape,
              const int           opId,
+             const int           rigidId,
              const bool          create = true);
 
   //! Creates history item for the given shape.
-  //! \param[in] shape shape to create a history item for.
-  //! \param[in] opId  auxiliary operation ID.
+  //! \param[in] shape   shape to create a history item for.
+  //! \param[in] opId    auxiliary operation ID.
+  //! \param[in] rigidId auxiliary persistent rigid ID.
   //! \return history item.
   asiAlgo_EXPORT t_item*
     makeItem(const TopoDS_Shape& shape,
-             const int           opId);
+             const int           opId,
+             const int           rigidId);
 
   //! Collects leaf items for the given seed and evolution type.
   //! \param[in]  pSeed     seed item.
@@ -549,6 +582,12 @@ protected:
   //! Shapes and their corresponding history items. The map is indexed to
   //! have a persistent key.
   t_shapeItemMap m_items;
+
+  //! Progress notifier.
+  ActAPI_ProgressEntry m_progress;
+
+  //! Imperative plotter.
+  ActAPI_PlotterEntry m_plotter;
 
 };
 

@@ -32,66 +32,9 @@
 #include <asiAlgo_Naming.h>
 
 // asiAlgo includes
+#include <asiAlgo_AAG.h>
 #include <asiAlgo_TopoAttrName.h>
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
-                               ActAPI_ProgressEntry             progress)
-: Standard_Transient()
-{
-  m_topograph = topograph;
-  m_history   = new asiAlgo_History;
-  m_progress  = progress;
-}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_Naming::asiAlgo_Naming(const TopoDS_Shape&  shape,
-                               ActAPI_ProgressEntry progress)
-: Standard_Transient()
-{
-  m_topograph = new asiAlgo_TopoGraph(shape);
-  m_history   = new asiAlgo_History;
-  m_progress  = progress;
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_Naming::InitNames()
-{
-  if ( m_topograph.IsNull() )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Topology graph is not initialized.");
-    return false;
-  }
-
-  // Loop over the topology graph and generate names for its items.
-  for ( asiAlgo_TopoGraph::Iterator git(m_topograph); git.More(); git.Next() )
-  {
-    // Get current topological item.
-    const int           itemIndex = git.GetCurrentIndex();
-    const TopoDS_Shape& itemShape = git.GetCurrentNode();
-
-    // Generate unique name.
-    TCollection_AsciiString itemName = this->GenerateName(itemShape);
-
-    // Bind to map for fast access.
-    if ( !this->registerNamedShape(itemName, itemShape) )
-    {
-      m_progress.SendLogMessage(LogErr(Normal) << "Attempt to register shape under non-unique name '%1'."
-                                               << itemName);
-      return false;
-    }
-
-    // Prepare nodal attribute to store the name in the topology graph.
-    Handle(asiAlgo_TopoAttrName) itemAttr = new asiAlgo_TopoAttrName(itemName);
-    //
-    m_topograph->AddNodeAttribute(itemIndex, itemAttr);
-  }
-
-  return true;
-}
+#include <asiAlgo_Utils.h>
 
 //-----------------------------------------------------------------------------
 
@@ -133,179 +76,199 @@ TCollection_AsciiString
 
 //-----------------------------------------------------------------------------
 
-TCollection_AsciiString
-  asiAlgo_Naming::GenerateName(const TopoDS_Shape& shape)
+TopAbs_ShapeEnum
+  asiAlgo_Naming::ShapeTypeByName(const TCollection_AsciiString& name)
 {
-  const TopAbs_ShapeEnum shapeType = shape.ShapeType();
+  std::vector<TCollection_AsciiString> chunks;
+  asiAlgo_Utils::Str::Split(name, "_", chunks);
 
-  // Request index from the stored collection. The last free one will be used.
-  if ( !m_nameIds.IsBound(shapeType) )
-    m_nameIds.Bind(shapeType, 1);
-  else
-    m_nameIds(shapeType) += 1;
-  //
-  const int shapeIndex = m_nameIds(shapeType);
+  if ( chunks.size() != 2 )
+    return TopAbs_SHAPE;
 
-  // Generate name.
-  TCollection_AsciiString baseName = PrepareName(shapeType, shapeIndex);
+  const TCollection_AsciiString& baseName = chunks[0];
 
-  return baseName;
+  if ( baseName == "compound" )
+    return TopAbs_COMPOUND;
+
+  if ( baseName == "compsolid" )
+    return TopAbs_COMPSOLID;
+
+  if ( baseName == "solid" )
+    return TopAbs_SOLID;
+
+  if ( baseName == "shell" )
+    return TopAbs_SHELL;
+
+  if ( baseName == "face" )
+    return TopAbs_FACE;
+
+  if ( baseName == "wire" )
+    return TopAbs_WIRE;
+
+  if ( baseName == "edge" )
+    return TopAbs_EDGE;
+
+  if ( baseName == "vertex" )
+    return TopAbs_VERTEX;
+
+  return TopAbs_SHAPE;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
+asiAlgo_Naming::asiAlgo_Naming(ActAPI_ProgressEntry progress,
+                               ActAPI_PlotterEntry  plotter)
+: asiAlgo_History(progress, plotter)
+{}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Naming::InitNames(const Handle(asiAlgo_AAG)& aag)
 {
-  if ( m_history.IsNull() )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "No history to actualize naming.");
-    return false;
-  }
+  TopTools_IndexedMapOfShape allFaces, allEdges, allVertices;
 
-  // Clean up the map of alive sub-shapes.
-  m_namedAliveShapes.Clear();
+  aag->RequestMapOf(TopAbs_FACE,   allFaces);
+  aag->RequestMapOf(TopAbs_EDGE,   allEdges);
+  aag->RequestMapOf(TopAbs_VERTEX, allVertices);
 
-  // Construct new topology graph.
-  Handle(asiAlgo_TopoGraph) newTopograph = new asiAlgo_TopoGraph(newShape);
+  // Add roots to the history for faces.
+  for ( int f = 1; f <= allFaces.Extent(); ++f )
+    this->AddRoot( allFaces(f), f );
 
-  // Loop over the previous topology graph and try finding images for
-  // its topological elements using the history.
-  for ( asiAlgo_TopoGraph::Iterator oldIt(m_topograph); oldIt.More(); oldIt.Next() )
-  {
-    const int           oldIndex = oldIt.GetCurrentIndex();
-    const TopoDS_Shape& oldShape = oldIt.GetCurrentNode();
+  // Add roots to the history for edges.
+  for ( int e = 1; e <= allEdges.Extent(); ++e )
+    this->AddRoot( allEdges(e), e );
 
-    // Get name of the old shape.
-    Handle(asiAlgo_TopoAttr)
-      nameAttrBase = m_topograph->GetNodeAttribute( oldIndex, asiAlgo_TopoAttrName::GUID() );
-    //
-    TCollection_AsciiString name;
-    //
-    if ( !nameAttrBase.IsNull() )
-    {
-      Handle(asiAlgo_TopoAttrName)
-        nameAttr = Handle(asiAlgo_TopoAttrName)::DownCast(nameAttrBase);
-      //
-      name = nameAttr->GetName();
-    }
+  // Add roots to the history for vertices.
+  for ( int v = 1; v <= allVertices.Extent(); ++v )
+    this->AddRoot( allVertices(v), v );
 
-    // Adjust mapping between names and alive sub-shapes.
-    std::vector<TopoDS_Shape> modified;
-    //
-    if ( m_history->GetModified(oldShape, modified) )
-    {
-      // Get all topological elements which substitute the old shape.
-      this->actualizeImages(modified, newTopograph, nameAttrBase, false);
-    }
-    else if ( !m_history->IsDeleted(oldShape) )
-    {
-      this->passIntact(oldShape, newTopograph, nameAttrBase);
-    }
-
-    // Get all topological elements which were generated from the old shape.
-    std::vector<TopoDS_Shape> generated;
-    //
-    if ( m_history->GetGenerated(oldShape, generated) )
-      this->actualizeImages(modified, newTopograph, nameAttrBase, true);
-  }
-
-  // Replace topology graph.
-  m_topograph = newTopograph;
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_Naming::actualizeImages(const std::vector<TopoDS_Shape>& images,
-                                     const Handle(asiAlgo_TopoGraph)& newTopograph,
-                                     const Handle(asiAlgo_TopoAttr)&  attr2Pass,
-                                     const bool                       isGenerated)
+int asiAlgo_Naming::FindRigidId(const TopoDS_Shape& shape) const
 {
-  if ( attr2Pass.IsNull() )
-    return;
+  if ( !m_items.Contains(shape) )
+    return 0;
 
-  // Make a copy of this attribute.
-  Handle(asiAlgo_TopoAttrName)
-    namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
+  t_item* pItem = m_items.FindFromKey(shape);
+  return pItem->RigidId;
+}
 
-  // Prepare name.
-  const TCollection_AsciiString& name = namingAttr->GetName();
-  TCollection_AsciiString imageName;
+//-----------------------------------------------------------------------------
 
-  // Add prefix for generated items.
-  if ( isGenerated )
-  {
-    imageName = "Generated from ";
-    imageName += name;
+TopoDS_Face asiAlgo_Naming::FindAliveFace(const int rigidId) const
+{
+  // Get all roots of a certain type.
+  std::vector<t_item*> roots;
+  this->GetRootsOfType(TopAbs_FACE, roots);
 
-    namingAttr->SetName(name);
-  }
-  else
-    imageName = name;
-
-  // Loop over the images to populate them with the attribute.
-  for ( size_t k = 0; k < images.size(); ++k )
-  {
-    const TopoDS_Shape& imageShape = images[k];
-
-    // Add attribute to the topology graph.
-    const int imageNodeIdx = newTopograph->GetNodeIndex(imageShape);
-    //
-    if ( imageNodeIdx )
+  // Iterate over the roots finding the origin with the given rigid ID.
+  t_item* pFoundOrigin = NULL;
+  for ( size_t k = 0; k < roots.size(); ++k )
+    if ( roots[k]->RigidId == rigidId )
     {
-      // Add name attribute. Notice that the map of labels will be updated
-      // only in case if the topology graph accepts the passed name
-      // attribute. This is done for better data consistency.
-      if ( newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr) )
-      {
-        // Bind to map for fast access (rewrite on).
-        this->registerNamedShape(imageName, imageShape);
-      }
+      pFoundOrigin = roots[k];
+      break;
     }
-  }
-}
 
-//-----------------------------------------------------------------------------
+  if ( !pFoundOrigin )
+    return TopoDS_Face();
 
-void asiAlgo_Naming::passIntact(const TopoDS_Shape&              shape,
-                                const Handle(asiAlgo_TopoGraph)& newTopograph,
-                                const Handle(asiAlgo_TopoAttr)&  attr2Pass)
-{
-  if ( attr2Pass.IsNull() )
-    return;
-
-  // Make a copy of this attribute.
-  Handle(asiAlgo_TopoAttrName)
-    namingAttr = Handle(asiAlgo_TopoAttrName)::DownCast( attr2Pass->Copy() );
-
-  // Bind to map for fast access (rewrite on).
-  this->registerNamedShape(namingAttr->GetName(), shape);
-
-  // Add attribute to the topology graph.
-  const int imageNodeIdx = newTopograph->GetNodeIndex(shape);
+  // Find the ultimate leaf.
+  TopoDS_Shape image = this->GetLastImageOrArg(pFoundOrigin->TransientPtr);
   //
-  if ( imageNodeIdx )
-    newTopograph->AddNodeAttribute(imageNodeIdx, namingAttr);
+  if ( image.IsNull() || image.ShapeType() != TopAbs_FACE )
+    return TopoDS_Face();
+
+  return TopoDS::Face(image);
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Naming::registerNamedShape(const TCollection_AsciiString& name,
-                                        const TopoDS_Shape&            shape)
+TopoDS_Edge asiAlgo_Naming::FindAliveEdge(const int rigidId) const
 {
-  if ( m_namedAliveShapes.IsBound(name) )
-    return false; // Not unique name passed.
+  // Get all roots of a certain type.
+  std::vector<t_item*> roots;
+  this->GetRootsOfType(TopAbs_EDGE, roots);
 
-  // We bound the named shape with EXTERNAL orientation as actually orientation
-  // has no sense for a boundary element alone. Imagine a vertex which is shared
-  // by two edges. Imagine also that we store oriented entities here. Then,
-  // once the topological naming service is initialized, all boundary elements
-  // are used to populate the map of names. To populate that map, we iterate
-  // the topograph which distinguishes only partner elements because orientations
-  // are stored as arc attributes. Imagine that you first iterate a Co-Vertex
-  // from the first edge and the topograph returns REVERSED entity. In such case,
-  // the topological naming map will always store the vertex boundary element
-  // in a reversed state even though the second edge may forward-include it.
-  m_namedAliveShapes.Bind( name, shape.Oriented(TopAbs_EXTERNAL) );
-  return true;
+  // Iterate over the roots finding the origin with the given rigid ID.
+  t_item* pFoundOrigin = NULL;
+  for ( size_t k = 0; k < roots.size(); ++k )
+    if ( roots[k]->RigidId == rigidId )
+    {
+      pFoundOrigin = roots[k];
+      break;
+    }
+
+  if ( !pFoundOrigin )
+    return TopoDS_Edge();
+
+  // Find the ultimate leaf.
+  TopoDS_Shape image = this->GetLastImageOrArg(pFoundOrigin->TransientPtr);
+  //
+  if ( image.IsNull() || image.ShapeType() != TopAbs_EDGE )
+    return TopoDS_Edge();
+
+  return TopoDS::Edge(image);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Vertex asiAlgo_Naming::FindAliveVertex(const int rigidId) const
+{
+  // Get all roots of a certain type.
+  std::vector<t_item*> roots;
+  this->GetRootsOfType(TopAbs_VERTEX, roots);
+
+  // Iterate over the roots finding the origin with the given rigid ID.
+  t_item* pFoundOrigin = NULL;
+  for ( size_t k = 0; k < roots.size(); ++k )
+    if ( roots[k]->RigidId == rigidId )
+    {
+      pFoundOrigin = roots[k];
+      break;
+    }
+
+  if ( !pFoundOrigin )
+    return TopoDS_Vertex();
+
+  // Find the ultimate leaf.
+  TopoDS_Shape image = this->GetLastImageOrArg(pFoundOrigin->TransientPtr);
+  //
+  if ( image.IsNull() || image.ShapeType() != TopAbs_VERTEX )
+    return TopoDS_Vertex();
+
+  return TopoDS::Vertex(image);
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape
+  asiAlgo_Naming::FindAliveShape(const TCollection_AsciiString& name) const
+{
+  // Get rigid index.
+  std::vector<TCollection_AsciiString> chunks;
+  asiAlgo_Utils::Str::Split(name, "_", chunks);
+  //
+  if ( chunks.size() != 2 || !chunks[1].IsIntegerValue() )
+    return TopoDS_Shape();
+
+  const int rigidId = chunks[1].IntegerValue();
+
+  // Get shape type.
+  const TopAbs_ShapeEnum shapeType = ShapeTypeByName(name);
+
+  if ( shapeType == TopAbs_FACE )
+    return this->FindAliveFace(rigidId);
+
+  if ( shapeType == TopAbs_EDGE )
+    return this->FindAliveEdge(rigidId);
+
+  if ( shapeType == TopAbs_VERTEX )
+    return this->FindAliveVertex(rigidId);
+
+  return TopoDS_Shape();
 }

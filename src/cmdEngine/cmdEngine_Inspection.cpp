@@ -767,9 +767,9 @@ int ENGINE_DumpTopographDot(const Handle(asiTcl_Interp)& interp,
   // Access or create topograph.
   Handle(asiAlgo_TopoGraph) topograph;
   //
-  if ( part_n->HasNaming() )
-    topograph = part_n->GetNaming()->GetTopoGraph(); // With names.
-  else
+  //if ( part_n->HasNaming() )
+  //  topograph = part_n->GetNaming()->GetTopoGraph(); // With names.
+  //else
     topograph = new asiAlgo_TopoGraph( part_n->GetShape() ); // Without names.
 
   // Dump to buffer.
@@ -2001,7 +2001,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
     {
       TCollection_AsciiString name(argv[2]);
       //
-      TopoDS_Shape subshape = part_n->GetNaming()->GetShape(name);
+      TopoDS_Shape subshape = part_n->GetNaming()->FindAliveShape(name);
       //
       if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_EDGE )
       {

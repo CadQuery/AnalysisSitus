@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 14 May (*) 2018
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018, Sergey Slyadnev
+// Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,8 @@ asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&  masterCAD,
                                          ActAPI_PlotterEntry  plotter)
 //
 : ActAPI_IAlgorithm (progress, plotter),
-  m_input           (masterCAD)
+  m_input           (masterCAD),
+  m_frozenVertices  (NULL)
 {
   m_aag = new asiAlgo_AAG(m_input, true);
 }
@@ -55,12 +56,13 @@ asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
                                          ActAPI_PlotterEntry        plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_input           (masterCAD),
-  m_aag             (aag)
+  m_aag             (aag),
+  m_frozenVertices  (aag)
 {}
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
+bool asiAlgo_RebuildEdge::Perform(const int edgeId)
 {
   /* ===================
    *  Preparation stage
@@ -81,7 +83,7 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
                                        m_plotter);
 
   // Initialize Modification.
-  if ( !Mod->Init(edge) )
+  if ( !Mod->Init(edgeId) )
     return false;
   //
   Mod->SetFrozenVertices(m_frozenVertices.vertices);
@@ -230,9 +232,9 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_RebuildEdge::AddFrozenVertex(const TopoDS_Vertex& vertex)
+void asiAlgo_RebuildEdge::AddFrozenVertex(const int vertexId)
 {
-  m_frozenVertices.Add(vertex);
+  m_frozenVertices.Add(vertexId);
 }
 
 //-----------------------------------------------------------------------------

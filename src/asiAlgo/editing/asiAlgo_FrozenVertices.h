@@ -32,7 +32,7 @@
 #define asiAlgo_FrozenVertices_h
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_AAG.h>
 
 // OCCT includes
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -44,32 +44,34 @@
 //! used in defeaturing tools.
 struct asiAlgo_FrozenVertices
 {
-  TopTools_IndexedMapOfShape vertices; //!< Vertices to keep intact.
+  TColStd_PackedMapOfInteger vertices; //!< Vertices to keep intact.
+  Handle(asiAlgo_AAG)        AAG;      //!< AAG with naming service.
 
-  //! Default ctor.
-  asiAlgo_FrozenVertices() {}
+  //! Ctor accepting AAG with naming service.
+  //! \param[in] _aag AAG with naming service activated.
+  asiAlgo_FrozenVertices(const Handle(asiAlgo_AAG)& _aag)
+  : AAG(_aag)
+  {}
 
   //! Ctor.
-  asiAlgo_FrozenVertices(const TopTools_IndexedMapOfShape& _vertices) : vertices(_vertices) {}
+  //! \param[in] _vertices vertices to set frozen.
+  //! \param[in] _aag      AAG with naming service activated.
+  asiAlgo_FrozenVertices(const TColStd_PackedMapOfInteger& _vertices,
+                         const Handle(asiAlgo_AAG)&        _aag)
+  : vertices(_vertices), AAG(_aag)
+  {}
 
   //! Adds another vertex to the collection of frozen ones.
-  void Add(const TopoDS_Shape& vertex)
+  //! \param[in] vertexId rigid ID of a vertex to add as frozen.
+  void Add(const int vertexId)
   {
-    vertices.Add(vertex);
-  }
-
-  //! Accessor for a vertex by its index.
-  //! \param[in] oneBasedIdx 1-based ID of the vertex to access.
-  //! \return reference to the vertex.
-  const TopoDS_Shape& operator()(const int oneBasedIdx) const
-  {
-    return vertices(oneBasedIdx);
+    this->vertices.Add(vertexId);
   }
 
   //! \return number of stored vertices.
   int GetNumOfVertices() const
   {
-    return vertices.Extent();
+    return this->vertices.Extent();
   }
 
   //! Creates another map of frozen vertices as an intersection between `this`
@@ -78,11 +80,8 @@ struct asiAlgo_FrozenVertices
   //! \return new collection of frozen vertices.
   asiAlgo_FrozenVertices GetIntersection(const asiAlgo_FrozenVertices& op) const
   {
-    asiAlgo_FrozenVertices result;
-
-    for ( int j = 1; j <= op.vertices.Extent(); ++j )
-      if ( this->vertices.Contains( op.vertices(j) ) )
-        result.Add( op.vertices(j) );
+    asiAlgo_FrozenVertices result(this->AAG);
+    result.vertices.Intersection(this->vertices, op.vertices);
 
     return result;
   }

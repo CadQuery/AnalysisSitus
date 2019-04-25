@@ -338,10 +338,10 @@ vtkSmartPointer<vtkGraph>
   if ( regime == Regime_Topology )
   {
     // Create new topology graph or take the existing one from Naming
-    if ( m_naming.IsNull() )
+    /*if ( m_naming.IsNull() )*/
       m_topoGraph = new asiAlgo_TopoGraph(shape);
-    else
-      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(shape);
+    //else
+    //  m_topoGraph = m_naming->GetTopoGraph()->SubGraph(shape);
 
     // Convert
     vtkSmartPointer<vtkMutableDirectedGraph>

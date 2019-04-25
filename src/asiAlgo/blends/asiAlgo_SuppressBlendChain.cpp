@@ -208,14 +208,8 @@ asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)
   m_aag               (aag),
   m_iSuppressedChains (0)
 {
-  // Check if there is a naming service active.
-  const Handle(asiAlgo_Naming)& naming = aag->GetNaming();
-
-  // Reuse or create new history.
-  if ( naming.IsNull() )
-    m_history = new asiAlgo_History;
-  else
-    m_history = naming->GetHistory();
+  // Take naming as a history.
+  m_history = aag->GetNaming();
 }
 
 //-----------------------------------------------------------------------------
@@ -322,6 +316,8 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   if ( !this->performTopoOperations(targetShape) )
     return false;
 
+  m_aag->ChangeMasterCAD() = targetShape;
+
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Topological reduction")
 
@@ -406,19 +402,19 @@ void
   asiAlgo_SuppressBlendChain::updateTopoConditions(const int                      toSkip,
                                                    const Handle(asiAlgo_History)& history) const
 {
-  for ( asiAlgo_HBlendTopoConditionMap::Iterator cit(*m_workflow.topoCondition);
-        cit.More(); cit.Next() )
-  {
-    const int fid = cit.Key();
-    //
-    if ( fid == toSkip )
-      continue;
+  //for ( asiAlgo_HBlendTopoConditionMap::Iterator cit(*m_workflow.topoCondition);
+  //      cit.More(); cit.Next() )
+  //{
+  //  const int fid = cit.Key();
+  //  //
+  //  if ( fid == toSkip )
+  //    continue;
 
-    // Actualize condition.
-    const Handle(asiAlgo_BlendTopoCondition)& cond = cit.Value();
-    //
-    cond->Actualize(history);
-  }
+  //  // Actualize condition.
+  //  const Handle(asiAlgo_BlendTopoCondition)& cond = cit.Value();
+  //  //
+  //  //cond->Actualize(history);
+  //}
 }
 
 //-----------------------------------------------------------------------------
@@ -464,21 +460,21 @@ bool
   // Normalize geometry.
   for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {
-    // Update from history as the edge could have been modified by rebuilder
-    // on previous iterations.
-    if ( k > 1 )
-      this->updateEdges2Rebuild(m_history);
+    //// Update from history as the edge could have been modified by rebuilder
+    //// on previous iterations.
+    //if ( k > 1 )
+    //  this->updateEdges2Rebuild(m_history);
 
-    const TopoDS_Edge& edge2Rebuild = m_workflow.edges2Rebuild.edges(k).edge;
+    const int edge2RebuildId = m_workflow.edges2Rebuild.edges(k).edgeId;
     //
-    if ( edge2Rebuild.IsNull() )
-      continue; // Null image of the next edge to rebuild.
+    if ( !edge2RebuildId )
+      continue;
     //
-    m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Magenta, 1.0, true, "edge2Rebuild");
+    m_plotter.DRAW_SHAPE(m_aag->GetNamedEdge(edge2RebuildId), Color_Magenta, 1.0, true, "edge2Rebuild");
 
-    // Update AAG.
-    // TODO: full update of AAG is an overkill. It is better to adjust it.
-    m_aag = new asiAlgo_AAG(targetShape, true);
+    //// Update AAG.
+    //// TODO: full update of AAG is an overkill. It is better to adjust it.
+    //m_aag = new asiAlgo_AAG(targetShape, true);
 
     // Prepare algorithm.
     asiAlgo_RebuildEdge rebuildEdge(targetShape, m_aag, m_progress, m_plotter);
@@ -487,9 +483,9 @@ bool
     rebuildEdge.SetFrozenVertices(m_workflow.edges2Rebuild.edges(k).frozenVertices);
 
     // Apply geometric operator.
-    if ( !rebuildEdge.Perform(edge2Rebuild) )
+    if ( !rebuildEdge.Perform(edge2RebuildId) )
     {
-      m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Red, 1.0, true, "edge2Rebuild_failed");
+      m_plotter.DRAW_SHAPE(m_aag->GetNamedEdge(edge2RebuildId), Color_Red, 1.0, true, "edge2Rebuild_failed");
       m_progress.SendLogMessage(LogWarn(Normal) << "Cannot rebuild edge.");
       return false;
     }
@@ -505,18 +501,18 @@ bool
 
 void asiAlgo_SuppressBlendChain::updateEdges2Rebuild(const Handle(asiAlgo_History)& history)
 {
-  asiAlgo_Edges2Rebuild updated;
+  //asiAlgo_Edges2Rebuild updated;
 
-  for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
-  {
-    asiAlgo_Edge2Rebuild edgeInfo = m_workflow.edges2Rebuild.edges(k);
+  //for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
+  //{
+  //  asiAlgo_Edge2Rebuild edgeInfo = m_workflow.edges2Rebuild.edges(k);
 
-    // Update from history.
-    edgeInfo.Actualize(history);
-    //
-    updated.Add(edgeInfo);
-  }
+  //  // Update from history.
+  //  edgeInfo.Actualize(history);
+  //  //
+  //  updated.Add(edgeInfo);
+  //}
 
-  // Set the result.
-  m_workflow.edges2Rebuild = updated;
+  //// Set the result.
+  //m_workflow.edges2Rebuild = updated;
 }

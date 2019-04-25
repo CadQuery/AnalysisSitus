@@ -436,6 +436,14 @@ public:
   asiAlgo_EXPORT TopoDS_Vertex
     GetNamedVertex(const int vid);
 
+  //! Returns the naming index (the suffix of the name) for the passed
+  //! shape which should be the alive shape of the model.
+  //! \param[in] aliveShape shape of interest.
+  //! \return 1-based persistent index of the shape or 0 if the shape cannot
+  //!         be found.
+  asiAlgo_EXPORT int
+    GetNamingIndex(const TopoDS_Shape& aliveShape);
+
 public:
 
   //! \return master CAD model.

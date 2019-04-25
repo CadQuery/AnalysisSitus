@@ -103,6 +103,8 @@ typedef NCollection_DataMap<TopoDS_Shape,
 
 //-----------------------------------------------------------------------------
 
+class asiAlgo_AAG;
+
 //! Auxiliary functions facilitating working with OCCT topological shapes.
 namespace asiAlgo_Utils
 {
@@ -955,6 +957,20 @@ namespace asiAlgo_Utils
                   const TopoDS_Shape&  G,
                   const TopoDS_Vertex& hint);
 
+  //! Gets common (shared) edge between the two passed faces.
+  //! \param[in] f        index of the first face.
+  //! \param[in] g        index of the second face.
+  //! \param[in] hint     vertex to resolve ambiguity.
+  //! \param[in] aag      AAG with the naming service initialized.
+  //! \param[in] progress progress notifier.
+  //! \return index of the first common edge.
+  asiAlgo_EXPORT int
+    GetCommonEdge(const int                  f,
+                  const int                  g,
+                  const int                  hint,
+                  const Handle(asiAlgo_AAG)& aag,
+                  ActAPI_ProgressEntry       progress = NULL);
+
   //! Gets common edges for the passed face and it vertex.
   //! \param[in]  F     face in question.
   //! \param[in]  V     vertex in question.
@@ -965,15 +981,44 @@ namespace asiAlgo_Utils
                    const TopoDS_Vertex&        V,
                    TopTools_IndexedMapOfShape& edges);
 
+  //! Gets common edges for the passed face and it vertex.
+  //! \param[in]  f        rigid index of the face in question.
+  //! \param[in]  v        rigid index of the vertex in question.
+  //! \param[out] edgeIds  rigid indices of the found common edges.
+  //! \param[in]  aag      AAG with the naming service initialized.
+  //! \param[in]  progress progress notifier.
+  //! \return false if no common edges exist.
+  asiAlgo_EXPORT bool
+    GetCommonEdges(const int                   f,
+                   const int                   v,
+                   TColStd_PackedMapOfInteger& edgeIds,
+                   const Handle(asiAlgo_AAG)&  aag,
+                   ActAPI_ProgressEntry        progress);
+
   //! Gets common (shared) vertex between the three passed faces.
   //! \param[in] F first face.
   //! \param[in] G second face.
   //! \param[in] H third face.
-  //! \return first common edge.
+  //! \return common vertex.
   asiAlgo_EXPORT TopoDS_Vertex
     GetCommonVertex(const TopoDS_Shape& F,
                     const TopoDS_Shape& G,
                     const TopoDS_Shape& H);
+
+  //! Gets the index of the common (shared) vertex between the three
+  //! passed faces using the given AAG with initialized naming service.
+  //! \param[in] f        index of the first face.
+  //! \param[in] g        index of the second face.
+  //! \param[in] h        index of the third face.
+  //! \param[in] aag      AAG with the naming service initialized.
+  //! \param[in] progress progress notifier.
+  //! \return index of the common vertex.
+  asiAlgo_EXPORT int
+    GetCommonVertex(const int                  f,
+                    const int                  g,
+                    const int                  h,
+                    const Handle(asiAlgo_AAG)& aag,
+                    ActAPI_ProgressEntry       progress = NULL);
 
   //! Joins the passed pair of B-spline curves into a single curve.
   //! The resulting curve will have the passed continuity at joints. The input

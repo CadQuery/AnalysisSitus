@@ -51,10 +51,10 @@ public:
 
 public:
 
-  TopoDS_Face f_s1;   //!< Support face 1.
-  TopoDS_Face f_s2;   //!< Support face 2.
-  TopoDS_Edge e_b_s1; //!< Spring edge between faces `b` and `s1`.
-  TopoDS_Edge e_b_s2; //!< Spring edge between faces `b` and `s2`.
+  int f_s1;   //!< Support face 1.
+  int f_s2;   //!< Support face 2.
+  int e_b_s1; //!< Spring edge between faces `b` and `s1`.
+  int e_b_s2; //!< Spring edge between faces `b` and `s2`.
 
 public:
 
@@ -66,7 +66,11 @@ public:
                                ActAPI_ProgressEntry       progress,
                                ActAPI_PlotterEntry        plotter)
   //
-  : asiAlgo_BlendTopoCondition (aag, progress, plotter)
+  : asiAlgo_BlendTopoCondition (aag, progress, plotter),
+    f_s1                       (0),
+    f_s2                       (0),
+    e_b_s1                     (0),
+    e_b_s2                     (0)
   {}
 
 public:
@@ -76,10 +80,10 @@ public:
   {
     asiAlgo_BlendTopoCondition::Dump(plotter); // Dump base entities.
 
-    plotter.REDRAW_SHAPE("f_s1",   this->f_s1);
-    plotter.REDRAW_SHAPE("f_s2",   this->f_s2);
-    plotter.REDRAW_SHAPE("e_b_s1", this->e_b_s1, Color_Blue, 1.0, true);
-    plotter.REDRAW_SHAPE("e_b_s2", this->e_b_s2, Color_Blue, 1.0, true);
+    plotter.REDRAW_SHAPE( "f_s1",   this->AAG->GetNamedFace(this->f_s1) );
+    plotter.REDRAW_SHAPE( "f_s2",   this->AAG->GetNamedFace(this->f_s2) );
+    plotter.REDRAW_SHAPE( "e_b_s1", this->AAG->GetNamedEdge(this->e_b_s1), Color_Blue, 1.0, true );
+    plotter.REDRAW_SHAPE( "e_b_s2", this->AAG->GetNamedEdge(this->e_b_s2), Color_Blue, 1.0, true );
   }
 
   //! Allows to identify a certain topological condition from the passed blend
@@ -105,10 +109,8 @@ public:
     const int f_b_idx = bcAttr->GetFaceId();
 
     // Get spring edges.
-    const int   e_b_s1_idx = bcAttr->SpringEdgeIndices.GetMinimalMapped();
-    const int   e_b_s2_idx = bcAttr->SpringEdgeIndices.GetMaximalMapped();
-    TopoDS_Edge e_b_s1_loc = this->AAG->GetNamedEdge(e_b_s1_idx);
-    TopoDS_Edge e_b_s2_loc = this->AAG->GetNamedEdge(e_b_s2_idx);
+    const int e_b_s1_idx = bcAttr->SpringEdgeIndices.GetMinimalMapped();
+    const int e_b_s2_idx = bcAttr->SpringEdgeIndices.GetMaximalMapped();
 
     // Get support (`s`) faces as neighbors of the blend face through
     // the spring edges.
@@ -122,10 +124,10 @@ public:
     const int f_b_s2_idx = f_b_s2_indices.GetMinimalMapped();
 
     // Initialize topological primitives.
-    this->f_s1   = this->AAG->GetNamedFace(f_b_s1_idx);
-    this->f_s2   = this->AAG->GetNamedFace(f_b_s2_idx);
-    this->e_b_s1 = e_b_s1_loc;
-    this->e_b_s2 = e_b_s2_loc;
+    this->f_s1   = f_b_s1_idx;
+    this->f_s2   = f_b_s2_idx;
+    this->e_b_s1 = e_b_s1_idx;
+    this->e_b_s2 = e_b_s2_idx;
 
     return true; // Identified.
   }

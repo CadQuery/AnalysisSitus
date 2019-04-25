@@ -45,17 +45,17 @@ public:
 
 public:
 
-  TopoDS_Face   f_c1;      //!< Next face 1 for the blend face `b`.
-  TopoDS_Face   f_c2;      //!< Next face 2 for the blend face `b`.
-  TopoDS_Edge   e_b_c1;    //!< Cross edge between `b` and the first neighbor `c1`.
-  TopoDS_Edge   e_b_c2;    //!< Cross edge between `b` and the second neighbor `c2`.
-  TopoDS_Vertex v_b_s1_c1; //!< Vertex common for `b`, `s1` and `c1`.
-  TopoDS_Vertex v_b_s2_c1; //!< Vertex common for `b`, `s2` and `c1`.
-  TopoDS_Vertex v_b_s1_c2; //!< Vertex common for `b`, `s1` and `c2`.
-  TopoDS_Vertex v_b_s2_c2; //!< Vertex common for `b`, `s2` and `c2`.
+  int f_c1;      //!< Next face 1 for the blend face `b`.
+  int f_c2;      //!< Next face 2 for the blend face `b`.
+  int e_b_c1;    //!< Cross edge between `b` and the first neighbor `c1`.
+  int e_b_c2;    //!< Cross edge between `b` and the second neighbor `c2`.
+  int v_b_s1_c1; //!< Vertex common for `b`, `s1` and `c1`.
+  int v_b_s2_c1; //!< Vertex common for `b`, `s2` and `c1`.
+  int v_b_s1_c2; //!< Vertex common for `b`, `s1` and `c2`.
+  int v_b_s2_c2; //!< Vertex common for `b`, `s2` and `c2`.
 
   //! Additional edges to recompute (the ones touchin the vertices `b_s1_c1`, etc.).
-  TopTools_IndexedMapOfShape e_extra;
+  TColStd_PackedMapOfInteger e_extra;
 
 public:
 
@@ -67,7 +67,15 @@ public:
                                           ActAPI_ProgressEntry       progress,
                                           ActAPI_PlotterEntry        plotter)
   //
-  : asiAlgo_BlendTopoConditionFF(aag, progress, plotter)
+  : asiAlgo_BlendTopoConditionFF (aag, progress, plotter),
+    f_c1                         (0),
+    f_c2                         (0),
+    e_b_c1                       (0),
+    e_b_c2                       (0),
+    v_b_s1_c1                    (0),
+    v_b_s2_c1                    (0),
+    v_b_s1_c2                    (0),
+    v_b_s2_c2                    (0)
   {}
 
 public:
@@ -77,14 +85,14 @@ public:
   {
     asiAlgo_BlendTopoConditionFF::Dump(plotter); // Dump base entities.
 
-    plotter.REDRAW_SHAPE("f_c1",      this->f_c1);
-    plotter.REDRAW_SHAPE("f_c2",      this->f_c2);
-    plotter.REDRAW_SHAPE("e_b_c1",    this->e_b_c1,    Color_Red,   1.0, true);
-    plotter.REDRAW_SHAPE("e_b_c2",    this->e_b_c2,    Color_Red,   1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s1_c1", this->v_b_s1_c1, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s1_c2", this->v_b_s1_c2, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s2_c1", this->v_b_s2_c1, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s2_c2", this->v_b_s2_c2, Color_White, 1.0, true);
+    plotter.REDRAW_SHAPE( "f_c1",      this->AAG->GetNamedFace   (this->f_c1) );
+    plotter.REDRAW_SHAPE( "f_c2",      this->AAG->GetNamedFace   (this->f_c2) );
+    plotter.REDRAW_SHAPE( "e_b_c1",    this->AAG->GetNamedEdge   (this->e_b_c1),    Color_Red,   1.0, true );
+    plotter.REDRAW_SHAPE( "e_b_c2",    this->AAG->GetNamedEdge   (this->e_b_c2),    Color_Red,   1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s1_c1", this->AAG->GetNamedVertex (this->v_b_s1_c1), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s1_c2", this->AAG->GetNamedVertex (this->v_b_s1_c2), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s2_c1", this->AAG->GetNamedVertex (this->v_b_s2_c1), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s2_c2", this->AAG->GetNamedVertex (this->v_b_s2_c2), Color_White, 1.0, true );
   }
 
   //! Allows to identify a certain topological condition from the passed blend
@@ -132,10 +140,6 @@ public:
     // Get ID of the blend face.
     const int f_b_idx = bcAttr->GetFaceId();
 
-    // Get cross edges.
-    TopoDS_Edge e_b_c1_loc = this->AAG->GetNamedEdge(e_b_c1_idx);
-    TopoDS_Edge e_b_c2_loc = this->AAG->GetNamedEdge(e_b_c2_idx);
-
     // Get `c` faces as neighbors to the blend face through the cross edges.
     TColStd_PackedMapOfInteger f_b_c1_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c1_idx);
     TColStd_PackedMapOfInteger f_b_c2_indices = this->AAG->GetNeighborsThru(f_b_idx, e_b_c2_idx);
@@ -147,22 +151,22 @@ public:
     const int f_b_c2_idx = f_b_c2_indices.GetMinimalMapped();
 
     // Initialize topological primitives.
-    this->f_c1   = this->AAG->GetNamedFace(f_b_c1_idx);
-    this->f_c2   = this->AAG->GetNamedFace(f_b_c2_idx);
-    this->e_b_c1 = e_b_c1_loc;
-    this->e_b_c2 = e_b_c2_loc;
+    this->f_c1   = f_b_c1_idx;
+    this->f_c2   = f_b_c2_idx;
+    this->e_b_c1 = e_b_c1_idx;
+    this->e_b_c2 = e_b_c2_idx;
 
     // Get common vertices.
-    this->v_b_s1_c1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_c1);
-    this->v_b_s2_c1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_c1);
-    this->v_b_s1_c2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_c2);
-    this->v_b_s2_c2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_c2);
+    this->v_b_s1_c1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_c1, this->AAG, m_progress);
+    this->v_b_s2_c1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_c1, this->AAG, m_progress);
+    this->v_b_s1_c2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_c2, this->AAG, m_progress);
+    this->v_b_s2_c2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_c2, this->AAG, m_progress);
 
     // Add additional edges to rebuild (if any).
-    asiAlgo_Utils::GetCommonEdges(this->f_s1, this->v_b_s1_c1, e_extra);
-    asiAlgo_Utils::GetCommonEdges(this->f_s1, this->v_b_s1_c2, e_extra);
-    asiAlgo_Utils::GetCommonEdges(this->f_s2, this->v_b_s2_c1, e_extra);
-    asiAlgo_Utils::GetCommonEdges(this->f_s2, this->v_b_s2_c2, e_extra);
+    asiAlgo_Utils::GetCommonEdges(this->f_s1, this->v_b_s1_c1, this->e_extra, this->AAG, m_progress);
+    asiAlgo_Utils::GetCommonEdges(this->f_s1, this->v_b_s1_c2, this->e_extra, this->AAG, m_progress);
+    asiAlgo_Utils::GetCommonEdges(this->f_s2, this->v_b_s2_c1, this->e_extra, this->AAG, m_progress);
+    asiAlgo_Utils::GetCommonEdges(this->f_s2, this->v_b_s2_c2, this->e_extra, this->AAG, m_progress);
 
     return true; // Identified.
   }
@@ -183,22 +187,22 @@ public:
 
     // Kill the first cross edge. We also specify a vertex to kill to
     // be as much deterministic as possible.
-    if ( !this->e_b_c1.IsNull() && !this->kev(output, this->e_b_c1, this->v_b_s1_c1, output, history) )
+    if ( !this->e_b_c1 && !this->kev(output, this->e_b_c1, this->v_b_s1_c1, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the first cross edge.");
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     // Kill the second cross edge.
-    if ( !this->e_b_c2.IsNull() && !this->kev(output, this->e_b_c2, this->v_b_s1_c2, output, history) )
+    if ( !this->e_b_c2 && !this->kev(output, this->e_b_c2, this->v_b_s1_c2, output, history) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "KEV failed on the second cross edge.");
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     // Kill the blend face.
     if ( !this->kef(output, this->f_b, this->e_b_s2, this->e_b_s1, output, history) )
@@ -207,35 +211,35 @@ public:
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     return true;
   }
 
-  //! Actualizes the current state of topological condition w.r.t. the
-  //! passed history.
-  //! \param[in] history modification history to apply.
-  virtual void Actualize(const Handle(asiAlgo_History)& history)
-  {
-    this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
-    this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
-    this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
-    this->f_c1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c1) );
-    this->f_c2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c2) );
-    this->e_b_c1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c1) );
-    this->e_b_c2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c2) );
-    this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
-    this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
-    this->v_b_s1_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c1) );
-    this->v_b_s1_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c2) );
-    this->v_b_s2_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c1) );
-    this->v_b_s2_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c2) );
+  ////! Actualizes the current state of topological condition w.r.t. the
+  ////! passed history.
+  ////! \param[in] history modification history to apply.
+  //virtual void Actualize(const Handle(asiAlgo_History)& history)
+  //{
+  //  this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
+  //  this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
+  //  this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
+  //  this->f_c1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c1) );
+  //  this->f_c2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_c2) );
+  //  this->e_b_c1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c1) );
+  //  this->e_b_c2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_c2) );
+  //  this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
+  //  this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
+  //  this->v_b_s1_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c1) );
+  //  this->v_b_s1_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_c2) );
+  //  this->v_b_s2_c1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c1) );
+  //  this->v_b_s2_c2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_c2) );
 
-    // Update extra edges.
-    TopTools_IndexedMapOfShape e_extra_updated;
-    for ( int k = 1; k <= e_extra.Extent(); ++k )
-      e_extra_updated.Add( TopoDS::Edge( history->GetLastImageOrArg( this->e_extra(k) ) ) );
-  }
+  //  // Update extra edges.
+  //  TopTools_IndexedMapOfShape e_extra_updated;
+  //  for ( int k = 1; k <= e_extra.Extent(); ++k )
+  //    e_extra_updated.Add( TopoDS::Edge( history->GetLastImageOrArg( this->e_extra(k) ) ) );
+  //}
 
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression. Every edge may declare some vertices as "frozen", i.e.,
@@ -250,11 +254,15 @@ public:
   //! \param[out] edges output collection of edges to rebuild.
   virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const
   {
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_b_s1) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_b_s1, this->AAG) );
 
     // TODO: for those extra edges, frozen vertices can be determined.
-    for ( int k = 1; k <= e_extra.Extent(); ++k )
-      edges.Add( asiAlgo_Edge2Rebuild( TopoDS::Edge( this->e_extra(k) ) ) );
+    for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->e_extra); mit.More(); mit.Next() )
+    {
+      const int extraEdgeId = mit.Key();
+
+      edges.Add( asiAlgo_Edge2Rebuild(extraEdgeId, this->AAG) );
+    }
   }
 
 };

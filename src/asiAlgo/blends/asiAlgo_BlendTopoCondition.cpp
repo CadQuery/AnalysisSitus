@@ -39,12 +39,16 @@
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
-                                     const TopoDS_Edge&       edge,
+                                     const int                edgeId,
                                      TopoDS_Shape&            output,
                                      Handle(asiAlgo_History)& history)
 {
+  // Get edge to kill.
+  TopoDS_Edge edge = this->AAG->GetNamedEdge(edgeId);
+
+  // Run Euler operator.
   asiAlgo_EulerKEV KEV( shape,
-                        TopoDS::Edge( edge.Oriented(TopAbs_EXTERNAL) ),
+                        edge,
                         m_progress, m_plotter );
   //
   if ( !history.IsNull() )
@@ -63,14 +67,19 @@ bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
-                                     const TopoDS_Edge&       edge,
-                                     const TopoDS_Vertex&     vertex2Kill,
+                                     const int                edgeId,
+                                     const int                vertex2KillId,
                                      TopoDS_Shape&            output,
                                      Handle(asiAlgo_History)& history)
 {
+  // Get transient entities.
+  TopoDS_Edge   edge        = this->AAG->GetNamedEdge(edgeId);
+  TopoDS_Vertex vertex2Kill = this->AAG->GetNamedVertex(vertex2KillId);
+
+  // Run Euler operator.
   asiAlgo_EulerKEV KEV( shape,
-                        TopoDS::Edge( edge.Oriented(TopAbs_EXTERNAL) ),
-                        TopoDS::Vertex( vertex2Kill.Oriented(TopAbs_EXTERNAL) ),
+                        edge,
+                        vertex2Kill,
                         false,
                         m_progress, m_plotter );
   //
@@ -90,16 +99,22 @@ bool asiAlgo_BlendTopoCondition::kev(const TopoDS_Shape&      shape,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_BlendTopoCondition::kef(const TopoDS_Shape&      shape,
-                                     const TopoDS_Face&       face,
-                                     const TopoDS_Edge&       edge2Kill,
-                                     const TopoDS_Edge&       edge2Save,
+                                     const int                faceId,
+                                     const int                edge2KillId,
+                                     const int                edge2SaveId,
                                      TopoDS_Shape&            output,
                                      Handle(asiAlgo_History)& history)
 {
+  // Get transient entities.
+  TopoDS_Face face      = this->AAG->GetNamedFace(faceId);
+  TopoDS_Edge edge2Kill = this->AAG->GetNamedEdge(edge2KillId);
+  TopoDS_Edge edge2Save = this->AAG->GetNamedEdge(edge2SaveId);
+
+  // Run Euler operator.
   asiAlgo_EulerKEF KEF( shape,
-                        TopoDS::Face( face.Oriented(TopAbs_EXTERNAL) ),
-                        TopoDS::Edge( edge2Kill.Oriented(TopAbs_EXTERNAL) ),
-                        TopoDS::Edge( edge2Save.Oriented(TopAbs_EXTERNAL) ),
+                        face,
+                        edge2Kill,
+                        edge2Save,
                         m_progress, m_plotter );
   //
   if ( !history.IsNull() )
@@ -118,12 +133,16 @@ bool asiAlgo_BlendTopoCondition::kef(const TopoDS_Shape&      shape,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_BlendTopoCondition::kfmv(const TopoDS_Shape&      shape,
-                                      const TopoDS_Face&       face,
+                                      const int                faceId,
                                       TopoDS_Shape&            output,
                                       Handle(asiAlgo_History)& history)
 {
+  // Get face to kill.
+  TopoDS_Face face = this->AAG->GetNamedFace(faceId);
+
+  // Run Euler operator.
   asiAlgo_EulerKFMV KFMV( shape,
-                          TopoDS::Face( face.Oriented(TopAbs_EXTERNAL) ),
+                          face,
                           m_progress, m_plotter );
   //
   if ( !history.IsNull() )

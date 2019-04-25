@@ -94,7 +94,6 @@ protected:
   vtkTextWidget*   m_textWidget; //!< Text.
   //
   Handle(asiEngine_Model) m_model;    //!< Data Model instance.
-  Handle(asiAlgo_Naming)  m_naming;   //!< Naming service (optional).
   Handle(asiAlgo_History) m_history;  //!< Modification history.
   ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
   ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.

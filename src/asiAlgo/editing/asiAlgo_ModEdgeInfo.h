@@ -70,6 +70,9 @@ public:
     TopoDS_Face   f_t2;       //!< Terminating face t2.
     TopoDS_Vertex v_s1_s2_t1; //!< First vertex of the edge.
     TopoDS_Vertex v_s1_s2_t2; //!< Last vertex of the edge.
+
+    //! Frozen vertices.
+    TopTools_IndexedMapOfShape frozenVertices;
   };
 
   //! Geometric primitives to resolve the topological situation.

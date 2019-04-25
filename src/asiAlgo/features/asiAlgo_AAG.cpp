@@ -174,21 +174,7 @@ TopoDS_Face asiAlgo_AAG::GetNamedFace(const int fid)
     return TopoDS_Face();
   }
 
-  // Get original shape by its name.
-  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_FACE, fid);
-  TopoDS_Shape            nshape = m_naming->GetShape(name);
-  //
-  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_FACE )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Shape for face ID %1 is null or not a face."
-                                             << fid);
-    return TopoDS_Face();
-  }
-
-  // Get image.
-  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
-
-  return TopoDS::Face(nshape);
+  return m_naming->FindAliveFace(fid);
 }
 
 //-----------------------------------------------------------------------------
@@ -201,21 +187,7 @@ TopoDS_Edge asiAlgo_AAG::GetNamedEdge(const int eid)
     return TopoDS_Edge();
   }
 
-  // Get original shape by its name.
-  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_EDGE, eid);
-  TopoDS_Shape            nshape = m_naming->GetShape(name);
-  //
-  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_EDGE )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Shape for edge ID %1 is null or not an edge."
-                                             << eid);
-    return TopoDS_Edge();
-  }
-
-  // Get image.
-  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
-
-  return TopoDS::Edge(nshape);
+  return m_naming->FindAliveEdge(eid);
 }
 
 //-----------------------------------------------------------------------------
@@ -228,21 +200,20 @@ TopoDS_Vertex asiAlgo_AAG::GetNamedVertex(const int vid)
     return TopoDS_Vertex();
   }
 
-  // Get original shape by its name.
-  TCollection_AsciiString name   = asiAlgo_Naming::PrepareName(TopAbs_VERTEX, vid);
-  TopoDS_Shape            nshape = m_naming->GetShape(name);
-  //
-  if ( nshape.IsNull() || nshape.ShapeType() != TopAbs_VERTEX )
+  return m_naming->FindAliveVertex(vid);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiAlgo_AAG::GetNamingIndex(const TopoDS_Shape& aliveShape)
+{
+  if ( m_naming.IsNull() )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Shape for vertex ID %1 is null or not a vertex."
-                                             << vid);
-    return TopoDS_Vertex();
+    m_progress.SendLogMessage(LogErr(Normal) << "Naming service is null while requested.");
+    return 0;
   }
 
-  // Get image.
-  nshape = m_naming->GetHistory()->GetLastImageOrArg(nshape);
-
-  return TopoDS::Vertex(nshape);
+  return m_naming->FindRigidId(aliveShape);
 }
 
 //-----------------------------------------------------------------------------

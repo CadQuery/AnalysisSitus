@@ -125,14 +125,14 @@ void asiVisu_GeomEdgePrs::afterInitPipelines()
   // If naming service is alive, add persistent name
   if ( !m_partNode->GetNaming().IsNull() )
   {
-    TCollection_AsciiString namingName;
+    /*TCollection_AsciiString namingName;
 
     if ( m_partNode->GetNaming()->FindName(E, namingName) )
     {
       TITLE += " [";
       TITLE += namingName;
       TITLE += "]";
-    }
+    }*/
   }
 
   // Add orientation of all vertices. We are interested in relative orientations

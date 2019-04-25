@@ -78,10 +78,10 @@ public:
 public:
 
   //! Performs operator.
-  //! \param[in] edge edge to rebuild.
+  //! \param[in] edgeId rigid index of the edge to rebuild.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT virtual bool
-    Perform(const TopoDS_Edge& edge);
+    Perform(const int edgeId);
 
   //! Allows to set a collection of vertices which should not be
   //! recreated (in 3D) by reintersection. In certain topological
@@ -89,9 +89,9 @@ public:
   //! data to make computations more efficient and robust. This is a sort
   //! of knowledge-driven computation enabled here.
   //!
-  //! \param[in] vertex vertex to add.
+  //! \param[in] vertexId rigid index of a vertex to add as frozen.
   asiAlgo_EXPORT void
-    AddFrozenVertex(const TopoDS_Vertex& vertex);
+    AddFrozenVertex(const int vertexId);
 
   //! Sets the collection of intact ("frozen") vertices.
   //! \sa AddFrozenVertex()

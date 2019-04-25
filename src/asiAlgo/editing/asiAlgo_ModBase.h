@@ -65,10 +65,10 @@ public:
 public:
 
   //! Initializes Modification.
-  //! \param[in] target shape being modified.
+  //! \param[in] target rigid index of the shape being modified.
   //! \return true in case of success, false -- otherwise.
   virtual bool
-    Init(const TopoDS_Shape& target) = 0;
+    Init(const int targetId) = 0;
 
 protected:
 

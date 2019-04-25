@@ -61,7 +61,8 @@ public:
 
 public:
 
-  TopoDS_Face f_b; //!< Blend face.
+  //TopoDS_Face f_b; //!< Blend face.
+  int f_b; //!< Blend face.
 
 public:
 
@@ -75,7 +76,8 @@ public:
   //
   : AAG        ( aag ),
     m_progress ( progress ),
-    m_plotter  ( plotter )
+    m_plotter  ( plotter ),
+    f_b        ( 0 )
   {}
 
 public:
@@ -83,7 +85,7 @@ public:
   //! Dumps the topological condition to the passed plotter.
   virtual void Dump(ActAPI_PlotterEntry plotter) const
   {
-    plotter.REDRAW_SHAPE("f_b", this->f_b);
+    plotter.REDRAW_SHAPE( "f_b", this->AAG->GetNamedFace(this->f_b) );
   }
 
   //! Allows to identify a certain topological condition from the passed blend
@@ -96,11 +98,8 @@ public:
   //! \return true if the certain topological condition is identified.
   virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)
   {
-    // Get ID of the blend face.
-    const int f_b_idx = bcAttr->GetFaceId();
-
     // Initialize blend face.
-    this->f_b = this->AAG->GetNamedFace(f_b_idx);
+    this->f_b = bcAttr->GetFaceId();
 
     return true; // Identified.
   }
@@ -114,69 +113,69 @@ public:
                         TopoDS_Shape&            output,
                         Handle(asiAlgo_History)& history) = 0;
 
-  //! Actualizes the current state of topological condition w.r.t. the
-  //! passed history.
-  //! \param[in] history modification history to apply.
-  virtual void Actualize(const Handle(asiAlgo_History)& history) = 0;
+  ////! Actualizes the current state of topological condition w.r.t. the
+  ////! passed history.
+  ////! \param[in] history modification history to apply.
+  //virtual void Actualize(const Handle(asiAlgo_History)& history) = 0;
 
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression.
-  //! \param[out] edges   output collection of edges to rebuild.
+  //! \param[out] edges output collection of edges to rebuild.
   virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const = 0;
 
 protected:
 
   //! Performs KEV Euler operator on the passed shape.
   //! \param[in]  shape   entire shape.
-  //! \param[in]  edge    edge to kill.
+  //! \param[in]  edgeId  rigid index of the edge to kill.
   //! \param[out] output  result of Euler operator.
   //! \param[out] history history of modification.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     kev(const TopoDS_Shape&      shape,
-        const TopoDS_Edge&       edge,
+        const int                edgeId,
         TopoDS_Shape&            output,
         Handle(asiAlgo_History)& history);
 
   //! Performs KEV Euler operator on the passed shape.
-  //! \param[in]  shape       entire shape.
-  //! \param[in]  edge        edge to kill.
-  //! \param[in]  vertex2Kill vertex to kill.
-  //! \param[out] output      result of Euler operator.
-  //! \param[out] history     history of modification.
+  //! \param[in]  shape         entire shape.
+  //! \param[in]  edgeId        rigid index of the edge to kill.
+  //! \param[in]  vertex2KillId rigid index of the vertex to kill.
+  //! \param[out] output        result of Euler operator.
+  //! \param[out] history       history of modification.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     kev(const TopoDS_Shape&      shape,
-        const TopoDS_Edge&       edge,
-        const TopoDS_Vertex&     vertex2Kill,
+        const int                edgeId,
+        const int                vertex2KillId,
         TopoDS_Shape&            output,
         Handle(asiAlgo_History)& history);
 
   //! Performs KEF Euler operator on the passed shape.
-  //! \param[in]  shape     entire shape.
-  //! \param[in]  face      face to kill.
-  //! \param[in]  edge2Kill edge to kill.
-  //! \param[in]  edge2Save edge to save.
-  //! \param[out] output    result of Euler operator.
-  //! \param[out] history   history of modification.
+  //! \param[in]  shape       entire shape.
+  //! \param[in]  faceId      rigid index of the face to kill.
+  //! \param[in]  edge2KillId rigid index of the edge to kill.
+  //! \param[in]  edge2SaveId rigid index of the edge to save.
+  //! \param[out] output      result of Euler operator.
+  //! \param[out] history     history of modification.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     kef(const TopoDS_Shape&      shape,
-        const TopoDS_Face&       face,
-        const TopoDS_Edge&       edge2Kill,
-        const TopoDS_Edge&       edge2Save,
+        const int                faceId,
+        const int                edge2KillId,
+        const int                edge2SaveId,
         TopoDS_Shape&            output,
         Handle(asiAlgo_History)& history);
 
   //! Performs KFMV Euler operator for suppressing vertex blends.
   //! \param[in]  shape   entire shape.
-  //! \param[in]  face    face to kill.
+  //! \param[in]  faceId  rigid index of the face to kill.
   //! \param[out] output  result of Euler operator.
   //! \param[out] history history of modification.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     kfmv(const TopoDS_Shape&      shape,
-         const TopoDS_Face&       face,
+         const int                faceId,
          TopoDS_Shape&            output,
          Handle(asiAlgo_History)& history);
 

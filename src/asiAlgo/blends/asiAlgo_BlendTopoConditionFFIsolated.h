@@ -45,18 +45,18 @@ public:
 
 public:
 
-  TopoDS_Face   f_t1;      //!< Terminating face 1.
-  TopoDS_Face   f_t2;      //!< Terminating face 2.
-  TopoDS_Edge   e_b_t1;    //!< Terminating edge 1 between faces `b` and `t1`.
-  TopoDS_Edge   e_b_t2;    //!< Terminating edge 2 between faces `b` and `t2`.
-  TopoDS_Edge   e_s1_t1;   //!< Edge between `s1` and `t1`.
-  TopoDS_Edge   e_s1_t2;   //!< Edge between `s1` and `t2`.
-  TopoDS_Edge   e_s2_t1;   //!< Edge between `s2` and `t1`.
-  TopoDS_Edge   e_s2_t2;   //!< Edge between `s2` and `t2`.
-  TopoDS_Vertex v_b_s1_t1; //!< Vertex common for `b`, `s1` and `t1`.
-  TopoDS_Vertex v_b_s2_t1; //!< Vertex common for `b`, `s2` and `t1`.
-  TopoDS_Vertex v_b_s1_t2; //!< Vertex common for `b`, `s1` and `t2`.
-  TopoDS_Vertex v_b_s2_t2; //!< Vertex common for `b`, `s2` and `t2`.
+  int f_t1;      //!< Terminating face 1.
+  int f_t2;      //!< Terminating face 2.
+  int e_b_t1;    //!< Terminating edge 1 between faces `b` and `t1`.
+  int e_b_t2;    //!< Terminating edge 2 between faces `b` and `t2`.
+  int e_s1_t1;   //!< Edge between `s1` and `t1`.
+  int e_s1_t2;   //!< Edge between `s1` and `t2`.
+  int e_s2_t1;   //!< Edge between `s2` and `t1`.
+  int e_s2_t2;   //!< Edge between `s2` and `t2`.
+  int v_b_s1_t1; //!< Vertex common for `b`, `s1` and `t1`.
+  int v_b_s2_t1; //!< Vertex common for `b`, `s2` and `t1`.
+  int v_b_s1_t2; //!< Vertex common for `b`, `s1` and `t2`.
+  int v_b_s2_t2; //!< Vertex common for `b`, `s2` and `t2`.
 
 public:
 
@@ -68,7 +68,19 @@ public:
                                        ActAPI_ProgressEntry       progress,
                                        ActAPI_PlotterEntry        plotter)
   //
-  : asiAlgo_BlendTopoConditionFF(aag, progress, plotter)
+  : asiAlgo_BlendTopoConditionFF (aag, progress, plotter),
+    f_t1                         (0),
+    f_t2                         (0),
+    e_b_t1                       (0),
+    e_b_t2                       (0),
+    e_s1_t1                      (0),
+    e_s1_t2                      (0),
+    e_s2_t1                      (0),
+    e_s2_t2                      (0),
+    v_b_s1_t1                    (0),
+    v_b_s2_t1                    (0),
+    v_b_s1_t2                    (0),
+    v_b_s2_t2                    (0)
   {}
 
 public:
@@ -78,18 +90,18 @@ public:
   {
     asiAlgo_BlendTopoConditionFF::Dump(plotter); // Dump base entities.
 
-    plotter.REDRAW_SHAPE("f_t1",      this->f_t1);
-    plotter.REDRAW_SHAPE("f_t2",      this->f_t2);
-    plotter.REDRAW_SHAPE("e_b_t1",    this->e_b_t1,    Color_Red,   1.0, true);
-    plotter.REDRAW_SHAPE("e_b_t2",    this->e_b_t2,    Color_Red,   1.0, true);
-    plotter.REDRAW_SHAPE("e_s1_t1",   this->e_s1_t1,   Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("e_s1_t2",   this->e_s1_t2,   Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("e_s2_t1",   this->e_s2_t1,   Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("e_s2_t2",   this->e_s2_t2,   Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s1_t1", this->v_b_s1_t1, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s1_t2", this->v_b_s1_t2, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s2_t1", this->v_b_s2_t1, Color_White, 1.0, true);
-    plotter.REDRAW_SHAPE("v_b_s2_t2", this->v_b_s2_t2, Color_White, 1.0, true);
+    plotter.REDRAW_SHAPE( "f_t1",      this->AAG->GetNamedFace   (this->f_t1) );
+    plotter.REDRAW_SHAPE( "f_t2",      this->AAG->GetNamedFace   (this->f_t2) );
+    plotter.REDRAW_SHAPE( "e_b_t1",    this->AAG->GetNamedEdge   (this->e_b_t1),    Color_Red,   1.0, true );
+    plotter.REDRAW_SHAPE( "e_b_t2",    this->AAG->GetNamedEdge   (this->e_b_t2),    Color_Red,   1.0, true );
+    plotter.REDRAW_SHAPE( "e_s1_t1",   this->AAG->GetNamedEdge   (this->e_s1_t1),   Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "e_s1_t2",   this->AAG->GetNamedEdge   (this->e_s1_t2),   Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "e_s2_t1",   this->AAG->GetNamedEdge   (this->e_s2_t1),   Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "e_s2_t2",   this->AAG->GetNamedEdge   (this->e_s2_t2),   Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s1_t1", this->AAG->GetNamedVertex (this->v_b_s1_t1), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s1_t2", this->AAG->GetNamedVertex (this->v_b_s1_t2), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s2_t1", this->AAG->GetNamedVertex (this->v_b_s2_t1), Color_White, 1.0, true );
+    plotter.REDRAW_SHAPE( "v_b_s2_t2", this->AAG->GetNamedVertex (this->v_b_s2_t2), Color_White, 1.0, true );
   }
 
   //! Allows to identify a certain topological condition from the passed blend
@@ -118,10 +130,8 @@ public:
     const int f_b_idx = bcAttr->GetFaceId();
 
     // Get terminating edges.
-    const int   e_b_t1_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
-    const int   e_b_t2_idx = bcAttr->TerminatingEdgeIndices.GetMaximalMapped();
-    TopoDS_Edge e_b_t1_loc = this->AAG->GetNamedEdge(e_b_t1_idx);
-    TopoDS_Edge e_b_t2_loc = this->AAG->GetNamedEdge(e_b_t2_idx);
+    const int e_b_t1_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
+    const int e_b_t2_idx = bcAttr->TerminatingEdgeIndices.GetMaximalMapped();
 
     // Get terminating (`t`) faces as neighbors to the blend face through
     // the terminating edges.
@@ -135,28 +145,25 @@ public:
     const int f_b_t2_idx = f_b_t2_indices.GetMinimalMapped();
 
     // Initialize topological primitives.
-    this->f_t1   = this->AAG->GetNamedFace(f_b_t1_idx);
-    this->f_t2   = this->AAG->GetNamedFace(f_b_t2_idx);
-    this->e_b_t1 = e_b_t1_loc;
-    this->e_b_t2 = e_b_t2_loc;
+    this->f_t1   = f_b_t1_idx;
+    this->f_t2   = f_b_t2_idx;
+    this->e_b_t1 = e_b_t1_idx;
+    this->e_b_t2 = e_b_t2_idx;
 
     // Get common vertices.
-    this->v_b_s1_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t1);
-    this->v_b_s2_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t1);
-    this->v_b_s1_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t2);
-    this->v_b_s2_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t2);
+    this->v_b_s1_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t1, this->AAG, m_progress);
+    this->v_b_s2_t1 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t1, this->AAG, m_progress);
+    this->v_b_s1_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s1, this->f_t2, this->AAG, m_progress);
+    this->v_b_s2_t2 = asiAlgo_Utils::GetCommonVertex(this->f_b, this->f_s2, this->f_t2, this->AAG, m_progress);
 
     // Get other common edges.
-    this->e_s1_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t1, this->v_b_s1_t1);
-    this->e_s1_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t2, this->v_b_s1_t2);
-    this->e_s2_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t1, this->v_b_s2_t1);
-    this->e_s2_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t2, this->v_b_s2_t2);
+    this->e_s1_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t1, this->v_b_s1_t1, this->AAG, m_progress);
+    this->e_s1_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s1, this->f_t2, this->v_b_s1_t2, this->AAG, m_progress);
+    this->e_s2_t1 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t1, this->v_b_s2_t1, this->AAG, m_progress);
+    this->e_s2_t2 = asiAlgo_Utils::GetCommonEdge(this->f_s2, this->f_t2, this->v_b_s2_t2, this->AAG, m_progress);
 
     // Check if all edges are initialized.
-    if ( this->e_s1_t1.IsNull() ||
-         this->e_s1_t2.IsNull() ||
-         this->e_s2_t1.IsNull() ||
-         this->e_s2_t2.IsNull() )
+    if ( !this->e_s1_t1 || !this->e_s1_t2 || !this->e_s2_t1 || !this->e_s2_t2 )
       return false;
 
     return true; // Identified.
@@ -184,7 +191,7 @@ public:
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     // Kill the second terminating edge.
     if ( !this->kev(output, this->e_b_t2, this->v_b_s1_t2, output, history) )
@@ -193,7 +200,7 @@ public:
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     // Kill the blend face.
     if ( !this->kef(output, this->f_b, this->e_b_s2, this->e_b_s1, output, history) )
@@ -202,34 +209,34 @@ public:
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     return true;
   }
 
-  //! Actualizes the current state of topological condition w.r.t. the
-  //! passed history.
-  //! \param[in] history modification history to apply.
-  virtual void Actualize(const Handle(asiAlgo_History)& history)
-  {
-    this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
-    this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
-    this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
-    this->f_t1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t1) );
-    this->f_t2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t2) );
-    this->e_b_t1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t1) );
-    this->e_b_t2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t2) );
-    this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
-    this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
-    this->e_s1_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t1) );
-    this->e_s1_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t2) );
-    this->e_s2_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t1) );
-    this->e_s2_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t2) );
-    this->v_b_s1_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t1) );
-    this->v_b_s1_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t2) );
-    this->v_b_s2_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t1) );
-    this->v_b_s2_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t2) );
-  }
+  ////! Actualizes the current state of topological condition w.r.t. the
+  ////! passed history.
+  ////! \param[in] history modification history to apply.
+  //virtual void Actualize(const Handle(asiAlgo_History)& history)
+  //{
+  //  this->f_b       = TopoDS::Face   ( history->GetLastImageOrArg(this->f_b) );
+  //  this->f_s1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s1) );
+  //  this->f_s2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_s2) );
+  //  this->f_t1      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t1) );
+  //  this->f_t2      = TopoDS::Face   ( history->GetLastImageOrArg(this->f_t2) );
+  //  this->e_b_t1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t1) );
+  //  this->e_b_t2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_t2) );
+  //  this->e_b_s1    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s1) );
+  //  this->e_b_s2    = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_b_s2) );
+  //  this->e_s1_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t1) );
+  //  this->e_s1_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s1_t2) );
+  //  this->e_s2_t1   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t1) );
+  //  this->e_s2_t2   = TopoDS::Edge   ( history->GetLastImageOrArg(this->e_s2_t2) );
+  //  this->v_b_s1_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t1) );
+  //  this->v_b_s1_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s1_t2) );
+  //  this->v_b_s2_t1 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t1) );
+  //  this->v_b_s2_t2 = TopoDS::Vertex ( history->GetLastImageOrArg(this->v_b_s2_t2) );
+  //}
 
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression. Every edge may declare some vertices as "frozen", i.e.,
@@ -244,11 +251,11 @@ public:
   //! \param[out] edges output collection of edges to rebuild.
   virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const
   {
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t1, this->v_b_s2_t1, false) );
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t2, this->v_b_s2_t2, false) );
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_b_s1) );
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t1, this->v_b_s2_t1, false) );
-    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t2, this->v_b_s2_t2, false) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t1, this->v_b_s2_t1, false, this->AAG) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s1_t2, this->v_b_s2_t2, false, this->AAG) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_b_s1,  this->AAG) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t1, this->v_b_s2_t1, false, this->AAG) );
+    edges.Add( asiAlgo_Edge2Rebuild(this->e_s2_t2, this->v_b_s2_t2, false, this->AAG) );
   }
 
 };

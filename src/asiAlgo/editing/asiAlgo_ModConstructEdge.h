@@ -63,15 +63,15 @@ public:
 public:
 
   //! Initializes Modification.
-  //! \param[in] target shape being modified.
+  //! \param[in] targetId rigid index of a shape being modified.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT virtual bool
-    Init(const TopoDS_Shape& target) override;
+    Init(const int targetId) override;
 
   //! Sets the collection of intact ("frozen") vertices.
   //! \param[in] vertices collection of vertices to set as frozen.
   asiAlgo_EXPORT void
-    SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices);
+    SetFrozenVertices(const TColStd_PackedMapOfInteger& vertices);
 
 public:
 
@@ -159,10 +159,10 @@ public:
 protected:
 
   //! Initializes topological situation near the target edge.
-  //! \param[in] targetEdge target edge.
+  //! \param[in] targetEdgeId rigid index of the target edge.
   //! \return false in case of unexpected topological situation.
   asiAlgo_EXPORT bool
-    initSituation(const TopoDS_Edge& targetEdge);
+    initSituation(const int targetEdgeId);
 
   //! Reconstructs p-curve for the given edge on the passed face.
   //! \param[in] E edge in question.
@@ -186,9 +186,6 @@ protected:
   //! Data structure describing local geometric
   //! situation near the target edge.
   asiAlgo_ModEdgeInfo m_edgeInfo;
-
-  //! Frozen vertices.
-  TopTools_IndexedMapOfShape m_frozenVertices;
 
 };
 

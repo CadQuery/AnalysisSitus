@@ -51,73 +51,101 @@
 //! unreliable geometric algorithms (e.g. curve-surface intersection).
 struct asiAlgo_Edge2Rebuild
 {
-  TopoDS_Edge            edge;           //!< Edge to rebuild.
+  int                    edgeId;         //!< Rigid index of the edge to rebuild.
   asiAlgo_FrozenVertices frozenVertices; //!< Vertices to keep intact.
+  Handle(asiAlgo_AAG)    AAG;            //!< AAG with naming service.
 
   // Ctor.
-  explicit asiAlgo_Edge2Rebuild(const TopoDS_Edge& _edge) : edge(_edge) {}
+  //! \param[in] _edgeId rigid ID of the edge to rebuild.
+  //! \param[in] _aag    AAG with naming service.
+  explicit asiAlgo_Edge2Rebuild(const int                  _edgeId,
+                                const Handle(asiAlgo_AAG)& _aag)
+  : edgeId(_edgeId), frozenVertices(_aag), AAG(_aag)
+  {}
 
   // Ctor.
-  asiAlgo_Edge2Rebuild(const TopoDS_Edge&   _edge,
-                       const TopoDS_Vertex& _vertex,
-                       const bool           _frozen)
-  : edge(_edge)
+  //! \param[in] _edgeId   rigid index of the edge.
+  //! \param[in] _vertexId rigid index of a vertex to set as frozen or to
+  //!                      help finding and freeze the opposite one.
+  //! \param[in] _frozen   flag to set a vertex as frozen.
+  //! \param[in] _aag      AAG with naming service.
+  asiAlgo_Edge2Rebuild(const int                  _edgeId,
+                       const int                  _vertexId,
+                       const bool                 _frozen,
+                       const Handle(asiAlgo_AAG)& _aag)
+  : edgeId(_edgeId), frozenVertices(_aag), AAG(_aag)
   {
     if ( _frozen )
     {
-      frozenVertices.Add(_vertex);
+      // Freeze.
+      frozenVertices.Add(_vertexId);
     }
     else
     {
+      // Get transient entities.
+      TopoDS_Edge     edge = this->AAG->GetNamedEdge(_edgeId);
+      TopoDS_Vertex vertex = this->AAG->GetNamedVertex(_vertexId);
+
+      // Get vertices of the edge.
       TopoDS_Vertex vf, vl;
-      TopExp::Vertices(_edge, vf, vl);
+      TopExp::Vertices(edge, vf, vl);
 
       // Add opposite vertex to be frozen.
-      if ( _vertex.IsPartner(vf) )
-        frozenVertices.Add(vl);
-      else if ( _vertex.IsPartner(vl) )
-        frozenVertices.Add(vf);
+      TopoDS_Vertex chosenVertex;
+      if ( vertex.IsPartner(vf) )
+        chosenVertex = vl;
+      else if ( vertex.IsPartner(vl) )
+        chosenVertex = vf;
+
+      // Get index of the frozen vertex.
+      const int chosenVertexId = this->AAG->GetNamingIndex(chosenVertex);
+
+      // Freeze.
+      frozenVertices.Add(chosenVertexId);
     }
   }
 
-  //! Actualizes the stored boundary elements w.r.t. the passed history.
-  //! \param[in] history editing history for actualization.
-  void Actualize(const Handle(asiAlgo_History)& history)
-  {
-    // Update edge.
-    if ( history->IsDeleted(this->edge) )
-    {
-      this->edge.Nullify();
-      this->frozenVertices.vertices.Clear();
-    }
-    else
-    {
-      this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
+  ////! Actualizes the stored boundary elements w.r.t. the passed history.
+  ////! \param[in] history editing history for actualization.
+  //void Actualize(const Handle(asiAlgo_History)& history)
+  //{
+  //  // Get edge.
+  //  TopoDS_Edge edge = this->AAG->GetNamedEdge(this->edgeId);
 
-      // Update frozen vertices.
-      asiAlgo_FrozenVertices updatedVertices;
-      //
-      for ( int vidx = 1; vidx <= this->frozenVertices.GetNumOfVertices(); ++vidx )
-      {
-        TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
-        updatedVertices.Add(vertex);
-      }
-      //
-      this->frozenVertices = updatedVertices;
-    }
-  }
+  //  // Update edge.
+  //  if ( history->IsDeleted(edge) )
+  //  {
+  //    //this->edge.Nullify();
+  //    this->frozenVertices.vertices.Clear();
+  //  }
+  //  else
+  //  {
+  //    //this->edge = TopoDS::Edge( history->GetLastModifiedOrArg(this->edge) );
+
+  //    // Update frozen vertices.
+  //    asiAlgo_FrozenVertices updatedVertices(this->AAG);
+  //    //
+  //    for ( int vidx = 1; vidx <= this->frozenVertices.GetNumOfVertices(); ++vidx )
+  //    {
+  //      TopoDS_Shape vertex = history->GetLastModifiedOrArg( this->frozenVertices(vidx) );
+  //      updatedVertices.Add(vertex);
+  //    }
+  //    //
+  //    this->frozenVertices = updatedVertices;
+  //  }
+  //}
 
   //! Hasher for data maps.
   struct Hasher
   {
     static int HashCode(const asiAlgo_Edge2Rebuild& e, const int upper)
     {
-      return ::HashCode(e.edge, upper);
+      return ::HashCode(e.edgeId, upper);
     }
 
     static bool IsEqual(const asiAlgo_Edge2Rebuild& e1, const asiAlgo_Edge2Rebuild& e2)
     {
-      return ::IsEqual(e1.edge, e2.edge);
+      return ::IsEqual(e1.edgeId, e2.edgeId);
     }
   };
 };
@@ -159,7 +187,7 @@ struct asiAlgo_Edges2Rebuild
       frozenVerts = storedEdge2Rebuild.frozenVertices.GetIntersection(newEdge2Rebuild.frozenVertices);
 
     // Prepare another edge2Rebuild.
-    asiAlgo_Edge2Rebuild edge2Rebuild(newEdge2Rebuild.edge);
+    asiAlgo_Edge2Rebuild edge2Rebuild(newEdge2Rebuild.edgeId, newEdge2Rebuild.AAG);
     edge2Rebuild.frozenVertices = frozenVerts;
 
     // Store.

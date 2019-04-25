@@ -245,10 +245,6 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
     part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
   }
 
-  // Actualize naming if it is initialized.
-  if ( part_n->HasNaming() )
-    part_n->GetNaming()->Actualize(model);
-
   // Actualize presentation.
   if ( m_prsMgr )
     m_prsMgr->Actualize(part_n);
@@ -274,9 +270,9 @@ void asiEngine_Part::InitializeNaming()
   }
 
   // Prepare naming service.
-  Handle(asiAlgo_Naming) naming = new asiAlgo_Naming(partShape, m_progress);
+  Handle(asiAlgo_Naming) naming = new asiAlgo_Naming(m_progress, m_plotter);
   //
-  if ( !naming->InitNames() )
+  if ( !naming->InitNames( part_n->GetAAG() ) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Naming initialization failed.");
     return;

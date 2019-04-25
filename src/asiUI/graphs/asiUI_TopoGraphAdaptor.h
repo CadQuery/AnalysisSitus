@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_Naming.h>
+#include <asiAlgo_TopoGraph.h>
 
 // VTK includes
 #pragma warning(push, 0)

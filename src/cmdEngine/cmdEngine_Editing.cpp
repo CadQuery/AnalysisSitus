@@ -196,7 +196,7 @@ bool FindNamedArg(const Handle(asiTcl_Interp)&  interp,
     if ( interp->IsKeyword(argv[k], ssKey) )
     {
       // Get named sub-shape.
-      TopoDS_Shape subshape = naming->GetShape(argv[k + 1]);
+      TopoDS_Shape subshape = naming->FindAliveShape(argv[k + 1]);
       //
       if ( subshape.IsNull() || subshape.ShapeType() != ssType )
         continue;
@@ -280,7 +280,7 @@ int ENGINE_KEV(const Handle(asiTcl_Interp)& interp,
                                 interp->GetProgress(),
                                 interp->GetPlotter() );
   //
-  KEV->SetHistory( naming->GetHistory() );
+  KEV->SetHistory(naming);
   //
   if ( !KEV->Perform() )
   {
@@ -389,7 +389,7 @@ int ENGINE_KEF(const Handle(asiTcl_Interp)& interp,
   }
 
   // Set history and perform.
-  KEF->SetHistory( naming->GetHistory() );
+  KEF->SetHistory(naming);
   //
   if ( !KEF->Perform() )
   {
@@ -458,7 +458,7 @@ int ENGINE_KFMV(const Handle(asiTcl_Interp)& interp,
                                   interp->GetPlotter() );
 
   // Set history and perform.
-  KFMV->SetHistory( naming->GetHistory() );
+  KFMV->SetHistory(naming);
   //
   if ( !KFMV->Perform() )
   {
@@ -522,7 +522,7 @@ int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
     }
 
     // Get named sub-shape.
-    TopoDS_Shape subshape = naming->GetShape(argv[k + 1]);
+    TopoDS_Shape subshape = naming->FindAliveShape(argv[k + 1]);
     //
     if ( subshape.IsNull() || subshape.ShapeType() != ssType )
     {
@@ -542,7 +542,7 @@ int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
                            interp->GetProgress(),
                            interp->GetPlotter() );
   //
-  killer.SetHistory( part_n->GetNaming()->GetHistory() );
+  killer.SetHistory( part_n->GetNaming() );
 
   // Put requests on replacement.
   for ( TopTools_ListIteratorOfListOfShape lit(subShapes); lit.More(); lit.Next() )
@@ -614,7 +614,7 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
     {
       TCollection_AsciiString name(argv[2]);
       //
-      subshape = part_n->GetNaming()->GetShape(name);
+      subshape = part_n->GetNaming()->FindAliveShape(name);
       //
       if ( subshape.IsNull() || subshape.ShapeType() != ssType )
       {
@@ -648,7 +648,7 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
                            interp->GetPlotter() );
   //
   if ( part_n->HasNaming() )
-    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+    killer.SetHistory( part_n->GetNaming() );
   //
   if ( !killer.AskRemove(subshape) )
   {
@@ -840,7 +840,7 @@ int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
                            interp->GetPlotter() );
   //
   if ( part_n->HasNaming() )
-    killer.SetHistory( part_n->GetNaming()->GetHistory() );
+    killer.SetHistory( part_n->GetNaming() );
   //
   if ( !killer.AskRemove(ownerSolid) )
   {
@@ -1159,13 +1159,19 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
   // Check whether naming service is active.
   const bool hasNaming = !part_n->GetNaming().IsNull();
+  //
+  if ( !hasNaming )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "This function requires naming service activated.");
+    return TCL_ERROR;
+  }
 
   // Edge to rebuild.
   TopoDS_Edge edge;
 
   // Check if naming service is active. If so, the user may ask to access
   // a sub-shape in question by its unique name.
-  if ( hasNaming && argc == 3 )
+  if ( argc == 3 )
   {
     if ( !interp->IsKeyword(argv[1], "name") )
     {
@@ -1176,7 +1182,7 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
     {
       TCollection_AsciiString name(argv[2]);
       //
-      TopoDS_Shape subshape = part_n->GetNaming()->GetShape(name);
+      TopoDS_Shape subshape = part_n->GetNaming()->FindAliveShape(name);
       //
       if ( subshape.IsNull() || subshape.ShapeType() != TopAbs_EDGE )
       {
@@ -1187,23 +1193,6 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
       //
       edge = TopoDS::Edge(subshape);
     }
-  }
-  else // Naming is not used to access the argument.
-  {
-    const int ssidx = atoi(argv[1]);
-    //
-    if ( ssidx < 1 )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sub-shape index should be 1-based.");
-      return TCL_OK;
-    }
-
-    // Get map of sub-shapes with respect to those the passed index is relevant.
-    TopTools_IndexedMapOfShape subShapesOfType;
-    part_n->GetAAG()->RequestMapOf(TopAbs_EDGE, subShapesOfType);
-
-    // Get sub-shape in question.
-    edge = TopoDS::Edge( subShapesOfType(ssidx).Oriented(TopAbs_EXTERNAL) );
   }
 
   /* ======================
@@ -1219,11 +1208,10 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
                             interp->GetProgress()/*,
                             interp->GetPlotter()*/ );
   //
-  if ( hasNaming )
-    oper.SetHistory( part_n->GetNaming()->GetHistory() );
+  oper.SetHistory( part_n->GetNaming() );
 
   // Apply geometric operator.
-  if ( !oper.Perform(edge) )
+  if ( !oper.Perform( part_n->GetNaming()->FindRigidId(edge) ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "BRepTools_Modifier is not done.");
     return false;
@@ -1797,17 +1785,16 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
     return TCL_ERROR;
   }
-  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
-  TopoDS_Shape        shape = partNode->GetShape();
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
 
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
   // Prepare naming service.
   Handle(asiAlgo_Naming)
-    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+    naming = new asiAlgo_Naming( interp->GetProgress(), interp->GetPlotter()  );
   //
-  naming->InitNames();
+  naming->InitNames(aag);
   //
   aag->SetNaming(naming);
 
@@ -1916,17 +1903,16 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
     return TCL_ERROR;
   }
-  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
-  TopoDS_Shape        shape = partNode->GetShape();
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
 
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
   // Prepare naming service.
   Handle(asiAlgo_Naming)
-    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+    naming = new asiAlgo_Naming( interp->GetProgress(), interp->GetPlotter() );
   //
-  naming->InitNames();
+  naming->InitNames(aag);
   //
   aag->SetNaming(naming);
 
@@ -2023,17 +2009,16 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
     return TCL_ERROR;
   }
-  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
-  TopoDS_Shape        shape = partNode->GetShape();
+  Handle(asiAlgo_AAG) aag = partNode->GetAAG();
 
   // Make sure to have diagnostic tools in AAG.
   aag->SetDiagnosticTools( interp->GetProgress(), interp->GetPlotter() );
 
   // Prepare naming service.
   Handle(asiAlgo_Naming)
-    naming = new asiAlgo_Naming( shape, interp->GetProgress() );
+    naming = new asiAlgo_Naming( interp->GetProgress(), interp->GetPlotter() );
   //
-  naming->InitNames();
+  naming->InitNames(aag);
   //
   aag->SetNaming(naming);
 

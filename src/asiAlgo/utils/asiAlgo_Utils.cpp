@@ -35,6 +35,7 @@
 #include <windows.h>
 
 // asiAlgo includes
+#include <asiAlgo_AAG.h>
 #include <asiAlgo_ClassifyPointFace.h>
 #include <asiAlgo_Timer.h>
 
@@ -427,15 +428,15 @@ TCollection_AsciiString
   //
   if ( !naming.IsNull() )
   {
-    msg += "\n\t Name: ";
+    //msg += "\n\t Name: ";
 
-    TCollection_AsciiString label;
-    naming->FindName(subShape, label);
-    //
-    if ( !label.IsEmpty() )
-      msg += label;
-    else
-      msg += "<empty>";
+    //TCollection_AsciiString label;
+    //naming->FindName(subShape, label);
+    ////
+    //if ( !label.IsEmpty() )
+    //  msg += label;
+    //else
+    //  msg += "<empty>";
   }
   //
   if ( subShape.ShapeType() == TopAbs_EDGE )
@@ -2948,6 +2949,33 @@ TopoDS_Edge asiAlgo_Utils::GetCommonEdge(const TopoDS_Shape&  F,
 
 //-----------------------------------------------------------------------------
 
+int asiAlgo_Utils::GetCommonEdge(const int                  f,
+                                 const int                  g,
+                                 const int                  hint,
+                                 const Handle(asiAlgo_AAG)& aag,
+                                 ActAPI_ProgressEntry       progress)
+{
+  if ( aag.IsNull() || !aag->HasNaming() )
+  {
+    progress.SendLogMessage(LogWarn(Normal) << "AAG is null or misses the naming service.");
+    return 0;
+  }
+
+  // Get alive faces using the naming service.
+  TopoDS_Face   F = aag->GetNamedFace(f);
+  TopoDS_Face   G = aag->GetNamedFace(g);
+  TopoDS_Vertex V = aag->GetNamedVertex(hint);
+
+  // Get common edge of the alive faces.
+  TopoDS_Edge E = GetCommonEdge(F, G, V);
+  //
+  const int e = aag->GetNamingIndex(E);
+
+  return e;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::GetCommonEdges(const TopoDS_Shape&         F,
                                    const TopoDS_Vertex&        V,
                                    TopTools_IndexedMapOfShape& edges)
@@ -2974,6 +3002,50 @@ bool asiAlgo_Utils::GetCommonEdges(const TopoDS_Shape&         F,
   }
 
   return isAnyFound;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::GetCommonEdges(const int                   f,
+                                   const int                   v,
+                                   TColStd_PackedMapOfInteger& edgeIds,
+                                   const Handle(asiAlgo_AAG)&  aag,
+                                   ActAPI_ProgressEntry        progress)
+{
+  if ( aag.IsNull() || !aag->HasNaming() )
+  {
+    progress.SendLogMessage(LogWarn(Normal) << "AAG is null or misses the naming service.");
+    return 0;
+  }
+
+  // Get alive shapes using the naming service.
+  TopoDS_Face   F = aag->GetNamedFace(f);
+  TopoDS_Vertex V = aag->GetNamedVertex(v);
+
+  // Get transient common edges.
+  TopTools_IndexedMapOfShape edges;
+  if ( !GetCommonEdges(F, V, edges) )
+    return false;
+
+  // Get rigid IDs of the found edges.
+  for ( int k = 1; k <= edges.Extent(); ++k )
+  {
+    const TopoDS_Shape& edge = edges(k);
+
+    // Get index of the edge.
+    const int edgeId = aag->GetNamingIndex(edge);
+    //
+    if ( !edgeId )
+    {
+      progress.SendLogMessage(LogWarn(Normal) << "Cannot find alive common edge");
+      return false;
+    }
+
+    // Add ID to the result collection.
+    edgeIds.Add(edgeId);
+  }
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -3014,6 +3086,33 @@ TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
     if ( isDone ) break;
   }
   return commonVertex;
+}
+
+//-----------------------------------------------------------------------------
+
+int asiAlgo_Utils::GetCommonVertex(const int                  f,
+                                   const int                  g,
+                                   const int                  h,
+                                   const Handle(asiAlgo_AAG)& aag,
+                                   ActAPI_ProgressEntry       progress)
+{
+  if ( aag.IsNull() || !aag->HasNaming() )
+  {
+    progress.SendLogMessage(LogWarn(Normal) << "AAG is null or misses the naming service.");
+    return 0;
+  }
+
+  // Get alive faces using the naming service.
+  TopoDS_Face F = aag->GetNamedFace(f);
+  TopoDS_Face G = aag->GetNamedFace(g);
+  TopoDS_Face H = aag->GetNamedFace(h);
+
+  // Get common vertex of the alive faces.
+  TopoDS_Vertex V = GetCommonVertex(F, G, H);
+  //
+  const int v = aag->GetNamingIndex(V);
+
+  return v;
 }
 
 //-----------------------------------------------------------------------------

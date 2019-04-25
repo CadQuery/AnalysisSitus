@@ -92,7 +92,7 @@ int ENGINE_ShowHistory(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
   Handle(asiAlgo_Naming)   naming = part_n->GetNaming();
   //
-  if ( naming.IsNull() || naming->GetHistory().IsNull() )
+  if ( naming.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "History is not initialized.");
     return TCL_OK;

@@ -105,18 +105,18 @@ public:
       return false;
     }
     //
-    this->Actualize(history);
+    //this->Actualize(history);
 
     return true;
   }
 
-  //! Actualizes the current state of topological condition w.r.t. the
-  //! passed history.
-  //! \param[in] history modification history to apply.
-  virtual void Actualize(const Handle(asiAlgo_History)& history)
-  {
-    this->f_b = TopoDS::Face( history->GetLastImageOrArg(this->f_b) );
-  }
+  ////! Actualizes the current state of topological condition w.r.t. the
+  ////! passed history.
+  ////! \param[in] history modification history to apply.
+  //virtual void Actualize(const Handle(asiAlgo_History)& history)
+  //{
+  //  this->f_b = TopoDS::Face( history->GetLastImageOrArg(this->f_b) );
+  //}
 
   //! Gathers the collection of affected edges to rebuild as a result of
   //! suppression. Every edge may declare some vertices as "frozen", i.e.,

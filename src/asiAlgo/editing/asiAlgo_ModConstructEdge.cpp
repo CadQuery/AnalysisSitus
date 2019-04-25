@@ -71,20 +71,29 @@ asiAlgo_ModConstructEdge::asiAlgo_ModConstructEdge(const Handle(asiAlgo_AAG)& aa
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ModConstructEdge::Init(const TopoDS_Shape& target)
+bool asiAlgo_ModConstructEdge::Init(const int targetId)
 {
-  // Downcast for subsequent use.
-  const TopoDS_Edge& targetEdge = TopoDS::Edge(target);
-
   // Initialize info.
-  return this->initSituation(targetEdge);
+  return this->initSituation(targetId);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_ModConstructEdge::SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices)
+void asiAlgo_ModConstructEdge::SetFrozenVertices(const TColStd_PackedMapOfInteger& vertices)
 {
-  m_frozenVertices = vertices;
+  for ( TColStd_MapIteratorOfPackedMapOfInteger vit(vertices); vit.More(); vit.Next() )
+  {
+    const int     v = vit.Key();
+    TopoDS_Vertex V = m_aag->GetNamedVertex(v);
+
+    if ( V.IsNull() )
+    {
+      m_progress.SendLogMessage(LogWarn(Normal) << "Cannot add frozen vertex: naming service failed to find it.");
+      continue;
+    }
+
+    m_edgeInfo.situation.frozenVertices.Add(V);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -151,7 +160,7 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   // do not try to reevaluate it. Such a paradigm is especially fruitful
   // in cases where intersection is not well-defined, e.g., when tangential
   // situation is realized.
-  if ( m_frozenVertices.Contains(V) )
+  if ( m_edgeInfo.situation.frozenVertices.Contains(V) )
   {
     m_progress.SendLogMessage(LogNotice(Normal) << "Skipping 'frozen' vertex.");
     m_plotter.DRAW_SHAPE(V, Color_Blue, 1.0, true, "frozen_vertex");
@@ -425,11 +434,17 @@ GeomAbs_Shape
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
+bool asiAlgo_ModConstructEdge::initSituation(const int targetEdgeId)
 {
   // Build child-parent map.
-  const asiAlgo_IndexedDataMapOfTShapeListOfShape&
-    edgeFaceMap = m_aag->RequestTMapOfEdgesFaces();
+  /*const asiAlgo_IndexedDataMapOfTShapeListOfShape&
+    edgeFaceMap = m_aag->RequestTMapOfEdgesFaces();*/
+
+  TopoDS_Edge targetEdge = m_aag->GetNamedEdge(targetEdgeId);
+
+  // Get owner faces.
+  asiAlgo_IndexedDataMapOfTShapeListOfShape edgeFaceMap;
+  asiAlgo_Utils::MapTShapesAndAncestors(m_aag->GetMasterCAD(), TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
 
   // Check if the edge in question is a part of the model.
   if ( !edgeFaceMap.Contains(targetEdge) )
@@ -597,7 +612,14 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
       break;
   }
 
-  const int f1_id = m_aag->GetFaceId(m_edgeInfo.situation.f_s1);
+  const int f1_id = m_aag->GetNamingIndex(m_edgeInfo.situation.f_s1);
+  //
+  if ( !f1_id )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot access f_s1 from the naming service");
+    this->SetErrorStateOn();
+    return false;
+  }
 
   // Initialize t1.
   const TColStd_PackedMapOfInteger&
@@ -613,7 +635,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     return false;
   }
   //
-  m_edgeInfo.situation.f_t1 = m_aag->GetFace( f1_prev_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t1 = m_aag->GetNamedFace( f1_prev_neighbors.GetMinimalMapped() );
 
   // Initialize t2.
   const TColStd_PackedMapOfInteger&
@@ -629,7 +651,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
     return false;
   }
   //
-  m_edgeInfo.situation.f_t2 = m_aag->GetFace( f1_next_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t2 = m_aag->GetNamedFace( f1_next_neighbors.GetMinimalMapped() );
 
 #if defined DRAW_DEBUG
   m_edgeInfo.DumpSituation(m_plotter);

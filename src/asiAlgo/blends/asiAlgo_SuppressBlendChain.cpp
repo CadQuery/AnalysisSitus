@@ -469,12 +469,8 @@ bool
     //
     m_plotter.DRAW_SHAPE(edge2Rebuild, Color_Magenta, 1.0, true, "edge2Rebuild");
 
-    // Update AAG.
-    // TODO: full update of AAG is an overkill. It is better to adjust it.
-    m_aag = new asiAlgo_AAG(targetShape, true);
-
     // Prepare algorithm.
-    asiAlgo_RebuildEdge rebuildEdge(targetShape, m_aag, m_progress, m_plotter);
+    asiAlgo_RebuildEdge rebuildEdge(targetShape, m_progress, m_plotter);
     //
     rebuildEdge.SetHistory(m_history);
     rebuildEdge.SetFrozenVertices(m_workflow.edges2Rebuild.edges(k).frozenVertices);

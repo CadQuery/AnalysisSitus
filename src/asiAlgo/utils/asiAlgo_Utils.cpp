@@ -3018,6 +3018,42 @@ TopoDS_Vertex asiAlgo_Utils::GetCommonVertex(const TopoDS_Shape& F,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::GetNeighborsThru(const TopoDS_Shape&         shape,
+                                     const TopoDS_Face&          F,
+                                     const TopoDS_Edge&          E,
+                                     TopTools_IndexedMapOfShape& M)
+{
+  // Get all edges with their owner faces in the master shape.
+  TopTools_IndexedDataMapOfShapeListOfShape edgesFacesMap;
+  TopExp::MapShapesAndAncestors(shape, TopAbs_EDGE, TopAbs_FACE, edgesFacesMap);
+
+  // Get all faces owning the edge in question.
+  if ( !edgesFacesMap.Contains(E) )
+    return false;
+  //
+  const TopTools_ListOfShape& ownerFaces = edgesFacesMap.FindFromKey(E);
+
+  // Find all faces except F.
+  bool isFfound = false;
+  //
+  for ( TopTools_ListIteratorOfListOfShape fit(ownerFaces); fit.More(); fit.Next() )
+  {
+    const TopoDS_Shape& currFace = fit.Value();
+    //
+    if ( currFace.IsPartner(F) )
+    {
+      isFfound = true;
+      continue;
+    }
+
+    M.Add(currFace);
+  }
+
+  return isFfound;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
                                Handle(Geom_BSplineCurve)& curve2,
                                const int                  order,

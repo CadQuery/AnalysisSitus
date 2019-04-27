@@ -52,21 +52,21 @@ public:
 public:
 
   //! Constructor.
-  //! \param[in] aag      Attributed Adjacency Graph.
+  //! \param[in] shape    shape to modify.
   //! \param[in] notifier progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_ModConstructEdge(const Handle(asiAlgo_AAG)& aag,
-                             ActAPI_ProgressEntry       notifier,
-                             ActAPI_PlotterEntry        plotter);
+    asiAlgo_ModConstructEdge(const TopoDS_Shape&  shape,
+                             ActAPI_ProgressEntry notifier,
+                             ActAPI_PlotterEntry  plotter);
 
 public:
 
   //! Initializes Modification.
-  //! \param[in] target shape being modified.
+  //! \param[in] targetEdge edge to rebuild.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT virtual bool
-    Init(const TopoDS_Shape& target) override;
+    Init(const TopoDS_Shape& targetEdge) override;
 
   //! Sets the collection of intact ("frozen") vertices.
   //! \param[in] vertices collection of vertices to set as frozen.
@@ -180,8 +180,8 @@ protected:
 
 protected:
 
-  //! Attributed Adjacency Graph.
-  Handle(asiAlgo_AAG) m_aag;
+  //! Shape to modify.
+  TopoDS_Shape m_shape;
 
   //! Data structure describing local geometric
   //! situation near the target edge.

@@ -63,10 +63,10 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_ModConstructEdge::asiAlgo_ModConstructEdge(const Handle(asiAlgo_AAG)& aag,
-                                                   ActAPI_ProgressEntry       notifier,
-                                                   ActAPI_PlotterEntry        plotter)
-: asiAlgo_ModBase(notifier, plotter), m_aag(aag)
+asiAlgo_ModConstructEdge::asiAlgo_ModConstructEdge(const TopoDS_Shape&  shape,
+                                                   ActAPI_ProgressEntry notifier,
+                                                   ActAPI_PlotterEntry  plotter)
+: asiAlgo_ModBase(notifier, plotter), m_shape(shape)
 {}
 
 //-----------------------------------------------------------------------------
@@ -428,8 +428,8 @@ GeomAbs_Shape
 bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 {
   // Build child-parent map.
-  const asiAlgo_IndexedDataMapOfTShapeListOfShape&
-    edgeFaceMap = m_aag->RequestTMapOfEdgesFaces();
+  asiAlgo_IndexedDataMapOfTShapeListOfShape edgeFaceMap;
+  asiAlgo_Utils::MapTShapesAndAncestors(m_shape, TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
 
   // Check if the edge in question is a part of the model.
   if ( !edgeFaceMap.Contains(targetEdge) )
@@ -595,40 +595,42 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
          !m_edgeInfo.situation.e_s2_t2.IsNull() )
       break;
   }
-
-  const int f1_id = m_aag->GetFaceId(m_edgeInfo.situation.f_s1);
-
+  
   // Initialize t1.
-  const TColStd_PackedMapOfInteger&
-    f1_prev_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t1);
+  TopTools_IndexedMapOfShape f1_prev_neighbors;
+  asiAlgo_Utils::GetNeighborsThru(m_shape,
+                                  m_edgeInfo.situation.f_s1,
+                                  m_edgeInfo.situation.e_s1_t1,
+                                  f1_prev_neighbors);
   //
   if ( f1_prev_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
-                                                "Cannot find t1."
-                                             << f1_id);
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1."
+                                                "Cannot find t1.");
 
     this->SetErrorStateOn();
     return false;
   }
   //
-  m_edgeInfo.situation.f_t1 = m_aag->GetFace( f1_prev_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t1 = TopoDS::Face( f1_prev_neighbors(1) );
 
   // Initialize t2.
-  const TColStd_PackedMapOfInteger&
-    f1_next_neighbors = m_aag->GetNeighborsThru(f1_id, m_edgeInfo.situation.e_s1_t2);
+  TopTools_IndexedMapOfShape f1_next_neighbors;
+  asiAlgo_Utils::GetNeighborsThru(m_shape,
+                                  m_edgeInfo.situation.f_s1,
+                                  m_edgeInfo.situation.e_s1_t2,
+                                  f1_next_neighbors);
   //
   if ( f1_next_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1 (id %1)."
-                                                "Cannot find t2."
-                                             << f1_id);
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1."
+                                                "Cannot find t2.");
 
     this->SetErrorStateOn();
     return false;
   }
   //
-  m_edgeInfo.situation.f_t2 = m_aag->GetFace( f1_next_neighbors.GetMinimalMapped() );
+  m_edgeInfo.situation.f_t2 = TopoDS::Face( f1_next_neighbors(1) );
 
 #if defined DRAW_DEBUG
   m_edgeInfo.DumpSituation(m_plotter);

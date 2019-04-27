@@ -975,6 +975,18 @@ namespace asiAlgo_Utils
                     const TopoDS_Shape& G,
                     const TopoDS_Shape& H);
 
+  //! Gathers all faces which are neighbors to `F` through the edge `E`.
+  //! \param[in]  shape master shape.
+  //! \param[in]  F     face to find the neighbors for.
+  //! \param[in]  E     edge to check neighbors in.
+  //! \param[out] M     gathered collection of neighbor faces.
+  //! \return false if the passed entities are not related.
+  asiAlgo_EXPORT bool
+    GetNeighborsThru(const TopoDS_Shape&         shape,
+                     const TopoDS_Face&          F,
+                     const TopoDS_Edge&          E,
+                     TopTools_IndexedMapOfShape& M);
+
   //! Joins the passed pair of B-spline curves into a single curve.
   //! The resulting curve will have the passed continuity at joints. The input
   //! curves should be properly oriented.

@@ -1222,7 +1222,6 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
   // Prepare algorithm.
   asiAlgo_RebuildEdge oper( part_n->GetShape(),
-                            part_n->GetAAG(),
                             interp->GetProgress()/*,
                             interp->GetPlotter()*/ );
   //

@@ -43,9 +43,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! Base class for geometric modifications driven by BRepTools_Modifier.
-//! All such modifications are essentially homeomorphisms as they cannot
-//! affect topology of a CAD model.
+//! Base class for homeomorphic (topology-preserving) modifications of a shape.
 class asiAlgo_ModBase : public asiAlgo_BRepNormalization
 {
 public:

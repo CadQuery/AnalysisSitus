@@ -64,17 +64,6 @@ public:
                         ActAPI_ProgressEntry progress = NULL,
                         ActAPI_PlotterEntry  plotter  = NULL);
 
-  //! Constructor.
-  //! \param[in] masterCAD full CAD model.
-  //! \param[in] aag       AAG of the full CAD model.
-  //! \param[in] progress  Progress Notifier.
-  //! \param[in] plotter   Imperative Plotter.
-  asiAlgo_EXPORT
-    asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
-                        const Handle(asiAlgo_AAG)& aag,
-                        ActAPI_ProgressEntry       progress = NULL,
-                        ActAPI_PlotterEntry        plotter  = NULL);
-
 public:
 
   //! Performs operator.
@@ -129,7 +118,6 @@ public:
 protected:
 
   Handle(asiAlgo_History) m_history;        //!< Modification history.
-  Handle(asiAlgo_AAG)     m_aag;            //!< AAG of the master CAD model.
   asiAlgo_FrozenVertices  m_frozenVertices; //!< Frozen vertices.
   TopoDS_Shape            m_input;          //!< Input CAD model.
   TopoDS_Shape            m_result;         //!< Result CAD model.

@@ -43,19 +43,6 @@ asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&  masterCAD,
 //
 : ActAPI_IAlgorithm (progress, plotter),
   m_input           (masterCAD)
-{
-  m_aag = new asiAlgo_AAG(m_input, true);
-}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_RebuildEdge::asiAlgo_RebuildEdge(const TopoDS_Shape&        masterCAD,
-                                         const Handle(asiAlgo_AAG)& aag,
-                                         ActAPI_ProgressEntry       progress,
-                                         ActAPI_PlotterEntry        plotter)
-: ActAPI_IAlgorithm (progress, plotter),
-  m_input           (masterCAD),
-  m_aag             (aag)
 {}
 
 //-----------------------------------------------------------------------------
@@ -76,7 +63,7 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
 
   // Prepare Modification.
   Handle(asiAlgo_ModConstructEdge)
-    Mod = new asiAlgo_ModConstructEdge(m_aag,
+    Mod = new asiAlgo_ModConstructEdge(m_input,
                                        m_progress,
                                        m_plotter);
 

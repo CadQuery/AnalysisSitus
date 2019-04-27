@@ -151,7 +151,9 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
 
       recognize = false; // Try next face.
-      fids.Remove(fid);
+      fids.Remove(fid);  // TODO: remove all faces of the chain which failed to be suppressed.
+                         //       BTW: how do we know that the same faces will not be attempted
+                         //            to be killed again?
       continue;
     }
 

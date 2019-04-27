@@ -169,7 +169,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     result = incRes;
 
     // Adjust the collection of remaining faces.
-    fids.Remove(fid);
+    fids.Remove(fid); // TODO: remove all faces of the chain, not only the seed.
     //
     if ( fids.IsEmpty() )
     {

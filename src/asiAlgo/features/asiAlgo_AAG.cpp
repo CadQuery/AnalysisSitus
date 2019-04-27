@@ -175,6 +175,8 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 
 void asiAlgo_AAG::SetSelectedFaces(const TopTools_IndexedMapOfShape& selectedFaces)
 {
+  m_selected.Clear();
+
   // Save selected faces for future filtering.
   for ( int s = 1; s <= selectedFaces.Extent(); ++s )
     m_selected.Add( m_faces.FindIndex( selectedFaces.FindKey(s) ) );

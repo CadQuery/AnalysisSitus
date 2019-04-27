@@ -1,15 +1,15 @@
 clear
 
 # Set working variables.
-set datafile cad/nist/nist_ctc_01.brep
+set datafile cad/blends/boxblend_06.brep
 set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1
 set ref_nshe     1
-set ref_nf       124
-set ref_nw       149
-set ref_ne       343
-set ref_nv       222
+set ref_nf       11
+set ref_nw       12
+set ref_ne       24
+set ref_nv       16
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -25,21 +25,21 @@ print-summary
 set initialToler [get-tolerance]
 
 # Check Euler-Poincare property of the manifold before modification.
-if { [check-euler 10] != 1 } {
+if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
 # Kill blend chains incrementally.
 disable-notifier
 #
-if { [kill-blends-inc] != 22 } {
+if { [kill-blends-inc] != 2 } {
   error "Unexpected number of suppressed blend chains."
 }
 #
 enable-notifier
 
 # Check Euler-Poincare property of the manifold after modification.
-if { [check-euler 10] != 1 } {
+if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 

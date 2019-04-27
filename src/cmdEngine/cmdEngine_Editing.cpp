@@ -163,6 +163,12 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
 
     numSuppressedChains += incSuppress.GetNumSuppressedChains();
 
+    // Get result.
+    const TopoDS_Shape& incRes = incSuppress.GetResult();
+    //
+    result = incRes;
+
+    // Adjust the collection of remaining faces.
     fids.Remove(fid);
     //
     if ( fids.IsEmpty() )
@@ -171,16 +177,13 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       continue;
     }
 
-    // Get result.
-    const TopoDS_Shape& incRes = incSuppress.GetResult();
-
     // Update AAG.
     tempAAG = new asiAlgo_AAG(incRes, false);
     recognize = true;
   }
   while ( !stop );
 
-  result = tempAAG->GetMasterCAD();
+  //result = tempAAG->GetMasterCAD();
 
   return true;
 }

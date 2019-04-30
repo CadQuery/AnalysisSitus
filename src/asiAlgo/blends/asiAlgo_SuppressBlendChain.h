@@ -75,6 +75,13 @@ public:
   asiAlgo_EXPORT bool
     Perform(const int faceId);
 
+  //! Returns the IDs of all faces constituting the chain to suppress. Use
+  //! this method after Perform() invocation.
+  //! \return faceIds IDs of the blend chain faces.
+  //! \sa Perform() for computing blend chains.
+  asiAlgo_EXPORT TColStd_PackedMapOfInteger
+    GetChainIds() const;
+
 public:
 
   //! Accessor for the result shape.

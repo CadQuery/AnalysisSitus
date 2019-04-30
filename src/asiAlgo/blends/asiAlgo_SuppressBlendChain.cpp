@@ -285,6 +285,24 @@ bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceI
 
 //-----------------------------------------------------------------------------
 
+TColStd_PackedMapOfInteger asiAlgo_SuppressBlendChain::GetChainIds() const
+{
+  if ( m_workflow.topoCondition.IsNull() )
+    return TColStd_PackedMapOfInteger();
+
+  TColStd_PackedMapOfInteger result;
+  //
+  for ( asiAlgo_HBlendTopoConditionMap::Iterator it(*m_workflow.topoCondition); it.More(); it.Next() )
+  {
+    const int fid = it.Key();
+    result.Add(fid);
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
 {
   m_iSuppressedChains = 0;

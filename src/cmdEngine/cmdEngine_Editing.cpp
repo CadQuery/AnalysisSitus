@@ -103,9 +103,13 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
                                  ActAPI_ProgressEntry       progress = NULL,
                                  ActAPI_PlotterEntry        plotter  = NULL)
 {
+  // Initialize outputs.
+  result              = aag->GetMasterCAD();
   numSuppressedChains = 0;
+
   TColStd_PackedMapOfInteger fids;
 
+  // Perform main loop for incremental suppression.
   bool                recognize = true;
   bool                stop      = false;
   Handle(asiAlgo_AAG) tempAAG   = aag;
@@ -151,9 +155,8 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
 
       recognize = false; // Try next face.
-      fids.Remove(fid);  // TODO: remove all faces of the chain which failed to be suppressed.
-                         //       BTW: how do we know that the same faces will not be attempted
-                         //            to be killed again?
+      fids.Subtract( incSuppress.GetChainIds() );
+      fids.Remove( fid );
       continue;
     }
 
@@ -171,7 +174,8 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     result = incRes;
 
     // Adjust the collection of remaining faces.
-    fids.Remove(fid); // TODO: remove all faces of the chain, not only the seed.
+    fids.Subtract( incSuppress.GetChainIds() );
+    fids.Remove( fid );
     //
     if ( fids.IsEmpty() )
     {

@@ -109,6 +109,10 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
 
   TColStd_PackedMapOfInteger fids;
 
+  // Faces to skip as already tried and known to be non-suppressible. Here
+  // we use transient pointers to avoid any confusion with renumbering.
+  TopTools_IndexedMapOfShape nonSuppressibleFaces;
+
   // Perform main loop for incremental suppression.
   bool                recognize = true;
   bool                stop      = false;
@@ -146,6 +150,15 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
 
     // Choose any face for suppression.
     const int fid = fids.GetMinimalMapped();
+    //
+    if ( nonSuppressibleFaces.Contains( tempAAG->GetFace(fid) ) )
+    {
+      progress.SendLogMessage(LogWarn(Normal) << "Skip non-suppressible face. Keep going...");
+
+      recognize = false; // Try next face.
+      fids.Remove( fid );
+      continue;
+    }
 
     // Prepare tool.
     asiAlgo_SuppressBlendChain incSuppress(tempAAG, progress, plotter);
@@ -157,6 +170,14 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       recognize = false; // Try next face.
       fids.Subtract( incSuppress.GetChainIds() );
       fids.Remove( fid );
+
+      // Add non-suppressible faces.
+      TopTools_IndexedMapOfShape lastChainFaces = incSuppress.GetChainFaces();
+      //
+      nonSuppressibleFaces.Add( tempAAG->GetFace(fid) );
+      for ( int k = 1; k <= lastChainFaces.Extent(); ++k )
+        nonSuppressibleFaces.Add( lastChainFaces(k) );
+
       continue;
     }
 

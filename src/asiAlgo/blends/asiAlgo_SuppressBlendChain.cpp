@@ -285,24 +285,6 @@ bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceI
 
 //-----------------------------------------------------------------------------
 
-TColStd_PackedMapOfInteger asiAlgo_SuppressBlendChain::GetChainIds() const
-{
-  if ( m_workflow.topoCondition.IsNull() )
-    return TColStd_PackedMapOfInteger();
-
-  TColStd_PackedMapOfInteger result;
-  //
-  for ( asiAlgo_HBlendTopoConditionMap::Iterator it(*m_workflow.topoCondition); it.More(); it.Next() )
-  {
-    const int fid = it.Key();
-    result.Add(fid);
-  }
-
-  return result;
-}
-
-//-----------------------------------------------------------------------------
-
 bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
 {
   m_iSuppressedChains = 0;
@@ -357,6 +339,41 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+TColStd_PackedMapOfInteger asiAlgo_SuppressBlendChain::GetChainIds() const
+{
+  if ( m_workflow.topoCondition.IsNull() )
+    return TColStd_PackedMapOfInteger();
+
+  TColStd_PackedMapOfInteger result;
+  //
+  for ( asiAlgo_HBlendTopoConditionMap::Iterator it(*m_workflow.topoCondition); it.More(); it.Next() )
+  {
+    const int fid = it.Key();
+    result.Add(fid);
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+TopTools_IndexedMapOfShape asiAlgo_SuppressBlendChain::GetChainFaces() const
+{
+  TColStd_PackedMapOfInteger faceIds = this->GetChainIds();
+
+  TopTools_IndexedMapOfShape result;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faceIds); fit.More(); fit.Next() )
+  {
+    const int fid = fit.Key();
+    result.Add( m_aag->GetFace(fid) );
+  }
+
+  return result;
 }
 
 //-----------------------------------------------------------------------------

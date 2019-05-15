@@ -161,18 +161,18 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     }
 
     // Prepare tool.
-    asiAlgo_SuppressBlendChain incSuppress(tempAAG, progress, plotter);
+    asiAlgo_SuppressBlendChain suppressor(tempAAG, progress, plotter);
     //
-    if ( !incSuppress.Perform(fid) )
+    if ( !suppressor.Perform(fid) )
     {
       progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
 
       recognize = false; // Try next face.
-      fids.Subtract( incSuppress.GetChainIds() );
+      fids.Subtract( suppressor.GetChainIds() );
       fids.Remove( fid );
 
       // Add non-suppressible faces.
-      TopTools_IndexedMapOfShape lastChainFaces = incSuppress.GetChainFaces();
+      TopTools_IndexedMapOfShape lastChainFaces = suppressor.GetChainFaces();
       //
       nonSuppressibleFaces.Add( tempAAG->GetFace(fid) );
       for ( int k = 1; k <= lastChainFaces.Extent(); ++k )
@@ -181,21 +181,21 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       continue;
     }
 
-    if ( incSuppress.GetNumSuppressedChains() == 0 )
+    if ( suppressor.GetNumSuppressedChains() == 0 )
     {
       stop = true;
       continue;
     }
 
-    numSuppressedChains += incSuppress.GetNumSuppressedChains();
+    numSuppressedChains += suppressor.GetNumSuppressedChains();
 
     // Get result.
-    const TopoDS_Shape& incRes = incSuppress.GetResult();
+    const TopoDS_Shape& incRes = suppressor.GetResult();
     //
     result = incRes;
 
     // Adjust the collection of remaining faces.
-    fids.Subtract( incSuppress.GetChainIds() );
+    fids.Subtract( suppressor.GetChainIds() );
     fids.Remove( fid );
     //
     if ( fids.IsEmpty() )

@@ -43,6 +43,7 @@
 // asiAlgo includes
 #include <asiAlgo_MeshOBB.h>
 #include <asiAlgo_MeshOffset.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 #if defined USE_MOBIUS
@@ -717,11 +718,11 @@ int ENGINE_BOPFuse(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_FuseGen(const Handle(asiTcl_Interp)& interp,
-                   int                          argc,
-                   const char**                 argv)
+int ENGINE_BOPFuseGen(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
 {
-  if ( argc != 4 && argc != 5 )
+  if ( argc != 4 && argc != 5 && argc != 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -746,16 +747,23 @@ int ENGINE_FuseGen(const Handle(asiTcl_Interp)& interp,
   }
 
   // Fuzzy value.
-  const double fuzz = (argc == 5 ? Atof(argv[4]) : 0.0);
+  const double fuzz = (argc > 4 ? Atof(argv[4]) : 0.0);
 
   // Put all arguments to the list.
   TopTools_ListOfShape arguments;
   arguments.Append( topoItem1->GetShape() );
   arguments.Append( topoItem2->GetShape() );
 
+  TIMER_NEW
+  TIMER_GO
+
   // Fuse.
-  TopoDS_Shape fused = asiAlgo_Utils::BooleanGeneralFuse(arguments, fuzz);
-  //
+  TopoDS_Shape fused = asiAlgo_Utils::BooleanGeneralFuse( arguments, fuzz, interp->HasKeyword(argc, argv, "glue") );
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "General fuse")
+
+  // Set the result.
   interp->GetPlotter().REDRAW_SHAPE(argv[1], fused);
 
   return TCL_OK;
@@ -1154,13 +1162,15 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_BOPFuse);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("fuse-gen",
+  interp->AddCommand("bop-fuse-gen",
     //
-    "fuse-gen result op1 op2 [fuzz]\n"
+    "bop-fuse-gen result op1 op2 [fuzz] [-glue]\n"
     "\t Fuses the passed two operands using Boolean General Fuse operation.\n"
-    "\t It is possible to affect the fusion tolerance with <fuzz> argument.",
+    "\t It is possible to affect the fusion tolerance with <fuzz> argument.\n"
+    "\t In case if you have overlapping faces in your operands, you may want\n"
+    "\t to try gluing option to speed up computations.",
     //
-    __FILE__, group, ENGINE_FuseGen);
+    __FILE__, group, ENGINE_BOPFuseGen);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("define-geom",

@@ -625,11 +625,13 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT TopoDS_Shape
     BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                        const double                fuzz,
-                       BOPAlgo_Builder&            API);
+                       BOPAlgo_Builder&            API,
+                       const bool                  glue = false);
 
   asiAlgo_EXPORT TopoDS_Shape
     BooleanGeneralFuse(const TopTools_ListOfShape& objects,
-                       const double                fuzz);
+                       const double                fuzz,
+                       const bool                  glue = false);
 
   asiAlgo_EXPORT bool
     BooleanRemoveFaces(const TopoDS_Shape&  shape,

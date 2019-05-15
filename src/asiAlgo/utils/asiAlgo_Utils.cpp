@@ -1919,9 +1919,11 @@ TopoDS_Shape asiAlgo_Utils::BooleanIntersect(const TopTools_ListOfShape& objects
 //! \param[in]  objects objects to fuse in non-manifold manner.
 //! \param[in]  fuzz    fuzzy value to control the tolerance.
 //! \param[out] API     Boolean algorithm to access history.
+//! \param[in]  glue    whether gluing is requested.
 TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
                                                const double                fuzz,
-                                               BOPAlgo_Builder&            API)
+                                               BOPAlgo_Builder&            API,
+                                               const bool                  glue)
 {
   const bool bRunParallel = false;
 
@@ -1937,6 +1939,9 @@ TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objec
     return TopoDS_Shape();
   }
 
+  if ( glue )
+    API.SetGlue(BOPAlgo_GlueFull);
+
   API.SetArguments(objects);
   API.SetRunParallel(bRunParallel);
   API.PerformWithFiller(DSFiller);
@@ -1948,6 +1953,20 @@ TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objec
   }
 
   return API.Shape();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Performs Boolean General Fuse for the passed objects.
+//! \param[in] objects objects to fuse in non-manifold manner.
+//! \param[in] fuzz    fuzzy value to control the tolerance.
+//! \param[in] glue    whether gluing is requested.
+TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
+                                               const double                fuzz,
+                                               const bool                  glue)
+{
+  BOPAlgo_Builder API;
+  return BooleanGeneralFuse(objects, fuzz, API, glue);
 }
 
 //-----------------------------------------------------------------------------
@@ -2007,19 +2026,6 @@ bool asiAlgo_Utils::BooleanRemoveFaces(const TopoDS_Shape&         shape,
   // Set result.
   result = API.Shape();
   return true;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Performs Boolean General Fuse for the passed objects.
-//! \param[in]  objects objects to fuse in non-manifold manner.
-//! \param[in]  fuzz    fuzzy value to control the tolerance.
-//! \param[out] API     Boolean algorithm to access history.
-TopoDS_Shape asiAlgo_Utils::BooleanGeneralFuse(const TopTools_ListOfShape& objects,
-                                               const double                fuzz)
-{
-  BOPAlgo_Builder API;
-  return BooleanGeneralFuse(objects, fuzz, API);
 }
 
 //-----------------------------------------------------------------------------

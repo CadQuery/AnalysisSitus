@@ -94,6 +94,9 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
 
   if ( globalId )
   {
+    if ( m_partNode->GetAAG().IsNull() )
+      return 0;
+
     const TopTools_IndexedMapOfShape&
       faces = m_partNode->GetAAG()->GetMapOfFaces();
 

@@ -69,32 +69,33 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //------------------//
-  // Common           //
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-  // Geometry         //
-  //------------------//
-    PID_Geometry,     //!< B-Rep structure.
-    PID_AAG,          //!< AAG structure.
-    PID_BVH,          //!< BVH structure.
-    PID_Naming,       //!< Topology naming service.
-  //------------------//
-  // Facets           //
-  //------------------//
-    PID_GroupTess,    //!< Tessellation group.
-    PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
-    PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
-  //------------------//
-  // Presentation     //
-  //------------------//
-    PID_GroupPrs,     //!< Presentation group.
-    PID_DisplayMode,  //!< Display mode.
-    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
-    PID_Color,        //!< Color.
-    PID_HasVertices,  //!< Indicates whether vertices are active.
-  //------------------//
+  //----------------------//
+  // Common               //
+  //----------------------//
+    PID_Name,             //!< Name of the Node.
+  //----------------------//
+  // Geometry             //
+  //----------------------//
+    PID_Geometry,         //!< B-Rep structure.
+    PID_AAG,              //!< AAG structure.
+    PID_BVH,              //!< BVH structure.
+    PID_Naming,           //!< Topology naming service.
+  //----------------------//
+  // Facets               //
+  //----------------------//
+    PID_GroupTess,        //!< Tessellation group.
+    PID_TessLinDefl,      //!< Linear deflection of visualization tessellation.
+    PID_TessAngDefl,      //!< Angular deflection of visualization tessellation.
+    PID_KeepTessParams,   //!< Indicates whether to keep tessellation parameters frozen.
+  //----------------------//
+  // Presentation         //
+  //----------------------//
+    PID_GroupPrs,         //!< Presentation group.
+    PID_DisplayMode,      //!< Display mode.
+    PID_HasColor,         //!< Indicates whether the Color Parameter is active.
+    PID_Color,            //!< Color.
+    PID_HasVertices,      //!< Indicates whether vertices are active.
+  //----------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -141,6 +142,12 @@ public:
 
   asiData_EXPORT double
     GetAngularDeflection() const;
+
+  asiData_EXPORT void
+    SetKeepTessParams(const bool flag) const;
+
+  asiData_EXPORT bool
+    IsKeepTessParams() const;
 
   asiData_EXPORT void
     SetHasColor(const bool);

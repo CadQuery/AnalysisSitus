@@ -163,7 +163,7 @@ void asiUI_ControlsPart::onLoadFromBRep()
   // Update part
   m_model->OpenCommand(); // tx start
   {
-    asiEngine_Part(m_model).Update(shape, true);
+    asiEngine_Part(m_model).Update( shape, !m_model->GetPartNode()->IsKeepTessParams() );
   }
   m_model->CommitCommand(); // tx commit
   //
@@ -210,7 +210,7 @@ void asiUI_ControlsPart::onLoadFromBRepAppend()
   // Update part
   m_model->OpenCommand(); // tx start
   {
-    asiEngine_Part(m_model).Update(comp, true);
+    asiEngine_Part(m_model).Update( comp, !m_model->GetPartNode()->IsKeepTessParams() );
   }
   m_model->CommitCommand(); // tx commit
   //

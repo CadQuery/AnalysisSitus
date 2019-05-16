@@ -45,6 +45,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group, PID_GroupTess);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
   REGISTER_PARAMETER(Real,  PID_TessAngDefl);
+  REGISTER_PARAMETER(Bool,  PID_KeepTessParams);
   REGISTER_PARAMETER(Group, PID_GroupPrs);
   REGISTER_PARAMETER(Int,   PID_DisplayMode);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
@@ -79,23 +80,25 @@ void asiData_PartNode::Init(const bool resetNaming)
   // Set default values to primitive Parameters.
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
+  this->SetKeepTessParams    (false);
   this->SetHasColor          (true);
   this->SetColor             (2500134); // Sort of dark color.
   this->SetDisplayMode       (1);       // Shading.
   this->SetHasVertices       (false);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_Name,        "Name",               "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,           "Name",               "",               ParameterFlag_IsVisible, true);
   //
-  this->InitParameter(PID_GroupTess,   "Tessellation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TessLinDefl, "Linear deflection",  "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TessAngDefl, "Angular deflection", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupTess,      "Tessellation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessLinDefl,    "Linear deflection",  "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessAngDefl,    "Angular deflection", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_KeepTessParams, "Keep parameters",    "",               ParameterFlag_IsVisible, true);
   //
-  this->InitParameter(PID_GroupPrs,    "Presentation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_DisplayMode, "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasColor,    "Colorized",          "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_Color,       "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasVertices, "Show vertices",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupPrs,       "Presentation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode,    "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasColor,       "Colorized",          "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,          "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasVertices,    "Show vertices",      "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -174,6 +177,22 @@ void asiData_PartNode::SetAngularDeflection(const double defl)
 double asiData_PartNode::GetAngularDeflection() const
 {
   return ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->GetValue();
+}
+
+//! Sets the flag which determines whether the tessellation parameters
+//! (i.e., linear and angular deflections of a faceter) can be reset by
+//! Analysis Situs internally (true) or whether these values should be
+//! preserved as they are (false).
+//! \param[in] flag Boolean value to set (on/off).
+void asiData_PartNode::SetKeepTessParams(const bool flag) const
+{
+  ActParamTool::AsBool( this->Parameter(PID_KeepTessParams) )->SetValue(flag);
+}
+
+//! \return true/false.
+bool asiData_PartNode::IsKeepTessParams() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_KeepTessParams) )->GetValue();
 }
 
 //! Sets the Boolean value indicating whether the color Parameter of this

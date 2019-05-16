@@ -351,7 +351,7 @@ void asiUI_DialogSTEP::proceed_Read()
   //
   M->OpenCommand(); // tx start
   {
-    asiEngine_Part(M).Update(shape, true);
+    asiEngine_Part(M).Update( shape, !M->GetPartNode()->IsKeepTessParams() );
   }
   M->CommitCommand(); // tx commit
 

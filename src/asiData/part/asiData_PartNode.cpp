@@ -41,6 +41,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
 {
   // Register standard Active Data Parameters.
   REGISTER_PARAMETER(Name,  PID_Name);
+  REGISTER_PARAMETER(Bool,  PID_AutoAAG);
   REGISTER_PARAMETER(Shape, PID_Geometry);
   REGISTER_PARAMETER(Group, PID_GroupTess);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
@@ -78,6 +79,7 @@ void asiData_PartNode::Init(const bool resetNaming)
     this->setNaming ( NULL );
 
   // Set default values to primitive Parameters.
+  this->SetAutoAAG           (true);
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
   this->SetKeepTessParams    (false);
@@ -88,6 +90,7 @@ void asiData_PartNode::Init(const bool resetNaming)
 
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,           "Name",               "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_AutoAAG,        "Auto-construct AAG", "",               ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_GroupTess,      "Tessellation",       "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_TessLinDefl,    "Linear deflection",  "",               ParameterFlag_IsVisible, true);
@@ -127,6 +130,19 @@ void asiData_PartNode::SetName(const TCollection_ExtendedString& name)
 TopoDS_Shape asiData_PartNode::GetShape() const
 {
   return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+}
+
+//! Sets flag for automatic AAG construction.
+//! \param[in] flag on/off.
+void asiData_PartNode::SetAutoAAG(const bool flag) const
+{
+  ActParamTool::AsBool( this->Parameter(PID_AutoAAG) )->SetValue(flag);
+}
+
+//! \return true/false.
+bool asiData_PartNode::IsAutoAAG() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_AutoAAG) )->GetValue();
 }
 
 //! \return stored AAG.

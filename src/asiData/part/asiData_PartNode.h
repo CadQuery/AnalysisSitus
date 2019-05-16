@@ -77,6 +77,7 @@ public:
   // Geometry             //
   //----------------------//
     PID_Geometry,         //!< B-Rep structure.
+    PID_AutoAAG,          //!< Whether to build AAG automatically.
     PID_AAG,              //!< AAG structure.
     PID_BVH,              //!< BVH structure.
     PID_Naming,           //!< Topology naming service.
@@ -118,6 +119,12 @@ public:
 
   asiData_EXPORT TopoDS_Shape
     GetShape() const;
+
+  asiData_EXPORT void
+    SetAutoAAG(const bool flag) const;
+
+  asiData_EXPORT bool
+    IsAutoAAG() const;
 
   asiData_EXPORT Handle(asiAlgo_AAG)
     GetAAG() const;

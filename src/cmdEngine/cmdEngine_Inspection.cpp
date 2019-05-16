@@ -133,6 +133,23 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
 
       // Draw imperatively (populates Data Model).
       interp->GetPlotter().DRAW_SHAPE(subShape, name);
+
+      // Set tessellation properties.
+      if ( !IV.IsNull() )
+      {
+        Handle(asiData_IVTopoItemNode)
+          topoNode = Handle(asiData_IVTopoItemNode)::DownCast( IV->GetLastNode() );
+        //
+        if ( !topoNode.IsNull() )
+        {
+          cmdEngine::model->OpenCommand();
+          {
+            topoNode->SetLinearDeflection  ( partNode->GetLinearDeflection() );
+            topoNode->SetAngularDeflection ( partNode->GetAngularDeflection() );
+          }
+          cmdEngine::model->CommitCommand();
+        }
+      }
     }
   }
   else
@@ -174,6 +191,23 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
 
       // Draw imperatively (populates Data Model).
       interp->GetPlotter().DRAW_SHAPE(subShape, name);
+
+      // Set tessellation properties.
+      if ( !IV.IsNull() )
+      {
+        Handle(asiData_IVTopoItemNode)
+          topoNode = Handle(asiData_IVTopoItemNode)::DownCast( IV->GetLastNode() );
+        //
+        if ( !topoNode.IsNull() )
+        {
+          cmdEngine::model->OpenCommand();
+          {
+            topoNode->SetLinearDeflection  ( partNode->GetLinearDeflection() );
+            topoNode->SetAngularDeflection ( partNode->GetAngularDeflection() );
+          }
+          cmdEngine::model->CommitCommand();
+        }
+      }
     }
   }
 

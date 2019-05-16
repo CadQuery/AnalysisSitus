@@ -510,6 +510,12 @@ public:
     return m_prsMgr2d;
   }
 
+  //! \return last created Node.
+  const Handle(ActAPI_INode)& GetLastNode() const
+  {
+    return m_lastObj;
+  }
+
 protected:
 
   asiUI_EXPORT void
@@ -649,6 +655,7 @@ protected:
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr3d;   //!< Presentation manager 3D.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr2d;   //!< Presentation manager 2D.
   asiUI_ObjectBrowser*                m_pBrowser;   //!< Object browser.
+  Handle(ActAPI_INode)                m_lastObj;    //!< Last created object.
 
 };
 

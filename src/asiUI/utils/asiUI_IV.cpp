@@ -956,6 +956,9 @@ void asiUI_IV::draw_point(const gp_XY&                   coord,
   if ( doCreate )
   {
     points_n = asiEngine_IV(m_model).Create_PointSet2d(coords, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = points_n;
   }
 
   // Commit transaction
@@ -1002,6 +1005,9 @@ void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
   if ( doCreate )
   {
     points_n = asiEngine_IV(m_model).Create_PointSet(asiAlgo_PointCloudUtils::AsCloudd(coords), name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = points_n;
   }
 
   // Commit transaction
@@ -1046,6 +1052,9 @@ void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
   if ( doCreate )
   {
     curve_n = asiEngine_IV(m_model).Create_Curve(curve, 1000, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = curve_n;
   }
 
   // Commit transaction
@@ -1092,6 +1101,9 @@ void asiUI_IV::draw_curve2d(const Handle(Geom2d_Curve)&    curve,
   if ( doCreate )
   {
     curve_n = asiEngine_IV(m_model).Create_Curve2d(curve, hostPlane, 1000, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = curve_n;
   }
 
   // Commit transaction
@@ -1144,6 +1156,9 @@ void asiUI_IV::draw_surface(const Handle(Geom_Surface)&    surface,
                                                      uMin, uMax,
                                                      vMin, vMax,
                                                      name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = surface_n;
   }
 
   // Commit transaction
@@ -1190,6 +1205,9 @@ void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
   if ( doCreate )
   {
     item_n = asiEngine_IV(m_model).Create_TopoItem(shape, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = item_n;
   }
 
   // Commit transaction
@@ -1241,6 +1259,9 @@ void asiUI_IV::draw_link(const gp_XYZ&                  p1,
   if ( doCreate )
   {
     curve_n = asiEngine_IV(m_model).Create_Curve(C, Precision::Infinite(), name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = curve_n;
   }
 
   // Commit transaction
@@ -1414,6 +1435,9 @@ void asiUI_IV::draw_triangulation(const Handle(Poly_Triangulation)& tris,
   if ( doCreate )
   {
     item_n = asiEngine_IV(m_model).Create_TessItem(tris, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = item_n;
   }
 
   // Commit transaction
@@ -1456,6 +1480,9 @@ void asiUI_IV::draw_text(const TCollection_AsciiString& text,
   if ( doCreate )
   {
     item_n = asiEngine_IV(m_model).Create_TextItem(text, name, newPrimitive);
+
+    // Update the last created object
+    m_lastObj = item_n;
   }
 
   // Commit transaction

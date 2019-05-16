@@ -48,8 +48,8 @@ public:
 public:
 
   asiVisu_EXPORT
-    asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                              const Handle(ActAPI_HParameterList)& theParamList);
+    asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           nodeId,
+                              const Handle(ActAPI_HParameterList)& paramList);
 
 protected:
 
@@ -63,6 +63,12 @@ public:
 
   asiVisu_EXPORT virtual TopoDS_Shape
     GetShape() const;
+
+  asiVisu_EXPORT virtual double
+    GetLinearDeflection() const;
+
+  asiVisu_EXPORT virtual double
+    GetAngularDeflection() const;
 
 public:
 

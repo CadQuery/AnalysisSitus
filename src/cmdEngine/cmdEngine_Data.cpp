@@ -261,6 +261,10 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  // Faceter parameters to copy to Part Node.
+  double linDefl = 0.;
+  double angDefl = 0.;
+
   // Extract shape to set as a part.
   TopoDS_Shape shapeToSet;
   //
@@ -277,6 +281,8 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
 
     // Set shape to convert.
     shapeToSet = node->GetShape();
+    linDefl    = node->GetLinearDeflection();
+    angDefl    = node->GetAngularDeflection();
 
     // It is usually convenient to erase the source Node.
     if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
@@ -342,15 +348,20 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
   }
 
   // Modify Data Model.
+  Handle(asiData_PartNode) part_n;
+  //
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(shapeToSet);
+    part_n = asiEngine_Part(cmdEngine::model).Update(shapeToSet);
+    //
+    part_n->SetLinearDeflection(linDefl);
+    part_n->SetAngularDeflection(angDefl);
   }
   cmdEngine::model->CommitCommand();
 
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
-    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
 
   return TCL_OK;
 }
@@ -622,7 +633,10 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "set-as-part [varName | -node id -param id]\n"
     "\t Sets the object with the given name as a part for analysis.\n"
     "\t The object is expected to exist as a topological item in\n"
-    "\t imperative plotter.",
+    "\t imperative plotter. Alternatively, you can specify a custom Node ID\n"
+    "\t with its source Parameter ID storing the shape to transfer to the\n"
+    "\t Part Node. The latter option is useful if your shape is not stored\n"
+    "\t in the section of imperative plotter data.",
     //
     __FILE__, group, ENGINE_SetAsPart);
 

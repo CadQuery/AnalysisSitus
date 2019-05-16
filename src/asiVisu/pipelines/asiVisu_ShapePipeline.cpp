@@ -60,23 +60,23 @@ asiVisu_ShapePipeline::asiVisu_ShapePipeline(bool isScalarMode)
    *  Prepare custom filters
    * ======================== */
 
-  // Initialize Data Source
+  // Initialize Data Source.
   m_source = vtkSmartPointer<asiVisu_ShapeRobustSource>::New();
 
-  // Filter for normals
+  // Filter for normals.
   m_normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 
-  // Display mode filter
+  // Display mode filter.
   m_dmFilter = vtkSmartPointer<asiVisu_ShapeDisplayModeFilter>::New();
   m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
 
-  // Set line width
+  // Set line width.
   this->Actor()->GetProperty()->SetLineWidth(1);
   this->Actor()->GetProperty()->SetPointSize(8);
   //
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
 
-  // Compose pipeline
+  // Compose pipeline.
   this->append(m_dmFilter);
   this->append(m_normalsFilter);
 }
@@ -95,7 +95,7 @@ void asiVisu_ShapePipeline::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
-//! \param dataProvider [in] Data Provider.
+//! \param[in] dataProvider Data Provider.
 void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(asiVisu_ShapeDataProvider)
@@ -108,11 +108,11 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataPro
   TopoDS_Shape shape = DP->GetShape();
   if ( shape.IsNull() )
   {
-    // Pass empty data set in order to have valid pipeline
+    // Pass empty data set in order to have valid pipeline.
     vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
     this->SetInputData(dummyData);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
 
   /* ====================
@@ -121,17 +121,22 @@ void asiVisu_ShapePipeline::SetInput(const Handle(asiVisu_DataProvider)& dataPro
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
-    // Configure data source
-    m_source->SetShape(shape);
+    // Get deflection values.
+    const double linDefl = DP->GetLinearDeflection();
+    const double angDefl = DP->GetAngularDeflection();
 
-    // Bind to a Data Node using information key
+    // Configure data source.
+    m_source->SetShape(shape);
+    m_source->SetTessellationParams(linDefl, angDefl);
+
+    // Bind to a Data Node using information key.
     asiVisu_NodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
-    // Initialize pipeline
+    // Initialize pipeline.
     this->SetInputConnection( m_source->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
 

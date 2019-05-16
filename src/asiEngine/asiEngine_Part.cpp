@@ -216,14 +216,15 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 //! \param[in] model             CAD part to set.
 //! \param[in] doResetTessParams indicates whether to reset tessellation
 //!                              parameters.
-void asiEngine_Part::Update(const TopoDS_Shape& model,
-                            const bool          doResetTessParams)
+//! \return Part Node.
+Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape& model,
+                                                const bool          doResetTessParams)
 {
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
-    return;
+    return part_n;
 
   // Reset data.
   this->Clean();
@@ -252,6 +253,8 @@ void asiEngine_Part::Update(const TopoDS_Shape& model,
   // Actualize presentation.
   if ( m_prsMgr )
     m_prsMgr->Actualize(part_n);
+
+  return part_n;
 }
 
 //-----------------------------------------------------------------------------

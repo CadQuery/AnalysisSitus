@@ -41,7 +41,12 @@ asiData_IVTopoItemNode::asiData_IVTopoItemNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,  PID_Name);
   REGISTER_PARAMETER(Shape, PID_Geometry);
+  REGISTER_PARAMETER(Group, PID_GroupTess);
+  REGISTER_PARAMETER(Real,  PID_TessLinDefl);
+  REGISTER_PARAMETER(Real,  PID_TessAngDefl);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns new DETACHED instance of the Node ensuring its correct
 //! allocation in a heap.
@@ -51,17 +56,23 @@ Handle(ActAPI_INode) asiData_IVTopoItemNode::Instance()
   return new asiData_IVTopoItemNode();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_IVTopoItemNode::Init()
 {
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-  //
-  this->SetShape( TopoDS_Shape() );
+  // Set default values.
+  this->SetShape             ( TopoDS_Shape() );
+  this->SetLinearDeflection  ( 0.0 );
+  this->SetAngularDeflection ( 0.0 );
+
+  // Initialize Parameter flags.
+  this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupTess,   "Tessellation",       "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessLinDefl, "Linear deflection",  "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessAngDefl, "Angular deflection", "", ParameterFlag_IsVisible, true);
 }
 
-//-----------------------------------------------------------------------------
-// Generic naming
 //-----------------------------------------------------------------------------
 
 //! Accessor for the Node's name.
@@ -71,15 +82,15 @@ TCollection_ExtendedString asiData_IVTopoItemNode::GetName()
   return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets name for the Node.
-//! \param theName [in] name to set.
-void asiData_IVTopoItemNode::SetName(const TCollection_ExtendedString& theName)
+//! \param[in] name name to set.
+void asiData_IVTopoItemNode::SetName(const TCollection_ExtendedString& name)
 {
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(theName);
+  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
 
-//-----------------------------------------------------------------------------
-// Handy accessors
 //-----------------------------------------------------------------------------
 
 //! \return stored geometry.
@@ -88,9 +99,45 @@ TopoDS_Shape asiData_IVTopoItemNode::GetShape() const
   return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets shape to store.
-//! \param shape [in] shape to store.
+//! \param[in] shape shape to store.
 void asiData_IVTopoItemNode::SetShape(const TopoDS_Shape& shape)
 {
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets linear deflection.
+//! \param[in] defl value to set.
+void asiData_IVTopoItemNode::SetLinearDeflection(const double defl)
+{
+  ActParamTool::AsReal( this->Parameter(PID_TessLinDefl) )->SetValue(defl);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return linear deflection.
+double asiData_IVTopoItemNode::GetLinearDeflection() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_TessLinDefl) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets angular deflection.
+//! \param[in] defl value to set.
+void asiData_IVTopoItemNode::SetAngularDeflection(const double defl)
+{
+  ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->SetValue(defl);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return angular deflection.
+double asiData_IVTopoItemNode::GetAngularDeflection() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->GetValue();
 }

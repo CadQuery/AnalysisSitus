@@ -41,14 +41,16 @@
 #include <vtkProperty.h>
 
 //! Creates a Presentation object for the passed Node.
-//! \param theNode [in] Node to create a Presentation for.
-asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode)
-: asiVisu_DefaultPrs(theNode)
+//! \param[in] N Node to create a Presentation for.
+asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
   // Create Data Provider
   Handle(asiVisu_ShapeDataProvider)
-    DP = new asiVisu_ShapeDataProvider( theNode->GetId(),
-                                        ActParamStream() << theNode->Parameter(asiData_IVTopoItemNode::PID_Geometry) );
+    DP = new asiVisu_ShapeDataProvider( N->GetId(),
+                                        ActParamStream() << N->Parameter(asiData_IVTopoItemNode::PID_Geometry)
+                                                         << N->Parameter(asiData_IVTopoItemNode::PID_TessLinDefl)
+                                                         << N->Parameter(asiData_IVTopoItemNode::PID_TessAngDefl) );
 
   // Main pipeline
   Handle(asiVisu_ShapePipeline) pl = new asiVisu_ShapePipeline(false);
@@ -64,9 +66,9 @@ asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& theNode
 }
 
 //! Factory method for Presentation.
-//! \param theNode [in] Node to create a Presentation for.
+//! \param[in] N Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& N)
 {
-  return new asiVisu_IVTopoItemPrs(theNode);
+  return new asiVisu_IVTopoItemPrs(N);
 }

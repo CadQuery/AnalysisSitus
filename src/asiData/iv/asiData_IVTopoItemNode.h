@@ -44,8 +44,6 @@
 // Data Node representing a single topo item in IV (Imperative Viewer)
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_IVTopoItemNode, ActData_BaseNode)
-
 //! Data Node representing a single topo item in IV (Imperative Viewer).
 class asiData_IVTopoItemNode : public ActData_BaseNode
 {
@@ -68,6 +66,12 @@ public:
     PID_Name,         //!< Name of the Node.
   //------------------//
     PID_Geometry,     //!< Stored geometry.
+  //------------------//
+  // Facets           //
+  //------------------//
+    PID_GroupTess,    //!< Tessellation group.
+    PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
+    PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -94,6 +98,18 @@ public:
 
   asiData_EXPORT void
     SetShape(const TopoDS_Shape& shape);
+
+  asiData_EXPORT void
+    SetLinearDeflection(const double);
+
+  asiData_EXPORT double
+    GetLinearDeflection() const;
+
+  asiData_EXPORT void
+    SetAngularDeflection(const double);
+
+  asiData_EXPORT double
+    GetAngularDeflection() const;
 
 // Initialization:
 public:

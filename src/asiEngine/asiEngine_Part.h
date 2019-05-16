@@ -72,7 +72,7 @@ public:
   asiEngine_EXPORT Handle(asiData_PartNode)
     CreatePart();
 
-  asiEngine_EXPORT void
+  asiEngine_EXPORT Handle(asiData_PartNode)
     Update(const TopoDS_Shape& model,
            const bool          doResetTessParams = false);
 

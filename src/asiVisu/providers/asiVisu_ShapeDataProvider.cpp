@@ -44,14 +44,14 @@ asiVisu_ShapeDataProvider::asiVisu_ShapeDataProvider()
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting the set of source data structures.
-//! \param theNodeId    [in] ID of the target Data Node.
-//! \param theParamList [in] source Parameters.
-asiVisu_ShapeDataProvider::asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           theNodeId,
-                                                     const Handle(ActAPI_HParameterList)& theParamList)
+//! \param[in] nodeId    ID of the target Data Node.
+//! \param[in] paramList source Parameters.
+asiVisu_ShapeDataProvider::asiVisu_ShapeDataProvider(const ActAPI_DataObjectId&           nodeId,
+                                                     const Handle(ActAPI_HParameterList)& paramList)
 : asiVisu_DataProvider()
 {
-  m_nodeID = theNodeId;
-  m_params = theParamList;
+  m_nodeID = nodeId;
+  m_params = paramList;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +72,28 @@ ActAPI_DataObjectId asiVisu_ShapeDataProvider::GetNodeID() const
 TopoDS_Shape asiVisu_ShapeDataProvider::GetShape() const
 {
   return ActParamTool::AsShape( m_params->Value(1) )->GetShape();
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return linear deflection.
+double asiVisu_ShapeDataProvider::GetLinearDeflection() const
+{
+  if ( m_params->Length() != 3 )
+    return 0.;
+
+  return ActParamTool::AsReal( m_params->Value(2) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return angular deflection.
+double asiVisu_ShapeDataProvider::GetAngularDeflection() const
+{
+  if ( m_params->Length() != 3 )
+    return 0.;
+
+  return ActParamTool::AsReal( m_params->Value(3) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

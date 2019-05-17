@@ -186,9 +186,10 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
   Handle(asiVisu_PartPipeline)
     pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  pl->Actor()->GetProperty()->SetColor( color.redF(),
-                                        color.greenF(),
-                                        color.blueF() );
+  if ( !pl.IsNull() )
+    pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                          color.greenF(),
+                                          color.blueF() );
 }
 
 //-----------------------------------------------------------------------------

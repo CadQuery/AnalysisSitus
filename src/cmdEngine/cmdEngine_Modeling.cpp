@@ -445,9 +445,29 @@ int ENGINE_AddSubShape(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MakePoint(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const double px = atof(argv[2]);
+  const double py = atof(argv[3]);
+  const double pz = atof(argv[4]);
+  //
+  interp->GetPlotter().REDRAW_POINT(argv[1], gp_Pnt(px, py, pz), Color_Yellow);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_MakeCurve(const Handle(asiTcl_Interp)& interp,
-                    int                          argc,
-                    const char**                 argv)
+                     int                          argc,
+                     const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -1120,6 +1140,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Adds <child> to <parent>.",
     //
     __FILE__, group, ENGINE_AddSubShape);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-point",
+    //
+    "make-point pointName x y z\n"
+    "\t Creates a point with the passed coordinates.",
+    //
+    __FILE__, group, ENGINE_MakePoint);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-curve",

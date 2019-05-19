@@ -2709,6 +2709,72 @@ int ENGINE_CheckAlongCurvature(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const double px = atof(argv[2]);
+  const double py = atof(argv[3]);
+  const double pz = atof(argv[4]);
+  //
+  interp->GetPlotter().REDRAW_POINT("p", gp_Pnt(px, py, pz), Color_Yellow);
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Convert to Mobius B-surface.
+  mobius::ptr<mobius::bsurf>
+    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
+
+  // Invert point.
+  mobius::uv projUV;
+  //
+  if ( !mobSurf->InvertPoint(mobius::xyz(px, py, pz), projUV) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
+    return TCL_ERROR;
+  }
+
+  // Evaluate surface for the obtained (u,v) coordinates.
+  mobius::xyz S;
+  mobSurf->Eval(projUV.U(), projUV.V(), S);
+  //
+  interp->GetPlotter().REDRAW_POINT("proj", mobius::cascade::GetOpenCascadePnt(S), Color_Green);
+
+  // Dump the result to the notifier.
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
+                                                        << projUV.U() << projUV.V() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -2996,4 +3062,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks on-surface curvature for the selected edge.",
     //
     __FILE__, group, ENGINE_CheckAlongCurvature);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("invert-point-surf",
+    //
+    "invert-point-surf surf x y z\n"
+    "\t Inverts point on a surface.",
+    //
+    __FILE__, group, ENGINE_InvertPointSurf);
 }

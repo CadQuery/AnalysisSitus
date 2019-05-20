@@ -3198,7 +3198,8 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
       if ( !mobSurf->InvertPoint(poles[i][j], projUV) )
       {
         interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
-        return TCL_ERROR;
+        interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(poles[i][j]), Color_Red, "pfaulty");
+        continue;
       }
 
       // Evaluate surface for the obtained (u,v) coordinates.

@@ -168,6 +168,15 @@ void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        render
       pl->Actor()->SetVisibility(1);
       pl->SetInput( this->dataProviderSelection(plIdx++) );
       pl->Update();
+
+      // Print the picked coordinates.
+      gp_XYZ pos = pickRes->GetPickedPos();
+      m_progress.SendLogMessage( LogInfo(Normal) << "Picked point: (x, y, z) = (%1, %2, %3)."
+                                                 << pos.X() << pos.Y() << pos.Z() );
+      std::cout << "Picked point: (x, y, z) = ("
+                << pos.X() << ", "
+                << pos.Y() << ", "
+                << pos.Z() << ")." << std::endl;
     }
   }
 }

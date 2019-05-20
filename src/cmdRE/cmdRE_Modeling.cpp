@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_MeshInterPlane.h>
+#include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
@@ -1074,6 +1075,47 @@ int RE_CheckSurfDeviation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get point cloud Node.
+  Handle(asiData_IVPointSetNode)
+    ptsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
+  //
+  if ( ptsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data object '%1' is not a point cloud."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Get points.
+  Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
+
+  // Build average plane.
+  asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
+  //
+  gp_Pln resPln;
+  if ( !planeOnPoints.Build(ptsCloud, resPln) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
+    return TCL_ERROR;
+  }
+
+  // Set the result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], new Geom_Plane(resPln), Color_Default);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -1156,4 +1198,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Checks deviation between the given surface and the reference mesh.",
     //
     __FILE__, group, RE_CheckSurfDeviation);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-make-average-plane",
+    //
+    "re-make-average-plane res pointsName\n"
+    "\t Approximates the given point cloud with plane.",
+    //
+    __FILE__, group, RE_MakeAveragePlane);
 }

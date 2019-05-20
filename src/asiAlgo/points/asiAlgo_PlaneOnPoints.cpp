@@ -50,9 +50,6 @@ bool compare(const std::pair<double, int>& p1, const std::pair<double, int>& p2)
 
 //-----------------------------------------------------------------------------
 
-//! Constructs the tool.
-//! \param progress [in] progress indicator.
-//! \param plotter  [in] imperative plotter.
 asiAlgo_PlaneOnPoints::asiAlgo_PlaneOnPoints(ActAPI_ProgressEntry progress,
                                              ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm(progress, plotter)
@@ -60,12 +57,30 @@ asiAlgo_PlaneOnPoints::asiAlgo_PlaneOnPoints(ActAPI_ProgressEntry progress,
 
 //-----------------------------------------------------------------------------
 
-//! Constructs the average plane on the given point set.
-//! \param points [in]  point set to build a fitting plane for.
-//! \param result [out] result plane.
-//! \return true in case of success, false -- otherwise.
 bool asiAlgo_PlaneOnPoints::Build(const std::vector<gp_XYZ>& points,
-                                  gp_Pln&                    result)
+                                  gp_Pln&                    result) const
+{
+  return this->internalBuild(points, result);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PlaneOnPoints::Build(const Handle(asiAlgo_BaseCloud<double>)& points,
+                                  gp_Pln&                                  result) const
+{
+  // Repack point cloud to a vector.
+  std::vector<gp_XYZ> pointsVec;
+  //
+  for ( int k = 0; k < points->GetNumberOfElements(); ++k )
+    pointsVec.push_back( points->GetElement(k) );
+
+  return this->internalBuild(pointsVec, result);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PlaneOnPoints::internalBuild(const std::vector<gp_XYZ>& points,
+                                          gp_Pln&                    result) const
 {
   const int nPts = (int) points.size();
 

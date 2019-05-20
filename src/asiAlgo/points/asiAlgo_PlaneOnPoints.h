@@ -52,15 +52,43 @@ public:
 
 public:
 
+  //! Constructs the tool.
+  //! \param[in] progress progress indicator.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_PlaneOnPoints(ActAPI_ProgressEntry progress,
                           ActAPI_PlotterEntry  plotter);
 
 public:
 
+  //! Constructs the average plane on the given point set.
+  //! \param[in]  points point set to build a fitting plane for.
+  //! \param[out] result resulting plane.
+  //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Build(const std::vector<gp_XYZ>& points,
-          gp_Pln&                    result);
+          gp_Pln&                    result) const;
+
+  //! Constructs the average plane on the given point set passed in
+  //! the form of a point cloud.
+  //! \param[in]  points point set to build a fitting plane for.
+  //! \param[out] result resulting plane.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Build(const Handle(asiAlgo_BaseCloud<double>)& points,
+          gp_Pln&                                  result) const;
+
+protected:
+
+  //! Internal method for constructing an average plane for the given point
+  //! set. This method is here to provide different public interfaces to the
+  //! same core computation.
+  //! \param[in]  points point set to build a fitting plane for.
+  //! \param[out] result resulting plane.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    internalBuild(const std::vector<gp_XYZ>& points,
+                  gp_Pln&                    result) const;
 
 };
 

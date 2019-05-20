@@ -3150,6 +3150,74 @@ int MISC_DumpBVH(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Node by name.
+  Handle(ActAPI_INode) node = interp->GetModel()->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                        << argv[1]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
+
+  // Get B-surface.
+  Handle(Geom_BSplineSurface)
+    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  //
+  if ( occtBSurface.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
+    return TCL_OK;
+  }
+
+  // Convert to Mobius B-surface.
+  mobius::ptr<mobius::bsurf>
+    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
+
+  // Loop over the control points and invert each one to the surface.
+  std::vector< std::vector<mobius::xyz> > poles = mobSurf->GetPoles();
+  //
+  for ( size_t i = 0; i < poles.size(); ++i )
+    for ( size_t j = 0; j < poles[0].size(); ++j )
+    {
+      // Invert point.
+      mobius::uv projUV;
+      //
+      if ( !mobSurf->InvertPoint(poles[i][j], projUV) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
+        return TCL_ERROR;
+      }
+
+      // Evaluate surface for the obtained (u,v) coordinates.
+      mobius::xyz S;
+      mobSurf->Eval(projUV.U(), projUV.V(), S);
+      //
+      interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(poles[i][j]), Color_Yellow, "p");
+      interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(S), Color_Green, "proj");
+      interp->GetPlotter().DRAW_LINK(mobius::cascade::GetOpenCascadePnt(poles[i][j]), mobius::cascade::GetOpenCascadePnt(S), Color_Red, "plink");
+
+      interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
+                                                            << projUV.U() << projUV.V() );
+    }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3328,6 +3396,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Dumps BVH to viewer.",
     //
     __FILE__, group, MISC_DumpBVH);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("misc-invert-bpoles",
+    //
+    "misc-invert-bpoles surfName\n"
+    "\t Inverts the control points of a B-surface to itself.",
+    //
+    __FILE__, group, MISC_InvertBPoles);
 
   // Load sub-modules.
   Commands_Coons(interp, data);

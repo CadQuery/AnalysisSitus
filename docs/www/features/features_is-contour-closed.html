@@ -77,8 +77,12 @@ host surface is visualized with isoparametric lines.
 <div align="center"><img src="../imgs/is_contour_closed_01.png"/></div>
 
 <p>
-The closeness check is done in the parametric domain (UV space) of each face. The coincidence test is
-done using the local tolerances of the face.
+The closeness check is done in the parametric domain (UV space) of each face. In the parametric space,
+according to the Jordan theorem <a href="../references.html#hales-2007">[Hales, 2007]</a>, a
+closed curve separates the plane into a bounded interior region and an unbounded exterior.
+However, the boundary of a region is usually not a single curve but the composition of curves which
+imperfectly touch each other at their end points. The coincidence test for the end points is done using
+the local tolerances of the face.
 </p>
 
 </body>

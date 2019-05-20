@@ -230,8 +230,15 @@ QString asiUI_Logger::toString(const Handle(Standard_Transient)& val) const
   if ( hVal.IsNull() )
     return QString::null;
 
-  TCollection_AsciiString str(hVal->Value);
-  return AsciiStr2QStr(str);
+  // Convert to string using the max precision (this is not as straightforward
+  // as simply using the ctor of ASCII string class as those ctors usually
+  // do not care of precision).
+  std::ostringstream os;
+  os << std::setprecision( std::numeric_limits<double>::max_digits10 );
+  os << hVal->Value;
+  std::string str = os.str();
+
+  return str.c_str();
 }
 
 //-----------------------------------------------------------------------------

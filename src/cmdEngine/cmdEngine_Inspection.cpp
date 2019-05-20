@@ -2765,6 +2765,7 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
   mobSurf->Eval(projUV.U(), projUV.V(), S);
   //
   interp->GetPlotter().REDRAW_POINT("proj", mobius::cascade::GetOpenCascadePnt(S), Color_Green);
+  interp->GetPlotter().REDRAW_LINK("plink", gp_Pnt(px, py, pz), mobius::cascade::GetOpenCascadePnt(S), Color_Red);
 
   // Dump the result to the notifier.
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."

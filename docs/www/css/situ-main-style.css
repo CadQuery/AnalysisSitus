@@ -1,9 +1,9 @@
 body {
   font-family: "Adobe Caslon", Georgia, "Times New Roman", Times, serif;
-  font-size: 18px;
+  font-size: 16px;
   color: rgb(40,40,40);
-  margin-left: 20%;
-  margin-right: 20%;
+  margin-left: 25%;
+  margin-right: 25%;
   line-height: 1.5;
 }
 a {
@@ -73,7 +73,7 @@ a:visited:hover {
   margin: 10px 0;
   background-color: rgb(220, 220, 220);
   color: rgb(30, 30, 30);
-  font-size: 18px;
+  font-size: 16px;
 }
 .table-content-header {
   padding-left: 5px;
@@ -86,7 +86,7 @@ a:visited:hover {
 .table-content-block {
   color: rgb(30, 30, 30);
   border-bottom: 1px dotted rgb(150, 150, 150);
-  font-size: 18px;
+  font-size: 16px;
 }
 .code {
   padding-left: 15px;

@@ -53,6 +53,18 @@ without emphasizing the difference between the two kernels.
 
 <h1>Basic algorithms</h1>
 
+<h2>Point inversion for surface</h2>
+
+<p>
+The point inversion algorithm for B-surface is based on Newton iterations following the
+approach presented in <a href="../references.html#piegl-tiller-1995">The NURBS Book</a>.
+The input for this calculation is the coordinates of a 3D point. The output is the
+parametric (u,v) image which gives a point projected on a surface. Use <span class="code-inline">invert-point-surf</span>
+Tcl command for point-surface inversion.
+</p>
+
+<div align="center"><img src="../imgs/invert_point_surface.gif"/></div>
+
 <h2>Decompose B-curve into Bezier segments</h2>
 
 <p>

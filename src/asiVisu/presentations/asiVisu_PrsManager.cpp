@@ -153,10 +153,12 @@ void asiVisu_PrsManager::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //! \param[in] doFitContents indicates whether to fit the viewport contents
 //!                          after actualization of Presentations.
 //! \param[in] withRepaint   if true, repaints view window.
+//! \param[in] doAdjustTrih  indicates whether to adjust trihedron.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
                                    const bool                  withChildren,
                                    const bool                  doFitContents,
-                                   const bool                  withRepaint)
+                                   const bool                  withRepaint,
+                                   const bool                  doAdjustTrih)
 {
   if ( node.IsNull() )
     return;
@@ -165,7 +167,7 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
   oneNodeList->Append(node);
 
   // Call common method
-  this->Actualize(oneNodeList, withChildren, doFitContents, withRepaint);
+  this->Actualize(oneNodeList, withChildren, doFitContents, withRepaint, doAdjustTrih);
 }
 
 //-----------------------------------------------------------------------------
@@ -177,10 +179,12 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
 //! \param[in] doFitContents indicates whether to fit the viewport contents
 //!                          after actualization of Presentations.
 //! \param[in] withRepaint   if true, repaints view window.
+//! \param[in] doAdjustTrih  indicates whether to adjust trihedron.
 void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
                                    const bool                      withChildren,
                                    const bool                      doFitContents,
-                                   const bool                      withRepaint)
+                                   const bool                      withRepaint,
+                                   const bool                      doAdjustTrih)
 {
   if ( nodeList.IsNull() )
     return;
@@ -212,7 +216,7 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
       {
         this->InitPresentation(node);
         this->RenderPresentation(node); // Render before update to adjust trihedron correctly
-        this->UpdatePresentation(node, false);
+        this->UpdatePresentation(node, false, false);
       }
       else
       {
@@ -224,12 +228,15 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
     if ( withChildren )
     {
       for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
-        this->Actualize(child_it->Value(), true, false, false);
+        this->Actualize(child_it->Value(), true, false, false, false);
     }
   }
 
   // Re-initialize all pickers (otherwise picking gives strange results...)
   this->InitializePickers(nodeList);
+
+  if ( doAdjustTrih )
+    asiVisu_Utils::AdjustTrihedron( m_renderer, m_trihedron, this->PropsByTrihedron() );
 
   if ( doFitContents )
     asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
@@ -528,13 +535,16 @@ void asiVisu_PrsManager::GarbageCollect()
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param[in] node          Node to update the Presentation for.
-//! \param[in] doFitContents indicates whether to adjust camera in order for
-//!                          the viewer contents to fit the rendering window.
+//! \param[in] node              Node to update the Presentation for.
+//! \param[in] doFitContents     indicates whether to adjust camera in order for
+//!                              the viewer contents to fit the rendering window.
+//! \param[in] doAdjustTrihedron indicates whether to automatically adjust the
+//!                              global trihedron's size.
 void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& node,
-                                            const bool                  doFitContents)
+                                            const bool                  doFitContents,
+                                            const bool                  doAdjustTrihedron)
 {
-  this->UpdatePresentation(node->GetId(), doFitContents);
+  this->UpdatePresentation(node->GetId(), doFitContents, doAdjustTrihedron);
 }
 
 //-----------------------------------------------------------------------------
@@ -545,11 +555,14 @@ void asiVisu_PrsManager::UpdatePresentation(const Handle(ActAPI_INode)& node,
 //! Presentation should exist and be registered with SetPresentation()
 //! method, otherwise an exception is thrown.
 //!
-//! \param[in] nodeId        ID of the Node to update the Presentation for.
-//! \param[in] doFitContents indicates whether to adjust camera in order for
-//!                          the viewer contents to fit the rendering window.
+//! \param[in] nodeId            ID of the Node to update the Presentation for.
+//! \param[in] doFitContents     indicates whether to adjust camera in order for
+//!                              the viewer contents to fit the rendering window.
+//! \param[in] doAdjustTrihedron indicates whether to automatically adjust the
+//!                              global trihedron's size.
 void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
-                                            const bool                 doFitContents)
+                                            const bool                 doFitContents,
+                                            const bool                 doAdjustTrihedron)
 {
   if ( !m_nodePresentations.IsBound(nodeId) )
   {
@@ -569,9 +582,10 @@ void asiVisu_PrsManager::UpdatePresentation(const ActAPI_DataObjectId& nodeId,
   }
 
   // Adjust trihedron
-  asiVisu_Utils::AdjustTrihedron( m_renderer,
-                                  m_trihedron,
-                                  this->PropsByTrihedron() );
+  if ( doAdjustTrihedron )
+    asiVisu_Utils::AdjustTrihedron( m_renderer,
+                                    m_trihedron,
+                                    this->PropsByTrihedron() );
 
   // Adjust camera if requested
   if ( doFitContents )
@@ -813,9 +827,7 @@ bool
 
   // Update view window.
   if ( m_widget )
-  {
     m_widget->repaint();
-  }
 
   return true;
 }

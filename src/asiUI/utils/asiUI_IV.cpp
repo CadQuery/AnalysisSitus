@@ -809,6 +809,9 @@ void asiUI_IV::BROWSER_OFF()
 void asiUI_IV::BROWSER_ON()
 {
   m_bBrowserOn = true;
+
+  if ( m_bBrowserOn && m_pBrowser )
+    m_pBrowser->Populate();
 }
 
 //---------------------------------------------------------------------------//
@@ -825,6 +828,22 @@ void asiUI_IV::VISUALIZATION_ON()
   m_bVisuOn = true;
 }
 
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::REPAINT_OFF()
+{
+  m_bRepaintOn = false;
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::REPAINT_ON()
+{
+  m_bRepaintOn = true;
+
+  this->prsManager(false)->GetQVTKWidget()->repaint();
+  this->prsManager(true)->GetQVTKWidget()->repaint();
+}
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::visualize(const bool                  is2d,
@@ -906,9 +925,9 @@ void asiUI_IV::visualize(const bool                  is2d,
     }
   }
 
-  // Visualize.
+  // Visualize (trihedron is not adjusted for better performance).
   if ( m_bVisuOn )
-    this->prsManager(is2d)->Actualize(node.get(), false, false, true);
+    this->prsManager(is2d)->Actualize(node.get(), false, false, m_bRepaintOn, false);
 }
 
 //---------------------------------------------------------------------------//

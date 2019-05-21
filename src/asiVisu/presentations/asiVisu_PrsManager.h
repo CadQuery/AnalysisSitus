@@ -121,13 +121,15 @@ public:
     Actualize(const Handle(ActAPI_INode)& node,
               const bool                  withChildren  = false,
               const bool                  doFitContents = false,
-              const bool                  withRepaint   = true);
+              const bool                  withRepaint   = true,
+              const bool                  doAdjustTrih  = true);
 
   asiVisu_EXPORT virtual void
     Actualize(const Handle(ActAPI_HNodeList)& nodeList,
               const bool                      withChildren  = false,
               const bool                      doFitContents = false,
-              const bool                      withRepaint   = true);
+              const bool                      withRepaint   = true,
+              const bool                      doAdjustTrih  = true);
 
   asiVisu_EXPORT virtual void
     ActualizeExclusively(const Handle(ActAPI_HNodeList)& nodeList,
@@ -195,11 +197,13 @@ public:
 
   asiVisu_EXPORT virtual void
     UpdatePresentation(const Handle(ActAPI_INode)& node,
-                       const bool doFitContents = true);
+                       const bool doFitContents = true,
+                       const bool doAdjustTrihedron = true);
 
   asiVisu_EXPORT virtual void
     UpdatePresentation(const ActAPI_DataObjectId& nodeId,
-                       const bool doFitContents = true);
+                       const bool doFitContents = true,
+                       const bool doAdjustTrihedron = true);
 
 //-----------------------------------------------------------------------------
 

@@ -47,8 +47,13 @@
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 
+// Mobius includes
+#include <mobius/core_IPlotter.h>
+
 // STD includes
 #include <vector>
+
+//-----------------------------------------------------------------------------
 
 //! Interface for Imperative Viewer. A particular algorithm may benefit
 //! from immediate plotting of its geometric variables in a unified way
@@ -71,6 +76,7 @@ public:
   : ActAPI_IPlotter (),
     m_bBrowserOn    (true),
     m_bVisuOn       (true),
+    m_bRepaintOn    (true),
     m_model         (model),
     m_prsMgr3d      (prsMgr3d),
     m_prsMgr2d      (prsMgr2d),
@@ -466,6 +472,12 @@ public:
   asiUI_EXPORT void
     VISUALIZATION_ON();
 
+  asiUI_EXPORT void
+    REPAINT_OFF();
+
+  asiUI_EXPORT void
+    REPAINT_ON();
+
 public:
 
   //! Initializes imperative plotter.
@@ -651,11 +663,185 @@ protected:
 
   bool                                m_bBrowserOn; //!< Flag to enable/disable plotting.
   bool                                m_bVisuOn;    //!< Flag to enable/disable plotting.
+  bool                                m_bRepaintOn; //!< Whether to repaint.
   Handle(asiEngine_Model)             m_model;      //!< Data Model instance.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr3d;   //!< Presentation manager 3D.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr2d;   //!< Presentation manager 2D.
   asiUI_ObjectBrowser*                m_pBrowser;   //!< Object browser.
   Handle(ActAPI_INode)                m_lastObj;    //!< Last created object.
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Imperative plotter to redirect the visual debugging requests of Mobius to
+//! the standard drawing facilities of Analysis Situs.
+class asiUI_IVMobius : public mobius::core_IPlotter
+{
+public:
+
+  //! Ctor accepting the standard (Active Data) plotter.
+  //! \param[in] plotter imperative plotter to use.
+  asiUI_IVMobius(const Handle(ActAPI_IPlotter)& plotter)
+  //
+  : mobius::core_IPlotter(), m_plotter(plotter)
+  {}
+
+// GEOMETRY:
+public:
+
+  //-------------------------------------------------------------------------//
+
+  virtual void
+    DRAW_POINT(const mobius::core_UV&,
+               const mobius::core_Color&,
+               const std::string&) {}
+
+  virtual void
+    DRAW_POINT(const mobius::core_XYZ&,
+               const mobius::core_Color&,
+               const std::string&) {}
+
+  virtual void
+    REDRAW_POINT(const std::string&,
+                 const mobius::core_UV&,
+                 const mobius::core_Color&) {}
+
+  virtual void
+    REDRAW_POINT(const std::string&,
+                 const mobius::core_XYZ&,
+                 const mobius::core_Color&) {}
+
+  //-------------------------------------------------------------------------//
+
+  virtual void
+    DRAW_POINTS(const std::vector<mobius::core_XYZ>&,
+                const mobius::core_Color&,
+                const std::string&) {}
+
+  virtual void
+    REDRAW_POINTS(const std::string&,
+                  const std::vector<mobius::core_XYZ>&,
+                  const mobius::core_Color&) {}
+
+  //-------------------------------------------------------------------------//
+
+  virtual void
+    DRAW_VECTOR_AT(const mobius::core_XYZ&,
+                   const mobius::core_XYZ&,
+                   const mobius::core_Color&,
+                   const std::string&) {}
+
+  virtual void
+    REDRAW_VECTOR_AT(const std::string&,
+                     const mobius::core_XYZ&,
+                     const mobius::core_XYZ&,
+                     const mobius::core_Color&) {}
+
+  //-------------------------------------------------------------------------//
+
+  virtual void
+    DRAW_CURVE(const mobius::ptr<mobius::geom_Curve>&,
+               const mobius::core_Color&,
+               const std::string&) {}
+
+  virtual void
+    REDRAW_CURVE(const std::string&,
+                 const mobius::ptr<mobius::geom_Curve>&,
+                 const mobius::core_Color&) {}
+
+  //-------------------------------------------------------------------------//
+
+  virtual void
+    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
+                 const mobius::core_Color&,
+                 const std::string&) {}
+
+  virtual void
+    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
+                 const mobius::core_Color&,
+                 const double, // opacity
+                 const std::string&) {}
+
+  virtual void
+    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
+                 const double, // U min
+                 const double, // U max
+                 const double, // V min
+                 const double, // V max
+                 const mobius::core_Color&,
+                 const std::string&) {}
+
+  virtual void
+    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
+                 const double, // U min
+                 const double, // U max
+                 const double, // V min
+                 const double, // V max
+                 const mobius::core_Color&,
+                 const double, // opacity
+                 const std::string&) {}
+
+  virtual void
+    REDRAW_SURFACE(const std::string&,
+                   const mobius::ptr<mobius::geom_Surface>&,
+                   const mobius::core_Color&) {}
+
+  virtual void
+    REDRAW_SURFACE(const std::string&,
+                   const mobius::ptr<mobius::geom_Surface>&,
+                   const mobius::core_Color&,
+                   const double) {} // opacity
+
+  virtual void
+    REDRAW_SURFACE(const std::string&,
+                   const mobius::ptr<mobius::geom_Surface>&,
+                   const double, // U min
+                   const double, // U max
+                   const double, // V min
+                   const double, // V max
+                   const mobius::core_Color&) {}
+
+  virtual void
+    REDRAW_SURFACE(const std::string&,
+                   const mobius::ptr<mobius::geom_Surface>&,
+                   const double, // U min
+                   const double, // U max
+                   const double, // V min
+                   const double, // V max
+                   const mobius::core_Color&,
+                   const double) {} // opacity
+
+// TESSELLATION:
+public:
+
+  virtual void
+    DRAW_LINK(const mobius::core_XYZ&,
+              const mobius::core_XYZ&,
+              const mobius::core_Color&,
+              const std::string&);
+
+  virtual void
+    DRAW_LINK(const mobius::core_UV&,
+              const mobius::core_UV&,
+              const mobius::core_Color&,
+              const std::string&);
+
+  virtual void
+    REDRAW_LINK(const std::string&,
+                const mobius::core_XYZ&,
+                const mobius::core_XYZ&,
+                const mobius::core_Color&);
+
+  virtual void
+    REDRAW_LINK(const std::string&,
+                const mobius::core_UV&,
+                const mobius::core_UV&,
+                const mobius::core_Color&);
+
+private:
+
+  Handle(ActAPI_IPlotter) m_plotter; //!< Standard plotter.
 
 };
 

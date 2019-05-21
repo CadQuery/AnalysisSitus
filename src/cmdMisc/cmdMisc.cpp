@@ -3186,6 +3186,12 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
   mobius::ptr<mobius::bsurf>
     mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
 
+  // Disable UI immediate updates for better performance.
+  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+  //
+  IV->REPAINT_OFF();
+  IV->BROWSER_OFF();
+
   // Loop over the control points and invert each one to the surface.
   std::vector< std::vector<mobius::xyz> > poles = mobSurf->GetPoles();
   //
@@ -3213,6 +3219,10 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
       interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
                                                             << projUV.U() << projUV.V() );
     }
+
+  // Update UI.
+  IV->REPAINT_ON();
+  IV->BROWSER_ON();
 
   return TCL_OK;
 }

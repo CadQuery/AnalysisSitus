@@ -78,7 +78,7 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   this->addPipeline        ( Pipeline_BKnotsIsos, new asiVisu_BSurfKnotsPipeline );
   this->assignDataProvider ( Pipeline_BKnotsIsos, DP );
   //
-  this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(0);
+  this->GetPipeline(Pipeline_BKnotsIsos)->Actor()->SetVisibility(1);
 
   /* Local curvilinear axes */
 

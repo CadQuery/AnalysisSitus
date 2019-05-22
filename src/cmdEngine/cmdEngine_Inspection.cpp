@@ -2751,6 +2751,11 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
   mobius::ptr<mobius::bsurf>
     mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
 
+  // Set diagnostic tools.
+  mobius::ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
+  //
+  mobSurf->SetDiagnosticTools( NULL, mobius::core_PlotterEntry(ivMob) );
+
   // Invert point.
   mobius::uv projUV;
   //

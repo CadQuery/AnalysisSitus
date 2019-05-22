@@ -48,6 +48,7 @@
 #include <ActAPI_IPlotter.h>
 
 // Mobius includes
+#include <mobius/cascade.h>
 #include <mobius/core_IPlotter.h>
 
 // STD includes
@@ -693,151 +694,205 @@ public:
   //-------------------------------------------------------------------------//
 
   virtual void
-    DRAW_POINT(const mobius::core_UV&,
-               const mobius::core_Color&,
-               const std::string&) {}
+    DRAW_POINT(const mobius::core_UV&    coords,
+               const mobius::core_Color& color,
+               const std::string&        name)
+  {
+    m_plotter->DRAW_POINT( mobius::cascade::GetOpenCascadePnt2d(coords),
+                           this->getColor(color),
+                           name.c_str() );
+  }
 
   virtual void
-    DRAW_POINT(const mobius::core_XYZ&,
-               const mobius::core_Color&,
-               const std::string&) {}
+    DRAW_POINT(const mobius::core_XYZ&   coords,
+               const mobius::core_Color& color,
+               const std::string&        name)
+  {
+    m_plotter->DRAW_POINT( mobius::cascade::GetOpenCascadePnt(coords),
+                           this->getColor(color),
+                           name.c_str() );
+  }
 
   virtual void
-    REDRAW_POINT(const std::string&,
-                 const mobius::core_UV&,
-                 const mobius::core_Color&) {}
+    REDRAW_POINT(const std::string&        name,
+                 const mobius::core_UV&    coords,
+                 const mobius::core_Color& color)
+  {
+    m_plotter->REDRAW_POINT( name.c_str(),
+                             mobius::cascade::GetOpenCascadePnt2d(coords),
+                             this->getColor(color) );
+  }
 
   virtual void
-    REDRAW_POINT(const std::string&,
-                 const mobius::core_XYZ&,
-                 const mobius::core_Color&) {}
+    REDRAW_POINT(const std::string&        name,
+                 const mobius::core_XYZ&   coords,
+                 const mobius::core_Color& color)
+  {
+    m_plotter->REDRAW_POINT( name.c_str(),
+                             mobius::cascade::GetOpenCascadePnt(coords),
+                             this->getColor(color) );
+  }
 
   //-------------------------------------------------------------------------//
 
   virtual void
-    DRAW_POINTS(const std::vector<mobius::core_XYZ>&,
-                const mobius::core_Color&,
-                const std::string&) {}
+    DRAW_POINTS(const std::vector<mobius::core_XYZ>& coordsVec,
+                const mobius::core_Color&            color,
+                const std::string&                   name)
+  {
+    int idx = 0;
+    Handle(TColStd_HArray1OfReal) coordsOcc = new TColStd_HArray1OfReal(0, int( coordsVec.size() )*3 - 1);
+    //
+    for ( size_t k = 0; k < coordsVec.size(); ++k )
+    {
+      const gp_Pnt P = mobius::cascade::GetOpenCascadePnt(coordsVec[k]);
+      coordsOcc->ChangeValue(idx++) = P.X();
+      coordsOcc->ChangeValue(idx++) = P.Y();
+      coordsOcc->ChangeValue(idx++) = P.Z();
+    }
+
+    m_plotter->DRAW_POINTS( coordsOcc, this->getColor(color), name.c_str() );
+  }
 
   virtual void
-    REDRAW_POINTS(const std::string&,
-                  const std::vector<mobius::core_XYZ>&,
-                  const mobius::core_Color&) {}
+    REDRAW_POINTS(const std::string&                   name,
+                  const std::vector<mobius::core_XYZ>& coordsVec,
+                  const mobius::core_Color&            color)
+  {
+    int idx = 0;
+    Handle(TColStd_HArray1OfReal) coordsOcc = new TColStd_HArray1OfReal(0, int( coordsVec.size() )*3 - 1);
+    //
+    for ( size_t k = 0; k < coordsVec.size(); ++k )
+    {
+      const gp_Pnt P = mobius::cascade::GetOpenCascadePnt(coordsVec[k]);
+      coordsOcc->ChangeValue(idx++) = P.X();
+      coordsOcc->ChangeValue(idx++) = P.Y();
+      coordsOcc->ChangeValue(idx++) = P.Z();
+    }
+
+    m_plotter->REDRAW_POINTS( name.c_str(), coordsOcc, this->getColor(color) );
+  }
 
   //-------------------------------------------------------------------------//
 
   virtual void
-    DRAW_VECTOR_AT(const mobius::core_XYZ&,
-                   const mobius::core_XYZ&,
-                   const mobius::core_Color&,
-                   const std::string&) {}
+    DRAW_VECTOR_AT(const mobius::core_XYZ&   P,
+                   const mobius::core_XYZ&   V,
+                   const mobius::core_Color& color,
+                   const std::string&        name)
+  {
+    m_plotter->DRAW_VECTOR_AT( mobius::cascade::GetOpenCascadePnt(P),
+                               mobius::cascade::GetOpenCascadeVec(V),
+                               this->getColor(color),
+                               name.c_str() );
+  }
 
   virtual void
-    REDRAW_VECTOR_AT(const std::string&,
-                     const mobius::core_XYZ&,
-                     const mobius::core_XYZ&,
-                     const mobius::core_Color&) {}
+    REDRAW_VECTOR_AT(const std::string&        name,
+                     const mobius::core_XYZ&   P,
+                     const mobius::core_XYZ&   V,
+                     const mobius::core_Color& color)
+  {
+    m_plotter->REDRAW_VECTOR_AT( name.c_str(),
+                                 mobius::cascade::GetOpenCascadePnt(P),
+                                 mobius::cascade::GetOpenCascadeVec(V),
+                                 this->getColor(color) );
+  }
 
   //-------------------------------------------------------------------------//
 
   virtual void
-    DRAW_CURVE(const mobius::ptr<mobius::geom_Curve>&,
-               const mobius::core_Color&,
-               const std::string&) {}
+    DRAW_CURVE(const mobius::ptr<mobius::geom_Curve>& curve,
+               const mobius::core_Color&              color,
+               const std::string&                     name)
+  {
+    // We can draw B-curves only.
+    mobius::ptr<mobius::bcurve> bc = mobius::ptr<mobius::bcurve>::DownCast(curve);
+    //
+    if ( bc.IsNull() )
+      return;
+
+    m_plotter->DRAW_CURVE( mobius::cascade::GetOpenCascadeBCurve(bc),
+                           this->getColor(color),
+                           name.c_str() );
+  }
 
   virtual void
-    REDRAW_CURVE(const std::string&,
-                 const mobius::ptr<mobius::geom_Curve>&,
-                 const mobius::core_Color&) {}
+    REDRAW_CURVE(const std::string&                     name,
+                 const mobius::ptr<mobius::geom_Curve>& curve,
+                 const mobius::core_Color&              color)
+  {
+    // We can draw B-curves only.
+    mobius::ptr<mobius::bcurve> bc = mobius::ptr<mobius::bcurve>::DownCast(curve);
+    //
+    if ( bc.IsNull() )
+      return;
 
-  //-------------------------------------------------------------------------//
-
-  virtual void
-    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
-                 const mobius::core_Color&,
-                 const std::string&) {}
-
-  virtual void
-    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
-                 const mobius::core_Color&,
-                 const double, // opacity
-                 const std::string&) {}
-
-  virtual void
-    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
-                 const double, // U min
-                 const double, // U max
-                 const double, // V min
-                 const double, // V max
-                 const mobius::core_Color&,
-                 const std::string&) {}
-
-  virtual void
-    DRAW_SURFACE(const mobius::ptr<mobius::geom_Surface>&,
-                 const double, // U min
-                 const double, // U max
-                 const double, // V min
-                 const double, // V max
-                 const mobius::core_Color&,
-                 const double, // opacity
-                 const std::string&) {}
-
-  virtual void
-    REDRAW_SURFACE(const std::string&,
-                   const mobius::ptr<mobius::geom_Surface>&,
-                   const mobius::core_Color&) {}
-
-  virtual void
-    REDRAW_SURFACE(const std::string&,
-                   const mobius::ptr<mobius::geom_Surface>&,
-                   const mobius::core_Color&,
-                   const double) {} // opacity
-
-  virtual void
-    REDRAW_SURFACE(const std::string&,
-                   const mobius::ptr<mobius::geom_Surface>&,
-                   const double, // U min
-                   const double, // U max
-                   const double, // V min
-                   const double, // V max
-                   const mobius::core_Color&) {}
-
-  virtual void
-    REDRAW_SURFACE(const std::string&,
-                   const mobius::ptr<mobius::geom_Surface>&,
-                   const double, // U min
-                   const double, // U max
-                   const double, // V min
-                   const double, // V max
-                   const mobius::core_Color&,
-                   const double) {} // opacity
+    m_plotter->REDRAW_CURVE( name.c_str(),
+                             mobius::cascade::GetOpenCascadeBCurve(bc),
+                             this->getColor(color) );
+  }
 
 // TESSELLATION:
 public:
 
   virtual void
-    DRAW_LINK(const mobius::core_XYZ&,
-              const mobius::core_XYZ&,
-              const mobius::core_Color&,
-              const std::string&);
+    DRAW_LINK(const mobius::core_XYZ&   P1,
+              const mobius::core_XYZ&   P2,
+              const mobius::core_Color& color,
+              const std::string&        name)
+  {
+    m_plotter->DRAW_LINK( mobius::cascade::GetOpenCascadePnt(P1),
+                          mobius::cascade::GetOpenCascadePnt(P2),
+                          this->getColor(color),
+                          name.c_str() );
+  }
 
   virtual void
-    DRAW_LINK(const mobius::core_UV&,
-              const mobius::core_UV&,
-              const mobius::core_Color&,
-              const std::string&);
+    DRAW_LINK(const mobius::core_UV&    P1,
+              const mobius::core_UV&    P2,
+              const mobius::core_Color& color,
+              const std::string&        name)
+  {
+    m_plotter->DRAW_LINK( mobius::cascade::GetOpenCascadePnt2d(P1),
+                          mobius::cascade::GetOpenCascadePnt2d(P2),
+                          this->getColor(color),
+                          name.c_str() );
+  }
 
   virtual void
-    REDRAW_LINK(const std::string&,
-                const mobius::core_XYZ&,
-                const mobius::core_XYZ&,
-                const mobius::core_Color&);
+    REDRAW_LINK(const std::string&        name,
+                const mobius::core_XYZ&   P1,
+                const mobius::core_XYZ&   P2,
+                const mobius::core_Color& color)
+  {
+    m_plotter->REDRAW_LINK( name.c_str(),
+                            mobius::cascade::GetOpenCascadePnt(P1),
+                            mobius::cascade::GetOpenCascadePnt(P2),
+                            this->getColor(color) );
+  }
 
   virtual void
-    REDRAW_LINK(const std::string&,
-                const mobius::core_UV&,
-                const mobius::core_UV&,
-                const mobius::core_Color&);
+    REDRAW_LINK(const std::string&        name,
+                const mobius::core_UV&    P1,
+                const mobius::core_UV&    P2,
+                const mobius::core_Color& color)
+  {
+    m_plotter->REDRAW_LINK( name.c_str(),
+                            mobius::cascade::GetOpenCascadePnt2d(P1),
+                            mobius::cascade::GetOpenCascadePnt2d(P2),
+                            this->getColor(color) );
+  }
+
+private:
+
+  //! Converts Mobius color to Active Data color.
+  //! \param[in] color color to convert.
+  //! \return standard color.
+  ActAPI_Color getColor(const mobius::core_Color& color) const
+  {
+    return ActAPI_Color(color.fRed, color.fGreen, color.fBlue, Quantity_TOC_RGB);
+  }
 
 private:
 

@@ -36,7 +36,7 @@
 #include <Eigen/Dense>
 #pragma warning(default : 4701 4702)
 
-#undef COUT_DEBUG
+#define COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
@@ -133,6 +133,7 @@ bool asiAlgo_PlaneOnPoints::internalBuild(const std::vector<gp_XYZ>& points,
   Eigen::EigenSolver<Eigen::Matrix3d> EigenSolver(C);
 
 #if defined COUT_DEBUG
+  std::cout << "\tCovariance matrix: " << std::endl << C << std::endl;
   std::cout << "\tThe eigen values of C are:" << std::endl << EigenSolver.eigenvalues() << std::endl;
   std::cout << "\tThe matrix of eigenvectors, V, is:" << std::endl << EigenSolver.eigenvectors() << std::endl << std::endl;
 #endif

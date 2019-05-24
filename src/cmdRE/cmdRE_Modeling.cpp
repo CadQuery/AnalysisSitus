@@ -46,6 +46,7 @@
 #if defined USE_MOBIUS
   // Mobius includes
   #include <mobius/cascade.h>
+  #include <mobius/geom_BuildAveragePlane.h>
   #include <mobius/geom_InterpolateMultiCurve.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_SkinSurface.h>
@@ -1079,10 +1080,12 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
 {
-  if ( argc != 3 )
+  if ( argc != 3 && argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  const bool isMobius = interp->HasKeyword(argc, argv, "mobius");
 
   // Get point cloud Node.
   Handle(asiData_IVPointSetNode)
@@ -1099,13 +1102,35 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
   Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
 
   // Build average plane.
-  asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
-  //
   gp_Pln resPln;
-  if ( !planeOnPoints.Build(ptsCloud, resPln) )
+  //
+  if ( isMobius )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
-    return TCL_ERROR;
+    mobius::ptr<mobius::plane> mobPlane;
+
+    // Prepare point cloud.
+    mobius::ptr<pcloud> mobPts = new mobius::pcloud( ptsCloud->GetCoords() );
+
+    // Build average plane.
+    geom_BuildAveragePlane planeAlgo;
+    //
+    if ( !planeAlgo.Build(mobPts, mobPlane) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build average plane.");
+      return TCL_ERROR;
+    }
+
+    resPln = mobius::cascade::GetOpenCascadePlane(mobPlane)->Pln();
+  }
+  else
+  {
+    asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
+    //
+    if ( !planeOnPoints.Build(ptsCloud, resPln) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
+      return TCL_ERROR;
+    }
   }
 
   // Set the result.
@@ -1202,7 +1227,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",
     //
-    "re-make-average-plane res pointsName\n"
+    "re-make-average-plane res pointsName [-mobius]\n"
     "\t Approximates the given point cloud with plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);

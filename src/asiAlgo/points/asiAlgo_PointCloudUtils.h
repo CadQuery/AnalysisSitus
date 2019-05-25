@@ -31,7 +31,7 @@
 #ifndef asiAlgo_PointCloudUtils_h
 #define asiAlgo_PointCloudUtils_h
 
-// A-Situs includes
+// asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
 
 //-----------------------------------------------------------------------------

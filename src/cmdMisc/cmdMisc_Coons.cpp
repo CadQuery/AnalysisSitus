@@ -99,12 +99,12 @@ int MISC_BuildCoonsLinear(const Handle(asiTcl_Interp)& interp,
 
   // Build Coons surface by points.
   {
-    ptr<bcurve> mobC0 = cascade::GetMobiusBCurve(c0);
-    ptr<bcurve> mobC1 = cascade::GetMobiusBCurve(c1);
-    ptr<bcurve> mobB0 = cascade::GetMobiusBCurve(b0);
-    ptr<bcurve> mobB1 = cascade::GetMobiusBCurve(b1);
+    t_ptr<t_bcurve> mobC0 = cascade::GetMobiusBCurve(c0);
+    t_ptr<t_bcurve> mobC1 = cascade::GetMobiusBCurve(c1);
+    t_ptr<t_bcurve> mobB0 = cascade::GetMobiusBCurve(b0);
+    t_ptr<t_bcurve> mobB1 = cascade::GetMobiusBCurve(b1);
 
-    ptr<geom_CoonsSurfaceLinear>
+    t_ptr<geom_CoonsSurfaceLinear>
       coons = new geom_CoonsSurfaceLinear( mobC0, mobC1, mobB0, mobB1,
                                            mobC0->D0( mobC0->GetMinParameter() ),
                                            mobC1->D0( mobC1->GetMinParameter() ),

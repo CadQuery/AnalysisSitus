@@ -1334,7 +1334,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   // Convert to Mobius curve.
   mobius::cascade_BSplineCurve toMobius(occtBCurve);
   toMobius.DirectConvert();
-  const mobius::ptr<mobius::bcurve>& mobCurve = toMobius.GetMobiusCurve();
+  const mobius::t_ptr<mobius::t_bcurve>& mobCurve = toMobius.GetMobiusCurve();
 
   TIMER_NEW
   TIMER_GO
@@ -1352,7 +1352,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-curve fairing")
 
   // Get the faired curve.
-  const mobius::ptr<mobius::bcurve>& mobResult = fairing.GetResult();
+  const mobius::t_ptr<mobius::t_bcurve>& mobResult = fairing.GetResult();
 
   // Convert to OpenCascade curve.
   mobius::cascade_BSplineCurve toOpenCascade(mobResult);
@@ -1413,7 +1413,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   mobius::cascade_BSplineSurface converter(occtBSurface);
   converter.DirectConvert();
   //
-  const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
+  const mobius::t_ptr<mobius::t_bsurf>& mobSurf = converter.GetMobiusSurface();
 
   // Print bending energy.
   const double initEnergy = mobSurf->ComputeBendingEnergy();
@@ -1452,7 +1452,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-surface fairing")
 
   // Get the faired surface.
-  const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
+  const mobius::t_ptr<mobius::t_bsurf>& mobResult = fairing.GetResult();
 
   // Print bending energy.
   const double resEnergy = mobResult->ComputeBendingEnergy();
@@ -2120,10 +2120,10 @@ int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial curve.
-  mobius::ptr<mobius::bcurve>
+  mobius::t_ptr<mobius::t_bcurve>
     mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
   //
-  mobius::ptr<mobius::bcurve> mobResult = mobBCurve->Copy();
+  mobius::t_ptr<mobius::t_bcurve> mobResult = mobBCurve->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot(u, times) )
@@ -2187,10 +2187,10 @@ int ENGINE_InsertKnotSurfU(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial surface.
-  mobius::ptr<mobius::bsurf>
+  mobius::t_ptr<mobius::t_bsurf>
     mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::ptr<mobius::bsurf> mobResult = mobBSurface->Copy();
+  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot_U(u, times) )
@@ -2254,10 +2254,10 @@ int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial surface.
-  mobius::ptr<mobius::bsurf>
+  mobius::t_ptr<mobius::t_bsurf>
     mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::ptr<mobius::bsurf> mobResult = mobBSurface->Copy();
+  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot_V(v, times) )
@@ -2315,7 +2315,7 @@ int ENGINE_ExchangeUV(const Handle(asiTcl_Interp)& interp,
   }
 
   // Exchange UV.
-  mobius::ptr<mobius::bsurf>
+  mobius::t_ptr<mobius::t_bsurf>
     mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
   //
   mobBSurface->ExchangeUV();
@@ -2369,11 +2369,11 @@ int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius curve.
-  mobius::ptr<mobius::bcurve>
+  mobius::t_ptr<mobius::t_bcurve>
     mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
 
   // Split.
-  std::vector< mobius::ptr<mobius::bcurve> > segments;
+  std::vector< mobius::t_ptr<mobius::t_bcurve> > segments;
   //
   if ( !mobBCurve->SplitToBezier(segments) )
   {

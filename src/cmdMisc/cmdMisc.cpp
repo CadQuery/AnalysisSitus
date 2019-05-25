@@ -108,7 +108,7 @@
 #ifdef USE_MOBIUS
 
 void cmdMisc::DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
-                          const ptr<geom_Surface>&       surface,
+                          const t_ptr<geom_Surface>&       surface,
                           const TCollection_AsciiString& name)
 {
   // Sample patch.
@@ -140,7 +140,7 @@ void cmdMisc::DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
           stopV = true;
         else
         {
-          mobius::xyz P;
+          t_xyz P;
           surface->Eval(u, v, P);
 
           pts->AddElement( P.X(), P.Y(), P.Z() );
@@ -1505,19 +1505,19 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius curve.
-    mobius::ptr<mobius::bcurve>
-      mobCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
+    t_ptr<t_bcurve>
+      mobCurve = cascade::GetMobiusBCurve(occtBCurve);
 
     TIMER_GO
 
     // Prepare matrix to hold evaluation results.
-    mobius::core_HeapAlloc2D<double> Alloc;
+    core_HeapAlloc2D<double> Alloc;
     double** dN = Alloc.Allocate(mobCurve->GetDegree() + 1,
                                  mobCurve->GetDegree() + 1,
                                  true);
 
     // Evaluate.
-    mobius::xyz eval_DN;
+    t_xyz eval_DN;
     for ( int i = 0; i < numIters; ++i )
     {
       mobCurve->Eval_Dk(dN, u, order, eval_DN);
@@ -1623,12 +1623,12 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius surface.
-    mobius::ptr<mobius::bsurf>
-      mobBSurf = mobius::cascade::GetMobiusBSurface(occtBSurf);
+    t_ptr<t_bsurf>
+      mobBSurf = cascade::GetMobiusBSurface(occtBSurf);
 
     TIMER_GO
 
-    mobius::xyz eval_P;
+    t_xyz eval_P;
     for ( int i = 0; i < numIters; ++i )
     {
       mobBSurf->Eval(u, v, eval_P);
@@ -1714,8 +1714,8 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius B-surface.
-  mobius::ptr<mobius::bsurf>
-    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurf);
+  t_ptr<t_bsurf>
+    mobSurf = cascade::GetMobiusBSurface(occtBSurf);
 
   // Print bending energy.
   const double initEnergy = mobSurf->ComputeBendingEnergy();
@@ -1729,11 +1729,11 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   const int           p = mobSurf->GetDegree_U();
   const int           q = mobSurf->GetDegree_V();
   //
-  mobius::bspl_FindSpan findSpanU(U, p);
-  mobius::bspl_FindSpan findSpanV(V, q);
+  bspl_FindSpan findSpanU(U, p);
+  bspl_FindSpan findSpanV(V, q);
 
   // Prepare fairing operator.
-  mobius::geom_FairBSurf F(mobSurf, 1.0, NULL, NULL);
+  geom_FairBSurf F(mobSurf, 1.0, NULL, NULL);
 
   // Calculate characteristics size for discretization of boundary.
   double uMin, uMax, vMin, vMax;
@@ -1793,7 +1793,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
       interp->GetPlotter().DRAW_LINK(S3, S4, Color_Green, "S34");
       interp->GetPlotter().DRAW_LINK(S4, S1, Color_Green, "S41");*/
 
-      const mobius::xyz& mobPole1 = mobSurf->GetPoles()[spanU][spanV];
+      const t_xyz& mobPole1 = mobSurf->GetPoles()[spanU][spanV];
 
       // Pin point.
       F.AddPinnedPole(spanU, spanV);
@@ -1802,14 +1802,14 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
 
       for ( int k = 0; k < p; ++k )
       {
-        //const mobius::xyz& PPP = mobSurf->Poles()[spanU - k][spanV];
+        //const t_xyz& PPP = mobSurf->Poles()[spanU - k][spanV];
         F.AddPinnedPole(spanU-k, spanV);
         //interp->GetPlotter().DRAW_POINT(gp_Pnt( PPP.X(), PPP.Y(), PPP.Z() ), Color_Red, "mobPoleU");
       }
 
       for ( int k = 0; k < q; ++k )
       {
-        //const mobius::xyz& PPP = mobSurf->Poles()[spanU][spanV - k];
+        //const t_xyz& PPP = mobSurf->Poles()[spanU][spanV - k];
         F.AddPinnedPole(spanU, spanV-k);
         //interp->GetPlotter().DRAW_POINT(gp_Pnt( PPP.X(), PPP.Y(), PPP.Z() ), Color_Green, "mobPoleV");
       }
@@ -1830,7 +1830,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Fair surface")
 
   // Get fairing result.
-  const mobius::ptr<mobius::bsurf>& mobFaired = F.GetResult();
+  const t_ptr<t_bsurf>& mobFaired = F.GetResult();
 
   // Print bending energy.
   const double resEnergy = mobFaired->ComputeBendingEnergy();
@@ -1840,7 +1840,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
 
   // Convert to OpenCascade surface.
   Handle(Geom_BSplineSurface)
-    occtFaired = mobius::cascade::GetOpenCascadeBSurface(mobFaired);
+    occtFaired = cascade::GetOpenCascadeBSurface(mobFaired);
   //
   interp->GetPlotter().DRAW_SURFACE(occtFaired, (resEnergy < initEnergy) ? Color_Green : Color_Red, "faired");
 
@@ -1862,27 +1862,27 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
    *  Build rail curves
    * =================== */
 
-  ptr<bcurve> c0, c1, b0, b1;
-  xyz p00, p01, p10, p11;
+  t_ptr<t_bcurve> c0, c1, b0, b1;
+  t_xyz p00, p01, p10, p11;
 
   // Build `c` curves.
   {
-    std::vector<xyz> c0_pts = {
-      xyz(0.,  0.,  0.),
-      xyz(0.,  1.,  0.1),
-      xyz(0.,  2.,  0.2),
-      xyz(0.,  3.,  0.3),
-      xyz(0.,  4.,  0.2),
-      xyz(0.,  4.5, 0.)
+    std::vector<t_xyz> c0_pts = {
+      t_xyz(0.,  0.,  0.),
+      t_xyz(0.,  1.,  0.1),
+      t_xyz(0.,  2.,  0.2),
+      t_xyz(0.,  3.,  0.3),
+      t_xyz(0.,  4.,  0.2),
+      t_xyz(0.,  4.5, 0.)
     };
 
-    std::vector<xyz> c1_pts = {
-      xyz(5.,  0.,  0.),
-      xyz(5.,  1.,  0.2),
-      xyz(5.,  2.,  0.1),
-      xyz(5.,  3.,  0.2),
-      xyz(5.,  4.,  0.1),
-      xyz(5.,  5.,  0.)
+    std::vector<t_xyz> c1_pts = {
+      t_xyz(5.,  0.,  0.),
+      t_xyz(5.,  1.,  0.2),
+      t_xyz(5.,  2.,  0.1),
+      t_xyz(5.,  3.,  0.2),
+      t_xyz(5.,  4.,  0.1),
+      t_xyz(5.,  5.,  0.)
     };
 
     // Corner points.
@@ -1922,19 +1922,19 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
 
   // Build `b` curves.
   {
-    std::vector<xyz> b0_pts = {
+    std::vector<t_xyz> b0_pts = {
       p00,
-      xyz(2., 0.0, 0.1),
-      xyz(3., 0.0, 0.2),
-      xyz(4., 0.0, 0.1),
+      t_xyz(2., 0.0, 0.1),
+      t_xyz(3., 0.0, 0.2),
+      t_xyz(4., 0.0, 0.1),
       p01
     };
 
-    std::vector<xyz> b1_pts = {
+    std::vector<t_xyz> b1_pts = {
       p10,
-      xyz(2., 5.0, 0.2),
-      xyz(3., 5.0, 0.1),
-      xyz(4., 5.0, 0.2),
+      t_xyz(2., 5.0, 0.2),
+      t_xyz(3., 5.0, 0.1),
+      t_xyz(4., 5.0, 0.2),
       p11
     };
 
@@ -1967,7 +1967,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
    * =================== */
 
   // Build Coons surface.
-  ptr<geom_CoonsSurfaceLinear>
+  t_ptr<geom_CoonsSurfaceLinear>
     coons = new geom_CoonsSurfaceLinear(c0, c1, b0, b1, p00, p01, p10, p11);
 
   // Sample patch.
@@ -1995,11 +1995,11 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
    * ========================================================= */
 
   // Build P1S.
-  ptr<bsurf> P1S;
+  t_ptr<t_bsurf> P1S;
   Handle(Geom_BSplineSurface) P1Socc;
   {
     // Prepare rail curves.
-    std::vector< ptr<bcurve> > rails = {c0, c1};
+    std::vector< t_ptr<t_bcurve> > rails = {c0, c1};
 
     // Skin ruled surface through c0 and c1 rails.
     geom_SkinSurface skinner(rails, 1, false);
@@ -2027,11 +2027,11 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   }
 
   // Build P2S.
-  ptr<bsurf>  P2S;
+  t_ptr<t_bsurf>  P2S;
   Handle(Geom_BSplineSurface) P2Socc;
   {
     // Prepare rail curves.
-    std::vector< ptr<bcurve> > rails = {b0, b1};
+    std::vector< t_ptr<t_bcurve> > rails = {b0, b1};
 
     // Skin ruled surface through b0 and b1 rails.
     geom_SkinSurface skinner(rails, 1, false);
@@ -2062,10 +2062,10 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   }
 
   // Build P12S.
-  ptr<bsurf>  P12S;
+  t_ptr<t_bsurf>  P12S;
   Handle(Geom_BSplineSurface) P12Socc;
   {
-    std::vector< std::vector<xyz> >
+    std::vector< std::vector<t_xyz> >
       poles = { {p00, p01},
                 {p10, p11} };
 
@@ -2155,22 +2155,22 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   // vectors. It means that all patches are defined on the same basis. Therefore,
   // we can now produce a Boolean sum.
 
-  const std::vector< std::vector<xyz> >& polesP1S  = P1S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP2S  = P2S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP12S = P12S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP1S  = P1S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP2S  = P2S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP12S = P12S->GetPoles();
 
   const int numPolesU = P1S->GetNumOfPoles_U();
   const int numPolesV = P1S->GetNumOfPoles_V();
 
   // Compute the resulting poles.
-  std::vector< std::vector<xyz> > resPoles;
+  std::vector< std::vector<t_xyz> > resPoles;
   //
   for ( int i = 0; i < numPolesU; ++i )
   {
-    std::vector<mobius::xyz> col;
+    std::vector<t_xyz> col;
     for ( int j = 0; j < numPolesV; ++j )
     {
-      xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
+      t_xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
       //
       col.push_back(resPole);
     }
@@ -2178,8 +2178,8 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   }
 
   // Construct the resulting surface.
-  ptr<bsurf>
-    mobRes = new bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
+  t_ptr<t_bsurf>
+    mobRes = new t_bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
   //
   interp->GetPlotter().REDRAW_SURFACE("res-simple", cascade::GetOpenCascadeBSurface(mobRes), Color_Blue);
 
@@ -2188,16 +2188,16 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-#define c0_D1 xyz(0.0, 0.0, 1.0)
-#define c1_D1 xyz(1.0, 0.0, 0.0)
-#define b0_D1 xyz(0.0, 1.0, 0.0)
-#define b1_D1 xyz(0.0, 1.0, 0.0)
+#define c0_D1 t_xyz(0.0, 0.0, 1.0)
+#define c1_D1 t_xyz(1.0, 0.0, 0.0)
+#define b0_D1 t_xyz(0.0, 1.0, 0.0)
+#define b1_D1 t_xyz(0.0, 1.0, 0.0)
 
 class derivConstraint : public geom_Curve
 {
 public:
 
-  derivConstraint(const ptr<curve>& c0, const ptr<curve>& c1, const ptr<curve>& b0, const ptr<curve>& b1)
+  derivConstraint(const t_ptr<t_curve>& c0, const t_ptr<t_curve>& c1, const t_ptr<t_curve>& b0, const t_ptr<t_curve>& b1)
   : geom_Curve(), m_c0(c0), m_c1(c1), m_b0(b0), m_b1(b1) {}
 
 public:
@@ -2208,7 +2208,7 @@ public:
 
 protected:
 
-  ptr<curve> m_c0, m_c1, m_b0, m_b1; //!< Boundary curves.
+  t_ptr<t_curve> m_c0, m_c1, m_b0, m_b1; //!< Boundary curves.
 
 };
 
@@ -2217,12 +2217,12 @@ class dSu0_dv : public derivConstraint
 {
 public:
 
-  dSu0_dv(const ptr<curve>& c0, const ptr<curve>& c1, const ptr<curve>& b0, const ptr<curve>& b1)
+  dSu0_dv(const t_ptr<t_curve>& c0, const t_ptr<t_curve>& c1, const t_ptr<t_curve>& b0, const t_ptr<t_curve>& b1)
   : derivConstraint(c0, c1, b0, b1) {}
 
 public:
 
-  virtual void Eval(const double u, xyz& P) const
+  virtual void Eval(const double u, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2238,7 +2238,7 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double /*u*/, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     //const double uMax = this->GetMinParameter();
@@ -2253,12 +2253,12 @@ class dSu1_dv : public derivConstraint
 {
 public:
 
-  dSu1_dv(const ptr<curve>& c0, const ptr<curve>& c1, const ptr<curve>& b0, const ptr<curve>& b1)
+  dSu1_dv(const t_ptr<t_curve>& c0, const t_ptr<t_curve>& c1, const t_ptr<t_curve>& b0, const t_ptr<t_curve>& b1)
   : derivConstraint(c0, c1, b0, b1) {}
 
 public:
 
-  virtual void Eval(const double u, xyz& P) const
+  virtual void Eval(const double u, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2275,7 +2275,7 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double /*u*/, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, t_xyz& P) const
   {
     //const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2290,12 +2290,12 @@ class dS0v_du : public derivConstraint
 {
 public:
 
-  dS0v_du(const ptr<curve>& c0, const ptr<curve>& c1, const ptr<curve>& b0, const ptr<curve>& b1)
+  dS0v_du(const t_ptr<t_curve>& c0, const t_ptr<t_curve>& c1, const t_ptr<t_curve>& b0, const t_ptr<t_curve>& b1)
   : derivConstraint(c0, c1, b0, b1) {}
 
 public:
 
-  virtual void Eval(const double u, xyz& P) const
+  virtual void Eval(const double u, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2312,7 +2312,7 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double /*u*/, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     //const double uMax = this->GetMinParameter();
@@ -2327,12 +2327,12 @@ class dS1v_du : public derivConstraint
 {
 public:
 
-  dS1v_du(const ptr<curve>& c0, const ptr<curve>& c1, const ptr<curve>& b0, const ptr<curve>& b1)
+  dS1v_du(const t_ptr<t_curve>& c0, const t_ptr<t_curve>& c1, const t_ptr<t_curve>& b0, const t_ptr<t_curve>& b1)
   : derivConstraint(c0, c1, b0, b1) {}
 
 public:
 
-  virtual void Eval(const double u, xyz& P) const
+  virtual void Eval(const double u, t_xyz& P) const
   {
     const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2349,7 +2349,7 @@ public:
     }
   }
 
-  virtual void Eval_D1(const double /*u*/, xyz& P) const
+  virtual void Eval_D1(const double /*u*/, t_xyz& P) const
   {
     //const double uMin = this->GetMinParameter();
     const double uMax = this->GetMinParameter();
@@ -2369,12 +2369,12 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   }
 
   // Corner points.
-  xyz p00(0., 0.,  0.);
-  xyz p10(0., 4.5, 0.);
-  xyz p20(0., 8.5, 0.);
-  xyz p01(5., 0.,  0.);
-  xyz p11(5., 5.,  0.);
-  xyz p21(5., 9.,  0.);
+  t_xyz p00(0., 0.,  0.);
+  t_xyz p10(0., 4.5, 0.);
+  t_xyz p20(0., 8.5, 0.);
+  t_xyz p01(5., 0.,  0.);
+  t_xyz p11(5., 5.,  0.);
+  t_xyz p21(5., 9.,  0.);
 
   // Draw points.
   interp->GetPlotter().REDRAW_POINT("p00", cascade::GetOpenCascadePnt(p00), Color_Yellow);
@@ -2388,29 +2388,29 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
    *  Build rail curves
    * =================== */
 
-  ptr<bcurve> c0, c1, c2, c3, b0, b1, b2;
-  std::vector<xyz> c0_D1_vec, c1_D1_vec, b0_D1_vec, b1_D1_vec;
+  t_ptr<t_bcurve> c0, c1, c2, c3, b0, b1, b2;
+  std::vector<t_xyz> c0_D1_vec, c1_D1_vec, b0_D1_vec, b1_D1_vec;
 
   // Build `c` curves.
   {
     /* c0 */
 
-    std::vector<xyz> c0_pts = {
+    std::vector<t_xyz> c0_pts = {
       p00,
-      xyz(0., 1., 0.1),
-      xyz(0., 2., 0.2),
-      xyz(0., 3., 0.3),
-      xyz(0., 4., 0.2),
+      t_xyz(0., 1., 0.1),
+      t_xyz(0., 2., 0.2),
+      t_xyz(0., 3., 0.3),
+      t_xyz(0., 4., 0.2),
       p10
     };
     //
     c0_D1_vec = {
-      xyz(0.,  0.,  1.),
-      xyz(0.,  0.,  1.),
-      xyz(0.,  0.,  1.),
-      xyz(0.,  0.,  1.),
-      xyz(0.,  0.,  1.),
-      xyz(0.,  0.,  1.)
+      t_xyz(0.,  0.,  1.),
+      t_xyz(0.,  0.,  1.),
+      t_xyz(0.,  0.,  1.),
+      t_xyz(0.,  0.,  1.),
+      t_xyz(0.,  0.,  1.),
+      t_xyz(0.,  0.,  1.)
     };
     //
     for ( size_t k = 0; k < c0_D1_vec.size(); ++k )
@@ -2420,22 +2420,22 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
 
     /* c1 */
 
-    std::vector<xyz> c1_pts = {
+    std::vector<t_xyz> c1_pts = {
       p01,
-      xyz(5., 1., 0.2),
-      xyz(5., 2., 0.1),
-      xyz(5., 3., 0.2),
-      xyz(5., 4., 0.1),
+      t_xyz(5., 1., 0.2),
+      t_xyz(5., 2., 0.1),
+      t_xyz(5., 3., 0.2),
+      t_xyz(5., 4., 0.1),
       p11
     };
     //
     c1_D1_vec = {
-      xyz(1., 0., 0.),
-      xyz(1., 0., 0.),
-      xyz(1., 0., 0.),
-      xyz(1., 0., 0.),
-      xyz(1., 0., 0.),
-      xyz(1., 0., 0.)
+      t_xyz(1., 0., 0.),
+      t_xyz(1., 0., 0.),
+      t_xyz(1., 0., 0.),
+      t_xyz(1., 0., 0.),
+      t_xyz(1., 0., 0.),
+      t_xyz(1., 0., 0.)
     };
     //
     for ( size_t k = 0; k < c1_D1_vec.size(); ++k )
@@ -2445,30 +2445,30 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
 
     /* c2 */
 
-    std::vector<xyz> c2_pts = {
+    std::vector<t_xyz> c2_pts = {
       p10,
-      xyz(0.,  5., 0.2),
-      xyz(0.1, 6., 0.1),
-      xyz(0.1, 7., 0.2),
-      xyz(0.,  8., 0.1),
+      t_xyz(0.,  5., 0.2),
+      t_xyz(0.1, 6., 0.1),
+      t_xyz(0.1, 7., 0.2),
+      t_xyz(0.,  8., 0.1),
       p20
     };
 
     /* c3 */
 
-    std::vector<xyz> c3_pts = {
+    std::vector<t_xyz> c3_pts = {
       p11,
-      xyz(5.,  5.5, 0.),
-      xyz(5.1, 6.,  0.1),
-      xyz(5.1, 7.,  0.2),
-      xyz(5.,  8.,  0.1),
+      t_xyz(5.,  5.5, 0.),
+      t_xyz(5.1, 6.,  0.1),
+      t_xyz(5.1, 7.,  0.2),
+      t_xyz(5.,  8.,  0.1),
       p21
     };
 
     // Build sample curves.
-    mobius::geom_InterpolateMultiCurve multiInterp(3,
-                                                   mobius::ParamsSelection_Centripetal,
-                                                   mobius::KnotsSelection_Average);
+    geom_InterpolateMultiCurve multiInterp(3,
+                                                   ParamsSelection_Centripetal,
+                                                   KnotsSelection_Average);
     //
     multiInterp.AddRow(c0_pts);
     multiInterp.AddRow(c1_pts);
@@ -2499,20 +2499,20 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   {
     /* b0 */
 
-    std::vector<xyz> b0_pts = {
+    std::vector<t_xyz> b0_pts = {
       p00,
-      xyz(2., 0.0, 0.1),
-      xyz(3., 0.0, 0.2),
-      xyz(4., 0.0, 0.1),
+      t_xyz(2., 0.0, 0.1),
+      t_xyz(3., 0.0, 0.2),
+      t_xyz(4., 0.0, 0.1),
       p01
     };
     //
     b0_D1_vec = {
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.)
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.)
     };
     //
     for ( size_t k = 0; k < b0_D1_vec.size(); ++k )
@@ -2522,20 +2522,20 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
 
     /* b1 */
 
-    std::vector<xyz> b1_pts = {
+    std::vector<t_xyz> b1_pts = {
       p10,
-      xyz(2., 5.0, 0.2),
-      xyz(3., 5.0, 0.1),
-      xyz(4., 5.0, 0.2),
+      t_xyz(2., 5.0, 0.2),
+      t_xyz(3., 5.0, 0.1),
+      t_xyz(4., 5.0, 0.2),
       p11
     };
     //
     b1_D1_vec = {
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.),
-      xyz(0., 1., 0.)
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.),
+      t_xyz(0., 1., 0.)
     };
     //
     for ( size_t k = 0; k < b1_D1_vec.size(); ++k )
@@ -2545,11 +2545,11 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
 
     /* b2 */
 
-    std::vector<xyz> b2_pts = {
+    std::vector<t_xyz> b2_pts = {
       p20,
-      xyz(2., 8.5, -0.2),
-      xyz(3., 8.9, -0.1),
-      xyz(4., 8.7,  0.2),
+      t_xyz(2., 8.5, -0.2),
+      t_xyz(3., 8.9, -0.1),
+      t_xyz(4., 8.7,  0.2),
       p21
     };
 
@@ -2584,9 +2584,9 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
    *  Make P1 by skinning
    * ===================== */
 
-  ptr<bsurf> P1S;
+  t_ptr<t_bsurf> P1S;
   {
-    std::vector< ptr<bcurve> > rails = {c0, c1};
+    std::vector< t_ptr<t_bcurve> > rails = {c0, c1};
 
     // Skin ruled surface through the rail curves.
     geom_SkinSurface skinner(rails, 3, false);
@@ -2617,9 +2617,9 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
    *  Make P2 by skinning
    * ===================== */
 
-  ptr<bsurf> P2S;
+  t_ptr<t_bsurf> P2S;
   {
-    std::vector< ptr<bcurve> > rails = {b0, b1};
+    std::vector< t_ptr<t_bcurve> > rails = {b0, b1};
 
     // Skin ruled surface through the rail curves.
     geom_SkinSurface skinner(rails, 3, false);
@@ -2647,41 +2647,41 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
    * ============================================ */
 
   // Prepare derivative curves.
-  ptr<curve> c0_v = new dSu0_dv(c0, c1, b0, b1);
-  ptr<curve> c1_v = new dSu1_dv(c0, c1, b0, b1);
-  ptr<curve> b0_u = new dS0v_du(c0, c1, b0, b1);
-  ptr<curve> b1_u = new dS1v_du(c0, c1, b0, b1);
+  t_ptr<t_curve> c0_v = new dSu0_dv(c0, c1, b0, b1);
+  t_ptr<t_curve> c1_v = new dSu1_dv(c0, c1, b0, b1);
+  t_ptr<t_curve> b0_u = new dS0v_du(c0, c1, b0, b1);
+  t_ptr<t_curve> b1_u = new dS1v_du(c0, c1, b0, b1);
 
   // Define constraints.
-  const xyz S00        = p00;
-  const xyz S01        = p01;
-  const xyz S10        = p10;
-  const xyz S11        = p11;
+  const t_xyz S00        = p00;
+  const t_xyz S01        = p01;
+  const t_xyz S10        = p10;
+  const t_xyz S11        = p11;
   //
-  const xyz dS_du00    = b0_u->D0(0.0);
-  const xyz dS_du01    = b0_u->D0(1.0);
-  const xyz dS_du10    = b1_u->D0(0.0);
-  const xyz dS_du11    = b1_u->D0(1.0);
+  const t_xyz dS_du00    = b0_u->D0(0.0);
+  const t_xyz dS_du01    = b0_u->D0(1.0);
+  const t_xyz dS_du10    = b1_u->D0(0.0);
+  const t_xyz dS_du11    = b1_u->D0(1.0);
   //
-  const xyz dS_dv00    = c0_v->D0(0.0);
-  const xyz dS_dv01    = c1_v->D0(0.0);
-  const xyz dS_dv10    = c0_v->D0(1.0);
-  const xyz dS_dv11    = c1_v->D0(1.0);
+  const t_xyz dS_dv00    = c0_v->D0(0.0);
+  const t_xyz dS_dv01    = c1_v->D0(0.0);
+  const t_xyz dS_dv10    = c0_v->D0(1.0);
+  const t_xyz dS_dv11    = c1_v->D0(1.0);
   //
-  const xyz d2S_dudv00 = xyz(0., 0., 0.);
-  const xyz d2S_dudv01 = xyz(0., 0., 0.);
-  const xyz d2S_dudv10 = xyz(0., 0., 0.);
-  const xyz d2S_dudv11 = xyz(0., 0., 0.);
+  const t_xyz d2S_dudv00 = t_xyz(0., 0., 0.);
+  const t_xyz d2S_dudv01 = t_xyz(0., 0., 0.);
+  const t_xyz d2S_dudv10 = t_xyz(0., 0., 0.);
+  const t_xyz d2S_dudv11 = t_xyz(0., 0., 0.);
 
   // Build Coons surface.
-  ptr<geom_CoonsSurfaceCubic>
+  t_ptr<geom_CoonsSurfaceCubic>
     coons = new geom_CoonsSurfaceCubic(c0, c1, b0, b1,
                                        c0_v, c1_v, b0_u, b1_u,
                                        d2S_dudv00, d2S_dudv01, d2S_dudv10, d2S_dudv11);
 
   // Calculate finite difference to check constraints.
   {
-    xyz S0, S1;
+    t_xyz S0, S1;
     double u0 = 0.5;
     double v0 = 0.0;
     double delta = 1.0e-4;
@@ -2689,7 +2689,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     coons->Eval(u0 - delta, v0, S0);
     coons->Eval(u0 + delta, v0, S1);
 
-    xyz fd = (S1 - S0)/(2*delta);
+    t_xyz fd = (S1 - S0)/(2*delta);
 
     std::cout << "fd = " << fd.X() << ", " << fd.Y() << ", " << fd.Z() << std::endl;
   }
@@ -2711,7 +2711,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   //
   {
     double usample = 0., vsample = 0.35;
-    xyz P, D1u, D1v;
+    t_xyz P, D1u, D1v;
     //
     coons->Eval(usample, vsample, P);
     coons->Eval_D1(usample, vsample, D1u, D1v);
@@ -2725,10 +2725,10 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     double udelta = 0.0001;
     double unext = usample + udelta;
     //
-    xyz Pnext;
+    t_xyz Pnext;
     coons->Eval(unext, vsample, Pnext);
     //
-    xyz D1u_fd = (Pnext - P)*(1.0/udelta);
+    t_xyz D1u_fd = (Pnext - P)*(1.0/udelta);
     //
     interp->GetProgress().SendLogMessage( LogNotice(Normal) << "D1u_fd(%1,%2) = (%3,%4,%5)." << usample << vsample << D1u_fd.X() << D1u_fd.Y() << D1u_fd.Z() );
   }
@@ -2736,7 +2736,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   // P1S_D1u
   {
     double usample = 0., vsample = 0.35;
-    xyz P1S_P, P1S_D1u, P1S_D1v;
+    t_xyz P1S_P, P1S_D1u, P1S_D1v;
     //
     coons->Eval_P1S(usample, vsample, P1S_P);
     coons->Eval_D1_P1S(usample, vsample, P1S_D1u, P1S_D1v);
@@ -2750,10 +2750,10 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     double udelta = 0.0001;
     double unext = usample + udelta;
     //
-    xyz P1S_Pnext;
+    t_xyz P1S_Pnext;
     coons->Eval_P1S(unext, vsample, P1S_Pnext);
     //
-    xyz P1S_D1u_fd = (P1S_Pnext - P1S_P)*(1.0/udelta);
+    t_xyz P1S_D1u_fd = (P1S_Pnext - P1S_P)*(1.0/udelta);
     //
     interp->GetProgress().SendLogMessage( LogNotice(Normal) << "P1S_D1u_fd(0,0.35) = (%1,%2,%3)." << P1S_D1u_fd.X() << P1S_D1u_fd.Y() << P1S_D1u_fd.Z() );
   }
@@ -2761,7 +2761,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   // P2S_D1u
   {
     double usample = 0., vsample = 0.35;
-    xyz P2S_P, P2S_D1u, P2S_D1v;
+    t_xyz P2S_P, P2S_D1u, P2S_D1v;
     //
     coons->Eval_P2S(usample, vsample, P2S_P);
     coons->Eval_D1_P2S(usample, vsample, P2S_D1u, P2S_D1v);
@@ -2775,10 +2775,10 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     double udelta = 0.0001;
     double unext = usample + udelta;
     //
-    xyz P2S_Pnext;
+    t_xyz P2S_Pnext;
     coons->Eval_P2S(unext, vsample, P2S_Pnext);
     //
-    xyz P2S_D1u_fd = (P2S_Pnext - P2S_P)*(1.0/udelta);
+    t_xyz P2S_D1u_fd = (P2S_Pnext - P2S_P)*(1.0/udelta);
     //
     interp->GetProgress().SendLogMessage( LogNotice(Normal) << "P2S_D1u_fd(0,0.35) = (%1,%2,%3)." << P2S_D1u_fd.X() << P2S_D1u_fd.Y() << P2S_D1u_fd.Z() );
   }
@@ -2794,19 +2794,19 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  const ptr<bsurf>& P12S = mkBicubic.GetResult();
+  const t_ptr<t_bsurf>& P12S = mkBicubic.GetResult();
   //
   interp->GetPlotter().REDRAW_SURFACE("P12", cascade::GetOpenCascadeBSurface(P12S), Color_White);
 
   // Some tests.
-  xyz P1_S, P1S_d1U, P1S_d1V;
+  t_xyz P1_S, P1S_d1U, P1S_d1V;
   P1S->Eval_D1(0., 0.5, P1_S, P1S_d1U, P1S_d1V);
   //
   //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P1S(0,0) = (%1,%2,%3)." << P1_S.X() << P1_S.Y() << P1_S.Z() );
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "BSpl P1S_d1U(0,0.35) = (%1,%2,%3)." << P1S_d1U.X() << P1S_d1U.Y() << P1S_d1U.Z() );
   //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P1S_d1V(0,0) = (%1,%2,%3)." << P1S_d1V.X() << P1S_d1V.Y() << P1S_d1V.Z() );
 
-  xyz P2_S, P2S_d1U, P2S_d1V;
+  t_xyz P2_S, P2S_d1U, P2S_d1V;
   P2S->Eval_D1(0., 0.35, P2_S, P2S_d1U, P2S_d1V);
   //
   //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P1S(0,0) = (%1,%2,%3)." << P1_S.X() << P1_S.Y() << P1_S.Z() );
@@ -2836,7 +2836,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
                       P12S->GetKnots_V() };
 
   // Compute addendum knots.
-  mobius::bspl_UnifyKnots unifyKnots;
+  bspl_UnifyKnots unifyKnots;
   //
   std::vector< std::vector<double> > U_addendums = unifyKnots(knotVectors_U);
   std::vector< std::vector<double> > V_addendums = unifyKnots(knotVectors_V);
@@ -2882,22 +2882,22 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   // vectors. It means that all patches are defined on the same basis. Therefore,
   // we can now produce a Boolean sum.
 
-  const std::vector< std::vector<xyz> >& polesP1S  = P1S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP2S  = P2S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP12S = P12S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP1S  = P1S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP2S  = P2S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP12S = P12S->GetPoles();
 
   const int numPolesU = P1S->GetNumOfPoles_U();
   const int numPolesV = P1S->GetNumOfPoles_V();
 
   // Compute the resulting poles.
-  std::vector< std::vector<xyz> > resPoles;
+  std::vector< std::vector<t_xyz> > resPoles;
   //
   for ( int i = 0; i < numPolesU; ++i )
   {
-    std::vector<xyz> col;
+    std::vector<t_xyz> col;
     for ( int j = 0; j < numPolesV; ++j )
     {
-      xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
+      t_xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
       //
       col.push_back(resPole);
     }
@@ -2905,12 +2905,12 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   }
 
   // Construct the resulting surface.
-  ptr<bsurf>
-    mobRes = new bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
+  t_ptr<t_bsurf>
+    mobRes = new t_bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
   //
   interp->GetPlotter().REDRAW_SURFACE("res-constrained", cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
 
-  xyz S, D1u, D1v;
+  t_xyz S, D1u, D1v;
   const double usample = 0.0;
   const double vsample = 0.35;
   mobRes->Eval_D1(usample, vsample, S, D1u, D1v);
@@ -2936,46 +2936,46 @@ int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
    *  Build rail curves
    * =================== */
 
-  mobius::ptr<mobius::bcurve> c0, c1, cn;
+  t_ptr<t_bcurve> c0, c1, cn;
 
-  std::vector<mobius::xyz> c0_D1_vec, cn_D1_vec;
+  std::vector<t_xyz> c0_D1_vec, cn_D1_vec;
 
   // Build curves.
   {
-    std::vector<mobius::xyz> c0_pts = {
-      mobius::xyz(0.1,  0.,  0.),
-      mobius::xyz(0.,   1.,  0.),
-      mobius::xyz(0.1,  2.,  0.)
+    std::vector<t_xyz> c0_pts = {
+      t_xyz(0.1,  0.,  0.),
+      t_xyz(0.,   1.,  0.),
+      t_xyz(0.1,  2.,  0.)
     };
     //
     c0_D1_vec = {
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.)
+      t_xyz(0.,  0.,  3.),
+      t_xyz(0.,  0.,  3.),
+      t_xyz(0.,  0.,  3.)
     };
 
-    std::vector<mobius::xyz> c1_pts = {
-      mobius::xyz(2.1,  0.,  0.),
-      mobius::xyz(2.2,  1.,  1.),
-      mobius::xyz(2.1,  2.,  0.)
+    std::vector<t_xyz> c1_pts = {
+      t_xyz(2.1,  0.,  0.),
+      t_xyz(2.2,  1.,  1.),
+      t_xyz(2.1,  2.,  0.)
     };
 
-    std::vector<mobius::xyz> cn_pts = {
-      mobius::xyz(5.1,  0.,  0.),
-      mobius::xyz(5.,   1.,  0.),
-      mobius::xyz(5.1,  2.,  0.)
+    std::vector<t_xyz> cn_pts = {
+      t_xyz(5.1,  0.,  0.),
+      t_xyz(5.,   1.,  0.),
+      t_xyz(5.1,  2.,  0.)
     };
     //
     cn_D1_vec = {
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.),
-      mobius::xyz(0.,  0.,  3.)
+      t_xyz(0.,  0.,  3.),
+      t_xyz(0.,  0.,  3.),
+      t_xyz(0.,  0.,  3.)
     };
 
     // Interpolate points to build curves.
-    mobius::geom_InterpolateMultiCurve multiInterp(2,
-                                                   mobius::ParamsSelection_Centripetal,
-                                                   mobius::KnotsSelection_Average);
+    geom_InterpolateMultiCurve multiInterp(2,
+                                           ParamsSelection_Centripetal,
+                                           KnotsSelection_Average);
     //
     multiInterp.AddRow(c0_pts);
     multiInterp.AddRow(c1_pts);
@@ -2988,9 +2988,9 @@ int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
       c1 = multiInterp.GetResult(1);
       cn = multiInterp.GetResult(2);
       //
-      interp->GetPlotter().REDRAW_CURVE("c0", mobius::cascade::GetOpenCascadeBCurve(c0), Color_Default);
-      interp->GetPlotter().REDRAW_CURVE("c1", mobius::cascade::GetOpenCascadeBCurve(c1), Color_Default);
-      interp->GetPlotter().REDRAW_CURVE("cn", mobius::cascade::GetOpenCascadeBCurve(cn), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("c0", cascade::GetOpenCascadeBCurve(c0), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("c1", cascade::GetOpenCascadeBCurve(c1), Color_Default);
+      interp->GetPlotter().REDRAW_CURVE("cn", cascade::GetOpenCascadeBCurve(cn), Color_Default);
     }
     else
     {
@@ -3003,10 +3003,10 @@ int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
    *  Build skinning surface
    * ======================== */
 
-  std::vector< mobius::ptr<mobius::bcurve> > rails = {c0, c1, cn};
+  std::vector< t_ptr<t_bcurve> > rails = {c0, c1, cn};
 
   // Skin ruled surface through the rail curves.
-  mobius::geom_SkinSurface skinner(rails, 2, false);
+  geom_SkinSurface skinner(rails, 2, false);
   //
   skinner.AddLeadingTangencies(c0_D1_vec);
   skinner.AddTrailingTangencies(cn_D1_vec);
@@ -3017,10 +3017,10 @@ int MISC_TestSkinning1(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
   //
-  const mobius::ptr<mobius::bsurf>& mobRes = skinner.GetResult();
+  const t_ptr<t_bsurf>& mobRes = skinner.GetResult();
 
   // Draw.
-  interp->GetPlotter().REDRAW_SURFACE("res", mobius::cascade::GetOpenCascadeBSurface(mobRes), Color_White);
+  interp->GetPlotter().REDRAW_SURFACE("res", cascade::GetOpenCascadeBSurface(mobRes), Color_White);
 
   return TCL_OK;
 }
@@ -3183,8 +3183,8 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius B-surface.
-  mobius::ptr<mobius::bsurf>
-    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobSurf = cascade::GetMobiusBSurface(occtBSurface);
 
   // Disable UI immediate updates for better performance.
   Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
@@ -3193,28 +3193,28 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
   IV->BROWSER_OFF();
 
   // Loop over the control points and invert each one to the surface.
-  std::vector< std::vector<mobius::xyz> > poles = mobSurf->GetPoles();
+  std::vector< std::vector<t_xyz> > poles = mobSurf->GetPoles();
   //
   for ( size_t i = 0; i < poles.size(); ++i )
     for ( size_t j = 0; j < poles[0].size(); ++j )
     {
       // Invert point.
-      mobius::uv projUV;
+      t_uv projUV;
       //
       if ( !mobSurf->InvertPoint(poles[i][j], projUV) )
       {
         interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
-        interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(poles[i][j]), Color_Red, "pfaulty");
+        interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(poles[i][j]), Color_Red, "pfaulty");
         continue;
       }
 
       // Evaluate surface for the obtained (u,v) coordinates.
-      mobius::xyz S;
+      t_xyz S;
       mobSurf->Eval(projUV.U(), projUV.V(), S);
       //
-      interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(poles[i][j]), Color_Yellow, "p");
-      interp->GetPlotter().DRAW_POINT(mobius::cascade::GetOpenCascadePnt(S), Color_Green, "proj");
-      interp->GetPlotter().DRAW_LINK(mobius::cascade::GetOpenCascadePnt(poles[i][j]), mobius::cascade::GetOpenCascadePnt(S), Color_Red, "plink");
+      interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(poles[i][j]), Color_Yellow, "p");
+      interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(S), Color_Green, "proj");
+      interp->GetPlotter().DRAW_LINK(cascade::GetOpenCascadePnt(poles[i][j]), cascade::GetOpenCascadePnt(S), Color_Red, "plink");
 
       interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
                                                             << projUV.U() << projUV.V() );
@@ -3332,7 +3332,7 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("test-eval-curve",
     //
     "test-eval-curve curveName u num order [-mobius]\n"
-    "\t Evaluates curve <curveName> for the given parameter value <u>.\n"
+    "\t Evaluates curve <t_curveName> for the given parameter value <u>.\n"
     "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
     "\t functions. The argument <num> specifies how many iterations to use.\n"
     "\t This function is used to test performance of curve evaluation.",

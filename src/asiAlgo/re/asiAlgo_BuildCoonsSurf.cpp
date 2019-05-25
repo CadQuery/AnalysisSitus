@@ -73,10 +73,10 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
 {
 #ifdef USE_MOBIUS
   // Convert curves to Mobius form.
-  ptr<bcurve> c0 = cascade::GetMobiusBCurve(m_c0);
-  ptr<bcurve> c1 = cascade::GetMobiusBCurve(m_c1);
-  ptr<bcurve> b0 = cascade::GetMobiusBCurve(m_b0);
-  ptr<bcurve> b1 = cascade::GetMobiusBCurve(m_b1);
+  t_ptr<t_bcurve> c0 = cascade::GetMobiusBCurve(m_c0);
+  t_ptr<t_bcurve> c1 = cascade::GetMobiusBCurve(m_c1);
+  t_ptr<t_bcurve> b0 = cascade::GetMobiusBCurve(m_b0);
+  t_ptr<t_bcurve> b1 = cascade::GetMobiusBCurve(m_b1);
 
   // Make `c` curves compatible.
   {
@@ -115,21 +115,21 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   }
 
   // Initialize corner points.
-  xyz p00 = c0->D0( c0->GetMinParameter() );
-  xyz p10 = c0->D0( c0->GetMaxParameter() );
-  xyz p01 = c1->D0( c1->GetMinParameter() );
-  xyz p11 = c1->D0( c1->GetMaxParameter() );
+  t_xyz p00 = c0->D0( c0->GetMinParameter() );
+  t_xyz p10 = c0->D0( c0->GetMaxParameter() );
+  t_xyz p01 = c1->D0( c1->GetMinParameter() );
+  t_xyz p11 = c1->D0( c1->GetMaxParameter() );
 
   /* =================================
    *  Build components of Boolean sum
    * ================================= */
 
   // Build P1S.
-  ptr<bsurf> P1S;
+  t_ptr<t_bsurf> P1S;
   Handle(Geom_BSplineSurface) P1Socc;
   {
     // Prepare rail curves.
-    std::vector< ptr<bcurve> > rails = {c0, c1};
+    std::vector< t_ptr<t_bcurve> > rails = {c0, c1};
 
     // Skin ruled surface through c0 and c1 rails.
     geom_SkinSurface skinner(rails, 1, false);
@@ -154,11 +154,11 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   }
 
   // Build P2S.
-  ptr<bsurf> P2S;
+  t_ptr<t_bsurf> P2S;
   Handle(Geom_BSplineSurface) P2Socc;
   {
     // Prepare rail curves.
-    std::vector< ptr<bcurve> > rails = {b0, b1};
+    std::vector< t_ptr<t_bcurve> > rails = {b0, b1};
 
     // Skin ruled surface through b0 and b1 rails.
     geom_SkinSurface skinner(rails, 1, false);
@@ -186,10 +186,10 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   }
 
   // Build P12S.
-  ptr<bsurf> P12S;
+  t_ptr<t_bsurf> P12S;
   Handle(Geom_BSplineSurface) P12Socc;
   {
-    std::vector< std::vector<xyz> >
+    std::vector< std::vector<t_xyz> >
       poles = { {p00, p01},
                 {p10, p11} };
 
@@ -279,22 +279,22 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   // vectors. It means that all patches are defined on the same basis. Therefore,
   // we can now produce a Boolean sum.
 
-  const std::vector< std::vector<xyz> >& polesP1S  = P1S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP2S  = P2S->GetPoles();
-  const std::vector< std::vector<xyz> >& polesP12S = P12S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP1S  = P1S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP2S  = P2S->GetPoles();
+  const std::vector< std::vector<t_xyz> >& polesP12S = P12S->GetPoles();
 
   const int numPolesU = P1S->GetNumOfPoles_U();
   const int numPolesV = P1S->GetNumOfPoles_V();
 
   // Compute the resulting poles.
-  std::vector< std::vector<xyz> > resPoles;
+  std::vector< std::vector<t_xyz> > resPoles;
   //
   for ( int i = 0; i < numPolesU; ++i )
   {
-    std::vector<xyz> col;
+    std::vector<t_xyz> col;
     for ( int j = 0; j < numPolesV; ++j )
     {
-      xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
+      t_xyz resPole = polesP1S[i][j] + polesP2S[i][j] - polesP12S[i][j];
       //
       col.push_back(resPole);
     }
@@ -302,8 +302,8 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   }
 
   // Construct the resulting surface.
-  ptr<bsurf>
-    mobRes = new bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
+  t_ptr<t_bsurf>
+    mobRes = new t_bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
 
   // Convert to OCCT form.
   m_result = cascade::GetOpenCascadeBSurface(mobRes);

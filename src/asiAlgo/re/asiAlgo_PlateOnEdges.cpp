@@ -319,7 +319,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
      TIMER_RESET
      TIMER_GO
 
-     mobius::ptr<mobius::bsurf>
+     mobius::t_ptr<mobius::t_bsurf>
        mobSurf = mobius::cascade::GetMobiusBSurface(support);
 
      // Perform fairing.
@@ -347,7 +347,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
      }
 
      // Get the faired surface.
-     const mobius::ptr<mobius::bsurf>& mobResult = fairing.GetResult();
+     const mobius::t_ptr<mobius::t_bsurf>& mobResult = fairing.GetResult();
 
      // Convert to OCCT B-surface.
      support = mobius::cascade::GetOpenCascadeBSurface(mobResult);

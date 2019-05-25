@@ -69,7 +69,7 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
                                     ActAPI_ProgressEntry             progress)
 {
   // Convert to Mobius curve.
-  ptr<bcurve> mobCurve = cascade::GetMobiusBCurve(curve);
+  t_ptr<t_bcurve> mobCurve = cascade::GetMobiusBCurve(curve);
 
   // Perform fairing from Mobius.
   geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
@@ -81,7 +81,7 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
   }
 
   // Get the faired curve.
-  const ptr<bcurve>& mobResult = fairing.GetResult();
+  const t_ptr<t_bcurve>& mobResult = fairing.GetResult();
 
   // Convert to OpenCascade curve.
   Handle(Geom_BSplineCurve) result = cascade::GetOpenCascadeBCurve(mobResult);
@@ -210,9 +210,9 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
       // Get B-curve from edge.
       Handle(Geom_BSplineCurve)
-        bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
+        t_bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
       //
-      if ( bcurve.IsNull() )
+      if ( t_bcurve.IsNull() )
       {
         interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
                                                              << edgeNode->GetId() );
@@ -221,7 +221,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       }
 
       // Add curve to the collection for filling.
-      curves.push_back(bcurve);
+      curves.push_back(t_bcurve);
 
       // Update scene.
       cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
@@ -428,9 +428,9 @@ int RE_FairContourLines(const Handle(asiTcl_Interp)& interp,
 
     // Get B-curve from edge.
     Handle(Geom_BSplineCurve)
-      bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
+      t_bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
     //
-    if ( bcurve.IsNull() )
+    if ( t_bcurve.IsNull() )
     {
       interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
                                                            << edgeNode->GetId() );
@@ -438,7 +438,7 @@ int RE_FairContourLines(const Handle(asiTcl_Interp)& interp,
     }
 
     // Fair curve.
-    Handle(Geom_BSplineCurve) fairedBCurve = FairCurve( bcurve,
+    Handle(Geom_BSplineCurve) fairedBCurve = FairCurve( t_bcurve,
                                                         lambda,
                                                         interp->GetProgress() );
     //
@@ -490,7 +490,7 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
   //
   Handle(Poly_Triangulation) triangulation = tris_n->GetTriangulation();
 
-  // Get cutting plane.
+  // Get cutting t_plane.
   Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[2]);
   //
   if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVSurfaceNode) ) )
@@ -508,18 +508,18 @@ int RE_CutWithPlane(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtPlane.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a plane.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a t_plane.");
     return TCL_ERROR;
   }
 
-  // Intersect with plane.
+  // Intersect with t_plane.
   asiAlgo_MeshInterPlane algo( triangulation,
                                interp->GetProgress(),
                                interp->GetPlotter() );
   //
   if ( !algo.Perform(occtPlane, true) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to cut mesh with plane.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to cut mesh with t_plane.");
     return TCL_ERROR;
   }
 
@@ -681,7 +681,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
   const int vDegree = atoi(argv[2]);
 
   // Convert OCCT B-curves to Mobius B-curves.
-  std::vector< ptr<bcurve> > bCurves;
+  std::vector< t_ptr<t_bcurve> > bCurves;
   //
   for ( int k = (isFairing ? 5 : 3); k < argc; ++k )
   {
@@ -714,7 +714,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
     Handle(Geom_BSplineCurve)
       occtBCurve = Handle(Geom_BSplineCurve)::DownCast(curveBase);
     //
-    ptr<bcurve> mobiusBCurve = cascade::GetMobiusBCurve(occtBCurve);
+    t_ptr<t_bcurve> mobiusBCurve = cascade::GetMobiusBCurve(occtBCurve);
     //
     bCurves.push_back(mobiusBCurve);
 
@@ -808,7 +808,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get skinned surface.
-  const mobius::ptr<mobius::bsurf>& mobiusRes = skinner.GetResult();
+  const t_ptr<t_bsurf>& mobiusRes = skinner.GetResult();
 
   /* ==========================================
    *  Convert interpolant to OpenCascade shape
@@ -913,12 +913,12 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
       return false;
 
     // Fill row of points.
-    std::vector<xyz> ptsRow;
+    std::vector<t_xyz> ptsRow;
     //
     for ( int i = 1; i <= numPts; ++i )
     {
       const double param = Defl.Parameter(i);
-      xyz P = cascade::GetMobiusPnt( bCurves[k]->Value(param) );
+      t_xyz P = cascade::GetMobiusPnt( bCurves[k]->Value(param) );
       //
       ptsRow.push_back(P);
     }
@@ -1101,34 +1101,34 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
   // Get points.
   Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
 
-  // Build average plane.
+  // Build average t_plane.
   gp_Pln resPln;
   //
   if ( isMobius )
   {
-    mobius::ptr<mobius::plane> mobPlane;
+    t_ptr<t_plane> mobPlane;
 
     // Prepare point cloud.
-    mobius::ptr<pcloud> mobPts = new mobius::pcloud( ptsCloud->GetCoords() );
+    t_ptr<t_pcloud> mobPts = new t_pcloud( ptsCloud->GetCoords() );
 
-    // Build average plane.
-    geom_BuildAveragePlane planeAlgo;
+    // Build average t_plane.
+    geom_BuildAveragePlane t_planeAlgo;
     //
-    if ( !planeAlgo.Build(mobPts, mobPlane) )
+    if ( !t_planeAlgo.Build(mobPts, mobPlane) )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build average plane.");
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build average t_plane.");
       return TCL_ERROR;
     }
 
-    resPln = mobius::cascade::GetOpenCascadePlane(mobPlane)->Pln();
+    resPln = cascade::GetOpenCascadePlane(mobPlane)->Pln();
   }
   else
   {
-    asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
+    asiAlgo_PlaneOnPoints t_planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
     //
-    if ( !planeOnPoints.Build(ptsCloud, resPln) )
+    if ( !t_planeOnPoints.Build(ptsCloud, resPln) )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average t_plane.");
       return TCL_ERROR;
     }
   }
@@ -1175,10 +1175,10 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_FairContourLines);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-cut-with-plane",
+  interp->AddCommand("re-cut-with-t_plane",
     //
-    "re-cut-with-plane res p [-nosort]\n"
-    "\t Cuts triangulation with plane. If '-nosort' key is passed, the"
+    "re-cut-with-t_plane res p [-nosort]\n"
+    "\t Cuts triangulation with t_plane. If '-nosort' key is passed, the"
     "\t resulting points are not post-processed with K-neighbors hull"
     "\t algorithm thus remaining disordered.",
     //
@@ -1225,10 +1225,10 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_CheckSurfDeviation);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-make-average-plane",
+  interp->AddCommand("re-make-average-t_plane",
     //
-    "re-make-average-plane res pointsName [-mobius]\n"
-    "\t Approximates the given point cloud with plane.",
+    "re-make-average-t_plane res pointsName [-mobius]\n"
+    "\t Approximates the given point cloud with t_plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);
 }

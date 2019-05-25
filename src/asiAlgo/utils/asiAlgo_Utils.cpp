@@ -1042,7 +1042,7 @@ bool asiAlgo_Utils::ReadStl(const TCollection_AsciiString& filename,
     return false;
 
   // Get the constructed mesh.
-  const mobius::ptr<mobius::poly_Mesh>& mesh = reader.GetResult();
+  const mobius::t_ptr<mobius::poly_Mesh>& mesh = reader.GetResult();
 
   // Convert to OpenCascade's mesh.
   mobius::cascade_Triangulation converter(mesh);
@@ -1078,7 +1078,7 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
     return false;
 
   // Get the constructed mesh.
-  const mobius::ptr<mobius::poly_Mesh>& mobMesh = reader.GetResult();
+  const mobius::t_ptr<mobius::poly_Mesh>& mobMesh = reader.GetResult();
 
   // ...
   // Convert to Active Data mesh.
@@ -2662,7 +2662,7 @@ bool asiAlgo_Utils::CalculateBendingEnergy(const Handle(Geom_Surface)& surface,
     occtSurf = Handle(Geom_BSplineSurface)::DownCast(surface);
 
   // Convert to Mobius.
-  mobius::ptr<mobius::bsurf>
+  mobius::t_ptr<mobius::t_bsurf>
     mobSurf = mobius::cascade::GetMobiusBSurface(occtSurf);
 
   // Evaluate bending energy.
@@ -3076,15 +3076,15 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
   const int degree = curve1->Degree();
 
   // Convert curve 1 to Mobius form.
-  const mobius::ptr<mobius::bcurve>&
+  const mobius::t_ptr<mobius::t_bcurve>&
     mobCurve1 = mobius::cascade::GetMobiusBCurve(curve1);
 
   // Convert curve 2 to Mobius form.
-  const mobius::ptr<mobius::bcurve>&
+  const mobius::t_ptr<mobius::t_bcurve>&
     mobCurve2 = mobius::cascade::GetMobiusBCurve(curve2);
 
   // Get common vector of poles.
-  std::vector<mobius::xyz> poles;
+  std::vector<mobius::t_xyz> poles;
   //
   for ( int k = 0; k < mobCurve1->GetNumOfPoles(); ++k )
     poles.push_back( mobCurve1->GetPole(k) );
@@ -3108,8 +3108,8 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
     // TODO: perform knot removal here...
   }
 
-  mobius::ptr<mobius::bcurve>
-    mobResult = new mobius::bcurve(poles, U, degree);
+  mobius::t_ptr<mobius::t_bcurve>
+    mobResult = new mobius::t_bcurve(poles, U, degree);
 
   // Convert result to OpenCascade form.
   result = mobius::cascade::GetOpenCascadeBCurve(mobResult);

@@ -62,6 +62,8 @@
 #ifdef USE_MOBIUS
   #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/cascade_BSplineSurface.h>
+
+  using namespace mobius;
 #endif
 
 // OCCT includes
@@ -686,9 +688,9 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
 
   // Only B-surfaces are allowed.
   Handle(Geom_BSplineSurface)
-    bsurf = Handle(Geom_BSplineSurface)::DownCast(surface);
+    t_bsurf = Handle(Geom_BSplineSurface)::DownCast(surface);
   //
-  if ( bsurf.IsNull() )
+  if ( t_bsurf.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Only B-surfaces are allowed in this function.");
     return TCL_OK;
@@ -698,10 +700,10 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
    *  Evaluate continuity
    * ===================== */
 
-  const TColStd_Array1OfReal&    uKnots = bsurf->UKnots();
-  const TColStd_Array1OfReal&    vKnots = bsurf->VKnots();
-  const TColStd_Array1OfInteger& uMults = bsurf->UMultiplicities();
-  const TColStd_Array1OfInteger& vMults = bsurf->VMultiplicities();
+  const TColStd_Array1OfReal&    uKnots = t_bsurf->UKnots();
+  const TColStd_Array1OfReal&    vKnots = t_bsurf->VKnots();
+  const TColStd_Array1OfInteger& uMults = t_bsurf->UMultiplicities();
+  const TColStd_Array1OfInteger& vMults = t_bsurf->VMultiplicities();
 
   // Draw U defects.
   for ( int i = 1; i <= uKnots.Length(); ++i )
@@ -711,7 +713,7 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
 
     if ( uMult > 1 )
     {
-      Handle(Geom_Curve) iso = bsurf->UIso(u);
+      Handle(Geom_Curve) iso = t_bsurf->UIso(u);
 
       TCollection_AsciiString isoName("mult=");
       isoName += uMult;
@@ -730,7 +732,7 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
 
     if ( vMult > 1 )
     {
-      Handle(Geom_Curve) iso = bsurf->VIso(v);
+      Handle(Geom_Curve) iso = t_bsurf->VIso(v);
 
       TCollection_AsciiString isoName("mult=");
       isoName += vMult;
@@ -1025,16 +1027,16 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius curve.
-    mobius::cascade_BSplineCurve converter(occtBCurve);
+    cascade_BSplineCurve converter(occtBCurve);
     converter.DirectConvert();
     //
-    const mobius::ptr<mobius::bcurve>&
+    const t_ptr<t_bcurve>&
       mobCurve = converter.GetMobiusCurve();
 
     // Evaluate.
     if ( order == 0 )
     {
-      mobius::xyz eval_P;
+      t_xyz eval_P;
       mobCurve->Eval(u, eval_P);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1051,10 +1053,10 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     }
     else if ( order == 1 )
     {
-      mobius::xyz eval_P;
+      t_xyz eval_P;
       mobCurve->Eval(u, eval_P);
       //
-      mobius::xyz eval_D1;
+      t_xyz eval_D1;
       mobCurve->Eval_Dk(u, 1, eval_D1);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1083,13 +1085,13 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     }
     else if ( order == 2 )
     {
-      mobius::xyz eval_P;
+      t_xyz eval_P;
       mobCurve->Eval(u, eval_P);
       //
-      mobius::xyz eval_D1;
+      t_xyz eval_D1;
       mobCurve->Eval_Dk(u, 1, eval_D1);
       //
-      mobius::xyz eval_D2;
+      t_xyz eval_D2;
       mobCurve->Eval_Dk(u, 2, eval_D2);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1130,16 +1132,16 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
     }
     else if ( order == 3 )
     {
-      mobius::xyz eval_P;
+      t_xyz eval_P;
       mobCurve->Eval(u, eval_P);
       //
-      mobius::xyz eval_D1;
+      t_xyz eval_D1;
       mobCurve->Eval_Dk(u, 1, eval_D1);
       //
-      mobius::xyz eval_D2;
+      t_xyz eval_D2;
       mobCurve->Eval_Dk(u, 2, eval_D2);
       //
-      mobius::xyz eval_D3;
+      t_xyz eval_D3;
       mobCurve->Eval_Dk(u, 3, eval_D3);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1397,16 +1399,16 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
     }
 
     // Convert to Mobius surface.
-    mobius::cascade_BSplineSurface converter(occtBSurface);
+    cascade_BSplineSurface converter(occtBSurface);
     converter.DirectConvert();
     //
-    const mobius::ptr<mobius::bsurf>&
+    const t_ptr<t_bsurf>&
       mobSurface = converter.GetMobiusSurface();
 
     // Evaluate.
     if ( order == 0 )
     {
-      mobius::xyz eval_P;
+      t_xyz eval_P;
       mobSurface->Eval(u, v, eval_P);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1423,7 +1425,7 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
     }
     else if ( order == 1 )
     {
-      mobius::xyz eval_P, eval_D1u, eval_D1v;
+      t_xyz eval_P, eval_D1u, eval_D1v;
       mobSurface->Eval_D1(u, v, eval_P, eval_D1u, eval_D1v);
       //
       interp->GetPlotter().REDRAW_POINT("eval_P",
@@ -1464,7 +1466,7 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
     }
     else if ( order == 2 )
     {
-      mobius::xyz eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv;
+      t_xyz eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv;
       mobSurface->Eval_D2(u, v, eval_P, eval_D1u, eval_D1v, eval_D2u, eval_D2v, eval_D2uv);
       //
       //
@@ -2197,12 +2199,12 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
   {
 #if defined USE_MOBIUS
     // Convert to Mobius surface.
-    mobius::cascade_BSplineSurface converter(occtSurf);
+    cascade_BSplineSurface converter(occtSurf);
     converter.DirectConvert();
     //
-    const mobius::ptr<mobius::bsurf>& mobSurf = converter.GetMobiusSurface();
+    const t_ptr<t_bsurf>& mobSurf = converter.GetMobiusSurface();
 
-    const mobius::xyz& mobP = mobSurf->GetPoles()[i][j];
+    const t_xyz& mobP = mobSurf->GetPoles()[i][j];
     //
     P.SetX( mobP.X() );
     P.SetY( mobP.Y() );
@@ -2748,29 +2750,29 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius B-surface.
-  mobius::ptr<mobius::bsurf>
-    mobSurf = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobSurf = cascade::GetMobiusBSurface(occtBSurface);
 
   // Set diagnostic tools.
-  mobius::ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
+  t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
   //
-  mobSurf->SetDiagnosticTools( NULL, mobius::core_PlotterEntry(ivMob) );
+  mobSurf->SetDiagnosticTools( NULL, core_PlotterEntry(ivMob) );
 
   // Invert point.
-  mobius::uv projUV;
+  t_uv projUV;
   //
-  if ( !mobSurf->InvertPoint(mobius::xyz(px, py, pz), projUV) )
+  if ( !mobSurf->InvertPoint(t_xyz(px, py, pz), projUV) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
     return TCL_ERROR;
   }
 
   // Evaluate surface for the obtained (u,v) coordinates.
-  mobius::xyz S;
+  t_xyz S;
   mobSurf->Eval(projUV.U(), projUV.V(), S);
   //
-  interp->GetPlotter().REDRAW_POINT("proj", mobius::cascade::GetOpenCascadePnt(S), Color_Green);
-  interp->GetPlotter().REDRAW_LINK("plink", gp_Pnt(px, py, pz), mobius::cascade::GetOpenCascadePnt(S), Color_Red);
+  interp->GetPlotter().REDRAW_POINT("proj", cascade::GetOpenCascadePnt(S), Color_Green);
+  interp->GetPlotter().REDRAW_LINK("plink", gp_Pnt(px, py, pz), cascade::GetOpenCascadePnt(S), Color_Red);
 
   // Dump the result to the notifier.
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."

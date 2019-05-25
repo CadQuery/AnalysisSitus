@@ -619,17 +619,17 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
    * ================== */
 
   // Get grid in Mobius form.
-  std::vector< std::vector<mobius::xyz> > mobGrid;
+  std::vector< std::vector<mobius::t_xyz> > mobGrid;
   //
   for ( size_t i = 0; i < uvGridNodesSparsed.size(); ++i )
   {
-    std::vector<mobius::xyz> isoPoints;
+    std::vector<mobius::t_xyz> isoPoints;
 
     for ( size_t j = 0; j < uvGridNodesSparsed[i].size(); ++j )
     {
-      isoPoints.push_back( mobius::xyz( uvGridNodesSparsed[i][j].xyz.X(),
-                                        uvGridNodesSparsed[i][j].xyz.Y(),
-                                        uvGridNodesSparsed[i][j].xyz.Z() ) );
+      isoPoints.push_back( mobius::t_xyz( uvGridNodesSparsed[i][j].xyz.X(),
+                                          uvGridNodesSparsed[i][j].xyz.Y(),
+                                          uvGridNodesSparsed[i][j].xyz.Z() ) );
     }
 
     mobGrid.push_back(isoPoints);
@@ -649,7 +649,7 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
   }
 
   // Get Mobius surface.
-  const mobius::ptr<mobius::bsurf>& mobSurf = interpSurf.GetResult();
+  const mobius::t_ptr<mobius::t_bsurf>& mobSurf = interpSurf.GetResult();
 
   // Convert to OpenCascade surface.
   mobius::cascade_BSplineSurface toOpenCascade(mobSurf);

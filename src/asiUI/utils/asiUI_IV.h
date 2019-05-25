@@ -802,12 +802,12 @@ public:
   //-------------------------------------------------------------------------//
 
   virtual void
-    DRAW_CURVE(const mobius::ptr<mobius::geom_Curve>& curve,
-               const mobius::core_Color&              color,
-               const std::string&                     name)
+    DRAW_CURVE(const mobius::t_ptr<mobius::geom_Curve>& curve,
+               const mobius::core_Color&                color,
+               const std::string&                       name)
   {
     // We can draw B-curves only.
-    mobius::ptr<mobius::bcurve> bc = mobius::ptr<mobius::bcurve>::DownCast(curve);
+    mobius::t_ptr<mobius::t_bcurve> bc = mobius::t_ptr<mobius::t_bcurve>::DownCast(curve);
     //
     if ( bc.IsNull() )
       return;
@@ -818,12 +818,12 @@ public:
   }
 
   virtual void
-    REDRAW_CURVE(const std::string&                     name,
-                 const mobius::ptr<mobius::geom_Curve>& curve,
-                 const mobius::core_Color&              color)
+    REDRAW_CURVE(const std::string&                       name,
+                 const mobius::t_ptr<mobius::geom_Curve>& curve,
+                 const mobius::core_Color&                color)
   {
     // We can draw B-curves only.
-    mobius::ptr<mobius::bcurve> bc = mobius::ptr<mobius::bcurve>::DownCast(curve);
+    mobius::t_ptr<mobius::t_bcurve> bc = mobius::t_ptr<mobius::t_bcurve>::DownCast(curve);
     //
     if ( bc.IsNull() )
       return;

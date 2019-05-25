@@ -67,9 +67,9 @@ public:
 public:
 
   cmdMisc_EXPORT static void
-    DrawSurfPts(const Handle(asiTcl_Interp)&             interp,
-                const mobius::ptr<mobius::geom_Surface>& surface,
-                const TCollection_AsciiString&           name);
+    DrawSurfPts(const Handle(asiTcl_Interp)&               interp,
+                const mobius::t_ptr<mobius::geom_Surface>& surface,
+                const TCollection_AsciiString&             name);
 #endif
 
 public:

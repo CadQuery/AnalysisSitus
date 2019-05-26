@@ -1147,7 +1147,7 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
                   int                          argc,
                   const char**                 argv)
 {
-  if ( argc != 4 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1164,14 +1164,18 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
   //
   TopoDS_Shape shape = partNode->GetShape();
 
+  // Whether to sample facets (alternatively, you may want to sample faces).
+  const bool onFacets = interp->HasKeyword(argc, argv, "facets");
+
   // Cloudify shape.
   Handle(asiAlgo_BaseCloud<double>) sampledPts;
   //
-  asiAlgo_Cloudify cloudify;
+  asiAlgo_Cloudify cloudify( std::min( atof(argv[2]), atof(argv[3]) ) );
   //
   cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
   //
-  if ( !cloudify.Sample_Faces(shape, sampledPts) )
+  if ( onFacets && !cloudify.Sample_Facets (shape, sampledPts) ||
+      !onFacets && !cloudify.Sample_Faces  (shape, sampledPts) )
   {
     interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
     return TCL_ERROR;
@@ -1279,7 +1283,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-sample-part",
     //
-    "re-sample-part res ustep vstep\n"
+    "re-sample-part res ustep vstep [-facets]\n"
     "\t Makes a point cloud by sampling CAD part.",
     //
     __FILE__, group, RE_SamplePart);

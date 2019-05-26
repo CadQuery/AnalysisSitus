@@ -3053,7 +3053,7 @@ int MISC_TestDist(const Handle(asiTcl_Interp)& interp,
   // Cloudify shape.
   Handle(asiAlgo_BaseCloud<double>) sampledPts;
   //
-  asiAlgo_Cloudify cloudify;
+  asiAlgo_Cloudify cloudify( std::min( atof(argv[2]), atof(argv[3]) ) );
   //
   cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
   //

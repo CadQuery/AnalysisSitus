@@ -43,7 +43,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! Utility to build a point cloud from a CAD model.
+//! Utility to build a point cloud by sampling a CAD model.
 class asiAlgo_Cloudify : public ActAPI_IAlgorithm
 {
 public:

@@ -32,6 +32,7 @@
 #include <cmdRE.h>
 
 // asiAlgo includes
+#include <asiAlgo_Cloudify.h>
 #include <asiAlgo_MeshInterPlane.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_PlateOnEdges.h>
@@ -1112,11 +1113,11 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     t_ptr<t_pcloud> mobPts = new t_pcloud( ptsCloud->GetCoords() );
 
     // Build average t_plane.
-    geom_BuildAveragePlane t_planeAlgo;
+    geom_BuildAveragePlane planeAlgo;
     //
-    if ( !t_planeAlgo.Build(mobPts, mobPlane) )
+    if ( !planeAlgo.Build(mobPts, mobPlane) )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build average t_plane.");
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot build average plane.");
       return TCL_ERROR;
     }
 
@@ -1124,17 +1125,60 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
   }
   else
   {
-    asiAlgo_PlaneOnPoints t_planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
+    asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
     //
-    if ( !t_planeOnPoints.Build(ptsCloud, resPln) )
+    if ( !planeOnPoints.Build(ptsCloud, resPln) )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average t_plane.");
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
       return TCL_ERROR;
     }
   }
 
   // Set the result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1], new Geom_Plane(resPln), Color_Default);
+
+  return TCL_OK;
+}
+
+
+//-----------------------------------------------------------------------------
+
+int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node to access the shape.
+  Handle(asiData_PartNode)
+    partNode = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Cloudify shape.
+  Handle(asiAlgo_BaseCloud<double>) sampledPts;
+  //
+  asiAlgo_Cloudify cloudify;
+  //
+  cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
+  //
+  if ( !cloudify.Sample_Faces(shape, sampledPts) )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
+    return TCL_ERROR;
+  }
+
+  // Set the result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], sampledPts->GetCoordsArray(), Color_Yellow);
 
   return TCL_OK;
 }
@@ -1225,10 +1269,18 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_CheckSurfDeviation);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-make-average-t_plane",
+  interp->AddCommand("re-make-average-plane",
     //
-    "re-make-average-t_plane res pointsName [-mobius]\n"
-    "\t Approximates the given point cloud with t_plane.",
+    "re-make-average-plane res pointsName [-mobius]\n"
+    "\t Approximates the given point cloud with a plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-sample-part",
+    //
+    "re-sample-part res ustep vstep\n"
+    "\t Makes a point cloud by sampling CAD part.",
+    //
+    __FILE__, group, RE_SamplePart);
 }

@@ -155,11 +155,6 @@ void asiUI_ControlsPart::onLoadFromBRep()
   m_notifier.StepProgress(1);
   m_notifier.SetMessageKey("Update accelerating structures");
 
-  // Clean up the Model
-  asiUI_CommonFacilities::ClearViewers(m_partViewer, NULL, NULL, true);
-  //
-  m_model->Clear();
-
   // Update part
   m_model->OpenCommand(); // tx start
   {

@@ -98,9 +98,9 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   }
   m_cf->Model->CommitCommand();
 
-  // Update the Node in Browser.
+  // Update Object Browser.
   if ( m_cf->ObjectBrowser )
-    m_cf->ObjectBrowser->UpdateSelectedNode();
+    m_cf->ObjectBrowser->Populate();
 
   // Actualize Node.
   m_cf->ActualizeNode( m_cf->ObjectBrowser->GetSelectedNode() );
@@ -142,142 +142,155 @@ bool asiUI_ParameterEditorListener::applyParameter(const int       pid,
   if ( P.IsNull() )
     return false;
 
+  // Callback for direct pre-treatment.
+  bool proceed = true;
+  this->beforeParameterChanged(N, pid, value, proceed);
+
   /* =======================================
    *  Process different types of Parameters
    * ======================================= */
 
-  // We do not check that the passed Parameter value is different from
-  // the existing one in case if Node is invalid. In such cases, the user may
-  // want to repeat the same input in order to fix invalidity. In other
-  // cases, we perform equality check in order to skip redundant changes.
-  const bool doForceUpdate = !N->IsValidData();
-
-  ActAPI_ParameterType paramType = (ActAPI_ParameterType) P->GetParamType();
-
-  /* Unicode string */
-
-  if ( paramType == Parameter_Name ) // UNICODE STRING Parameter.
+  if ( proceed ) // Callback above may decide that the default treatment should
+                 // not be done (e.g., when a modification of a Parameter in
+                 // the selected Node should actually result in a modification
+                 // of a completely different Node).
   {
-    Handle(ActData_NameParameter)
-      stringParam = Handle(ActData_NameParameter)::DownCast(P);
+    // We do not check that the passed Parameter value is different from
+    // the existing one in case if Node is invalid. In such cases, the user may
+    // want to repeat the same input in order to fix invalidity. In other
+    // cases, we perform equality check in order to skip redundant changes.
+    const bool doForceUpdate = !N->IsValidData();
 
-    TCollection_ExtendedString        str     = QStr2ExtStr( value.toString() );
-    const TCollection_ExtendedString& prevStr = stringParam->GetValue();
+    ActAPI_ParameterType paramType = (ActAPI_ParameterType) P->GetParamType();
 
-    // No need to do anything in case if nothing has been really changed.
-    if ( !doForceUpdate && str.IsEqual(prevStr) )
-      return false;
+    /* Unicode string */
 
-    stringParam->SetValue(str);
-  }
+    if ( paramType == Parameter_Name ) // UNICODE STRING Parameter.
+    {
+      Handle(ActData_NameParameter)
+        stringParam = Handle(ActData_NameParameter)::DownCast(P);
 
-  /* ASCII string */
+      TCollection_ExtendedString        str     = QStr2ExtStr( value.toString() );
+      const TCollection_ExtendedString& prevStr = stringParam->GetValue();
 
-  else if ( paramType == Parameter_AsciiString ) // ASCII STRING Parameter.
-  {
-    Handle(ActData_AsciiStringParameter)
-      stringParam = Handle(ActData_AsciiStringParameter)::DownCast(P);
+      // No need to do anything in case if nothing has been really changed.
+      if ( !doForceUpdate && str.IsEqual(prevStr) )
+        return false;
 
-    TCollection_AsciiString        str     = QStr2AsciiStr( value.toString() );
-    const TCollection_AsciiString& prevStr = stringParam->GetValue();
+      stringParam->SetValue(str);
+    }
 
-    // No need to do anything in case if nothing has been really changed.
-    if ( !doForceUpdate && str.IsEqual(prevStr) )
-      return false;
+    /* ASCII string */
 
-    stringParam->SetValue(str);
-  }
+    else if ( paramType == Parameter_AsciiString ) // ASCII STRING Parameter.
+    {
+      Handle(ActData_AsciiStringParameter)
+        stringParam = Handle(ActData_AsciiStringParameter)::DownCast(P);
 
-  /* Floating-point value */
+      TCollection_AsciiString        str     = QStr2AsciiStr( value.toString() );
+      const TCollection_AsciiString& prevStr = stringParam->GetValue();
 
-  else if ( paramType == Parameter_Real ) // REAL Parameter.
-  {
-    Handle(ActData_RealParameter)
-      realParam = Handle(ActData_RealParameter)::DownCast(P);
+      // No need to do anything in case if nothing has been really changed.
+      if ( !doForceUpdate && str.IsEqual(prevStr) )
+        return false;
 
-    const double dblValue  = value.toDouble();
-    const double prevValue = realParam->GetValue();
+      stringParam->SetValue(str);
+    }
 
-    // No need to do anything in case if nothing has been really changed.
-    if ( !doForceUpdate && (dblValue == prevValue) )
-      return false;
+    /* Floating-point value */
 
-    realParam->SetValue(dblValue);
-  }
+    else if ( paramType == Parameter_Real ) // REAL Parameter.
+    {
+      Handle(ActData_RealParameter)
+        realParam = Handle(ActData_RealParameter)::DownCast(P);
 
-  /* Boolean */
+      const double dblValue  = value.toDouble();
+      const double prevValue = realParam->GetValue();
 
-  else if ( paramType == Parameter_Bool ) // Boolean Parameter.
-  {
-    Handle(ActData_BoolParameter)
-      boolParam = Handle(ActData_BoolParameter)::DownCast(P);
+      // No need to do anything in case if nothing has been really changed.
+      if ( !doForceUpdate && (dblValue == prevValue) )
+        return false;
 
-    const bool bValue    = value.toBool();
-    const bool prevValue = boolParam->GetValue();
+      realParam->SetValue(dblValue);
+    }
 
-    // No need to do anything in case if nothing has been really changed.
-    if ( !doForceUpdate && (bValue == prevValue) )
-      return false;
+    /* Boolean */
 
-    boolParam->SetValue(bValue);
-  }
+    else if ( paramType == Parameter_Bool ) // Boolean Parameter.
+    {
+      Handle(ActData_BoolParameter)
+        boolParam = Handle(ActData_BoolParameter)::DownCast(P);
 
-  /* Integer */
+      const bool bValue    = value.toBool();
+      const bool prevValue = boolParam->GetValue();
 
-  else if ( paramType == Parameter_Int ) // Integer Parameter.
-  {
-    Handle(ActData_IntParameter)
-      intParam = Handle(ActData_IntParameter)::DownCast(P);
+      // No need to do anything in case if nothing has been really changed.
+      if ( !doForceUpdate && (bValue == prevValue) )
+        return false;
 
-    const int iValue    = value.toInt();
-    const int prevValue = intParam->GetValue();
+      boolParam->SetValue(bValue);
+    }
 
-    // No need to do anything in case if nothing has been really changed.
-    if ( !doForceUpdate && (iValue == prevValue) )
-      return false;
+    /* Integer */
 
-    intParam->SetValue(iValue);
-  }
+    else if ( paramType == Parameter_Int ) // Integer Parameter.
+    {
+      Handle(ActData_IntParameter)
+        intParam = Handle(ActData_IntParameter)::DownCast(P);
 
-  /* Time stamp */
+      const int iValue    = value.toInt();
+      const int prevValue = intParam->GetValue();
 
-  else if ( paramType == Parameter_TimeStamp )
-  {
-    Handle(ActData_TimeStampParameter)
-      timeParam = Handle(ActData_TimeStampParameter)::DownCast(P);
+      // No need to do anything in case if nothing has been really changed.
+      if ( !doForceUpdate && (iValue == prevValue) )
+        return false;
 
-    Handle(ActAux_TimeStamp)
-      tsVal = asiUI_Common::ToTimeStamp( value.toDateTime() );
-    //
-    Handle(ActAux_TimeStamp) tsValPrev = timeParam->GetValue();
+      intParam->SetValue(iValue);
+    }
 
-    if ( !doForceUpdate && !tsValPrev.IsNull() && tsVal->IsEqual(tsValPrev) )
-      return false;
+    /* Time stamp */
 
-    timeParam->SetValue(tsVal);
-  }
+    else if ( paramType == Parameter_TimeStamp )
+    {
+      Handle(ActData_TimeStampParameter)
+        timeParam = Handle(ActData_TimeStampParameter)::DownCast(P);
 
-  /* Reference */
+      Handle(ActAux_TimeStamp)
+        tsVal = asiUI_Common::ToTimeStamp( value.toDateTime() );
+      //
+      Handle(ActAux_TimeStamp) tsValPrev = timeParam->GetValue();
 
-  else if ( paramType == Parameter_Reference )
-  {
-    ActAPI_DataObjectId refNodeId = QStr2AsciiStr( value.toString() );
+      if ( !doForceUpdate && !tsValPrev.IsNull() && tsVal->IsEqual(tsValPrev) )
+        return false;
 
-    Handle(ActAPI_IDataCursor) refNode = m_cf->Model->FindNode(refNodeId);
+      timeParam->SetValue(tsVal);
+    }
 
-    if ( refNode.IsNull() )
-      N->DisconnectReference(pid);
+    /* Reference */
+
+    else if ( paramType == Parameter_Reference )
+    {
+      ActAPI_DataObjectId refNodeId = QStr2AsciiStr( value.toString() );
+
+      Handle(ActAPI_IDataCursor) refNode = m_cf->Model->FindNode(refNodeId);
+
+      if ( refNode.IsNull() )
+        N->DisconnectReference(pid);
+      else
+        N->ConnectReference(pid, refNode);
+    }
+
+    /* Unknown */
+
     else
-      N->ConnectReference(pid, refNode);
+      return false;
+
+    m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Parameter (pid '%1') changed (new value is '%2')."
+                                                   << pid << QStr2AsciiStr( value.toString() ) );
   }
 
-  /* Unknown */
-
-  else
-    return false;
-
-  m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Parameter (pid '%1') changed (new value is '%2')."
-                                                 << pid << QStr2AsciiStr( value.toString() ) );
+  // Callback for direct post-treatment.
+  this->afterParameterChanged(N, pid);
 
   // Notify listeners.
   emit parameterStored();

@@ -40,6 +40,7 @@ set (controls_H_UI_FILES
   controls/asiUI_ParameterEditor.h
   controls/asiUI_ParameterEditorDelegate.h
   controls/asiUI_ParameterEditorListener.h
+  controls/asiUI_ParameterEditorListenerDefault.h
   controls/asiUI_ParameterEditorView.h
   controls/asiUI_StatusBar.h
   controls/asiUI_StyledTextEdit.h
@@ -63,6 +64,7 @@ set (controls_CPP_FILES
   controls/asiUI_ParameterEditor.cpp
   controls/asiUI_ParameterEditorDelegate.cpp
   controls/asiUI_ParameterEditorListener.cpp
+  controls/asiUI_ParameterEditorListenerDefault.cpp
   controls/asiUI_ParameterEditorItem.cpp
   controls/asiUI_ParameterEditorView.cpp
   controls/asiUI_StatusBar.cpp

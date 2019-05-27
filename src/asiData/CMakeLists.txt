@@ -29,9 +29,11 @@ set (part_H_FILES
   part/asiData_CurvatureCombsNode.h
   part/asiData_CurveNode.h
   part/asiData_EdgeNode.h
+  part/asiData_ElemMetadataNode.h
   part/asiData_FaceContourNode.h
   part/asiData_FaceNode.h
   part/asiData_FaceNormsNode.h
+  part/asiData_MetadataNode.h
   part/asiData_NamingAttr.h
   part/asiData_NamingParameter.h
   part/asiData_PartNode.h
@@ -50,9 +52,11 @@ set (part_CPP_FILES
   part/asiData_CurvatureCombsNode.cpp
   part/asiData_CurveNode.cpp
   part/asiData_EdgeNode.cpp
+  part/asiData_ElemMetadataNode.cpp
   part/asiData_FaceContourNode.cpp
   part/asiData_FaceNode.cpp
   part/asiData_FaceNormsNode.cpp
+  part/asiData_MetadataNode.cpp
   part/asiData_NamingAttr.cpp
   part/asiData_NamingParameter.cpp
   part/asiData_PartNode.cpp

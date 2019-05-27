@@ -205,8 +205,89 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
     geom_n->AddChildNode(tolshapes_n);
   }
 
+  // Create underlying Metadata Node
+  this->CreateMetadata();
+
   // Return the just created Node
   return geom_n;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Creates metadata holder.
+//! \return Metadata Node.
+Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
+{
+  Handle(ActAPI_INode) metadata_base = asiData_MetadataNode::Instance();
+  m_model->GetMetadataPartition()->AddNode(metadata_base);
+
+  // Initialize
+  Handle(asiData_MetadataNode)
+    metadata_n = Handle(asiData_MetadataNode)::DownCast(metadata_base);
+  //
+  metadata_n->Init();
+  metadata_n->SetName("Metadata");
+
+  // Set as child for the Part Node
+  m_model->GetPartNode()->AddChildNode(metadata_n);
+
+  return metadata_n;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds or creates elemental metadata for the passed shape which is normally
+//! a sub-shape of the part shape.
+//! \param[in] shape  sub-shape in question.
+//! \param[in] create whether to create the metadata element if it does not exist.
+//! \return newly created metadata element.
+Handle(asiData_ElemMetadataNode)
+  asiEngine_Part::FindElemMetadata(const TopoDS_Shape& shape,
+                                   const bool          create)
+{
+  // Get the parent metadata.
+  Handle(asiData_MetadataNode) metadata_n = m_model->GetMetadataNode();
+  //
+  if ( metadata_n.IsNull() || !metadata_n->IsWellFormed() )
+    return NULL;
+
+  // Iterate over the existing metadata elements to find one for the
+  // requested shape.
+  Handle(asiData_ElemMetadataNode) metadataElem_n;
+  for ( ActData_BasePartition::Iterator it( m_model->GetElemMetadataPartition() ); it.More(); it.Next() )
+  {
+    Handle(asiData_ElemMetadataNode)
+      N = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
+    //
+    if ( N.IsNull() || !N->IsWellFormed() )
+      continue;
+
+    if ( N->GetShape().IsPartner(shape) )
+    {
+      metadataElem_n = N;
+      break;
+    }
+  }
+
+  // Create if requested.
+  if ( metadataElem_n.IsNull() && create )
+  {
+    metadataElem_n = Handle(asiData_ElemMetadataNode)::DownCast( asiData_ElemMetadataNode::Instance() );
+    m_model->GetElemMetadataPartition()->AddNode(metadataElem_n);
+
+    // Prepare name.
+    std::string nodeName("Element "); nodeName += asiAlgo_Utils::ShapeTypeStr(shape);
+
+    // Initialize.
+    metadataElem_n->Init();
+    metadataElem_n->SetName( nodeName.c_str() );
+    metadataElem_n->SetShape( shape );
+
+    // Set as child for the Metadata Node and return.
+    metadata_n->AddChildNode(metadataElem_n);
+  }
+
+  return metadataElem_n;
 }
 
 //-----------------------------------------------------------------------------
@@ -343,6 +424,28 @@ void asiEngine_Part::Clean()
   asiEngine_TolerantShapes tolApi(m_model, m_prsMgr, m_progress, m_plotter);
   //
   tolApi.Clean_All();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Accessor for a transient pointer to a B-Rep face by its one-based index.
+//! \param[in] oneBasedGlobalId one-based global index of a face to access.
+//! \return transient pointer to a face.
+TopoDS_Face asiEngine_Part::GetFace(const int oneBasedGlobalId)
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return TopoDS_Face();
+
+  // Get AAG.
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
+  //
+  if ( aag.IsNull() )
+    return TopoDS_Face();
+
+  return TopoDS::Face( aag->RequestMapOfSubShapes()(oneBasedGlobalId) );
 }
 
 //-----------------------------------------------------------------------------

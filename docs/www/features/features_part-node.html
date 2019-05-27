@@ -20,6 +20,7 @@
  </head>
 <body>
 
+<table><tr><td>
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
   <td align="left" class="header">
@@ -38,6 +39,7 @@
   <td class="header-menu"><a href="../references.html">References</a></td>
 </tr>
 </table>
+</td></tr></table>
 
 <h1>Part Node</h1>
 
@@ -46,10 +48,22 @@ The entire workflow in Analysis Situs is built around the Part Node which is the
 representing the CAD model in question. By convention, there is only one Part Node in the application.
 Such a convention allows to reduce the number of arguments in the provided Tcl commands: if no object
 is specified explicitly, it is always assumed that the command will apply to the Part Node. Basically,
-Analysis Situs was designed as a Part analysis tool, so all other objects used in the software can be
-seen as auxiliary or complementary entities (in contrast to Assembly design utilities which would
-allow working with several Parts).
+Analysis Situs was designed as a <i>part analysis</i> tool, so all other objects used in the software can be
+seen as auxiliary or complementary entities (in contrast to the <i>assembly design</i> utilities which would
+allow working with several parts).
 </p>
+
+<h2>Metadata</h2>
+
+<p>
+Metadata is a piece of extra information which can be attached to the boundary elements of a part, such as
+its faces, edges or vertices. For example, to give face a dedicated color, you have a prepare a metadata
+object which will maintain the (r,g,b) components of that color. The metadata chunks are available in
+the corresponding branch of the Part Node. You have as many Nodes in this branch as many boundary elements
+are attached to some metadata.
+</p>
+
+<div align="center"><img src="../imgs/situ_part_node_01.png"/></div>
 
 </body>
 </html>

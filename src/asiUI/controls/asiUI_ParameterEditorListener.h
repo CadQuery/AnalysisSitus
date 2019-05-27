@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 #ifndef asiUI_ParameterEditorListener_h
-#define asiUI_ParameterEditorPartListener_h
+#define asiUI_ParameterEditorListener_h
 
 // asiUI includes
 #include <asiUI_CommonFacilities.h>
@@ -42,7 +42,8 @@
 
 //-----------------------------------------------------------------------------
 
-//! Default slots for parameter editor.
+//! Basic slots for parameter editor. This class is responsible for performing
+//! the Data Model modification.
 class asiUI_EXPORT asiUI_ParameterEditorListener : public QObject
 {
   Q_OBJECT
@@ -87,6 +88,43 @@ protected:
   //! \return true in case of success, false -- otherwise.
   virtual bool
     applyParameter(const int pid, const QVariant& value);
+
+  //! Callback invoked by the base class of listener before the Data Model
+  //! is modified. The derived classes can override this method to provide
+  //! their custom pre-threatment. At this stage, it is possible to return
+  //! false in case if the default Data Model modification should not be done.
+  //! \param[in]  N              Data Node which has been modified.
+  //! \param[in]  pid            local ID of a Parameter which has been modified.
+  //! \param[in]  value          new value of the modified parameter.
+  //! \param[out] proceedDefault false if the derived class wants to avoid the
+  //!                            default treatment, true -- if the derived
+  //!                            class is Ok that the base class continues
+  //!                            its job.
+  virtual void
+    beforeParameterChanged(const Handle(ActAPI_INode)& N,
+                           const int                   pid,
+                           const QVariant&             value,
+                           bool&                       proceedDefault)
+  {
+    asiUI_NotUsed(N);
+    asiUI_NotUsed(pid);
+    asiUI_NotUsed(value);
+    asiUI_NotUsed(proceedDefault);
+  }
+
+  //! Callback invoked by the base class of listener once the Data Model
+  //! is modified. The derived classes can override this method to provide
+  //! their custom post-threatment. At this stage, since the Data Model
+  //! is modified, the overridden method may consult OCAF directly.
+  //! \param[in] N   Data Node which has been modified.
+  //! \param[in] pid local ID of a Parameter which has been modified.
+  virtual void
+    afterParameterChanged(const Handle(ActAPI_INode)& N,
+                          const int                   pid)
+  {
+    asiUI_NotUsed(N);
+    asiUI_NotUsed(pid);
+  }
 
 protected:
 

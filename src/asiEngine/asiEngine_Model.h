@@ -54,6 +54,7 @@
 #include <asiData_IVTextNode.h>
 #include <asiData_IVTopoItemNode.h>
 #include <asiData_IVTopoNode.h>
+#include <asiData_MetadataNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
 #include <asiData_ReCoEdgeNode.h>
@@ -80,8 +81,8 @@
 //! standard implementation answers many typical needs related to analysis.
 //! However, in the prototyping scope you normally need something more.
 //! If the basic data model is not enough, you may either extend it with your
-//! custom Data Nodes or implement a brand new one. In the latter case you
-//! cannot use some handy services from the Engine package (e.g.
+//! custom Data Nodes or implement a brand new one. In the latter case, you
+//! will not be able to use some handy services from the Engine package (e.g.,
 //! initialization of Part Nodes).
 class asiEngine_Model : public ActData_BaseModel
 {
@@ -111,6 +112,9 @@ public:
 
   asiEngine_EXPORT Handle(asiData_PartNode)
     GetPartNode() const;
+
+  asiEngine_EXPORT Handle(asiData_MetadataNode)
+    GetMetadataNode() const;
 
   asiEngine_EXPORT Handle(asiData_TriangulationNode)
     GetTriangulationNode() const;
@@ -153,6 +157,20 @@ public:
   Handle(asiData_Partition<asiData_PartNode>) GetPartPartition() const
   {
     return Handle(asiData_Partition<asiData_PartNode>)::DownCast( this->Partition(Partition_Part) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Metadata Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_MetadataNode>) GetMetadataPartition() const
+  {
+    return Handle(asiData_Partition<asiData_MetadataNode>)::DownCast( this->Partition(Partition_Metadata) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Element Metadata Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_ElemMetadataNode>) GetElemMetadataPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ElemMetadataNode>)::DownCast( this->Partition(Partition_ElemMetadata) );
   }
 
   //! Accessor for a Partition instance dedicated to Face Nodes.
@@ -491,6 +509,8 @@ protected:
     Partition_Root,
   //---------------------------------------------------------------------------
     Partition_Part,
+    Partition_Metadata,
+    Partition_ElemMetadata,
     Partition_Face,
     Partition_FaceNorms,
     Partition_FaceContour,

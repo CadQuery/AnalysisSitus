@@ -72,6 +72,13 @@ public:
   asiEngine_EXPORT Handle(asiData_PartNode)
     CreatePart();
 
+  asiEngine_EXPORT Handle(asiData_MetadataNode)
+    CreateMetadata();
+
+  asiEngine_EXPORT Handle(asiData_ElemMetadataNode)
+    FindElemMetadata(const TopoDS_Shape& shape,
+                     const bool          create = false);
+
   asiEngine_EXPORT Handle(asiData_PartNode)
     Update(const TopoDS_Shape& model,
            const bool          doResetTessParams = false);
@@ -84,6 +91,9 @@ public:
 
   asiEngine_EXPORT void
     Clean();
+
+  asiEngine_EXPORT TopoDS_Face
+    GetFace(const int oneBasedGlobalId);
 
   asiEngine_EXPORT TopoDS_Shape
     GetShape();

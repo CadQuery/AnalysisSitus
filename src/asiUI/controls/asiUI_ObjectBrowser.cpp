@@ -112,6 +112,10 @@ void asiUI_ObjectBrowser::SetParameterEditor(const Handle(asiUI_IParamEditor)& e
 
 void asiUI_ObjectBrowser::Populate()
 {
+  // Get selected Node (if any).
+  Handle(ActAPI_INode) selN;
+  this->selectedNode(selN);
+
   // Clean up the existing contents.
   this->clear();
 
@@ -135,6 +139,10 @@ void asiUI_ObjectBrowser::Populate()
 
   // Expand tree.
   this->expandAll();
+
+  // Reselect Node.
+  if ( !selN.IsNull() )
+    this->SetSelectedNode( selN->GetId() );
 }
 
 //-----------------------------------------------------------------------------

@@ -38,6 +38,7 @@
 // asiUI includes
 #include <asiUI_Common.h>
 #include <asiUI_ParamEditorImpl.h>
+#include <asiUI_ParameterEditorListenerDefault.h>
 #include <asiUI_StatusBar.h>
 #include <asiUI_StatusBarImpl.h>
 
@@ -347,7 +348,7 @@ void exe_MainWindow::createDockWindows()
                                                        cf->Plotter);
 
   // Listener for parameter editor.
-  Listeners.pParamEditor = new asiUI_ParameterEditorListener(cf);
+  Listeners.pParamEditor = new asiUI_ParameterEditorListenerDefault(cf);
 
   // Signals-slots.
   Listeners.pControlsAnalysis ->Connect();

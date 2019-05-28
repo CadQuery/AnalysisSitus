@@ -293,6 +293,9 @@ set (sources_H_FILES
   sources/asiVisu_PCurveSource.h
   sources/asiVisu_PDomainSource.h
   sources/asiVisu_PointsSource.h
+  sources/asiVisu_ShapeColorSource.h
+  sources/asiVisu_ShapeColorSourceAAG.h
+  sources/asiVisu_ShapeColorSourceMeta.h
   sources/asiVisu_ShapeData.h
   sources/asiVisu_ShapeRobustSource.h
   sources/asiVisu_ShapeRobustTessellator.h

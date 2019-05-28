@@ -32,6 +32,7 @@
 #define asiVisu_ShapeRobustTessellator_h
 
 // asiVisu includes
+#include <asiVisu_ShapeColorSource.h>
 #include <asiVisu_ShapeData.h>
 
 // asiAlgo includes
@@ -149,18 +150,20 @@ public:
 public:
 
   asiVisu_EXPORT void
-    Initialize(const Handle(asiAlgo_AAG)& aag,
-               const double               linearDeflection = 0,
-               const double               angularDeflection_deg = 0,
-               ActAPI_ProgressEntry       progress = NULL,
-               ActAPI_PlotterEntry        plotter  = NULL);
+    Initialize(const Handle(asiAlgo_AAG)&              aag,
+               const double                            linearDeflection = 0,
+               const double                            angularDeflection_deg = 0,
+               const Handle(asiVisu_ShapeColorSource)& colorSource = NULL,
+               ActAPI_ProgressEntry                    progress = NULL,
+               ActAPI_PlotterEntry                     plotter  = NULL);
 
   asiVisu_EXPORT void
-    Initialize(const TopoDS_Shape&  shape,
-               const double         linearDeflection = 0,
-               const double         angularDeflection_deg = 0,
-               ActAPI_ProgressEntry progress = NULL,
-               ActAPI_PlotterEntry  plotter  = NULL);
+    Initialize(const TopoDS_Shape&                     shape,
+               const double                            linearDeflection = 0,
+               const double                            angularDeflection_deg = 0,
+               const Handle(asiVisu_ShapeColorSource)& colorSource = NULL,
+               ActAPI_ProgressEntry                    progress = NULL,
+               ActAPI_PlotterEntry                     plotter  = NULL);
 
 public:
 
@@ -204,10 +207,11 @@ public:
 protected:
 
   asiVisu_EXPORT void
-    internalInit(const double         linearDeflection,
-                 const double         angularDeflection_deg,
-                 ActAPI_ProgressEntry progress,
-                 ActAPI_PlotterEntry  plotter);
+    internalInit(const double                            linearDeflection,
+                 const double                            angularDeflection_deg,
+                 const Handle(asiVisu_ShapeColorSource)& colorSource,
+                 ActAPI_ProgressEntry                    progress,
+                 ActAPI_PlotterEntry                     plotter);
 
   asiVisu_EXPORT virtual void
     internalBuild();
@@ -253,14 +257,15 @@ protected:
 
 protected:
 
-  double                    m_fGlobalBndDiag;    //!< Diagonal of AABB for calibration.
-  Handle(asiAlgo_AAG)       m_aag;               //!< AAG to access the topological elements.
-  TopoDS_Shape              m_shape;             //!< Input shape.
-  Handle(asiVisu_ShapeData) m_data;              //!< Visualization data.
-  double                    m_fLinDeflection;    //!< Linear deflection.
-  double                    m_fAngDeflectionDeg; //!< Angular deflection.
-  ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
-  ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
+  double                           m_fGlobalBndDiag;    //!< Diagonal of AABB for calibration.
+  Handle(asiAlgo_AAG)              m_aag;               //!< AAG to access the topological elements.
+  TopoDS_Shape                     m_shape;             //!< Input shape.
+  Handle(asiVisu_ShapeData)        m_data;              //!< Visualization data.
+  double                           m_fLinDeflection;    //!< Linear deflection.
+  double                           m_fAngDeflectionDeg; //!< Angular deflection.
+  Handle(asiVisu_ShapeColorSource) m_colorSource;       //!< Interface to access colors of sub-shapes.
+  ActAPI_ProgressEntry             m_progress;          //!< Progress notifier.
+  ActAPI_PlotterEntry              m_plotter;           //!< Imperative plotter.
 
   //! Scalars generator for coloring.
   t_colorScalarGenerator* m_pScalarGen;

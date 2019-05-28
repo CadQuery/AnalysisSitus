@@ -240,7 +240,7 @@ Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 //! a sub-shape of the part shape.
 //! \param[in] shape  sub-shape in question.
 //! \param[in] create whether to create the metadata element if it does not exist.
-//! \return newly created metadata element.
+//! \return found or newly created metadata element.
 Handle(asiData_ElemMetadataNode)
   asiEngine_Part::FindElemMetadata(const TopoDS_Shape& shape,
                                    const bool          create)
@@ -251,23 +251,9 @@ Handle(asiData_ElemMetadataNode)
   if ( metadata_n.IsNull() || !metadata_n->IsWellFormed() )
     return NULL;
 
-  // Iterate over the existing metadata elements to find one for the
-  // requested shape.
-  Handle(asiData_ElemMetadataNode) metadataElem_n;
-  for ( ActData_BasePartition::Iterator it( m_model->GetElemMetadataPartition() ); it.More(); it.Next() )
-  {
-    Handle(asiData_ElemMetadataNode)
-      N = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
-    //
-    if ( N.IsNull() || !N->IsWellFormed() )
-      continue;
-
-    if ( N->GetShape().IsPartner(shape) )
-    {
-      metadataElem_n = N;
-      break;
-    }
-  }
+  // Find metadata element for the requested shape.
+  Handle(asiData_ElemMetadataNode)
+    metadataElem_n = metadata_n->FindElemMetadata(shape);
 
   // Create if requested.
   if ( metadataElem_n.IsNull() && create )
@@ -283,8 +269,12 @@ Handle(asiData_ElemMetadataNode)
     metadataElem_n->SetName( nodeName.c_str() );
     metadataElem_n->SetShape( shape );
 
-    // Set as child for the Metadata Node and return.
+    // Set as child for the Metadata Node.
     metadata_n->AddChildNode(metadataElem_n);
+
+    // Add reference in the part Node.
+    m_model->GetPartNode()->ConnectReferenceToList(asiData_PartNode::PID_MetadataElems,
+                                                   metadataElem_n);
   }
 
   return metadataElem_n;

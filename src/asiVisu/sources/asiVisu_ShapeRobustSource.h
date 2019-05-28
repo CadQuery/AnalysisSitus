@@ -66,6 +66,12 @@ public:
     GetAAG() const;
 
   asiVisu_EXPORT void
+    SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource);
+
+  asiVisu_EXPORT const Handle(asiVisu_ShapeColorSource)&
+    GetColorSource() const;
+
+  asiVisu_EXPORT void
     SetShape(const TopoDS_Shape& shape);
 
   asiVisu_EXPORT const TopoDS_Shape&
@@ -111,13 +117,14 @@ private:
 
 protected:
 
-  Handle(asiAlgo_AAG)       m_aag;               //!< (Optional) AAG of the original B-Rep shape.
-  TopoDS_Shape              m_shape;             //!< Original B-Rep shape.
-  Handle(asiVisu_ShapeData) m_shapeData;         //!< Polygonal data container.
-  double                    m_fLinDeflection;    //!< Linear deflection.
-  double                    m_fAngDeflectionDeg; //!< Angular deflection.
-  ActAPI_ProgressEntry      m_progress;          //!< Progress notifier.
-  ActAPI_PlotterEntry       m_plotter;           //!< Imperative plotter.
+  Handle(asiAlgo_AAG)              m_aag;               //!< (Optional) AAG of the original B-Rep shape.
+  TopoDS_Shape                     m_shape;             //!< Original B-Rep shape.
+  Handle(asiVisu_ShapeData)        m_shapeData;         //!< Polygonal data container.
+  double                           m_fLinDeflection;    //!< Linear deflection.
+  double                           m_fAngDeflectionDeg; //!< Angular deflection.
+  Handle(asiVisu_ShapeColorSource) m_colorSource;       //!< Source for colors of sub-shapes.
+  ActAPI_ProgressEntry             m_progress;          //!< Progress notifier.
+  ActAPI_PlotterEntry              m_plotter;           //!< Imperative plotter.
 
   //! Tessellator for convering B-Rep shape to visualization facets.
   vtkSmartPointer<asiVisu_ShapeRobustTessellator> m_tessellator;

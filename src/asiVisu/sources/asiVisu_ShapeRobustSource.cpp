@@ -80,6 +80,24 @@ const Handle(asiAlgo_AAG)& asiVisu_ShapeRobustSource::GetAAG() const
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_ShapeRobustSource::SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource)
+{
+  m_colorSource = colorSource;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return shape color source.
+const Handle(asiVisu_ShapeColorSource)&
+  asiVisu_ShapeRobustSource::GetColorSource() const
+{
+  return m_colorSource;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_ShapeRobustSource::SetShape(const TopoDS_Shape& shape)
 {
   m_aag.Nullify();
@@ -162,12 +180,14 @@ int asiVisu_ShapeRobustSource::RequestData(vtkInformation*        pInfo,
     m_tessellator->Initialize(m_shape,
                               m_fLinDeflection,
                               m_fAngDeflectionDeg,
+                              m_colorSource,
                               m_progress,
                               m_plotter);
   else
     m_tessellator->Initialize(m_aag,
                               m_fLinDeflection,
                               m_fAngDeflectionDeg,
+                              m_colorSource,
                               m_progress,
                               m_plotter);
   m_tessellator->Build();

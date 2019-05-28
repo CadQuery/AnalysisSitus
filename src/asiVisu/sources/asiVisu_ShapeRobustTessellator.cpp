@@ -96,18 +96,24 @@ asiVisu_ShapeRobustTessellator::~asiVisu_ShapeRobustTessellator()
 //! \param[in] aag                   AAG.
 //! \param[in] linearDeflection      linear deflection.
 //! \param[in] angularDeflection_deg angular deflection in degrees.
+//! \param[in] colorSource           color source for sub-shapes.
 //! \param[in] progress              progress notifier.
 //! \param[in] plotter               imperative plotter.
-void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
-                                                const double               linearDeflection,
-                                                const double               angularDeflection_deg,
-                                                ActAPI_ProgressEntry       progress,
-                                                ActAPI_PlotterEntry        plotter)
+void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)&              aag,
+                                                const double                            linearDeflection,
+                                                const double                            angularDeflection_deg,
+                                                const Handle(asiVisu_ShapeColorSource)& colorSource,
+                                                ActAPI_ProgressEntry                    progress,
+                                                ActAPI_PlotterEntry                     plotter)
 {
   m_aag   = aag;
   m_shape = m_aag->GetMasterCAD();
   //
-  this->internalInit(linearDeflection, angularDeflection_deg, progress, plotter);
+  this->internalInit(linearDeflection,
+                     angularDeflection_deg,
+                     colorSource,
+                     progress,
+                     plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -116,18 +122,24 @@ void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)& aag,
 //! \param[in] shape                 shape.
 //! \param[in] linearDeflection      linear deflection.
 //! \param[in] angularDeflection_deg angular deflection in degrees.
+//! \param[in] colorSource           color source for sub-shapes.
 //! \param[in] progress              progress notifier.
 //! \param[in] plotter               imperative plotter.
-void asiVisu_ShapeRobustTessellator::Initialize(const TopoDS_Shape&  shape,
-                                                const double         linearDeflection,
-                                                const double         angularDeflection_deg,
-                                                ActAPI_ProgressEntry progress,
-                                                ActAPI_PlotterEntry  plotter)
+void asiVisu_ShapeRobustTessellator::Initialize(const TopoDS_Shape&                     shape,
+                                                const double                            linearDeflection,
+                                                const double                            angularDeflection_deg,
+                                                const Handle(asiVisu_ShapeColorSource)& colorSource,
+                                                ActAPI_ProgressEntry                    progress,
+                                                ActAPI_PlotterEntry                     plotter)
 {
   m_aag.Nullify();
   m_shape = shape;
   //
-  this->internalInit(linearDeflection, angularDeflection_deg, progress, plotter);
+  this->internalInit(linearDeflection,
+                     angularDeflection_deg,
+                     colorSource,
+                     progress,
+                     plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -140,13 +152,15 @@ void asiVisu_ShapeRobustTessellator::Build()
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeRobustTessellator::internalInit(const double         linearDeflection,
-                                                  const double         angularDeflection_deg,
-                                                  ActAPI_ProgressEntry progress,
-                                                  ActAPI_PlotterEntry  plotter)
+void asiVisu_ShapeRobustTessellator::internalInit(const double                            linearDeflection,
+                                                  const double                            angularDeflection_deg,
+                                                  const Handle(asiVisu_ShapeColorSource)& colorSource,
+                                                  ActAPI_ProgressEntry                    progress,
+                                                  ActAPI_PlotterEntry                     plotter)
 {
-  m_progress = progress;
-  m_plotter  = plotter;
+  m_colorSource = colorSource;
+  m_progress    = progress;
+  m_plotter     = plotter;
 
   // Set linear deflection
   if ( Abs(linearDeflection) < asiAlgo_TooSmallValue )
@@ -453,23 +467,16 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
 int asiVisu_ShapeRobustTessellator::getFaceScalar(const int                    faceId,
                                                   const asiVisu_ShapePrimitive defaultType) const
 {
-  if ( m_aag.IsNull() )
-    return defaultType; // Null check.
-
-  Handle(asiAlgo_FeatureAttr)
-    attrBase = m_aag->GetNodeAttribute( faceId, asiAlgo_AttrFaceColor::GUID() );
-  //
-  if ( attrBase.IsNull() )
+  if ( m_colorSource.IsNull() ) // Null check.
     return defaultType;
 
   // Get color.
-  unsigned urgb[3];
-  Handle(asiAlgo_AttrFaceColor)::DownCast(attrBase)->GetColor(urgb[0], urgb[1], urgb[2]);
+  const int color = m_colorSource->GetFaceColor(faceId);
+  //
+  if ( color == -1 )
+    return defaultType;
 
-  // Convert color to integer.
-  const int color = asiVisu_Utils::ColorToInt(urgb);
-
-  // Get scalar for color.
+  // Convert color to scalar.
   const int scalar = m_pScalarGen->GetScalar(color);
   return scalar;
 }

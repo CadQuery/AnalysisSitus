@@ -41,6 +41,7 @@
 #include <asiData_FaceContourNode.h>
 #include <asiData_FaceNode.h>
 #include <asiData_FaceNormsNode.h>
+#include <asiData_MetadataNode.h>
 #include <asiData_NamingParameter.h>
 #include <asiData_SurfNode.h>
 #include <asiData_VertexNode.h>
@@ -96,6 +97,10 @@ public:
     PID_HasColor,         //!< Indicates whether the Color Parameter is active.
     PID_Color,            //!< Color.
     PID_HasVertices,      //!< Indicates whether vertices are active.
+  //----------------------//
+  // References           //
+  //----------------------//
+    PID_MetadataElems,    //!< Metadata elements.
   //----------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -211,6 +216,9 @@ public:
 
   asiData_EXPORT Handle(asiData_TolerantShapesNode)
     GetTolerantShapes() const;
+
+  asiData_EXPORT Handle(asiData_MetadataNode)
+    GetMetadata() const;
 
 // Initialization:
 public:

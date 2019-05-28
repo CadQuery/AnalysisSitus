@@ -31,6 +31,9 @@
 // Own include
 #include <asiVisu_PartDataProvider.h>
 
+// asiVisu includes
+#include <asiVisu_ShapeColorSourceMeta.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -47,7 +50,9 @@ asiVisu_PartDataProvider::asiVisu_PartDataProvider()
 //! \param partNode [in] Part Node.
 asiVisu_PartDataProvider::asiVisu_PartDataProvider(const Handle(asiData_PartNode)& partNode)
 : asiVisu_DataProvider(), m_node(partNode)
-{}
+{
+  m_colorSource = new asiVisu_ShapeColorSourceMeta( m_node->GetMetadata() );
+}
 
 //-----------------------------------------------------------------------------
 
@@ -101,6 +106,13 @@ double asiVisu_PartDataProvider::GetAngularDeflection() const
 
 //-----------------------------------------------------------------------------
 
+Handle(asiVisu_ShapeColorSource) asiVisu_PartDataProvider::GetColorSource() const
+{
+  return m_colorSource;
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return copy.
 Handle(asiVisu_PartDataProvider) asiVisu_PartDataProvider::Clone() const
 {
@@ -119,7 +131,8 @@ Handle(ActAPI_HParameterList) asiVisu_PartDataProvider::translationSources() con
   params << m_node->Parameter(asiData_PartNode::PID_Geometry)
          << m_node->Parameter(asiData_PartNode::PID_AAG)
          << m_node->Parameter(asiData_PartNode::PID_TessLinDefl)
-         << m_node->Parameter(asiData_PartNode::PID_TessAngDefl);
+         << m_node->Parameter(asiData_PartNode::PID_TessAngDefl)
+         << m_node->Parameter(asiData_PartNode::PID_MetadataElems);
 
   return params.List;
 }

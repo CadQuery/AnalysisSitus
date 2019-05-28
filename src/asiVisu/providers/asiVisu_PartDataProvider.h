@@ -33,6 +33,7 @@
 
 // asiVisu includes
 #include <asiVisu_DataProvider.h>
+#include <asiVisu_ShapeColorSource.h>
 
 // asiData includes
 #include <asiData_PartNode.h>
@@ -75,6 +76,9 @@ public:
   asiVisu_EXPORT double
     GetAngularDeflection() const;
 
+  asiVisu_EXPORT Handle(asiVisu_ShapeColorSource)
+    GetColorSource() const;
+
 public:
 
   asiVisu_EXPORT Handle(asiVisu_PartDataProvider)
@@ -89,6 +93,9 @@ protected:
 
   //! Source Node.
   Handle(asiData_PartNode) m_node;
+
+  //! Source for colors.
+  Handle(asiVisu_ShapeColorSource) m_colorSource;
 
 };
 

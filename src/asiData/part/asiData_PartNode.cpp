@@ -40,18 +40,19 @@
 asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
 {
   // Register standard Active Data Parameters.
-  REGISTER_PARAMETER(Name,  PID_Name);
-  REGISTER_PARAMETER(Bool,  PID_AutoAAG);
-  REGISTER_PARAMETER(Shape, PID_Geometry);
-  REGISTER_PARAMETER(Group, PID_GroupTess);
-  REGISTER_PARAMETER(Real,  PID_TessLinDefl);
-  REGISTER_PARAMETER(Real,  PID_TessAngDefl);
-  REGISTER_PARAMETER(Bool,  PID_KeepTessParams);
-  REGISTER_PARAMETER(Group, PID_GroupPrs);
-  REGISTER_PARAMETER(Int,   PID_DisplayMode);
-  REGISTER_PARAMETER(Bool,  PID_HasColor);
-  REGISTER_PARAMETER(Int,   PID_Color);
-  REGISTER_PARAMETER(Bool,  PID_HasVertices);
+  REGISTER_PARAMETER(Name,          PID_Name);
+  REGISTER_PARAMETER(Bool,          PID_AutoAAG);
+  REGISTER_PARAMETER(Shape,         PID_Geometry);
+  REGISTER_PARAMETER(Group,         PID_GroupTess);
+  REGISTER_PARAMETER(Real,          PID_TessLinDefl);
+  REGISTER_PARAMETER(Real,          PID_TessAngDefl);
+  REGISTER_PARAMETER(Bool,          PID_KeepTessParams);
+  REGISTER_PARAMETER(Group,         PID_GroupPrs);
+  REGISTER_PARAMETER(Int,           PID_DisplayMode);
+  REGISTER_PARAMETER(Bool,          PID_HasColor);
+  REGISTER_PARAMETER(Int,           PID_Color);
+  REGISTER_PARAMETER(Bool,          PID_HasVertices);
+  REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
 
   // Register custom Parameters specific to Analysis Situs application.
   this->registerParameter(PID_AAG,    asiData_AAGParameter::Instance(),    false);
@@ -417,6 +418,21 @@ Handle(asiData_TolerantShapesNode) asiData_PartNode::GetTolerantShapes() const
 
     if ( !tolShapes_n.IsNull() && tolShapes_n->IsWellFormed() )
       return tolShapes_n;
+  }
+
+  return NULL;
+}
+
+//! \return underlying Node which stores metadata.
+Handle(asiData_MetadataNode) asiData_PartNode::GetMetadata() const
+{
+  Handle(asiData_MetadataNode) meta_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    meta_n = Handle(asiData_MetadataNode)::DownCast( cit->Value() );
+
+    if ( !meta_n.IsNull() && meta_n->IsWellFormed() )
+      return meta_n;
   }
 
   return NULL;

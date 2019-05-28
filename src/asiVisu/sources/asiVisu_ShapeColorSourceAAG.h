@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 May 2019
+// Created on: 28 May 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,62 +28,65 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_MetadataNode_h
-#define asiData_MetadataNode_h
+#ifndef asiVisu_ShapeColorSourceAAG_h
+#define asiVisu_ShapeColorSourceAAG_h
 
-// asiData includes
-#include <asiData_ElemMetadataNode.h>
+// asiVisu includes
+#include <asiVisu_ShapeColorSource.h>
+#include <asiVisu_Utils.h>
 
-//! Node to group metadata chunks associated with the elements of a CAD part.
-class asiData_MetadataNode : public ActData_BaseNode
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
+#include <asiAlgo_AttrFaceColor.h>
+
+//-----------------------------------------------------------------------------
+
+//! Data provider interface for colors associated with sub-shapes. This
+//! implementation of the basic interface takes colors from AAG attributes.
+class asiVisu_ShapeColorSourceAAG : public asiVisu_ShapeColorSource
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_MetadataNode, ActData_BaseNode)
-
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_MetadataNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeColorSourceAAG, asiVisu_ShapeColorSource)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
+  //! Ctor accepting AAG which is the source of color attributes.
+  //! \param[in] aag AAG instance.
+  asiVisu_ShapeColorSourceAAG(const Handle(asiAlgo_AAG)& aag)
+  : asiVisu_ShapeColorSource (),
+    m_aag                    (aag)
+  {}
+
+public:
+
+  //! Returns color (as an integer value) for the given face ID.
+  //! \param[in] faceId one-based ID of a face.
+  //! \return color.
+  virtual int GetFaceColor(const int faceId) const
   {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
+    if ( m_aag.IsNull() )
+      return -1; // Null check.
 
-public:
+    Handle(asiAlgo_FeatureAttr)
+      attrBase = m_aag->GetNodeAttribute( faceId, asiAlgo_AttrFaceColor::GUID() );
+    //
+    if ( attrBase.IsNull() )
+      return -1;
 
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
+    // Get color.
+    unsigned urgb[3];
+    Handle(asiAlgo_AttrFaceColor)::DownCast(attrBase)->GetColor(urgb[0], urgb[1], urgb[2]);
 
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-  asiData_EXPORT Handle(asiData_ElemMetadataNode)
-    FindElemMetadata(const TopoDS_Shape& shape) const;
+    // Convert color to integer.
+    const int color = asiVisu_Utils::ColorToInt(urgb);
+    return color;
+  }
 
 protected:
 
-  //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_MetadataNode();
+  Handle(asiAlgo_AAG) m_aag; //!< AAG.
 
 };
 

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 May 2019
+// Created on: 28 May 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,62 +28,32 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_MetadataNode_h
-#define asiData_MetadataNode_h
+#ifndef asiVisu_ShapeColorSource_h
+#define asiVisu_ShapeColorSource_h
 
-// asiData includes
-#include <asiData_ElemMetadataNode.h>
+// asiVisu includes
+#include <asiVisu.h>
 
-//! Node to group metadata chunks associated with the elements of a CAD part.
-class asiData_MetadataNode : public ActData_BaseNode
+// OCCT includes
+#include <Standard_Type.hxx>
+
+//-----------------------------------------------------------------------------
+
+//! Data provider interface for colors associated with sub-shapes.
+class asiVisu_ShapeColorSource : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_MetadataNode, ActData_BaseNode)
-
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_MetadataNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ShapeColorSource, Standard_Transient)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
-
-public:
-
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
-
-  asiData_EXPORT Handle(asiData_ElemMetadataNode)
-    FindElemMetadata(const TopoDS_Shape& shape) const;
-
-protected:
-
-  //! Allocation is allowed only via Instance() method.
-  asiData_EXPORT
-    asiData_MetadataNode();
+  //! Returns color (as an integer value) for the given face ID.
+  //! \param[in] faceId one-based ID of a face.
+  //! \return color.
+  virtual int
+    GetFaceColor(const int faceId) const = 0;
 
 };
 

@@ -87,6 +87,10 @@ void asiUI_ParameterEditorListenerDefault::beforeParameterChanged(const Handle(A
       // Set color.
       meta_n->SetColor( value.toInt() );
 
+      // Set reference list to metadata in the Part Node modified to allow for
+      // actualization in 3D when the existing face was recolored.
+      m_cf->Model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems)->SetModified();
+
       // Set update type for Object Browser. Here we need to repopulate the
       // tree as new object appears.
       m_obUpdateType = OB_UpdateType_All;

@@ -102,6 +102,7 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     }
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
+    m_source->SetColorSource( DP->GetColorSource() );
 
     // Bind to a Data Node using information key
     asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );

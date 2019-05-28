@@ -37,8 +37,9 @@
 //-----------------------------------------------------------------------------
 
 asiUI_ParameterEditorListener::asiUI_ParameterEditorListener(const Handle(asiUI_CommonFacilities)& cf)
-: QObject (),
-  m_cf    (cf)
+: QObject        (),
+  m_cf           (cf),
+  m_obUpdateType (OB_UpdateType_Undefined)
 {}
 
 //-----------------------------------------------------------------------------
@@ -98,9 +99,22 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   }
   m_cf->Model->CommitCommand();
 
+  // Set default update type.
+  if ( m_obUpdateType == OB_UpdateType_Undefined )
+    m_obUpdateType = OB_UpdateType_SelectedNode;
+
   // Update Object Browser.
   if ( m_cf->ObjectBrowser )
-    m_cf->ObjectBrowser->Populate();
+  {
+    if ( m_obUpdateType == OB_UpdateType_All )
+      m_cf->ObjectBrowser->Populate();
+    else if ( m_obUpdateType == OB_UpdateType_SelectedNode )
+      m_cf->ObjectBrowser->UpdateSelectedNode();
+  }
+
+  // Reset update type (this gives the sub-classes the chance to redefine
+  // the update type in callbacks).
+  m_obUpdateType = OB_UpdateType_Undefined;
 
   // Actualize Node.
   m_cf->ActualizeNode( m_cf->ObjectBrowser->GetSelectedNode() );

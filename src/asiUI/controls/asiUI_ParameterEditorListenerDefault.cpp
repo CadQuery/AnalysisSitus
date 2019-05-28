@@ -87,6 +87,11 @@ void asiUI_ParameterEditorListenerDefault::beforeParameterChanged(const Handle(A
       // Set color.
       meta_n->SetColor( value.toInt() );
 
+      // Set update type for Object Browser. Here we need to repopulate the
+      // tree as new object appears.
+      m_obUpdateType = OB_UpdateType_All;
+
+      // Log message.
       m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Parameter (pid '%1') changed (new value is '%2')."
                                                      << pid << QStr2AsciiStr( value.toString() ) );
 

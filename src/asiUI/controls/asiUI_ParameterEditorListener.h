@@ -50,6 +50,16 @@ class asiUI_EXPORT asiUI_ParameterEditorListener : public QObject
 
 public:
 
+  //! How to update Object Browser after modification in the Parameter Editor.
+  enum OB_UpdateType
+  {
+    OB_UpdateType_Undefined = 0, //!< Undefined.
+    OB_UpdateType_SelectedNode,  //!< Update only the currently selected Node.
+    OB_UpdateType_All            //!< Full update.
+  };
+
+public:
+
   //! Constructor accepting all necessary facilities.
   //! \param[in] cf common facilities.
   asiUI_ParameterEditorListener(const Handle(asiUI_CommonFacilities)& cf);
@@ -63,6 +73,22 @@ public:
   //! Connects this listener to the controls widget.
   virtual void
     Connect();
+
+public:
+
+  //! Sets update type for Object Browser to be done after modification in the
+  //! Parameter Editor.
+  //! \param[in] updateType update type to set.
+  void SetOBUpdateType(const OB_UpdateType updateType)
+  {
+    m_obUpdateType = updateType;
+  }
+
+  //! \return update type defined for the Object Browser.
+  OB_UpdateType GetOBUpdateType() const
+  {
+    return m_obUpdateType;
+  }
 
 protected slots:
 
@@ -128,7 +154,11 @@ protected:
 
 protected:
 
-  Handle(asiUI_CommonFacilities) m_cf; //!< Common facilities.
+  //! Common facilities.
+  Handle(asiUI_CommonFacilities) m_cf;
+
+  //! How to update Object Browser.
+  OB_UpdateType m_obUpdateType;
 
 };
 

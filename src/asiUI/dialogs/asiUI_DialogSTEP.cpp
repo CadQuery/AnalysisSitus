@@ -33,9 +33,11 @@
 
 // asiAlgo includes
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_STEPWithMeta.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_STEPWriterInput.h>
 
 // asiUI includes
 #include <asiUI_Common.h>
@@ -299,19 +301,32 @@ void asiUI_DialogSTEP::proceed_Write()
 
   // Shape to save
   TopoDS_Shape targetShape = m_part->GetShape();
+  //
   if ( targetShape.IsNull() )
   {
-    std::cout << "Error: target shape is null" << std::endl;
+    m_notifier.SendLogMessage(LogErr(Normal) << "Part shape is null.");
     return;
   }
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
+  // Prepare input
+  Handle(asiEngine_STEPWriterInput)
+    input = new asiEngine_STEPWriterInput( Handle(asiEngine_Model)::DownCast(m_model) );
+
+  // Prepare translator
+  asiAlgo_STEPWithMeta writer(m_notifier, m_plotter);
+  writer.SetInput(input);
+
+  // Save to STEP
+  if ( !writer.Perform( QStr2AsciiStr(filename) ) )
+    m_notifier.SendLogMessage(LogErr(Normal) << "STEP writer failed.");
+
   // Save
-  if ( !asiAlgo_STEP(m_notifier).Write( targetShape, QStr2AsciiStr(filename) ) )
+  /*if ( !asiAlgo_STEP(m_notifier).Write( targetShape, QStr2AsciiStr(filename) ) )
   {
     std::cout << "Error: cannot save shape" << std::endl;
-  }
+  }*/
 
   QApplication::restoreOverrideCursor();
 }

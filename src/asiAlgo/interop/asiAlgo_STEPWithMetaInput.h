@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 November 2015
+// Created on: 28 May 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,54 +28,55 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_STEP_h
-#define asiAlgo_STEP_h
+#ifndef asiAlgo_STEPWithMetaInput_h
+#define asiAlgo_STEPWithMetaInput_h
 
 // asiAlgo includes
-#include <asiAlgo_InteropVars.h>
+#include <asiAlgo.h>
 
-// Active Data includes
-#include <ActAPI_IAlgorithm.h>
+// OCCT includes
+#include <Quantity_Color.hxx>
+#include <TopoDS_Shape.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! STEP interoperability tool.
-class asiAlgo_STEP : public ActAPI_IAlgorithm
+//! Input data provider for the STEP writer with metadata.
+class asiAlgo_STEPWithMetaInput : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_STEP, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_STEPWithMetaInput, Standard_Transient)
 
 public:
 
-  //! Ctor accepting progress notifier and imperative plotter.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiAlgo_STEP(ActAPI_ProgressEntry progress,
-               ActAPI_PlotterEntry  plotter = NULL)
-  //
-  : ActAPI_IAlgorithm(progress, plotter) {}
+  //! \return shape to write.
+  virtual TopoDS_Shape
+    GetShape() const = 0;
 
-public:
+  //! \return number of subshapes to be resolved by the STEP writer as
+  //!         individual entities to attach metadata to.
+  virtual int
+    GetNumSubShapes() const = 0;
 
-  //! Performs STEP import.
-  //! \param[in] filename  file to read.
-  //! \param[in] doHealing indicates whether to run shape healing after import.
-  //! \param[in] result    retrieved shape.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    Read(const TCollection_AsciiString& filename,
-         const bool                     doHealing,
-         TopoDS_Shape&                  result);
+  //! Accessor for a subshape by its zero-based index.
+  //! \param[in] zeroBasedIdx zero-based index of a sub-shape to access.
+  //! \return transient pointer to a sub-shape.
+  virtual TopoDS_Shape
+    GetSubShape(const int zeroBasedIdx) const = 0;
 
-  //! Saves the passed CAD model to STEP file.
-  //! \param[in] shape    shape to store.
-  //! \param[in] filename file to save.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    Write(const TopoDS_Shape&            shape,
-          const TCollection_AsciiString& filename);
+  //! Checks whether the passed shape has color or not.
+  //! \param[in] shape shape in question.
+  //! \return false if no color is attached, true -- otherwise.
+  virtual bool
+    HasColor(const TopoDS_Shape& shape) const = 0;
+
+  //! Accessor for the color associated with the given shape.
+  //! \param[in] shape shape in question.
+  //! \return attached color.
+  virtual Quantity_Color
+    GetColor(const TopoDS_Shape& shape) const = 0;
+
 };
 
 #endif

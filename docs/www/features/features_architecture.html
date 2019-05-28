@@ -184,5 +184,26 @@ such basic operations as Open/Save, Undo/Redo and compatibility conversion betwe
 On start-up, the empty Data Model is created and populated with the predefined structure of Nodes.
 </p>
 
+<h1>User interface</h1>
+
+<p>
+Analysis Situs is based on Qt framework, hence it fully exploits the mechanism of signals-slots to organize the communication
+between the UI elements. The principal components comprising the user interface are listed below:
+<ul>
+  <li>Common facilities instance: set of widgets and singleton service objects.</li>
+  <li>Widgets: controls, panels, dialogs.</li>
+  <li>Listeners: providers of business logic for widgets.</li>
+</ul>
+</p>
+
+<div align="center"><img src="../imgs/situ_arch_05.png"/></div>
+
+<p>
+The widgets are used to display the controls and the listeners define the reactions of the widgets to the user events.
+It is the responsibility of a listener to organize computations, detach and monitor threads, supply the algorithms with
+all necessary data and make the outputs available to the user. Most listeners can be overridden so that for a single view
+(widget) it is possible to have various behaviour depending on how the listener is implemented.
+</p>
+
 </body>
 </html>

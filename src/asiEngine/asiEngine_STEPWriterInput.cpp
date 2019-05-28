@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 May 2019
+// Created on: 28 May 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -29,78 +29,94 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_MetadataNode.h>
+#include <asiEngine_STEPWriterInput.h>
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
+// asiEngine includes
+#include <asiEngine_Part.h>
 
-//-----------------------------------------------------------------------------
-
-//! Default constructor. Registers all involved Parameters.
-asiData_MetadataNode::asiData_MetadataNode() : ActData_BaseNode()
-{
-  REGISTER_PARAMETER(Name, PID_Name);
-}
-
-//! Returns new DETACHED instance of the Node ensuring its correct
-//! allocation in a heap.
-//! \return new instance of the Node.
-Handle(ActAPI_INode) asiData_MetadataNode::Instance()
-{
-  return new asiData_MetadataNode();
-}
-
-//! Performs initial actions required to make this Node WELL-FORMED.
-void asiData_MetadataNode::Init()
-{
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-}
+// asiVisu includes
+#include <asiVisu_Utils.h>
 
 //-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
 
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_MetadataNode::GetName()
+asiEngine_STEPWriterInput::asiEngine_STEPWriterInput(const Handle(asiEngine_Model)& M)
+: asiAlgo_STEPWithMetaInput (),
+  m_model                   (M)
 {
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
-
-//! Sets name for the Node.
-//! \param[in] name name to set.
-void asiData_MetadataNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+  asiEngine_Part api(m_model);
+  api.GetMetadataElems(m_metaElems);
 }
 
 //-----------------------------------------------------------------------------
 
-//! Finds elemental metadata for the passed shape which is normally
-//! a sub-shape of the part shape.
-//! \param[in] shape sub-shape in question.
-//! \return found metadata element or null if there is no such object.
+TopoDS_Shape asiEngine_STEPWriterInput::GetShape() const
+{
+  return m_model->GetPartNode()->GetShape();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiEngine_STEPWriterInput::GetNumSubShapes() const
+{
+  if ( m_metaElems.IsNull() )
+    return 0;
+
+  return m_metaElems->Length();
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiEngine_STEPWriterInput::GetSubShape(const int zeroBasedIdx) const
+{
+  const Handle(asiData_ElemMetadataNode)&
+    elemNode = Handle(asiData_ElemMetadataNode)::DownCast( m_metaElems->Value(zeroBasedIdx + 1) );
+  //
+  return elemNode->GetShape();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiEngine_STEPWriterInput::HasColor(const TopoDS_Shape& shape) const
+{
+  Handle(asiData_ElemMetadataNode) metaNode = this->elemByShape(shape);
+  //
+  if ( metaNode.IsNull() )
+    return false;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+Quantity_Color
+  asiEngine_STEPWriterInput::GetColor(const TopoDS_Shape& shape) const
+{
+  Handle(asiData_ElemMetadataNode) metaNode = this->elemByShape(shape);
+  //
+  if ( metaNode.IsNull() )
+    return Quantity_Color(1., 1., 1., Quantity_TOC_RGB);
+
+  QColor qCol = asiVisu_Utils::IntToColor( metaNode->GetColor() );
+
+  return Quantity_Color(qCol.redF(), qCol.greenF(), qCol.blueF(), Quantity_TOC_RGB);
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(asiData_ElemMetadataNode)
-  asiData_MetadataNode::FindElemMetadata(const TopoDS_Shape& shape) const
+  asiEngine_STEPWriterInput::elemByShape(const TopoDS_Shape& shape) const
 {
-  // Iterate over the existing metadata elements to find one for the
-  // requested shape.
-  Handle(asiData_ElemMetadataNode) metadataElem_n;
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(asiData_ElemMetadataNode)
-      N = Handle(asiData_ElemMetadataNode)::DownCast( cit->Value() );
-    //
-    if ( N.IsNull() || !N->IsWellFormed() )
-      continue;
+  if ( m_metaElems.IsNull() )
+    return NULL;
 
-    if ( N->GetShape().IsSame(shape) )
-    {
-      metadataElem_n = N;
-      break;
-    }
+  for ( ActAPI_HNodeList::Iterator nit(*m_metaElems); nit.More(); nit.Next() )
+  {
+    const Handle(asiData_ElemMetadataNode)&
+      metaNode = Handle(asiData_ElemMetadataNode)::DownCast( nit.Value() );
+
+    if ( metaNode->GetShape().IsSame(shape) )
+      return metaNode;
   }
 
-  return metadataElem_n;
+  return NULL;
 }

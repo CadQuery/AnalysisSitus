@@ -75,6 +75,12 @@ public:
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     CreateMetadata();
 
+  asiEngine_EXPORT int
+    GetNumOfMetadata() const;
+
+  asiEngine_EXPORT void
+    GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const;
+
   asiEngine_EXPORT Handle(asiData_ElemMetadataNode)
     FindElemMetadata(const TopoDS_Shape& shape,
                      const bool          create = false);

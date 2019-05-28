@@ -236,6 +236,39 @@ Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 
 //-----------------------------------------------------------------------------
 
+//! \return number of metadata elements.
+int asiEngine_Part::GetNumOfMetadata() const
+{
+  Handle(ActData_ReferenceListParameter)
+    refListParam = ActParamTool::AsReferenceList( m_model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems) );
+  //
+  const int numElems = refListParam->NbTargets();
+
+  return numElems;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Gathers all Metadata Element Nodes.
+//! \param[out] nodes Metadata Element Nodes.
+void asiEngine_Part::GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const
+{
+  nodes = new ActAPI_HNodeList;
+
+  for ( Handle(ActAPI_IChildIterator) cit = m_model->GetMetadataNode()->GetChildIterator();
+        cit->More(); cit->Next() )
+  {
+    Handle(asiData_ElemMetadataNode)
+      elem_n = Handle(asiData_ElemMetadataNode)::DownCast( cit->Value() );
+    //
+    if ( !elem_n.IsNull() && elem_n->IsWellFormed() )
+      nodes->Append(elem_n);
+  }
+
+}
+
+//-----------------------------------------------------------------------------
+
 //! Finds or creates elemental metadata for the passed shape which is normally
 //! a sub-shape of the part shape.
 //! \param[in] shape  sub-shape in question.

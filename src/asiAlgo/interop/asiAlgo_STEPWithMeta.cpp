@@ -140,19 +140,20 @@ bool asiAlgo_STEPWithMeta::transfer(STEPControl_Writer&             writer,
   // Compute graph explicitly here.
   writer.WS()->ComputeGraph(true);
 
-  // Write colors
+  // Write colors.
   if ( m_bColorMode )
     this->writeColors( writer.WS() );
 
-  // register all MDGPRs in model
-  const Handle(Interface_InterfaceModel) &Model = writer.WS()->Model();
-  MoniTool_DataMapIteratorOfDataMapOfShapeTransient anItr(m_mapCompMDGPR);
-  for (; anItr.More(); anItr.Next())
-    Model->AddWithRefs( anItr.Value() );
+  // Register all MDGPRs in model.
+  const Handle(Interface_InterfaceModel)& Model = writer.WS()->Model();
+  MoniTool_DataMapIteratorOfDataMapOfShapeTransient itr(m_mapCompMDGPR);
+  //
+  for ( ; itr.More(); itr.Next() )
+    Model->AddWithRefs( itr.Value() );
 
-  Interface_Static::SetIVal ("write.step.schema", ap);
+  Interface_Static::SetIVal("write.step.schema", ap);
 
-  // Refresh graph
+  // Refresh graph.
   writer.WS()->ComputeGraph(true);
 
   return true;
@@ -165,21 +166,21 @@ static int FindEntities(const Handle(Transfer_FinderProcess) &FP,
                         TopLoc_Location &L,
                         TColStd_SequenceOfTransient &seqRI)
 {
-  Handle(StepRepr_RepresentationItem) item = STEPConstruct::FindEntity ( FP, S, L );
+  Handle(StepRepr_RepresentationItem) item = STEPConstruct::FindEntity(FP, S, L);
 
-  if ( ! item.IsNull() ) {
-    seqRI.Append ( item );
+  if ( !item.IsNull() ) {
+    seqRI.Append(item);
     return 1;
   }
-      
-  // may be S was splited during shape processing
-  Handle(TransferBRep_ShapeMapper) mapper = TransferBRep::ShapeMapper ( FP, S );
+
+  // May be S was split during shape processing.
+  Handle(TransferBRep_ShapeMapper) mapper = TransferBRep::ShapeMapper(FP, S);
   Handle(Transfer_Binder) bnd = FP->Find(mapper);
   if ( bnd.IsNull() ) return 0;
-  
-  Handle(Transfer_TransientListBinder) TransientListBinder =
-    //Handle(Transfer_TransientListBinder)::DownCast( bnd->Next(true) );
-    Handle(Transfer_TransientListBinder)::DownCast( bnd );
+
+  Handle(Transfer_TransientListBinder)
+    TransientListBinder = Handle(Transfer_TransientListBinder)::DownCast(bnd);
+  //
   int nres=0;
   if ( TransientListBinder.IsNull() && S.ShapeType() == TopAbs_COMPOUND) 
   {
@@ -190,16 +191,16 @@ static int FindEntities(const Handle(Transfer_FinderProcess) &FP,
       seqRI.Append (aLocalItem);
     }
   }
-  else if(!TransientListBinder.IsNull())
+  else if ( !TransientListBinder.IsNull() )
   {
-
     const int nb = TransientListBinder->NbTransients();
-    for (int i=1; i<=nb; i++) {
+    for ( int i = 1;  i<= nb; ++i )
+    {
       Handle(Standard_Transient) t = TransientListBinder->Transient(i);
       item = Handle(StepRepr_RepresentationItem)::DownCast(t);
       if ( item.IsNull() ) continue;
       nres++;
-      seqRI.Append ( item );
+      seqRI.Append(item);
     }
   }
   return nres;
@@ -213,35 +214,42 @@ bool asiAlgo_STEPWithMeta::writeColors(const Handle(XSControl_WorkSession)& WS)
   STEPConstruct_DataMapOfAsciiStringTransient DPDCs;
   STEPConstruct_DataMapOfPointTransient       ColRGBs;
 
+  // Get shape.
+  TopoDS_Shape shape = m_input->GetShape();
+
+  // Get its representation context.
+  Handle(StepRepr_RepresentationContext) context = Styles.FindContext(shape);
+  //
+  if ( context.IsNull() )
+  {
+    m_progress.SendLogMessage(LogWarn(Normal) << "No representation context is found for shape.");
+    return false;
+  }
+
   // Iterate over all individual sub-shapes.
   const int numSubShapes = m_input->GetNumSubShapes();
   //
-  for ( int i = 0; i < numSubShapes; ++i )
+  for ( int ss = 0; ss < numSubShapes; ++ss )
   {
-    // Get a target shape and try to find corresponding representation context.
-    TopoDS_Shape subShape = m_input->GetSubShape(i);
-    //
-    Handle(StepRepr_RepresentationContext) context = Styles.FindContext(subShape);
-    //
-    if ( context.IsNull() )
-      continue;
+    // Get subshape.
+    TopoDS_Shape subShape = m_input->GetSubShape(ss);
 
     // Create STEP styles.
     Handle(StepVisual_StyledItem) override;
     TopTools_MapOfShape Map;
-
+    //
     this->makeSTEPStyles(Styles, subShape, override, Map, DPDCs, ColRGBs);
 
-    // create MDGPR and record it in model
-    Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation) aMDGPR;
-
+    // Create MDGPR.
+    Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation) MDGPR;
+    //
     if ( m_mapCompMDGPR.IsBound(subShape) )
-      m_progress.SendLogMessage(LogWarn(Normal) << "Current shape have MDGPR already.");
-
-    Styles.CreateMDGPR(context, aMDGPR);
-
-    if ( !aMDGPR.IsNull() )
-      m_mapCompMDGPR.Bind(subShape, aMDGPR);
+      m_progress.SendLogMessage(LogWarn(Normal) << "Current shape already has MDGPR.");
+    //
+    Styles.CreateMDGPR(context, MDGPR);
+    //
+    if ( !MDGPR.IsNull() )
+      m_mapCompMDGPR.Bind(subShape, MDGPR);
   }
 
   return true;
@@ -249,58 +257,14 @@ bool asiAlgo_STEPWithMeta::writeColors(const Handle(XSControl_WorkSession)& WS)
 
 //-----------------------------------------------------------------------------
 
-static Handle(StepRepr_ProductDefinitionShape) FindPDS(const Interface_Graph &theGraph,
-                                                       const Handle(Standard_Transient) &theEnt,
-                                                       Handle(StepRepr_RepresentationContext) &theRC)
-{
-  if (theEnt.IsNull())
-    return NULL;
-  Handle(StepRepr_ProductDefinitionShape) aPDS;
-
-  // try to find shape_representation in sharings
-  Interface_EntityIterator anIter = theGraph.Sharings(theEnt);
-  for (anIter.Start(); anIter.More() && aPDS.IsNull(); anIter.Next()) {
-    Handle(StepShape_ShapeRepresentation) aSR = Handle(StepShape_ShapeRepresentation)::DownCast(anIter.Value());
-    if (aSR.IsNull())
-      continue;
-    theRC = aSR->ContextOfItems();
-    Interface_EntityIterator aSDRIt = theGraph.Sharings(aSR);
-    for (aSDRIt.Start(); aSDRIt.More() && aPDS.IsNull(); aSDRIt.Next()) {
-      Handle(StepShape_ShapeDefinitionRepresentation) aSDR =
-        Handle(StepShape_ShapeDefinitionRepresentation)::DownCast(aSDRIt.Value());
-      if (aSDR.IsNull()) continue;
-      Handle(StepRepr_PropertyDefinition) aPropD = aSDR->Definition().PropertyDefinition();
-      if (aPropD.IsNull()) continue;
-      aPDS = Handle(StepRepr_ProductDefinitionShape)::DownCast(aPropD);
-    }
-  }
-  if (!aPDS.IsNull())
-    return aPDS;
-
-  anIter = theGraph.Sharings(theEnt);
-  for (anIter.Start(); anIter.More(); anIter.Next()) {
-    if (anIter.Value()->IsKind(STANDARD_TYPE(StepShape_TopologicalRepresentationItem)) ||
-      anIter.Value()->IsKind(STANDARD_TYPE(StepGeom_GeometricRepresentationItem)))
-    {
-      aPDS = FindPDS(theGraph, anIter.Value(), theRC);
-      if (!aPDS.IsNull())
-        return aPDS;
-    }
-  }
-
-  return aPDS;
-}
-
-//-----------------------------------------------------------------------------
-
-void asiAlgo_STEPWithMeta::SetColorMode (const bool colormode)
+void asiAlgo_STEPWithMeta::SetColorMode(const bool colormode)
 {
   m_bColorMode = colormode;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::GetColorMode () const
+bool asiAlgo_STEPWithMeta::GetColorMode() const
 {
   return m_bColorMode;
 }
@@ -324,7 +288,7 @@ void asiAlgo_STEPWithMeta::makeSTEPStyles(STEPConstruct_Styles&                 
   Handle(StepVisual_Colour) surfColor;
   if ( m_input->HasColor(S) )
     surfColor = Styles.EncodeColor(shapeColor, DPDCs, ColRGBs);
-  
+
   bool hasOwn = !surfColor.IsNull();
 
   // Find target item and assign style to it.

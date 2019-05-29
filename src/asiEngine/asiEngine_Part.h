@@ -99,7 +99,7 @@ public:
     Clean();
 
   asiEngine_EXPORT TopoDS_Face
-    GetFace(const int oneBasedGlobalId);
+    GetFace(const int oneBasedId);
 
   asiEngine_EXPORT TopoDS_Shape
     GetShape();

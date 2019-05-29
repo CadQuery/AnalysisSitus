@@ -452,9 +452,9 @@ void asiEngine_Part::Clean()
 //-----------------------------------------------------------------------------
 
 //! Accessor for a transient pointer to a B-Rep face by its one-based index.
-//! \param[in] oneBasedGlobalId one-based global index of a face to access.
+//! \param[in] oneBasedId one-based index of a face to access.
 //! \return transient pointer to a face.
-TopoDS_Face asiEngine_Part::GetFace(const int oneBasedGlobalId)
+TopoDS_Face asiEngine_Part::GetFace(const int oneBasedId)
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -468,7 +468,11 @@ TopoDS_Face asiEngine_Part::GetFace(const int oneBasedGlobalId)
   if ( aag.IsNull() )
     return TopoDS_Face();
 
-  return TopoDS::Face( aag->RequestMapOfSubShapes()(oneBasedGlobalId) );
+  // Get face.
+  if ( !aag->HasFace(oneBasedId) )
+    return TopoDS_Face();
+
+  return aag->GetFace(oneBasedId);
 }
 
 //-----------------------------------------------------------------------------
@@ -678,7 +682,16 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
   Handle(asiAlgo_AAG) aag = m_model->GetPartNode()->GetAAG();
   //
   if ( aag.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "AAG is null.");
     return;
+  }
+
+  if ( !m_prsMgr.GetPointer() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Presentation manager is null.");
+    return;
+  }
 
   // Get the map of ALL shapes to extract topology by selected index which
   // is global (related to full accessory graph)

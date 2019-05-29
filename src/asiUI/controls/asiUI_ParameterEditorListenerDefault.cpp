@@ -64,32 +64,42 @@ void asiUI_ParameterEditorListenerDefault::beforeParameterChanged(const Handle(A
       // to let the base class proceed as usual.
       // ...
 
-      const int fid = part_n->GetFaceRepresentation()->GetSelectedFace();
+      asiEngine_Part partApi( m_cf->Model,
+                              m_cf->ViewerPart->PrsMgr(),
+                              m_cf->Progress,
+                              m_cf->Plotter );
+
+      // Get IDs of the highlighted faces.
+      TColStd_PackedMapOfInteger fids;
+      partApi.GetHighlightedFaces(fids);
       //
-      if ( !fid )
+      if ( !fids.Extent() )
       {
         proceedDefault = true; // Let the base class do its usual job.
         return;
       }
 
-      // If we are here, then there is an active face to attach the custom
-      // color to.
+      // If we are here, then there is at least one active face to attach the
+      // custom color to.
       // ...
 
-      asiEngine_Part partApi(m_cf->Model);
+      for ( TColStd_MapIteratorOfPackedMapOfInteger fit(fids); fit.More(); fit.Next() )
+      {
+        const int fid = fit.Key();
 
-      // Get the face in question.
-      TopoDS_Face F = partApi.GetFace(fid);
+        // Get the face in question.
+        TopoDS_Face F = partApi.GetFace(fid);
 
-      // Find or create Metadata Element for this face.
-      Handle(asiData_ElemMetadataNode) meta_n = partApi.FindElemMetadata(F, true);
+        // Find or create Metadata Element for this face.
+        Handle(asiData_ElemMetadataNode) meta_n = partApi.FindElemMetadata(F, true);
 
-      // Set color.
-      meta_n->SetColor( value.toInt() );
+        // Set color.
+        meta_n->SetColor( value.toInt() );
 
-      // Set reference list to metadata in the Part Node modified to allow for
-      // actualization in 3D when the existing face was recolored.
-      m_cf->Model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems)->SetModified();
+        // Set reference list to metadata in the Part Node modified to allow for
+        // actualization in 3D when the existing face was recolored.
+        m_cf->Model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems)->SetModified();
+      }
 
       // Set update type for Object Browser. Here we need to repopulate the
       // tree as new object appears.

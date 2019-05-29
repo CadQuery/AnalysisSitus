@@ -236,10 +236,95 @@ Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 
 //-----------------------------------------------------------------------------
 
+//! Creates elementary metadata holder.
+//! \param[in] name  name of the Node.
+//! \param[in] shape shape.
+//! \return Element Metadata Node.
+Handle(asiData_ElemMetadataNode)
+  asiEngine_Part::CreateElemMetadata(const TCollection_ExtendedString& name,
+                                     const TopoDS_Shape&               shape)
+{
+  Handle(asiData_ElemMetadataNode)
+    node = Handle(asiData_ElemMetadataNode)::DownCast( asiData_ElemMetadataNode::Instance() );
+  //
+  m_model->GetElemMetadataPartition()->AddNode(node);
+
+  // Initialize.
+  node->Init();
+  node->SetName(name);
+  node->SetShape(shape);
+
+  // Set as child for the Metadata Node.
+  m_model->GetMetadataNode()->AddChildNode(node);
+
+  // Add reference in the part Node.
+  m_model->GetPartNode()->ConnectReferenceToList(asiData_PartNode::PID_MetadataElems,
+                                                 node);
+
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Cleans up metadata.
 void asiEngine_Part::CleanMetadata()
 {
   this->_cleanChildren( m_model->GetMetadataNode() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Updates metadata available for the Part Node according to the passed
+//! modification history.
+//! \param[in] history modification history.
+void asiEngine_Part::UpdateMetadata(const Handle(asiAlgo_History)& history)
+{
+  // Contract check.
+  if ( history.IsNull() )
+    return;
+
+  // Get references to metadata elements.
+  Handle(ActData_ReferenceListParameter)
+    refListParam = ActParamTool::AsReferenceList( m_model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems) );
+  //
+  Handle(ActAPI_HDataCursorList) refs = refListParam->GetTargets();
+  //
+  if ( refs.IsNull() )
+    return;
+
+  // Iterate over the existing metadata to gather data transfer objects (DTOs)
+  // for transferring data.
+  std::vector<Handle(asiData_ElemMetadataDTO)> dtos;
+  //
+  for ( ActAPI_HDataCursorList::Iterator it(*refs); it.More(); it.Next() )
+  {
+    const Handle(asiData_ElemMetadataNode)&
+      MN = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
+    //
+    if ( MN.IsNull() || !MN->IsWellFormed() )
+      continue;
+
+    // Prepare DTO.
+    dtos.push_back( MN->CreateDTO() );
+  }
+
+  // Clean up the existing metadata.
+  this->CleanMetadata();
+
+  // Create new metadata objects from the collected DTOs.
+  for ( size_t k = 0; k < dtos.size(); ++k )
+  {
+    TopoDS_Shape imSh = history->GetLastImageOrArg(dtos[k]->Shape);
+    //
+    if ( imSh.IsNull() ) // Image is null, i.e., the shape was deleted.
+      continue;
+
+    // Create elementary metadata Node.
+    Handle(asiData_ElemMetadataNode)
+      EMN = this->CreateElemMetadata(dtos[k]->Name, imSh);
+    //
+    EMN->SetColor(dtos[k]->Color);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -298,23 +383,12 @@ Handle(asiData_ElemMetadataNode)
   // Create if requested.
   if ( metadataElem_n.IsNull() && create )
   {
-    metadataElem_n = Handle(asiData_ElemMetadataNode)::DownCast( asiData_ElemMetadataNode::Instance() );
-    m_model->GetElemMetadataPartition()->AddNode(metadataElem_n);
-
     // Prepare name.
-    std::string nodeName("Element "); nodeName += asiAlgo_Utils::ShapeTypeStr(shape);
+    std::string nodeName("Element ");
+    nodeName += asiAlgo_Utils::ShapeTypeStr(shape);
 
-    // Initialize.
-    metadataElem_n->Init();
-    metadataElem_n->SetName( nodeName.c_str() );
-    metadataElem_n->SetShape( shape );
-
-    // Set as child for the Metadata Node.
-    metadata_n->AddChildNode(metadataElem_n);
-
-    // Add reference in the part Node.
-    m_model->GetPartNode()->ConnectReferenceToList(asiData_PartNode::PID_MetadataElems,
-                                                   metadataElem_n);
+    // Create elementary metadata Node.
+    metadataElem_n = this->CreateElemMetadata(nodeName.c_str(), shape);
   }
 
   return metadataElem_n;
@@ -325,11 +399,14 @@ Handle(asiData_ElemMetadataNode)
 //! Updates part's geometry in a smart way, so all dependent attributes
 //! are also actualized.
 //! \param[in] model             CAD part to set.
+//! \param[in] history           modification history (if available) to
+//!                              actualize metadata.
 //! \param[in] doResetTessParams indicates whether to reset tessellation
 //!                              parameters.
 //! \return Part Node.
-Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape& model,
-                                                const bool          doResetTessParams)
+Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            model,
+                                                const Handle(asiAlgo_History)& history,
+                                                const bool                     doResetTessParams)
 {
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -363,6 +440,10 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape& model,
   // Actualize naming if it is initialized.
   if ( part_n->HasNaming() )
     part_n->GetNaming()->Actualize(model);
+
+  // Actualize metadata.
+  if ( !history.IsNull() )
+    this->UpdateMetadata(history);
 
   // Actualize presentation.
   if ( m_prsMgr )

@@ -34,6 +34,8 @@
 // asiData includes
 #include <asiData_ElemMetadataNode.h>
 
+//-----------------------------------------------------------------------------
+
 //! Node to group metadata chunks associated with the elements of a CAD part.
 class asiData_MetadataNode : public ActData_BaseNode
 {

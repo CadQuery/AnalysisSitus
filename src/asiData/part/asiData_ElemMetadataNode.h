@@ -37,6 +37,35 @@
 // Active Data includes
 #include <ActData_BaseNode.h>
 
+//-----------------------------------------------------------------------------
+
+//! Data transfer object (DTO) for metadata. The difference between a DTO and
+//! a Data Cursor (which is a pattern used for any Node or Parameter) is that
+//! DTOs are not persistent.
+class asiData_ElemMetadataDTO : public Standard_Transient
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiData_ElemMetadataDTO, Standard_Transient)
+
+public:
+
+  //! Default ctor.
+  asiData_ElemMetadataDTO()
+  : Standard_Transient (),
+    Color              (-1)
+  {} 
+
+public:
+
+  TCollection_ExtendedString Name;  //!< Name of the metadata chunk.
+  TopoDS_Shape               Shape; //!< Sub-shape the metadata is attached to.
+  int                        Color; //!< Packed color (triple of integers).
+};
+
+//-----------------------------------------------------------------------------
+
 //! Metadata associated with a single sub-shape of a part shape.
 class asiData_ElemMetadataNode : public ActData_BaseNode
 {
@@ -95,6 +124,11 @@ public:
 
   asiData_EXPORT int
     GetColor() const;
+
+public:
+
+  asiData_EXPORT Handle(asiData_ElemMetadataDTO)
+    CreateDTO();
 
 protected:
 

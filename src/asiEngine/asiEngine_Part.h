@@ -75,8 +75,15 @@ public:
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     CreateMetadata();
 
+  asiEngine_EXPORT Handle(asiData_ElemMetadataNode)
+    CreateElemMetadata(const TCollection_ExtendedString& name,
+                       const TopoDS_Shape&               shape);
+
   asiEngine_EXPORT void
     CleanMetadata();
+
+  asiEngine_EXPORT void
+    UpdateMetadata(const Handle(asiAlgo_History)& history);
 
   asiEngine_EXPORT int
     GetNumOfMetadata() const;
@@ -89,8 +96,9 @@ public:
                      const bool          create = false);
 
   asiEngine_EXPORT Handle(asiData_PartNode)
-    Update(const TopoDS_Shape& model,
-           const bool          doResetTessParams = false);
+    Update(const TopoDS_Shape&            model,
+           const Handle(asiAlgo_History)& history = NULL,
+           const bool                     doResetTessParams = false);
 
   asiEngine_EXPORT void
     InitializeNaming();

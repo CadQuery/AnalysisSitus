@@ -119,3 +119,18 @@ int asiData_ElemMetadataNode::GetColor() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
 }
+
+//-----------------------------------------------------------------------------
+
+//! Creates a DTO object from the Data Node's persistent contents.
+//! \return DTO instance.
+Handle(asiData_ElemMetadataDTO) asiData_ElemMetadataNode::CreateDTO()
+{
+  Handle(asiData_ElemMetadataDTO) res = new asiData_ElemMetadataDTO;
+  //
+  res->Name  = this->GetName();
+  res->Shape = this->GetShape();
+  res->Color = this->GetColor();
+
+  return res;
+}

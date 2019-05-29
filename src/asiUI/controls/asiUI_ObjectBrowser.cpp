@@ -839,6 +839,9 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node,
   if ( selected_n.IsNull() || !selected_n->IsWellFormed() )
   {
     std::cout << "Error: selected Node is invalid" << std::endl;
+
+    m_progress.SendLogMessage(LogWarn(Normal) << "Selected Node is invalid");
+    pItem->setBackgroundColor(0, Qt::darkRed);
     return false;
   }
 
@@ -882,6 +885,7 @@ bool asiUI_ObjectBrowser::selectedNodes(Handle(ActAPI_HNodeList)& Nodes) const
     if ( selected_n.IsNull() || !selected_n->IsWellFormed() )
     {
       m_progress.SendLogMessage(LogWarn(Normal) << "Selected Node is invalid");
+      item->setBackgroundColor(0, Qt::darkRed);
       continue;
     }
 

@@ -236,6 +236,14 @@ Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 
 //-----------------------------------------------------------------------------
 
+//! Cleans up metadata.
+void asiEngine_Part::CleanMetadata()
+{
+  this->_cleanChildren( m_model->GetMetadataNode() );
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return number of metadata elements.
 int asiEngine_Part::GetNumOfMetadata() const
 {
@@ -264,7 +272,6 @@ void asiEngine_Part::GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const
     if ( !elem_n.IsNull() && elem_n->IsWellFormed() )
       nodes->Append(elem_n);
   }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -447,6 +454,9 @@ void asiEngine_Part::Clean()
   asiEngine_TolerantShapes tolApi(m_model, m_prsMgr, m_progress, m_plotter);
   //
   tolApi.Clean_All();
+
+  // Clean up metadata.
+  this->CleanMetadata();
 }
 
 //-----------------------------------------------------------------------------

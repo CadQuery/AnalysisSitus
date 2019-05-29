@@ -75,6 +75,9 @@ public:
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     CreateMetadata();
 
+  asiEngine_EXPORT void
+    CleanMetadata();
+
   asiEngine_EXPORT int
     GetNumOfMetadata() const;
 

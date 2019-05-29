@@ -1905,7 +1905,8 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
   //
-  const TopoDS_Shape& result = suppressor.GetResult();
+  const TopoDS_Shape&            result  = suppressor.GetResult();
+  const Handle(asiAlgo_History)& history = suppressor.GetHistory();
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "kill-blend")
@@ -1913,13 +1914,16 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result, history);
   }
   cmdEngine::model->CommitCommand();
 
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate(); // To sync metadata.
 
   *interp << true;
   return TCL_OK;

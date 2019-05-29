@@ -279,37 +279,40 @@ void asiEngine_Part::CleanMetadata()
 //! \param[in] history modification history.
 void asiEngine_Part::UpdateMetadata(const Handle(asiAlgo_History)& history)
 {
-  // Contract check.
-  if ( history.IsNull() )
-    return;
-
-  // Get references to metadata elements.
-  Handle(ActData_ReferenceListParameter)
-    refListParam = ActParamTool::AsReferenceList( m_model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems) );
-  //
-  Handle(ActAPI_HDataCursorList) refs = refListParam->GetTargets();
-  //
-  if ( refs.IsNull() )
-    return;
-
-  // Iterate over the existing metadata to gather data transfer objects (DTOs)
-  // for transferring data.
   std::vector<Handle(asiData_ElemMetadataDTO)> dtos;
-  //
-  for ( ActAPI_HDataCursorList::Iterator it(*refs); it.More(); it.Next() )
-  {
-    const Handle(asiData_ElemMetadataNode)&
-      MN = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
-    //
-    if ( MN.IsNull() || !MN->IsWellFormed() )
-      continue;
 
-    // Prepare DTO.
-    dtos.push_back( MN->CreateDTO() );
+  if ( !history.IsNull() )
+  {
+    // Get references to metadata elements.
+    Handle(ActData_ReferenceListParameter)
+      refListParam = ActParamTool::AsReferenceList( m_model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems) );
+    //
+    Handle(ActAPI_HDataCursorList) refs = refListParam->GetTargets();
+    //
+    if ( refs.IsNull() )
+      return;
+
+    // Iterate over the existing metadata to gather data transfer objects (DTOs)
+    // for transferring data.
+    for ( ActAPI_HDataCursorList::Iterator it(*refs); it.More(); it.Next() )
+    {
+      const Handle(asiData_ElemMetadataNode)&
+        MN = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
+      //
+      if ( MN.IsNull() || !MN->IsWellFormed() )
+        continue;
+
+      // Prepare DTO.
+      dtos.push_back( MN->CreateDTO() );
+    }
   }
 
   // Clean up the existing metadata.
   this->CleanMetadata();
+
+  // If there is no history, let's simply clean the metadata.
+  if ( history.IsNull() )
+    return;
 
   // Create new metadata objects from the collected DTOs.
   for ( size_t k = 0; k < dtos.size(); ++k )
@@ -414,8 +417,12 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
     return part_n;
 
-  // Reset data.
-  this->Clean();
+  // Actualize metadata.
+  if ( !history.IsNull() )
+    this->UpdateMetadata(history);
+
+  // Reset data without cleaning up metadata.
+  this->Clean(false);
 
   // Set working structures
   Handle(ActData_ShapeParameter)
@@ -440,10 +447,6 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
   // Actualize naming if it is initialized.
   if ( part_n->HasNaming() )
     part_n->GetNaming()->Actualize(model);
-
-  // Actualize metadata.
-  if ( !history.IsNull() )
-    this->UpdateMetadata(history);
 
   // Actualize presentation.
   if ( m_prsMgr )
@@ -516,7 +519,7 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 //-----------------------------------------------------------------------------
 
 //! Cleans up Data Model structure related to the Part Node.
-void asiEngine_Part::Clean()
+void asiEngine_Part::Clean(const bool cleanMeta)
 {
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -537,7 +540,8 @@ void asiEngine_Part::Clean()
   tolApi.Clean_All();
 
   // Clean up metadata.
-  this->CleanMetadata();
+  if ( cleanMeta )
+    this->CleanMetadata();
 }
 
 //-----------------------------------------------------------------------------

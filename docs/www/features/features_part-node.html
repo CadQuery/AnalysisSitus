@@ -57,13 +57,19 @@ allow working with several parts).
 
 <p>
 Metadata is a piece of extra information which can be attached to the boundary elements of a part, such as
-its faces, edges or vertices. For example, to give face a dedicated color, you have a prepare a metadata
-object which will maintain the (r,g,b) components of that color. The metadata chunks are available in
+its faces, edges or vertices. For example, to give face a dedicated color, you have to prepare a metadata
+object which will store the (r,g,b) components of that color. The metadata chunks are available in
 the corresponding branch of the Part Node. You have as many Nodes in this branch as many boundary elements
-are attached to some metadata.
+are enriched with metadata.
 </p>
 
 <div align="center"><img src="../imgs/situ_part_node_01.png"/></div>
+
+<p>
+Once the Part shape is modified by a modeling operator, the metadata should be actualized in accordance with
+the modification history (if available). The actualization is done
+within <span class="code-inline">asiEngine_Part::Update()</span> method.
+</p>
 
 </body>
 </html>

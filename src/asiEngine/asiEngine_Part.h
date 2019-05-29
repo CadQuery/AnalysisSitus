@@ -107,7 +107,7 @@ public:
     BuildBVH();
 
   asiEngine_EXPORT void
-    Clean();
+    Clean(const bool cleanMeta = true);
 
   asiEngine_EXPORT TopoDS_Face
     GetFace(const int oneBasedId);

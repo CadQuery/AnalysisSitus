@@ -34,6 +34,10 @@
 // asiAlgo includes
 #include <asiAlgo_ShapePartnerHasher.h>
 
+// Active Data includes
+#include <ActAPI_IPlotter.h>
+#include <ActAPI_IProgressNotifier.h>
+
 // OCCT includes
 #include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS_Shape.hxx>
@@ -274,8 +278,11 @@ public:
 public:
 
   //! \brief Initializes history graph.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_History();
+    asiAlgo_History(ActAPI_ProgressEntry progress = NULL,
+                    ActAPI_PlotterEntry  plotter  = NULL);
 
   //! \brief Releases occupied memory.
   asiAlgo_EXPORT
@@ -283,16 +290,31 @@ public:
 
 public:
 
+  //! Add new root node to the history. Use this method to make origins in
+  //! the history graph without any succeeding evolution.
+  //! \param[in] shape shape to add a root node for.
+  //! \return created root node.
+  asiAlgo_EXPORT t_item*
+    AddRoot(const TopoDS_Shape& shape);
+
   //! Get root shapes from the history.
   //! \param[out] roots root shapes.
   asiAlgo_EXPORT void
     GetRoots(std::vector<TopoDS_Shape>& roots) const;
 
-  //! Get root shapes of a certain type from the history.
+  //! Returns root shapes of a certain type from the history.
+  //! \param[in]  type  shape type of interest.
   //! \param[out] roots root shapes of a certain type.
   asiAlgo_EXPORT void
     GetRootsOfType(const TopAbs_ShapeEnum     type,
                    std::vector<TopoDS_Shape>& roots) const;
+
+  //! Returns root nodes for the shapes of a certain type from the history.
+  //! \param[in]  type  shape type of interest.
+  //! \param[out] roots root nodes for the shapes of a certain type.
+  asiAlgo_EXPORT void
+    GetRootsOfType(const TopAbs_ShapeEnum type,
+                   std::vector<t_item*>&  roots) const;
 
   //! \brief Adds modification record to the history.
   //!
@@ -549,6 +571,12 @@ protected:
   //! Shapes and their corresponding history items. The map is indexed to
   //! have a persistent key.
   t_shapeItemMap m_items;
+
+  //! Progress notifier.
+  mutable ActAPI_ProgressEntry m_progress;
+
+  //! Imperative plotter.
+  mutable ActAPI_PlotterEntry m_plotter;
 
 };
 

@@ -33,7 +33,11 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_History::asiAlgo_History() : Standard_Transient()
+asiAlgo_History::asiAlgo_History(ActAPI_ProgressEntry progress,
+                                 ActAPI_PlotterEntry  plotter)
+: Standard_Transient (),
+  m_progress         (progress),
+  m_plotter          (plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -42,6 +46,19 @@ asiAlgo_History::~asiAlgo_History()
 {
   for ( size_t k = 0; k < m_roots.size(); ++k )
     delete m_roots[k];
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape)
+{
+  t_item* pRootItem = this->makeItem(shape, 0);
+  //
+  pRootItem->IsActive = true;
+  //
+  m_roots.push_back(pRootItem);
+
+  return pRootItem;
 }
 
 //-----------------------------------------------------------------------------
@@ -60,6 +77,16 @@ void asiAlgo_History::GetRootsOfType(const TopAbs_ShapeEnum     type,
   for ( size_t k = 0; k < m_roots.size(); ++k )
     if ( m_roots[k]->TransientPtr.ShapeType() == type )
       roots.push_back(m_roots[k]->TransientPtr);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_History::GetRootsOfType(const TopAbs_ShapeEnum type,
+                                     std::vector<t_item*>&  roots) const
+{
+  for ( size_t k = 0; k < m_roots.size(); ++k )
+    if ( m_roots[k]->TransientPtr.ShapeType() == type )
+      roots.push_back(m_roots[k]);
 }
 
 //-----------------------------------------------------------------------------

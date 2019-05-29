@@ -73,10 +73,10 @@ public:
   {
     int                  Op;           //!< Operation index.
     TopoDS_Shape         TransientPtr; //!< Shape as a transient pointer.
-    std::vector<t_item*> Generated;    //!< List of items generated from this one.
-    std::vector<t_item*> Modified;     //!< List of items substituted this one.
     bool                 IsDeleted;    //!< Identifies the item as deleted one.
     bool                 IsActive;     //!< Indicates whether this sub-shape is alive in the model.
+    std::vector<t_item*> Generated;    //!< List of items generated from this one.
+    std::vector<t_item*> Modified;     //!< List of items substituted this one.
 
     //! Constructor.
     t_item() : Op(0), IsDeleted(false), IsActive(false) {}
@@ -89,6 +89,27 @@ public:
 
       for ( size_t k = 0; k < Modified.size(); ++k )
         delete Modified[k];
+    }
+
+    //! Makes a deep copy (with all children) of this item.
+    //! \return deep copy of this item
+    t_item* DeepCopy() const
+    {
+      t_item* pCopy = new t_item;
+      //
+      pCopy->Op           = this->Op;
+      pCopy->TransientPtr = this->TransientPtr;
+      pCopy->IsDeleted    = this->IsDeleted;
+      pCopy->IsActive     = this->IsActive;
+
+      // Copy children.
+      for ( size_t k = 0; k < this->Generated.size(); ++k )
+        pCopy->Generated.push_back( this->Generated[k]->DeepCopy() );
+      //
+      for ( size_t k = 0; k < this->Modified.size(); ++k )
+        pCopy->Modified.push_back( this->Modified[k]->DeepCopy() );
+
+      return pCopy;
     }
 
     //! Returns child items realizing the given evolution type.
@@ -297,6 +318,12 @@ public:
   asiAlgo_EXPORT t_item*
     AddRoot(const TopoDS_Shape& shape);
 
+  //! Add new root node to the history. Use this method to add an existing
+  //! origin into the history graph with its any succeeding evolution.
+  //! \param[in] pItem item to add as a root node.
+  asiAlgo_EXPORT void
+    AddRoot(t_item* pItem);
+
   //! Get root shapes from the history.
   //! \param[out] roots root shapes.
   asiAlgo_EXPORT void
@@ -502,6 +529,12 @@ public:
   asiAlgo_EXPORT void
     GetLeafs(std::vector<t_item*>&  leafItems,
              const TopAbs_ShapeEnum shapeType = TopAbs_SHAPE) const;
+
+  //! Merges `this` history with the passed one by concatenating the leafs of
+  //! `this` history with the roots of the `other` history.
+  //! \param[in] other history to concatenate to this one.
+  asiAlgo_EXPORT void
+    Concatenate(const Handle(asiAlgo_History)& other);
 
 public:
 

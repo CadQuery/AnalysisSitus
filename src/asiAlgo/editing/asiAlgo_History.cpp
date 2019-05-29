@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_History.h>
 
+// OCCT includes
+#include <NCollection_Map.hxx>
+
 //-----------------------------------------------------------------------------
 
 asiAlgo_History::asiAlgo_History(ActAPI_ProgressEntry progress,
@@ -59,6 +62,13 @@ asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape)
   m_roots.push_back(pRootItem);
 
   return pRootItem;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_History::AddRoot(t_item* pItem)
+{
+  m_roots.push_back(pItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -319,7 +329,7 @@ void asiAlgo_History::GetLeafs(std::vector<t_item*>&  leafItems,
     if ( !pItem )
       continue; // just in case...
 
-    if ( !pItem->Generated.size() && !pItem->Modified.size() )
+    if ( !pItem->Generated.size() && !pItem->Modified.size() ) // leaf as there are no successive item.
     {
       bool isAllowed = true;
       //
@@ -329,6 +339,55 @@ void asiAlgo_History::GetLeafs(std::vector<t_item*>&  leafItems,
       if ( isAllowed )
         leafItems.push_back(pItem);
     }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
+{
+  // Get leafs of this history.
+  std::vector<t_item*> thisLeafs;
+  this->GetLeafs(thisLeafs);
+
+  // Get roots of the passed history.
+  const std::vector<t_item*>& otherRoots = other->GetRoots();
+
+  // Map of roots which were merged to leafs.
+  NCollection_Map<t_item*, t_item::Hasher> mergedRoots;
+
+  // For each leaf, find a root and make a link.
+  for ( size_t l = 0; l < thisLeafs.size(); ++l )
+  {
+    t_item* pThisLeaf = thisLeafs[l];
+    //
+    if ( !pThisLeaf->IsActive || pThisLeaf->IsDeleted )
+      continue; // Skip inactive elements.
+
+    // Find a root in the supplied history which continues tracing the
+    // evolution of the last active shape.
+    for ( size_t r = 0; r < otherRoots.size(); ++r )
+    {
+      t_item* pOtherRoot = otherRoots[r];
+
+      // Check coincidence by the transient shape pointers.
+      if ( pThisLeaf->TransientPtr.IsPartner(pOtherRoot->TransientPtr) )
+      {
+        pThisLeaf->IsActive = false;
+        pThisLeaf->Modified.push_back( pOtherRoot->DeepCopy() );
+        //
+        mergedRoots.Add(pOtherRoot);
+      }
+    }
+  }
+
+  // Add non-merged roots as new roots in the concatenated history.
+  for ( size_t r = 0; r < otherRoots.size(); ++r )
+  {
+    t_item* pOtherRoot = otherRoots[r];
+    //
+    if ( !mergedRoots.Contains(pOtherRoot) )
+      this->AddRoot( pOtherRoot->DeepCopy() );
   }
 }
 

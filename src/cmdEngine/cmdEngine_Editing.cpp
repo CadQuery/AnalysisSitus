@@ -99,10 +99,15 @@
 bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
                                  const double               radius,
                                  TopoDS_Shape&              result,
+                                 Handle(asiAlgo_History)&   history,
                                  int&                       numSuppressedChains,
                                  ActAPI_ProgressEntry       progress = NULL,
                                  ActAPI_PlotterEntry        plotter  = NULL)
 {
+  // Prepare a history instance to merge histories incrementally.
+  if ( history.IsNull() )
+    history = new asiAlgo_History;
+
   // Initialize outputs.
   result              = aag->GetMasterCAD();
   numSuppressedChains = 0;
@@ -193,6 +198,9 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     const TopoDS_Shape& incRes = suppressor.GetResult();
     //
     result = incRes;
+
+    // Merge history.
+    history->Concatenate( suppressor.GetHistory() );
 
     // Adjust the collection of remaining faces.
     fids.Subtract( suppressor.GetChainIds() );
@@ -2013,6 +2021,9 @@ int ENGINE_KillBlends(const Handle(asiTcl_Interp)& interp,
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate(); // To sync metadata.
 
   // Return the number of suppressed chains.
   *interp << suppressor.GetNumSuppressedChains();
@@ -2047,11 +2058,12 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   TIMER_NEW
   TIMER_GO
 
+  Handle(asiAlgo_History) history;
   TopoDS_Shape result;
 
   // Perform suppression incrementally.
   int numSuppressedChains = 0;
-  if ( !SuppressBlendsIncrementally( aag, maxRadius, result,
+  if ( !SuppressBlendsIncrementally( aag, maxRadius, result, history,
                                      numSuppressedChains,
                                      interp->GetProgress()/*,
                                      interp->GetPlotter()*/ ) )
@@ -2068,13 +2080,16 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(result);
+    asiEngine_Part(cmdEngine::model).Update(result, history);
   }
   cmdEngine::model->CommitCommand();
 
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate(); // To sync metadata.
 
   *interp << numSuppressedChains;
 

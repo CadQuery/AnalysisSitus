@@ -2783,6 +2783,34 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckPartContains(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Get topological item to imprint.
+  Handle(asiData_IVTopoItemNode)
+    topoItem_n = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( topoItem_n.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  *interp << asiAlgo_Utils::Contains( part_n->GetShape(), topoItem_n->GetShape() );
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -3078,4 +3106,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts point on a surface.",
     //
     __FILE__, group, ENGINE_InvertPointSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-part-contains",
+    //
+    "check-part-contains shapeName\n"
+    "\t Checks whether the part contains the shape <shapeName> as its sub-shape.",
+    //
+    __FILE__, group, ENGINE_CheckPartContains);
 }

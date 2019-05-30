@@ -41,6 +41,9 @@
 // asiUI includes
 #include <asiUI_DialogOCAFDump.h>
 
+// asiVisu includes
+#include <asiVisu_Utils.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -579,6 +582,172 @@ int ENGINE_SetFaceColorAAG(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
+                           int                          argc,
+                           const char**                 argv)
+{
+  if ( argc != 3 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get face ID (if passed).
+  int fid = 0;
+  TCollection_AsciiString fidStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "fid", fidStr) )
+    fid = fidStr.IntegerValue();
+
+  // Get color RGB components as unsigned integer values.
+  TCollection_AsciiString colorStr;
+  //
+  if ( !interp->GetKeyValue(argc, argv, "color", colorStr) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Color components are not specified.");
+    return TCL_ERROR;
+  }
+
+  // Get color components.
+  std::vector<int> colorComponents;
+  std::vector<std::string> colorComponentsStr;
+  //
+  asiAlgo_Utils::Str::Split(colorStr.ToCString(), "(,)", colorComponentsStr);
+  //
+  for ( size_t k = 0; k < colorComponentsStr.size(); ++k )
+  {
+    TCollection_AsciiString compStr( colorComponentsStr[k].c_str() );
+    //
+    if ( compStr.IsIntegerValue() )
+      colorComponents.push_back( compStr.IntegerValue() );
+  }
+
+  if ( colorComponents.size() != 3 )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Three color components expected.");
+    return TCL_ERROR;
+  }
+
+  asiEngine_Part partApi( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+
+  // If the face ID is not passed, get the selected face.
+  TColStd_PackedMapOfInteger fids;
+  //
+  if ( !fid )
+    partApi.GetHighlightedFaces(fids);
+  else
+    fids.Add(fid);
+
+  cmdEngine::model->OpenCommand();
+  {
+    // Add metadata.
+    for ( TColStd_MapIteratorOfPackedMapOfInteger fit(fids); fit.More(); fit.Next() )
+    {
+      Handle(asiData_ElemMetadataNode)
+        emn = partApi.CreateElemMetadata( "Color", partApi.GetFace( fit.Key() ) );
+      //
+      emn->SetColor( asiVisu_Utils::ColorToInt(colorComponents[0],
+                                               colorComponents[1],
+                                               colorComponents[2]) );
+    }
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate(); // To sync metadata.
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_GetMetadataIds(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get all metadata elements.
+  asiEngine_Part partApi(cmdEngine::model);
+  //
+  Handle(ActAPI_HNodeList) elems;
+  partApi.GetMetadataElems(elems);
+
+  // Number of elements.
+  const int numElems = elems->Length();
+
+  // Send to interpreter.
+  int idx = 0;
+  //
+  for ( ActAPI_HNodeList::Iterator nit(*elems); nit.More(); nit.Next() )
+  {
+    ++idx;
+    const ActAPI_DataObjectId nid = nit.Value()->GetId();
+
+    *interp << nid;
+
+    if ( idx < numElems )
+      *interp << " ";
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_GetParamShape(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Node by its ID.
+  Handle(ActAPI_INode) N = cmdEngine::model->FindNode(argv[2]);
+  //
+  if ( N.IsNull() || !N->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data Node %1 is null or invalid."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Get Parameter.
+  Handle(ActAPI_IUserParameter) P = N->Parameter( atoi(argv[3]) );
+  //
+  if ( P.IsNull() || !P->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Parameter %1 is null or invalid."
+                                                        << argv[3]);
+    return TCL_ERROR;
+  }
+
+  // Convert Parameter to shape type.
+  Handle(ActData_ShapeParameter)
+    SP = Handle(ActData_ShapeParameter)::DownCast(P);
+  //
+  if ( SP.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The requested Parameter is not of shape type.");
+    return TCL_ERROR;
+  }
+
+  // Get shape and set it as a result.
+  interp->GetPlotter().REDRAW_SHAPE( argv[1], SP->GetShape() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -675,4 +844,28 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t Sets color for the given face as AAG attribute.",
     //
     __FILE__, group, ENGINE_SetFaceColorAAG);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-face-color",
+    //
+    "set-face-color [-fid id] -color rgb(ured, ugreen, ublue)\n"
+    "\t Sets color for the given face.",
+    //
+    __FILE__, group, ENGINE_SetFaceColor);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-metadata-ids",
+    //
+    "get-metadata-ids\n"
+    "\t Returns IDs of all elementary metadata objects.",
+    //
+    __FILE__, group, ENGINE_GetMetadataIds);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-param-shape",
+    //
+    "get-param-shape resName nodeId paramId\n"
+    "\t Returns shape from the Parameter <paramId> of the Data Node <nodeId>.",
+    //
+    __FILE__, group, ENGINE_GetParamShape);
 }

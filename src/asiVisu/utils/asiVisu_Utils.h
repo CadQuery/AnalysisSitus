@@ -360,11 +360,21 @@ public:
   }
 
   //! Converts RGB color to integer.
+  //! \param[in] r red component.
+  //! \param[in] g green component.
+  //! \param[in] b blue component.
+  //! \return converted value.
+  static int ColorToInt(unsigned r, unsigned g, unsigned b)
+  {
+    return r << 16 | g << 8 | b;
+  }
+
+  //! Converts RGB color to integer.
   //! \param[in] rgb color.
   //! \return converted value.
   static int ColorToInt(unsigned rgb[3])
   {
-    return rgb[0] << 16 | rgb[1] << 8 | rgb[2];
+    return ColorToInt(rgb[0], rgb[1], rgb[2]);
   }
 
   //! Converts RGB color to integer.

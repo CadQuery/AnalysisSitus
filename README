@@ -1,6 +1,19 @@
 Release notes:
 
 -------------------------------------------------------------------------------
+v0.3.1, 31 May 2019
+-------------------------------------------------------------------------------
+- Add possibility to colorize faces.
+- Colored faces can be exported to STEP format now.
+- Add zoom in/out with Ctrl+Up/Down keys in Tcl console.
+- More parameters are now available for configuring objects via parameter editor.
+- Enrich the available set of Tcl commands.
+- Add finder for internal locations in the part shape.
+- Enable backface coloring for B-Rep and triangulations.
+- Improve internal architecture for use as a general-purpose CAD platform.
+- Add more commands for interactive reverse engineering.
+- Bugfix.
+-------------------------------------------------------------------------------
 v0.3.0, 04 March 2019
 -------------------------------------------------------------------------------
 - Rearrange control panels to give more logical and powerful interface.

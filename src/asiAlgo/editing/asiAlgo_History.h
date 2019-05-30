@@ -68,6 +68,11 @@ public:
     Evolution_Deleted
   };
 
+  struct t_item; // Forward declaration.
+
+  //! Convenience alias for indexed map of shapes-vs-items.
+  typedef NCollection_IndexedDataMap<TopoDS_Shape, t_item*, asiAlgo_ShapePartnerHasher> t_shapeItemMap;
+
   //! Node in the history graph.
   struct t_item
   {
@@ -92,8 +97,11 @@ public:
     }
 
     //! Makes a deep copy (with all children) of this item.
-    //! \return deep copy of this item
-    t_item* DeepCopy() const
+    //! \param[in,out] itemMap map to populate to have the correspondence of
+    //!                        the transient shape pointers to the newly created
+    //!                        items.
+    //! \return deep copy of this item.
+    t_item* DeepCopy(t_shapeItemMap& itemMap) const
     {
       t_item* pCopy = new t_item;
       //
@@ -101,13 +109,15 @@ public:
       pCopy->TransientPtr = this->TransientPtr;
       pCopy->IsDeleted    = this->IsDeleted;
       pCopy->IsActive     = this->IsActive;
+      //
+      itemMap.Add(pCopy->TransientPtr, pCopy);
 
       // Copy children.
       for ( size_t k = 0; k < this->Generated.size(); ++k )
-        pCopy->Generated.push_back( this->Generated[k]->DeepCopy() );
+        pCopy->Generated.push_back( this->Generated[k]->DeepCopy(itemMap) );
       //
       for ( size_t k = 0; k < this->Modified.size(); ++k )
-        pCopy->Modified.push_back( this->Modified[k]->DeepCopy() );
+        pCopy->Modified.push_back( this->Modified[k]->DeepCopy(itemMap) );
 
       return pCopy;
     }
@@ -144,9 +154,6 @@ public:
       }
     };
   };
-
-  //! Convenience alias for indexed map of shapes-vs-items.
-  typedef NCollection_IndexedDataMap<TopoDS_Shape, t_item*, asiAlgo_ShapePartnerHasher> t_shapeItemMap;
 
 public:
 
@@ -310,6 +317,12 @@ public:
     ~asiAlgo_History();
 
 public:
+
+  //! Checks whether the passed item is root in the history graph or not.
+  //! \param[in] pItem item to check.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    IsRoot(t_item* pItem) const;
 
   //! Add new root node to the history. Use this method to make origins in
   //! the history graph without any succeeding evolution.

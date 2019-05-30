@@ -73,6 +73,12 @@ public:
   asiAlgo_EXPORT void
     SetFrozenVertices(const TopTools_IndexedMapOfShape& vertices);
 
+  //! Dumps the topological situation graphically to the passed plotter.
+  //! \param[in] plotter imperative plotter.
+  asiAlgo_EXPORT void
+    Dump(ActAPI_PlotterEntry plotter) const;
+
+
 public:
 
   //! Returns true if the face <F> has been modified.

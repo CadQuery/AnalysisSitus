@@ -89,6 +89,29 @@ void asiAlgo_ModConstructEdge::SetFrozenVertices(const TopTools_IndexedMapOfShap
 
 //-----------------------------------------------------------------------------
 
+void asiAlgo_ModConstructEdge::Dump(ActAPI_PlotterEntry plotter) const
+{
+  plotter.REDRAW_SHAPE("e_s1_s2", m_edgeInfo.situation.e_s1_s2, Color_Green, 1., true);
+  plotter.REDRAW_SHAPE("e_s1_t1", m_edgeInfo.situation.e_s1_t1, Color_Red,   1., true);
+  plotter.REDRAW_SHAPE("e_s1_t2", m_edgeInfo.situation.e_s1_t2, Color_Red,   1., true);
+  plotter.REDRAW_SHAPE("e_s2_t1", m_edgeInfo.situation.e_s2_t1, Color_Red,   1., true);
+  plotter.REDRAW_SHAPE("e_s2_t2", m_edgeInfo.situation.e_s2_t2, Color_Red,   1., true);
+  //
+  plotter.REDRAW_SHAPE("f_s1",    m_edgeInfo.situation.f_s1);
+  plotter.REDRAW_SHAPE("f_s2",    m_edgeInfo.situation.f_s2);
+  plotter.REDRAW_SHAPE("f_t1",    m_edgeInfo.situation.f_t1);
+  plotter.REDRAW_SHAPE("f_t2",    m_edgeInfo.situation.f_t2);
+  //
+  plotter.REDRAW_SHAPE("v_s1_s2_t1", m_edgeInfo.situation.v_s1_s2_t1,
+                       m_frozenVertices.Contains(m_edgeInfo.situation.v_s1_s2_t1) ? Color_White : Color_Blue,
+                       1., true);
+  plotter.REDRAW_SHAPE("v_s1_s2_t2", m_edgeInfo.situation.v_s1_s2_t2,
+                       m_frozenVertices.Contains(m_edgeInfo.situation.v_s1_s2_t2) ? Color_White : Color_Blue,
+                       1., true);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_ModConstructEdge::NewSurface(const TopoDS_Face&    F,
                                           Handle(Geom_Surface)& S,
                                           TopLoc_Location&      L,

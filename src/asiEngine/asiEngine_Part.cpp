@@ -317,10 +317,17 @@ void asiEngine_Part::UpdateMetadata(const Handle(asiAlgo_History)& history)
   // Create new metadata objects from the collected DTOs.
   for ( size_t k = 0; k < dtos.size(); ++k )
   {
+    std::cout << "\t" << asiAlgo_Utils::ShapeAddrWithPrefix(dtos[k]->Shape) << " >>> ";
+
     TopoDS_Shape imSh = history->GetLastImageOrArg(dtos[k]->Shape);
     //
     if ( imSh.IsNull() ) // Image is null, i.e., the shape was deleted.
+    {
+      std::cout << "null" << std::endl;
       continue;
+    }
+    //
+    std::cout << asiAlgo_Utils::ShapeAddrWithPrefix(imSh) << std::endl;
 
     // Create elementary metadata Node.
     Handle(asiData_ElemMetadataNode)
@@ -457,9 +464,22 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
 
 //-----------------------------------------------------------------------------
 
+bool asiEngine_Part::HasNaming() const
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  return part_n->HasNaming();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiEngine_Part::InitializeNaming()
 {
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
@@ -488,6 +508,25 @@ void asiEngine_Part::InitializeNaming()
     namingParam = Handle(asiData_NamingParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Naming) );
   //
   namingParam->SetNaming(naming);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Stores history in the Part Node.
+//! \param[in] history history to store.
+void asiEngine_Part::StoreHistory(const Handle(asiAlgo_History)& history)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return;
+
+  // Set naming service to part.
+  Handle(asiData_NamingParameter)
+    namingParam = Handle(asiData_NamingParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Naming) );
+  //
+  namingParam->SetNaming( new asiAlgo_Naming(history) );
 }
 
 //-----------------------------------------------------------------------------

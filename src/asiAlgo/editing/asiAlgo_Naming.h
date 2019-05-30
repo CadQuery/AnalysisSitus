@@ -50,6 +50,13 @@ public:
 
 public:
 
+  //! \brief Constructs naming tool which holds history only.
+  //! \param[in] history  history to store.
+  //! \param[in] progress progress notifier.
+  asiAlgo_EXPORT
+    asiAlgo_Naming(const Handle(asiAlgo_History)& history,
+                   ActAPI_ProgressEntry           progress = NULL);
+
   //! \brief Constructs naming tool from topology graph.
   //! \param[in] topograph topology graph which allows for a more formal
   //!                      view on a CAD-model together with caching its

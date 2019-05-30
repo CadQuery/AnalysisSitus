@@ -54,7 +54,7 @@ the support faces to intersect (faces <span class="code-inline">s1</span> and <s
 <div align="center"><img src="../imgs/rebuild_edge_01.png"/></div>
 
 <p>
-As the figure above shows, the normal situation is to have ten adjacent topological
+As the figure above shows, in the simplest situation, we have ten adjacent topological
 elements for the edge in question (denoted as <span class="code-inline">s1-s2</span>).
 This tuple of ten boundary elements we call a <i>topological condition</i> which requires
 a certain <i>geometric resolution</i>. It is assumed that resolution does not change the topology
@@ -70,6 +70,17 @@ as <span class="code-inline">s1</span> without reducing the generality. The vert
 <span class="code-inline">s1-s2-t1</span> is chosen as the first vertex of the edge
 <span class="code-inline">s1-s2</span>. The vertex <span class="code-inline">s1-s2-t2</span>
 is chosen as the last vertex of the edge <span class="code-inline">s1-s2</span>.
+</p>
+
+<div align="center"><img src="../imgs/rebuild_edge_02.png"/></div>
+
+<p>
+There can be more than just a couple of terminating faces <span class="code-inline">t1</span> and
+<span class="code-inline">t2</span> as the figure above shows. If so, there will be
+a fan of <span class="code-inline">s*-t*</span> edges which should not be forgotten. At the same time,
+the s-t edges are not required for the geometric computations themselves, and it is only necessary
+to take them into account when constructing a modification history (e.g., to preserve
+<a href="./features_part-node.html">metadata</a>).
 </p>
 
 <h2>Knowledge-guided computation</h2>

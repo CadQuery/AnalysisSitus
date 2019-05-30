@@ -54,6 +54,19 @@ public:
   //! \param[in] aag      attributed adjacency graph containing the recognition
   //!                     results and hence (implicitly) the blend chain to
   //!                     suppress.
+  //! \param[in] history  modification history container (passed here for reuse).
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)&     aag,
+                               const Handle(asiAlgo_History)& history,
+                               ActAPI_ProgressEntry           progress = NULL,
+                               ActAPI_PlotterEntry            plotter  = NULL);
+
+  //! Ctor.
+  //! \param[in] aag      attributed adjacency graph containing the recognition
+  //!                     results and hence (implicitly) the blend chain to
+  //!                     suppress.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT

@@ -106,7 +106,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
 {
   // Prepare a history instance to merge histories incrementally.
   if ( history.IsNull() )
-    history = new asiAlgo_History;
+    history = new asiAlgo_History(progress, plotter);
 
   // Initialize outputs.
   result              = aag->GetMasterCAD();
@@ -166,7 +166,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     }
 
     // Prepare tool.
-    asiAlgo_SuppressBlendChain suppressor(tempAAG, progress, plotter);
+    asiAlgo_SuppressBlendChain suppressor(tempAAG/*, history*/, progress, plotter);
     //
     if ( !suppressor.Perform(fid) )
     {
@@ -1260,8 +1260,8 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
   // Prepare algorithm.
   asiAlgo_RebuildEdge oper( part_n->GetShape(),
-                            interp->GetProgress()/*,
-                            interp->GetPlotter()*/ );
+                            interp->GetProgress(),
+                            interp->GetPlotter() );
   //
   if ( hasNaming )
     oper.SetHistory( part_n->GetNaming()->GetHistory() );
@@ -1277,7 +1277,8 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Rebuild edge")
 
   // Get result.
-  const TopoDS_Shape& result = oper.GetResult();
+  const TopoDS_Shape&            result  = oper.GetResult();
+  const Handle(asiAlgo_History)& history = oper.GetHistory();
 
   /* =======================
    *  Finalize modification
@@ -1286,7 +1287,10 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(result);
+    asiEngine_Part partApi(cmdEngine::model);
+    //
+    partApi.Update(result, history);
+    //partApi.StoreHistory(history);
   }
   cmdEngine::model->CommitCommand();
 
@@ -1922,7 +1926,10 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(result, history);
+    asiEngine_Part partApi(cmdEngine::model);
+    //
+    partApi.Update(result, history);
+    partApi.StoreHistory(history);
   }
   cmdEngine::model->CommitCommand();
 
@@ -2080,7 +2087,10 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   // Modify Data Model.
   cmdEngine::model->OpenCommand();
   {
-    asiEngine_Part(cmdEngine::model).Update(result, history);
+    asiEngine_Part partApi(cmdEngine::model);
+    //
+    partApi.Update(result, history);
+    partApi.StoreHistory(history);
   }
   cmdEngine::model->CommitCommand();
 

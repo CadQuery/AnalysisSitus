@@ -200,6 +200,19 @@ namespace asiAlgo_AAGIterationRule
 
 //-----------------------------------------------------------------------------
 
+asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)&     aag,
+                                                       const Handle(asiAlgo_History)& history,
+                                                       ActAPI_ProgressEntry           progress,
+                                                       ActAPI_PlotterEntry            plotter)
+//
+: ActAPI_IAlgorithm   (progress, plotter),
+  m_aag               (aag),
+  m_history           (history),
+  m_iSuppressedChains (0)
+{}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)& aag,
                                                        ActAPI_ProgressEntry       progress,
                                                        ActAPI_PlotterEntry        plotter)

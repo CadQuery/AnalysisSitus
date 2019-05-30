@@ -55,8 +55,9 @@
 #define ARRNAME_HISTORY_SUBSHAPE_STATES "HistorySubshapeState"
 //
 #define ARRNAME_HISTORY_SUBSHAPE_STATE_INACTIVE 0
-#define ARRNAME_HISTORY_SUBSHAPE_STATE_ACTIVE 1
-#define ARRNAME_HISTORY_SUBSHAPE_STATE_DELETED 2
+#define ARRNAME_HISTORY_SUBSHAPE_STATE_ACTIVE   1
+#define ARRNAME_HISTORY_SUBSHAPE_STATE_DELETED  2
+#define ARRNAME_HISTORY_SUBSHAPE_STATE_ROOT     3
 
 // Evolution type is encoded by arcs
 #define ARRNAME_HISTORY_EVOLUTION_TYPES "HistoryEvolutionType"
@@ -109,6 +110,8 @@ protected:
         return vtkColor4ub(55, 255, 0, 255);
       if ( state->GetVariantValue(vertex).ToInt() == ARRNAME_HISTORY_SUBSHAPE_STATE_DELETED )
         return vtkColor4ub(255, 55, 0, 255);
+      if ( state->GetVariantValue(vertex).ToInt() == ARRNAME_HISTORY_SUBSHAPE_STATE_ROOT )
+        return vtkColor4ub(255, 0, 255, 255);
     }
 
     return vtkColor4ub(128, 128, 128, 255);

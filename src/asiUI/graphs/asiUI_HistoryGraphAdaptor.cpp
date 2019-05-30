@@ -117,12 +117,17 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     labelArr->InsertNextValue(label);
 
     // State
-    if ( pItem->IsDeleted )
-      stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_DELETED);
-    else if ( pItem->IsActive )
-      stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_ACTIVE);
+    if ( history->IsRoot(pItem) )
+      stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_ROOT);
     else
-      stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_INACTIVE);
+    {
+      if ( pItem->IsDeleted )
+        stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_DELETED);
+      else if ( pItem->IsActive )
+        stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_ACTIVE);
+      else
+        stateArr->InsertNextValue(ARRNAME_HISTORY_SUBSHAPE_STATE_INACTIVE);
+    }
   }
 
   // Add arcs

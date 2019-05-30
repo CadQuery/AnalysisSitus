@@ -36,6 +36,16 @@
 
 //-----------------------------------------------------------------------------
 
+asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_History)& history,
+                               ActAPI_ProgressEntry           progress)
+: Standard_Transient()
+{
+  m_history  = history;
+  m_progress = progress;
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_Naming::asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
                                ActAPI_ProgressEntry             progress)
 : Standard_Transient()
@@ -159,6 +169,12 @@ bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
   if ( m_history.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "No history to actualize naming.");
+    return false;
+  }
+
+  if ( m_topograph.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "No topograph to actualize naming.");
     return false;
   }
 

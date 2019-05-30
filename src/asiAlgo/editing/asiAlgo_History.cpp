@@ -53,6 +53,17 @@ asiAlgo_History::~asiAlgo_History()
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_History::IsRoot(t_item* pItem) const
+{
+  for ( size_t k = 0; k < m_roots.size(); ++k )
+    if ( m_roots[k] == pItem )
+      return true;
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape)
 {
   t_item* pRootItem = this->makeItem(shape, 0);
@@ -69,6 +80,7 @@ asiAlgo_History::t_item* asiAlgo_History::AddRoot(const TopoDS_Shape& shape)
 void asiAlgo_History::AddRoot(t_item* pItem)
 {
   m_roots.push_back(pItem);
+  m_items.Add(pItem->TransientPtr, pItem);
 }
 
 //-----------------------------------------------------------------------------
@@ -357,6 +369,7 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
   NCollection_Map<t_item*, t_item::Hasher> mergedRoots;
 
   // For each leaf, find a root and make a link.
+  int numJoints = 0;
   for ( size_t l = 0; l < thisLeafs.size(); ++l )
   {
     t_item* pThisLeaf = thisLeafs[l];
@@ -374,12 +387,23 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
       if ( pThisLeaf->TransientPtr.IsPartner(pOtherRoot->TransientPtr) )
       {
         pThisLeaf->IsActive = false;
-        pThisLeaf->Modified.push_back( pOtherRoot->DeepCopy() );
+        pThisLeaf->Modified.push_back( pOtherRoot->DeepCopy(m_items) );
         //
-        mergedRoots.Add(pOtherRoot);
+        if ( !mergedRoots.Contains(pOtherRoot) )
+          mergedRoots.Add(pOtherRoot);
+
+        ++numJoints;
       }
     }
   }
+
+  // Some diagnostics.
+  if ( thisLeafs.size() && !numJoints )
+    m_progress.SendLogMessage(LogWarn(Normal) << "Concatenation is not contiguous. "
+                                                 "The successive history will be added from its roots.");
+  //
+  if ( numJoints == thisLeafs.size() )
+    m_progress.SendLogMessage(LogNotice(Normal) << "One-to-one history joint.");
 
   // Add non-merged roots as new roots in the concatenated history.
   for ( size_t r = 0; r < otherRoots.size(); ++r )
@@ -387,7 +411,7 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
     t_item* pOtherRoot = otherRoots[r];
     //
     if ( !mergedRoots.Contains(pOtherRoot) )
-      this->AddRoot( pOtherRoot->DeepCopy() );
+      this->AddRoot( pOtherRoot->DeepCopy(m_items) );
   }
 }
 

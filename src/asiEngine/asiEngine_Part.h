@@ -103,6 +103,9 @@ public:
   asiEngine_EXPORT void
     InitializeNaming();
 
+  asiEngine_EXPORT void
+    StoreHistory(const Handle(asiAlgo_History)& history);
+
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
 

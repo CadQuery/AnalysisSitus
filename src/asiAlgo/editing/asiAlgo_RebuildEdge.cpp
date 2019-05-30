@@ -72,6 +72,8 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
     return false;
   //
   Mod->SetFrozenVertices(m_frozenVertices.vertices);
+  //
+  Mod->Dump(m_plotter);
 
   // Initialize Modifier.
   asiAlgo_BRepNormalizer Modifier(m_progress, m_plotter);

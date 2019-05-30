@@ -425,8 +425,7 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
     return part_n;
 
   // Actualize metadata.
-  if ( !history.IsNull() )
-    this->UpdateMetadata(history);
+  this->UpdateMetadata(history);
 
   // Reset data without cleaning up metadata.
   this->Clean(false);
@@ -470,7 +469,7 @@ bool asiEngine_Part::HasNaming() const
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
   if ( part_n.IsNull() || !part_n->IsWellFormed() )
-    return;
+    return false;
 
   return part_n->HasNaming();
 }

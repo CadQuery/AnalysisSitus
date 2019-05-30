@@ -121,10 +121,10 @@ protected:
 //-----------------------------------------------------------------------------
 signals:
 
-  void show         (const ActAPI_DataObjectId&);
-  void showOnly     (const ActAPI_DataObjectId&);
-  void hide         (const ActAPI_DataObjectId&);
-  void nodeSelected ();
+  void show          (const ActAPI_DataObjectId&);
+  void showOnly      (const ActAPI_DataObjectId&);
+  void hide          (const ActAPI_DataObjectId&);
+  void nodesSelected (const ActAPI_DataObjectIdList&);
 
 //-----------------------------------------------------------------------------
 protected slots:

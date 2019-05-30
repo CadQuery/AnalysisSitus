@@ -1290,13 +1290,20 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
     asiEngine_Part partApi(cmdEngine::model);
     //
     partApi.Update(result, history);
-    //partApi.StoreHistory(history);
+
+    // Store history if naming is not active (otherwise, the naming will
+    // be overridden which is not good).
+    if ( !partApi.HasNaming() )
+      partApi.StoreHistory(history);
   }
   cmdEngine::model->CommitCommand();
 
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  //
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate(); // To sync metadata.
 
   return TCL_OK;
 }

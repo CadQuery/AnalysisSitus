@@ -37,6 +37,7 @@ set (controls_H_UI_FILES
   controls/asiUI_EvalButton.h
   controls/asiUI_LineEdit.h
   controls/asiUI_ObjectBrowser.h
+  controls/asiUI_ObjectBrowserListener.h
   controls/asiUI_ParameterEditor.h
   controls/asiUI_ParameterEditorDelegate.h
   controls/asiUI_ParameterEditorListener.h
@@ -60,6 +61,7 @@ set (controls_CPP_FILES
   controls/asiUI_EvalButton.cpp
   controls/asiUI_LineEdit.cpp
   controls/asiUI_ObjectBrowser.cpp
+  controls/asiUI_ObjectBrowserListener.cpp
   controls/asiUI_ParamEditorImpl.cpp
   controls/asiUI_ParameterEditor.cpp
   controls/asiUI_ParameterEditorDelegate.cpp

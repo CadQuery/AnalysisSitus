@@ -307,6 +307,9 @@ void exe_MainWindow::createDockWindows()
   //
   this->tabifyDockWidget(pDockDomain, pDockParamEditor);
 
+  // Listener for object browser.
+  Listeners.pObjectBrowser = new asiUI_ObjectBrowserListener(cf);
+
   // Listener for analysis controls.
   Listeners.pControlsAnalysis = new asiUI_ControlsAnalysisListener(Widgets.wControlsAnalysis,
                                                                    cf);
@@ -351,6 +354,7 @@ void exe_MainWindow::createDockWindows()
   Listeners.pParamEditor = new asiUI_ParameterEditorListenerDefault(cf);
 
   // Signals-slots.
+  Listeners.pObjectBrowser    ->Connect();
   Listeners.pControlsAnalysis ->Connect();
   Listeners.pControlsPart     ->Connect();
   Listeners.pControlsModeling ->Connect();

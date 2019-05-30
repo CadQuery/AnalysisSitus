@@ -258,6 +258,8 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
 void asiUI_ObjectBrowser::onSelectionChanged()
 {
   // Populate parameter editor.
+  ActAPI_DataObjectIdList selIds;
+  //
   if ( !m_paramEditor.IsNull() )
   {
     Handle(ActAPI_HNodeList) nodes = this->GetSelectedNodes();
@@ -266,9 +268,14 @@ void asiUI_ObjectBrowser::onSelectionChanged()
       m_paramEditor->SetParameters( NULL );
     else
       m_paramEditor->SetParameters( nodes->First()->Parameters() );
+
+    // Collect IDs of the selected Nodes to pass them to the listeners.
+    if ( !nodes.IsNull() )
+      for ( ActAPI_HNodeList::Iterator nit(*nodes); nit.More(); nit.Next() )
+        selIds.Append( nit.Value()->GetId() );
   }
 
-  emit nodeSelected();
+  emit nodesSelected(selIds);
 }
 
 //-----------------------------------------------------------------------------
@@ -676,7 +683,6 @@ void asiUI_ObjectBrowser::onConvertToTris()
       pViewerPart->PrsMgr()->Actualize( m_model->GetTriangulationNode() );
   }
 }
-
 
 //-----------------------------------------------------------------------------
 

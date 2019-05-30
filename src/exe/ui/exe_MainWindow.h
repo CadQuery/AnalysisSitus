@@ -37,7 +37,7 @@
 #include <asiUI_ControlsMeshListener.h>
 #include <asiUI_ControlsModelingListener.h>
 #include <asiUI_ControlsPartListener.h>
-#include <asiUI_ObjectBrowser.h>
+#include <asiUI_ObjectBrowserListener.h>
 #include <asiUI_ParameterEditorListener.h>
 #include <asiUI_ViewerDomainListener.h>
 #include <asiUI_ViewerHostListener.h>
@@ -121,16 +121,18 @@ public:
   //! Listeners.
   struct t_listeners
   {
+    asiUI_ObjectBrowserListener*    pObjectBrowser;    //!< Listener for object browser.
     asiUI_ControlsAnalysisListener* pControlsAnalysis; //!< Listener for analysis controls.
     asiUI_ControlsPartListener*     pControlsPart;     //!< Listener for part controls.
-    asiUI_ControlsModelingListener* pControlsModeling; //!< Listener for part controls.
+    asiUI_ControlsModelingListener* pControlsModeling; //!< Listener for modeling controls.
     asiUI_ControlsMeshListener*     pControlsMesh;     //!< Listener for mesh controls.
     asiUI_ViewerPartListener*       pViewerPart;       //!< Listener for part viewer.
     asiUI_ViewerDomainListener*     pViewerDomain;     //!< Listener for domain viewer.
     asiUI_ViewerHostListener*       pViewerHost;       //!< Listener for host viewer.
     asiUI_ParameterEditorListener*  pParamEditor;      //!< Listener for parameter editor.
 
-    t_listeners() : pControlsAnalysis (NULL),
+    t_listeners() : pObjectBrowser    (NULL),
+                    pControlsAnalysis (NULL),
                     pControlsPart     (NULL),
                     pControlsModeling (NULL),
                     pControlsMesh     (NULL),
@@ -142,6 +144,7 @@ public:
 
     void Release()
     {
+      delete pObjectBrowser;    pObjectBrowser    = NULL;
       delete pControlsAnalysis; pControlsAnalysis = NULL;
       delete pControlsPart;     pControlsPart     = NULL;
       delete pControlsModeling; pControlsModeling = NULL;

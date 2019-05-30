@@ -100,6 +100,9 @@ public:
            const Handle(asiAlgo_History)& history = NULL,
            const bool                     doResetTessParams = false);
 
+  asiEngine_EXPORT bool
+    HasNaming() const;
+
   asiEngine_EXPORT void
     InitializeNaming();
 

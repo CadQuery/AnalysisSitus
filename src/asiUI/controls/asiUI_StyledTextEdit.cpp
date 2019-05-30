@@ -34,7 +34,7 @@
 void asiUI_StyledTextEdit::stylize()
 {
   // Style
-  this->setStyleSheet( QString::fromUtf8("background-color: rgb(30, 30, 30); color: rgb(230, 230, 230); font-size: 8pt") );
+  this->setStyleSheet( QString::fromUtf8("background-color: rgb(30, 30, 30); color: rgb(230, 230, 230);") );
   //
   QTextCharFormat fmt = this->currentCharFormat();
   //

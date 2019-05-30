@@ -68,6 +68,9 @@ asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
   this->setAcceptRichText( false );
   this->setReadOnly( false );
 
+   QFont f("monospace", 8);
+   this->setFont(f);
+
   // unset busy cursor
   this->viewport()->unsetCursor();
 
@@ -106,6 +109,24 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
 
   switch ( e->key() )
   {
+    case Qt::Key_Up:
+    {
+      if ( e->modifiers() == Qt::ControlModifier )
+        this->zoomIn();
+      else
+        asiUI_StyledTextEdit::keyPressEvent(e);
+
+      break;
+    }
+    case Qt::Key_Down:
+    {
+      if ( e->modifiers() == Qt::ControlModifier )
+        this->zoomOut();
+      else
+        asiUI_StyledTextEdit::keyPressEvent(e);
+
+      break;
+    }
     case Qt::Key_Return:
     case Qt::Key_Enter:
     {

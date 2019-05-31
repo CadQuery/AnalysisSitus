@@ -153,6 +153,9 @@ int ENGINE_ShowOnly(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
+  if ( !cmdEngine::cf || !cmdEngine::cf->ViewerPart )
+    return TCL_OK;
+
   cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderAllPresentations();
   //
   if ( argc > 1 )

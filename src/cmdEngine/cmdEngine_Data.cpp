@@ -627,7 +627,8 @@ int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  asiEngine_Part partApi( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+  asiEngine_Part partApi( cmdEngine::model,
+                          (cmdEngine::cf && cmdEngine::cf->ViewerPart) ? cmdEngine::cf->ViewerPart->PrsMgr() : NULL );
 
   // If the face ID is not passed, get the selected face.
   TColStd_PackedMapOfInteger fids;

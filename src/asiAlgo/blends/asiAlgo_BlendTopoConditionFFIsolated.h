@@ -95,7 +95,9 @@ public:
   //! Allows to identify a certain topological condition from the passed blend
   //! candidate attribute.
   //! \param[in] bcAttr blend candidate attribute in question.
-  //! \return true if the certain topological condition is identified.
+  //! \return true if the certain topological condition is identified. If not,
+  //!         this method returns false and the recognizer will try another
+  //!         condition.
   virtual bool Initialize(const Handle(asiAlgo_AttrBlendCandidate)& bcAttr)
   {
     // Identify the spring edges and the support faces.

@@ -97,7 +97,9 @@ public:
     if ( !asiAlgo_BlendTopoConditionFF::Initialize(bcAttr) )
       return false; // Not identified.
 
-    // Ordinary blend contains either two cross or two terminating edges.
+    // Ordinary blend contains either two cross edges or one cross and one
+    // terminating edge. It should not contain two terminating edges as,
+    // otherwise, it is an isolated blend (which is another topo condition).
     int e_b_c1_idx = 0, e_b_c2_idx = 0;
     //
     const int numCrossEdges  = bcAttr->CrossEdgeIndices.Extent();
@@ -107,15 +109,13 @@ public:
     if ( numSpringEdges != 2 )
       return false;
     //
+    if ( numTermEdges == 2 )
+      return false;
+    //
     if ( numCrossEdges == 2 && numTermEdges == 0 )
     {
       e_b_c1_idx = bcAttr->CrossEdgeIndices.GetMinimalMapped();
       e_b_c2_idx = bcAttr->CrossEdgeIndices.GetMaximalMapped();
-    }
-    else if ( numCrossEdges == 0 && numTermEdges == 2 )
-    {
-      e_b_c1_idx = bcAttr->TerminatingEdgeIndices.GetMinimalMapped();
-      e_b_c2_idx = bcAttr->TerminatingEdgeIndices.GetMaximalMapped();
     }
     else if ( numCrossEdges == 1 && numTermEdges == 1 )
     {

@@ -40,8 +40,8 @@
           "confirmed": "0",
           "numSmoothEdges": "3",
           "numSpringEdges": "2",
-          "numCrossEdges": "1",
-          "numTerminatingEdges": "1"
+          "numCrossEdges": "2",
+          "numTerminatingEdges": "0"
         }
       ]
     },
@@ -170,8 +170,8 @@
           "confirmed": "1",
           "numSmoothEdges": "2",
           "numSpringEdges": "2",
-          "numCrossEdges": "0",
-          "numTerminatingEdges": "2"
+          "numCrossEdges": "1",
+          "numTerminatingEdges": "1"
         }
       ]
     }

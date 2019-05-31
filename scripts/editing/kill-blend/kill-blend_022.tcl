@@ -22,20 +22,20 @@ if { [check-euler 0] != 1 } {
 disable-notifier
 
 # Attempt to kill blend.
-#if { [kill-blend 16] == 1 } {
-#  error "Unexpected result of blend suppression (failure expected)."
-#}
+if { [kill-blend 16] == 1 } {
+  error "Unexpected result of blend suppression (failure expected)."
+}
 #
-#if { [kill-blend 24] == 1 } {
-#  error "Unexpected result of blend suppression (failure expected)."
-#}
+if { [kill-blend 24] == 1 } {
+  error "Unexpected result of blend suppression (failure expected)."
+}
 #
-#if { [kill-blend 20] == 1 } {
-#  error "Unexpected result of blend suppression (failure expected)."
-#}
+if { [kill-blend 20] == 1 } {
+  error "Unexpected result of blend suppression (failure expected)."
+}
 #
-#if { [kill-blend 25] == 1 } {
-#  error "Unexpected result of blend suppression (failure expected)."
-#}
+if { [kill-blend 25] == 1 } {
+  error "Unexpected result of blend suppression (failure expected)."
+}
 
 enable-notifier

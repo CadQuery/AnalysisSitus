@@ -1898,9 +1898,8 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
 
   // Perform recognition starting from the guess face.
   asiAlgo_RecognizeBlends recognizer( partNode->GetAAG(),
-                                      interp->GetProgress(),
-                                      NULL
-                                      /*interp->GetPlotter()*/ );
+                                      interp->GetProgress()/*,
+                                      interp->GetPlotter()*/ );
   //
   if ( !recognizer.Perform(fid) )
   {
@@ -1912,9 +1911,8 @@ int ENGINE_KillBlend(const Handle(asiTcl_Interp)& interp,
 
   // Perform suppression.
   asiAlgo_SuppressBlendChain suppressor( recognizer.GetAAG(),
-                                         interp->GetProgress(),
-                                         NULL
-                                         /*interp->GetPlotter()*/ );
+                                         interp->GetProgress()/*,
+                                         interp->GetPlotter()*/ );
   //
   if ( !suppressor.Perform(fid) )
   {

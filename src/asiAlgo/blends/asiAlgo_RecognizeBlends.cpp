@@ -222,6 +222,82 @@ namespace asiAlgo_AAGIterationRule
     Handle(asiAlgo_RecognizeVBF) m_localReco;       //!< Local recognizer.
     bool                         m_bBlockingModeOn; //!< Blocking mode.
   };
+
+  //! This rule converts terminating edges to cross edges if the terminating
+  //! edges connect blend candidate faces.
+  class TerminatingEdges2CrossEdges : public Standard_Transient
+  {
+  public:
+
+    // OCCT RTTI
+    DEFINE_STANDARD_RTTI_INLINE(TerminatingEdges2CrossEdges, Standard_Transient)
+
+  public:
+
+    //! Ctor.
+    //! \param[in] aag      attributed adjacency graph keeping information on the
+    //!                     recognized properties of the model.
+    //! \param[in] progress progress notifier.
+    //! \param[in] plottter imperative plotter.
+    TerminatingEdges2CrossEdges(const Handle(asiAlgo_AAG)& aag,
+                                ActAPI_ProgressEntry       progress,
+                                ActAPI_PlotterEntry        plotter)
+    : m_aag(aag)
+    {}
+
+  public:
+
+    //! For the given face ID, this method decides whether to check its
+    //! neighbors or stop.
+    //! \param[in] fid 1-based ID of the face in question.
+    //! \return true if the face in question is a gatekeeper for further iteration.
+    bool IsBlocking(const int fid)
+    {
+      // Get attribute.
+      Handle(asiAlgo_AttrBlendCandidate)
+        bc = Handle(asiAlgo_AttrBlendCandidate)::DownCast( m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() ) );
+      //
+      if ( bc.IsNull() )
+        return false;
+
+      // Iterate over the terminating edges.
+      TColStd_PackedMapOfInteger suspectedTermEdges;
+      for ( TColStd_MapIteratorOfPackedMapOfInteger eit(bc->TerminatingEdgeIndices); eit.More(); eit.Next() )
+      {
+        // Get edge.
+        const int   eid  = eit.Key();
+        TopoDS_Edge edge = TopoDS::Edge( m_aag->RequestMapOfEdges()(eid) );
+
+        // Get neighbors of the current face.
+        bool isTermConfirmed = true;
+        TColStd_PackedMapOfInteger neighbors = m_aag->GetNeighborsThru(fid, edge);
+        //
+        for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
+        {
+          const int nid = nit.Key();
+          //
+          if ( !m_aag->GetNodeAttribute( nid, asiAlgo_AttrBlendCandidate::GUID() ).IsNull() )
+          {
+            isTermConfirmed = false;
+            break;
+          }
+        }
+
+        if ( !isTermConfirmed )
+          suspectedTermEdges.Add(eid);
+      }
+
+      // Override terminating edges.
+      bc->CrossEdgeIndices.Unite(suspectedTermEdges);
+      bc->TerminatingEdgeIndices.Subtract(suspectedTermEdges);
+
+      return false;
+    }
+
+  protected:
+
+    Handle(asiAlgo_AAG) m_aag; //!< AAG instance.
+  };
 };
 
 //-----------------------------------------------------------------------------
@@ -330,8 +406,30 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
     vbfIt.Next();
   }
 
+  /* ===========================================================
+   *  Stage 4: Reconsider some terminating edges as cross edges
+   * =========================================================== */
+
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges)
+    t2cRule = new asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges(m_aag,
+                                                                        m_progress,
+                                                                        m_plotter);
+
+  // Select seed face.
+  seedFaceId = 1;
+
+  // Prepare neighborhood iterator with customized propagation rule.
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges>
+    t2cIt(m_aag, seedFaceId, t2cRule);
+  //
+  while ( t2cIt.More() )
+  {
+    t2cIt.Next();
+  }
+
   /* =============================================================
-   *  Stage 4: extract features from the attributes hooked in AAG
+   *  Stage 5: extract features from the attributes hooked in AAG
    * ============================================================= */
 
   // Prepare tool to extract features from AAG.
@@ -435,8 +533,27 @@ bool asiAlgo_RecognizeBlends::Perform(const int    faceId,
     vbfIt.Next();
   }
 
+  /* ===========================================================
+   *  Stage 4: Reconsider some terminating edges as cross edges
+   * =========================================================== */
+
+  // Propagation rule.
+  Handle(asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges)
+    t2cRule = new asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges(m_aag,
+                                                                        m_progress,
+                                                                        m_plotter);
+
+  // Prepare neighborhood iterator with customized propagation rule.
+  asiAlgo_AAGNeighborsIterator<asiAlgo_AAGIterationRule::TerminatingEdges2CrossEdges>
+    t2cIt(m_aag, faceId, t2cRule);
+  //
+  while ( t2cIt.More() )
+  {
+    t2cIt.Next();
+  }
+
   /* =============================================================
-   *  Stage 4: extract features from the attributes hooked in AAG
+   *  Stage 5: extract features from the attributes hooked in AAG
    * ============================================================= */
 
   // Prepare tool to extract features from AAG.

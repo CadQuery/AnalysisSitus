@@ -550,6 +550,18 @@ public:
     RequestTMapOf(const TopAbs_ShapeEnum      ssType,
                   asiAlgo_IndexedMapOfTShape& map);
 
+  //! Returns vertices and their owner edges.
+  //! If the map is empty, it is constructed.
+  //! \return map of vertices and their owner edges.
+  asiAlgo_EXPORT const TopTools_IndexedDataMapOfShapeListOfShape&
+    RequestMapOfVerticesEdges();
+
+  //! Returns vertices with unique TShape pointers and their owner edges.
+  //! If the map is empty, it is constructed.
+  //! \return map of vertices and their owner edges.
+  asiAlgo_EXPORT const asiAlgo_IndexedDataMapOfTShapeListOfShape&
+    RequestTMapOfVerticesEdges();
+
   //! Returns edges and their owner faces.
   //! If the map is empty, it is constructed.
   //! \return map of edges and their owner faces.
@@ -803,6 +815,12 @@ protected:
 
   //! All vertices of the master model with distinct TShape pointers.
   asiAlgo_IndexedMapOfTShape m_tVertices;
+
+  //! Map of vertices versus edges.
+  TopTools_IndexedDataMapOfShapeListOfShape m_verticesEdges;
+
+  //! Map of vertices with distinct TShape pointers versus edges.
+  asiAlgo_IndexedDataMapOfTShapeListOfShape m_tVerticesEdges;
 
   //! Map of edges versus faces.
   TopTools_IndexedDataMapOfShapeListOfShape m_edgesFaces;

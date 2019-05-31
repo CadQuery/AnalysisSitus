@@ -115,25 +115,25 @@ public:
   //! \param[in] plotter imperative plotter.
   void DumpSituation(ActAPI_PlotterEntry plotter) const
   {
-    plotter.REDRAW_SHAPE("Situation.e_s1_s2", situation.e_s1_s2, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_s1_t1", situation.e_s1_t1, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_s1_t2", situation.e_s1_t2, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_s2_t1", situation.e_s2_t1, Color_Blue, 1.0, true);
-    plotter.REDRAW_SHAPE("Situation.e_s2_t2", situation.e_s2_t2, Color_Blue, 1.0, true);
+    plotter.DRAW_SHAPE(situation.e_s1_s2, Color_Red,  1.0, true, "Situation.e_s1_s2");
+    plotter.DRAW_SHAPE(situation.e_s1_t1, Color_Red,  1.0, true, "Situation.e_s1_t1");
+    plotter.DRAW_SHAPE(situation.e_s1_t2, Color_Red,  1.0, true, "Situation.e_s1_t2");
+    plotter.DRAW_SHAPE(situation.e_s2_t1, Color_Blue, 1.0, true, "Situation.e_s2_t1");
+    plotter.DRAW_SHAPE(situation.e_s2_t2, Color_Blue, 1.0, true, "Situation.e_s2_t2");
     //
-    plotter.REDRAW_SHAPE("Situation.f_s1", situation.f_s1, Color_Red,  0.25);
-    plotter.REDRAW_SHAPE("Situation.f_s2", situation.f_s2, Color_Blue, 0.25);
-    plotter.REDRAW_SHAPE("Situation.f_t1", situation.f_t1, Color_Red,  0.95, true);
-    plotter.REDRAW_SHAPE("Situation.f_t2", situation.f_t2, Color_Blue, 0.95, true);
+    plotter.DRAW_SHAPE(situation.f_s1, Color_Red,  0.25,       "Situation.f_s1");
+    plotter.DRAW_SHAPE(situation.f_s2, Color_Blue, 0.25,       "Situation.f_s2");
+    plotter.DRAW_SHAPE(situation.f_t1, Color_Red,  0.95, true, "Situation.f_t1");
+    plotter.DRAW_SHAPE(situation.f_t2, Color_Blue, 0.95, true, "Situation.f_t2");
     //
-    plotter.REDRAW_SHAPE("Situation.v_s1_s2_t1", situation.v_s1_s2_t1, Color_Red,  1.0, true);
-    plotter.REDRAW_SHAPE("Situation.v_s1_s2_t2", situation.v_s1_s2_t2, Color_Blue, 1.0, true);
+    plotter.DRAW_SHAPE(situation.v_s1_s2_t1, Color_Red,  1.0, true, "Situation.v_s1_s2_t1");
+    plotter.DRAW_SHAPE(situation.v_s1_s2_t2, Color_Blue, 1.0, true, "Situation.v_s1_s2_t2");
 
     // Dump extra edges.
     for ( int k = 1; k <= situation.e_extra.Extent(); ++k )
     {
       TCollection_AsciiString name("Situation.e_extra["); name += k; name += "]";
-      plotter.REDRAW_SHAPE(name, situation.e_extra(k), Color_White, 1.0, true);
+      plotter.DRAW_SHAPE(situation.e_extra(k), Color_White, 1.0, true, name);
     }
 
     // Dump extra faces.

@@ -441,6 +441,28 @@ void asiAlgo_AAG::RequestTMapOf(const TopAbs_ShapeEnum      ssType,
 //-----------------------------------------------------------------------------
 
 const TopTools_IndexedDataMapOfShapeListOfShape&
+  asiAlgo_AAG::RequestMapOfVerticesEdges()
+{
+  if ( m_verticesEdges.IsEmpty() )
+    TopExp::MapShapesAndAncestors(m_master, TopAbs_VERTEX, TopAbs_EDGE, m_edgesFaces);
+
+  return m_verticesEdges;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_IndexedDataMapOfTShapeListOfShape&
+  asiAlgo_AAG::RequestTMapOfVerticesEdges()
+{
+  if ( m_tVerticesEdges.IsEmpty() )
+    asiAlgo_Utils::MapTShapesAndAncestors(m_master, TopAbs_VERTEX, TopAbs_EDGE, m_tEdgesFaces);
+
+  return m_tVerticesEdges;
+}
+
+//-----------------------------------------------------------------------------
+
+const TopTools_IndexedDataMapOfShapeListOfShape&
   asiAlgo_AAG::RequestMapOfEdgesFaces()
 {
   if ( m_edgesFaces.IsEmpty() )

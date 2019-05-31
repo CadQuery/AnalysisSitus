@@ -123,6 +123,9 @@ namespace asiAlgo_AAGIterationRule
           // Attempt to identify a topological condition.
           if ( cond1->Initialize(bcAttr) )
           {
+            m_progress.SendLogMessage( LogNotice(Normal) << "Confirmed condition: %1."
+                                                         << cond1->DynamicType()->Name() );
+
             cond1->Dump(m_plotter);
             //
             m_faceInfo->Bind(fid, cond1);
@@ -131,6 +134,9 @@ namespace asiAlgo_AAGIterationRule
           }
           else if ( cond2->Initialize(bcAttr) )
           {
+            m_progress.SendLogMessage( LogNotice(Normal) << "Confirmed condition: %1."
+                                                         << cond2->DynamicType()->Name() );
+
             cond2->Dump(m_plotter);
             //
             m_faceInfo->Bind(fid, cond2);
@@ -139,6 +145,9 @@ namespace asiAlgo_AAGIterationRule
           }
           else if ( cond3->Initialize(bcAttr) )
           {
+            m_progress.SendLogMessage( LogNotice(Normal) << "Confirmed condition: %1."
+                                                         << cond3->DynamicType()->Name() );
+
             cond3->Dump(m_plotter);
             //
             m_faceInfo->Bind(fid, cond3);
@@ -502,6 +511,11 @@ bool
 bool
   asiAlgo_SuppressBlendChain::performGeomOperations(TopoDS_Shape& targetShape)
 {
+  const int numEdges = m_workflow.edges2Rebuild.edges.Extent();
+
+  m_progress.SendLogMessage(LogInfo(Normal) << "There are %1 edges to rebuild"
+                                            << numEdges);
+
   // Normalize geometry.
   for ( int k = 1; k <= m_workflow.edges2Rebuild.edges.Extent(); ++k )
   {

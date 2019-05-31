@@ -25,12 +25,14 @@ set (CPP_FILES
 set (cases_editing_H_FILES
   cases/editing/asiTest_InvertShells.h
   cases/editing/asiTest_KEV.h
+  cases/editing/asiTest_RebuildEdge.h
   cases/editing/asiTest_RecognizeBlends.h
   cases/editing/asiTest_SuppressBlends.h
 )
 set (cases_editing_CPP_FILES
   cases/editing/asiTest_InvertShells.cpp
   cases/editing/asiTest_KEV.cpp
+  cases/editing/asiTest_RebuildEdge.cpp
   cases/editing/asiTest_RecognizeBlends.cpp
   cases/editing/asiTest_SuppressBlends.cpp
 )

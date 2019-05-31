@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 31 May 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,57 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_CaseIDs_HeaderFile
-#define asiTest_CaseIDs_HeaderFile
+#ifndef asiTest_RebuildEdge_HeaderFile
+#define asiTest_RebuildEdge_HeaderFile
 
-// Tests includes
-#include <asiTest_CommonFacilities.h>
+// asiTest includes
+#include <asiTest_CaseIDs.h>
+#include <asiTest_TclTestCase.h>
 
-// asiTestEngine includes
-#include <asiTestEngine.h>
-
-//! IDs for Test Cases.
-enum test_CaseID
+//! Test functions for edge normalization.
+class asiTest_RebuildEdge : public asiTest_TclTestCase
 {
-  CaseID_InvertShells = 1,
-  CaseID_KEV,
-  CaseID_RebuildEdge,
-  CaseID_RecognizeBlends,
-  CaseID_SuppressBlends,
+public:
 
-/* ------------------------------------------------------------------------ */
+  //! Returns Test Case ID.
+  //! \return ID of the Test Case.
+  static int ID()
+  {
+    return CaseID_RebuildEdge;
+  }
 
-  CaseID_DataDictionary,
-  CaseID_Utils,
+  //! Returns filename for the description.
+  //! \return filename for the description of the Test Case.
+  static std::string DescriptionFn()
+  {
+    return "asiTest_RebuildEdge";
+  }
 
-/* ------------------------------------------------------------------------ */
+  //! Returns Test Case description directory.
+  //! \return description directory for the Test Case.
+  static std::string DescriptionDir()
+  {
+    return "editing";
+  }
 
-  CaseID_AAG,
-  CaseID_IsContourClosed,
-  CaseID_EdgeVexity,
+  //! Returns pointers to the Test Functions to launch.
+  //! \param[out] functions output collection of pointers.
+  static void Functions(AsiTestFunctions& functions)
+  {
+    functions << &testRebuildEdge001
+              << &testRebuildEdge002
+    ; // Put semicolon here for convenient adding new functions above ;)
+  }
 
-/* ------------------------------------------------------------------------ */
+private:
 
-  CaseID_LAST
+  static outcome runTestScript(const int   funcID,
+                               const char* filename);
+
+private:
+
+  static outcome testRebuildEdge001(const int funcID);
+  static outcome testRebuildEdge002(const int funcID);
 
 };
 

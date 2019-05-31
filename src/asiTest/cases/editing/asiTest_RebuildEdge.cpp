@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2018
+// Created on: 31 May 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,39 +28,44 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiTest_CaseIDs_HeaderFile
-#define asiTest_CaseIDs_HeaderFile
+// Own include
+#include <asiTest_RebuildEdge.h>
 
-// Tests includes
-#include <asiTest_CommonFacilities.h>
+//-----------------------------------------------------------------------------
 
-// asiTestEngine includes
-#include <asiTestEngine.h>
-
-//! IDs for Test Cases.
-enum test_CaseID
+outcome asiTest_RebuildEdge::runTestScript(const int   funcID,
+                                           const char* filename)
 {
-  CaseID_InvertShells = 1,
-  CaseID_KEV,
-  CaseID_RebuildEdge,
-  CaseID_RecognizeBlends,
-  CaseID_SuppressBlends,
+  // Get filename of script to execute.
+  TCollection_AsciiString fullFilename = GetFilename(filename);
 
-/* ------------------------------------------------------------------------ */
+  // Execute test script.
+  outcome res = evaluate(fullFilename);
 
-  CaseID_DataDictionary,
-  CaseID_Utils,
+  // Set description variables.
+  SetVarDescr("filename", fullFilename,       ID(), funcID);
+  SetVarDescr("time",     res.elapsedTimeSec, ID(), funcID);
 
-/* ------------------------------------------------------------------------ */
+  // Return status.
+  return res;
+}
 
-  CaseID_AAG,
-  CaseID_IsContourClosed,
-  CaseID_EdgeVexity,
+//-----------------------------------------------------------------------------
 
-/* ------------------------------------------------------------------------ */
+//! Test scenario 001.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_RebuildEdge::testRebuildEdge001(const int funcID)
+{
+  return runTestScript(funcID, "editing/rebuild-edge/rebuild-edge_001.tcl");
+}
 
-  CaseID_LAST
+//-----------------------------------------------------------------------------
 
-};
-
-#endif
+//! Test scenario 002.
+//! \param[in] funcID ID of the Test Function.
+//! \return true in case of success, false -- otherwise.
+outcome asiTest_RebuildEdge::testRebuildEdge002(const int funcID)
+{
+  return runTestScript(funcID, "editing/rebuild-edge/rebuild-edge_002.tcl");
+}

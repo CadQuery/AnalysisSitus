@@ -1,0 +1,15 @@
+[TITLE]
+
+  Edge normalization
+
+[1-*:OVERVIEW]
+
+  Rebuild edge by reintersection of adjacent faces.
+
+[1-*:DETAILS]
+
+  <b>Run to reproduce:</b>
+  <br>
+  <tt>source %%filename%%</tt>
+  <br><br>
+  Elapsed time [s]: %%time%%

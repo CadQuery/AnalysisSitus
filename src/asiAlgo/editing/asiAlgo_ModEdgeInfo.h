@@ -66,10 +66,18 @@ public:
     TopoDS_Edge   e_s2_t2;    //!< Edge between owner face s2 and terminating face t2.
     TopoDS_Face   f_s1;       //!< Owner face 1.
     TopoDS_Face   f_s2;       //!< Owner face 2.
-    TopoDS_Face   f_t1;       //!< Terminating face t1.
-    TopoDS_Face   f_t2;       //!< Terminating face t2.
+    TopoDS_Face   f_t1;       //!< Terminating face(s) t1.
+    TopoDS_Face   f_t2;       //!< Terminating face(s) t2.
     TopoDS_Vertex v_s1_s2_t1; //!< First vertex of the edge.
     TopoDS_Vertex v_s1_s2_t2; //!< Last vertex of the edge.
+
+    //! Additional edges to recompute. We expect to have here a fan of
+    //! s-t edges. This set does not contain e_s1_t1, e_s1_t2, e_s2_t1, e_s2_t2.
+    TopTools_IndexedMapOfShape e_extra;
+
+    //! Extra terminating faces which contain e_extra. This set does not
+    //! contain f_t1 and f_t2.
+    TopTools_IndexedMapOfShape f_extra;
   };
 
   //! Geometric primitives to resolve the topological situation.
@@ -120,6 +128,20 @@ public:
     //
     plotter.REDRAW_SHAPE("Situation.v_s1_s2_t1", situation.v_s1_s2_t1, Color_Red,  1.0, true);
     plotter.REDRAW_SHAPE("Situation.v_s1_s2_t2", situation.v_s1_s2_t2, Color_Blue, 1.0, true);
+
+    // Dump extra edges.
+    for ( int k = 1; k <= situation.e_extra.Extent(); ++k )
+    {
+      TCollection_AsciiString name("Situation.e_extra["); name += k; name += "]";
+      plotter.REDRAW_SHAPE(name, situation.e_extra(k), Color_White, 1.0, true);
+    }
+
+    // Dump extra faces.
+    for ( int k = 1; k <= situation.f_extra.Extent(); ++k )
+    {
+      TCollection_AsciiString name("Situation.f_extra["); name += k; name += "]";
+      plotter.REDRAW_SHAPE(name, situation.f_extra(k), Color_White, 1.0, false);
+    }
   }
 
 public:

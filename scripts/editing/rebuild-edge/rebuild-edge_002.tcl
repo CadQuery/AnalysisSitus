@@ -1,3 +1,9 @@
+# This unit test is aimed to verify that metadata is preserved on edge-rebuild
+# operation in case if there are more than one trailing face for each extremity
+# in the corresponding topological situation. Essentially, this test checks that
+# the modification history is propagated to the fan of s-t (support-terminating)
+# edges and the corresponding terminating faces.
+
 proc check-metadata {pidShape refNumMeta} {
   # Get IDs of all metadata elements.
   set metaElems [get-metadata-ids]
@@ -18,7 +24,7 @@ proc check-metadata {pidShape refNumMeta} {
 }
 
 # Set working variables.
-set datafile cad/box.brep
+set datafile cad/blends/nist_ctc_01_asme1_ap242.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -34,19 +40,31 @@ print-summary
 set initialToler [get-tolerance]
 
 # Add some metadata.
-set-face-color -fid 1 -color rgb(255,225,50)
-set-face-color -fid 2 -color rgb(255,125,50)
-set-face-color -fid 3 -color rgb(215,225,150)
+set-face-color -fid 104 -color rgb(140,20,50)
+#
+set-face-color -fid 105 -color rgb(40,85,150)
+set-face-color -fid 106 -color rgb(40,85,150)
+set-face-color -fid 107 -color rgb(40,85,150)
+set-face-color -fid 108 -color rgb(40,85,150)
+set-face-color -fid 109 -color rgb(40,85,150)
+set-face-color -fid 110 -color rgb(40,85,150)
+#
+set-face-color -fid 111 -color rgb(60,180,40)
+set-face-color -fid 112 -color rgb(60,180,40)
+set-face-color -fid 113 -color rgb(60,180,40)
+set-face-color -fid 114 -color rgb(60,180,40)
+set-face-color -fid 115 -color rgb(60,180,40)
+set-face-color -fid 116 -color rgb(60,180,40)
 
 # Initialize naming service
 init-naming
 
 # Apply geometric operators.
-rebuild-edge -name edge_1
+rebuild-edge -name edge_310; donly
 
 # Check metadata
 set pid 1
-set refMetaNum 3
+set refMetaNum 13
 #
 check-metadata $pid $refMetaNum
 

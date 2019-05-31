@@ -200,6 +200,42 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
       return false;
     }
 
+    /* Extra edges */
+
+    std::vector< std::pair<TopoDS_Shape, TopoDS_Shape> > eExtra_images;
+    for ( int k = 1; k <= edgeInfo.situation.e_extra.Extent(); ++k )
+    {
+      TopoDS_Shape eExtra_old = edgeInfo.situation.e_extra(k);
+      TopoDS_Shape eExtra_new;
+      //
+      if ( !Modifier.ModifiedShape(eExtra_old, eExtra_new) )
+      {
+        m_progress.SendLogMessage(LogErr(Normal) << "There is no image for extra edge %1." << k);
+        return false;
+      }
+
+      // Add to the list of images.
+      eExtra_images.push_back( std::pair<TopoDS_Shape, TopoDS_Shape>(eExtra_old, eExtra_new) );
+    }
+
+    /* Extra faces */
+
+    std::vector< std::pair<TopoDS_Shape, TopoDS_Shape> > fExtra_images;
+    for ( int k = 1; k <= edgeInfo.situation.f_extra.Extent(); ++k )
+    {
+      TopoDS_Shape fExtra_old = edgeInfo.situation.f_extra(k);
+      TopoDS_Shape fExtra_new;
+      //
+      if ( !Modifier.ModifiedShape(fExtra_old, fExtra_new) )
+      {
+        m_progress.SendLogMessage(LogErr(Normal) << "There is no image for extra face %1." << k);
+        return false;
+      }
+
+      // Add to the list of images.
+      fExtra_images.push_back( std::pair<TopoDS_Shape, TopoDS_Shape>(fExtra_old, fExtra_new) );
+    }
+
     // Populate history.
     m_history->AddModified(edgeInfo.situation.e_s1_s2,    e_s1_s2_new);
     m_history->AddModified(edgeInfo.situation.e_s1_t1,    e_s1_t1_new);
@@ -212,6 +248,12 @@ bool asiAlgo_RebuildEdge::Perform(const TopoDS_Edge& edge)
     m_history->AddModified(edgeInfo.situation.f_t2,       f_t2_new);
     m_history->AddModified(edgeInfo.situation.v_s1_s2_t1, v_s1_s2_t1_new);
     m_history->AddModified(edgeInfo.situation.v_s1_s2_t2, v_s1_s2_t2_new);
+    //
+    for ( size_t k = 0; k < eExtra_images.size(); ++k )
+      m_history->AddModified(eExtra_images[k].first, eExtra_images[k].second);
+    //
+    for ( size_t k = 0; k < fExtra_images.size(); ++k )
+      m_history->AddModified(fExtra_images[k].first, fExtra_images[k].second);
   }
 
   return true; // Success.

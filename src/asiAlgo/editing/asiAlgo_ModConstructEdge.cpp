@@ -91,23 +91,7 @@ void asiAlgo_ModConstructEdge::SetFrozenVertices(const TopTools_IndexedMapOfShap
 
 void asiAlgo_ModConstructEdge::Dump(ActAPI_PlotterEntry plotter) const
 {
-  plotter.REDRAW_SHAPE("e_s1_s2", m_edgeInfo.situation.e_s1_s2, Color_Green, 1., true);
-  plotter.REDRAW_SHAPE("e_s1_t1", m_edgeInfo.situation.e_s1_t1, Color_Red,   1., true);
-  plotter.REDRAW_SHAPE("e_s1_t2", m_edgeInfo.situation.e_s1_t2, Color_Red,   1., true);
-  plotter.REDRAW_SHAPE("e_s2_t1", m_edgeInfo.situation.e_s2_t1, Color_Red,   1., true);
-  plotter.REDRAW_SHAPE("e_s2_t2", m_edgeInfo.situation.e_s2_t2, Color_Red,   1., true);
-  //
-  plotter.REDRAW_SHAPE("f_s1",    m_edgeInfo.situation.f_s1);
-  plotter.REDRAW_SHAPE("f_s2",    m_edgeInfo.situation.f_s2);
-  plotter.REDRAW_SHAPE("f_t1",    m_edgeInfo.situation.f_t1);
-  plotter.REDRAW_SHAPE("f_t2",    m_edgeInfo.situation.f_t2);
-  //
-  plotter.REDRAW_SHAPE("v_s1_s2_t1", m_edgeInfo.situation.v_s1_s2_t1,
-                       m_frozenVertices.Contains(m_edgeInfo.situation.v_s1_s2_t1) ? Color_White : Color_Blue,
-                       1., true);
-  plotter.REDRAW_SHAPE("v_s1_s2_t2", m_edgeInfo.situation.v_s1_s2_t2,
-                       m_frozenVertices.Contains(m_edgeInfo.situation.v_s1_s2_t2) ? Color_White : Color_Blue,
-                       1., true);
+  m_edgeInfo.DumpSituation(plotter);
 }
 
 //-----------------------------------------------------------------------------
@@ -450,9 +434,11 @@ GeomAbs_Shape
 
 bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 {
-  // Build child-parent map.
-  asiAlgo_IndexedDataMapOfTShapeListOfShape edgeFaceMap;
-  asiAlgo_Utils::MapTShapesAndAncestors(m_shape, TopAbs_EDGE, TopAbs_FACE, edgeFaceMap);
+  // Build child-parent maps.
+  asiAlgo_IndexedDataMapOfTShapeListOfShape edgeFaceMap, vertexEdgeMap;
+  //
+  asiAlgo_Utils::MapTShapesAndAncestors(m_shape, TopAbs_EDGE,   TopAbs_FACE, edgeFaceMap);
+  asiAlgo_Utils::MapTShapesAndAncestors(m_shape, TopAbs_VERTEX, TopAbs_EDGE, vertexEdgeMap);
 
   // Check if the edge in question is a part of the model.
   if ( !edgeFaceMap.Contains(targetEdge) )
@@ -654,6 +640,55 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   }
   //
   m_edgeInfo.situation.f_t2 = TopoDS::Face( f1_next_neighbors(1) );
+
+  // Add fan of extra s-t edges.
+  const TopTools_ListOfShape& s_t1_edges = vertexEdgeMap.FindFromKey(m_edgeInfo.situation.v_s1_s2_t1);
+  const TopTools_ListOfShape& s_t2_edges = vertexEdgeMap.FindFromKey(m_edgeInfo.situation.v_s1_s2_t2);
+  //
+  for ( TopTools_ListIteratorOfListOfShape eit(s_t1_edges); eit.More(); eit.Next() )
+  {
+    const TopoDS_Shape& eExtra = eit.Value();
+    //
+    if ( !eExtra.IsPartner(m_edgeInfo.situation.e_s1_t1) &&
+         !eExtra.IsPartner(m_edgeInfo.situation.e_s2_t1) &&
+         !eExtra.IsPartner(m_edgeInfo.situation.e_s1_s2) )
+    {
+      m_edgeInfo.situation.e_extra.Add(eExtra);
+    }
+  }
+  //
+  for ( TopTools_ListIteratorOfListOfShape eit(s_t2_edges); eit.More(); eit.Next() )
+  {
+    const TopoDS_Shape& eExtra = eit.Value();
+    //
+    if ( !eExtra.IsPartner(m_edgeInfo.situation.e_s1_t2) &&
+         !eExtra.IsPartner(m_edgeInfo.situation.e_s2_t2) &&
+         !eExtra.IsPartner(m_edgeInfo.situation.e_s1_s2) )
+    {
+      m_edgeInfo.situation.e_extra.Add(eExtra);
+    }
+  }
+
+  // For the extra edges, find their faces and add them as geometries as well.
+  for ( int k = 1; k <= m_edgeInfo.situation.e_extra.Extent(); ++k )
+  {
+    const TopoDS_Shape& eExtra = m_edgeInfo.situation.e_extra(k);
+
+    // Get all owner faces for this extra edge and add them to the
+    // corresponding collection.
+    const TopTools_ListOfShape& eExtraOwners = edgeFaceMap.FindFromKey(eExtra);
+    //
+    for ( TopTools_ListIteratorOfListOfShape fit(eExtraOwners); fit.More(); fit.Next() )
+    {
+      const TopoDS_Shape& fExtra = fit.Value();
+      //
+      if ( !fExtra.IsPartner(m_edgeInfo.situation.f_t1) &&
+           !fExtra.IsPartner(m_edgeInfo.situation.f_t2) )
+      {
+        m_edgeInfo.situation.f_extra.Add(fExtra);
+      }
+    }
+  }
 
 #if defined DRAW_DEBUG
   m_edgeInfo.DumpSituation(m_plotter);

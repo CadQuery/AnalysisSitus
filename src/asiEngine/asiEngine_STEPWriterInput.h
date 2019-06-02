@@ -35,17 +35,17 @@
 #include <asiEngine_Model.h>
 
 // asiAlgo includes
-#include <asiAlgo_STEPWithMetaInput.h>
+#include <asiAlgo_WriteSTEPWithMetaInput.h>
 
 //-----------------------------------------------------------------------------
 
 //! Input data provider for the STEP writer with metadata.
-class asiEngine_STEPWriterInput : public asiAlgo_STEPWithMetaInput
+class asiEngine_STEPWriterInput : public asiAlgo_WriteSTEPWithMetaInput
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiEngine_STEPWriterInput, asiAlgo_STEPWithMetaInput)
+  DEFINE_STANDARD_RTTI_INLINE(asiEngine_STEPWriterInput, asiAlgo_WriteSTEPWithMetaInput)
 
 public:
 

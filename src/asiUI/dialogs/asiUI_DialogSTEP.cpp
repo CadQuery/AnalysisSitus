@@ -32,8 +32,8 @@
 #include <asiUI_DialogSTEP.h>
 
 // asiAlgo includes
+#include <asiAlgo_WriteSTEPWithMeta.h>
 #include <asiAlgo_STEP.h>
-#include <asiAlgo_STEPWithMeta.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
@@ -315,7 +315,7 @@ void asiUI_DialogSTEP::proceed_Write()
     input = new asiEngine_STEPWriterInput( Handle(asiEngine_Model)::DownCast(m_model) );
 
   // Prepare translator
-  asiAlgo_STEPWithMeta writer(m_notifier, m_plotter);
+  asiAlgo_WriteSTEPWithMeta writer(m_notifier, m_plotter);
   writer.SetInput(input);
 
   // Save to STEP

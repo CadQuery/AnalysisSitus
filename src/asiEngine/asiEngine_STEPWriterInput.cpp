@@ -40,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 asiEngine_STEPWriterInput::asiEngine_STEPWriterInput(const Handle(asiEngine_Model)& M)
-: asiAlgo_STEPWithMetaInput (),
+: asiAlgo_WriteSTEPWithMetaInput (),
   m_model                   (M)
 {
   asiEngine_Part api(m_model);

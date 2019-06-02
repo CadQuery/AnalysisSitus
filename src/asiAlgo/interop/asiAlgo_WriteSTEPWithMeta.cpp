@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_STEPWithMeta.h>
+#include <asiAlgo_WriteSTEPWithMeta.h>
 
 // OCCT includes
 #include <Interface_EntityIterator.hxx>
@@ -59,8 +59,8 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_STEPWithMeta::asiAlgo_STEPWithMeta(ActAPI_ProgressEntry progress,
-                                           ActAPI_PlotterEntry  plotter)
+asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(ActAPI_ProgressEntry progress,
+                                                    ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_bColorMode      (true)
 {
@@ -71,10 +71,10 @@ asiAlgo_STEPWithMeta::asiAlgo_STEPWithMeta(ActAPI_ProgressEntry progress,
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_STEPWithMeta::asiAlgo_STEPWithMeta(const Handle(XSControl_WorkSession)& WS,
-                                           const bool                           scratch,
-                                           ActAPI_ProgressEntry                 progress,
-                                           ActAPI_PlotterEntry                  plotter)
+asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(const Handle(XSControl_WorkSession)& WS,
+                                                    const bool                           scratch,
+                                                    ActAPI_ProgressEntry                 progress,
+                                                    ActAPI_PlotterEntry                  plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_bColorMode      (true)
 {
@@ -84,8 +84,8 @@ asiAlgo_STEPWithMeta::asiAlgo_STEPWithMeta(const Handle(XSControl_WorkSession)& 
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_STEPWithMeta::Init(const Handle(XSControl_WorkSession)& WS,
-                                const bool scratch)
+void asiAlgo_WriteSTEPWithMeta::Init(const Handle(XSControl_WorkSession)& WS,
+                                    const bool scratch)
 {
   WS->SelectNorm("STEP");
   m_writer.SetWS(WS, scratch);
@@ -93,7 +93,7 @@ void asiAlgo_STEPWithMeta::Init(const Handle(XSControl_WorkSession)& WS,
 
 //-----------------------------------------------------------------------------
 
-IFSelect_ReturnStatus asiAlgo_STEPWithMeta::Write(const char* filename)
+IFSelect_ReturnStatus asiAlgo_WriteSTEPWithMeta::Write(const char* filename)
 {
   IFSelect_ReturnStatus status = m_writer.Write(filename);
 
@@ -102,14 +102,14 @@ IFSelect_ReturnStatus asiAlgo_STEPWithMeta::Write(const char* filename)
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::Transfer(const STEPControl_StepModelType mode)
+bool asiAlgo_WriteSTEPWithMeta::Transfer(const STEPControl_StepModelType mode)
 {
   return this->transfer(m_writer, mode);
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::Perform(const TCollection_AsciiString& filename)
+bool asiAlgo_WriteSTEPWithMeta::Perform(const TCollection_AsciiString& filename)
 {
   if ( !this->Transfer() )
     return false;
@@ -119,8 +119,8 @@ bool asiAlgo_STEPWithMeta::Perform(const TCollection_AsciiString& filename)
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::transfer(STEPControl_Writer&             writer,
-                                    const STEPControl_StepModelType mode)
+bool asiAlgo_WriteSTEPWithMeta::transfer(STEPControl_Writer&             writer,
+                                        const STEPControl_StepModelType mode)
 {
   Handle(STEPControl_ActorWrite)
     Actor = Handle(STEPControl_ActorWrite)::DownCast( writer.WS()->NormAdaptor()->ActorWrite() );
@@ -208,7 +208,7 @@ static int FindEntities(const Handle(Transfer_FinderProcess) &FP,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::writeColors(const Handle(XSControl_WorkSession)& WS)
+bool asiAlgo_WriteSTEPWithMeta::writeColors(const Handle(XSControl_WorkSession)& WS)
 {
   STEPConstruct_Styles                        Styles(WS);
   STEPConstruct_DataMapOfAsciiStringTransient DPDCs;
@@ -257,26 +257,26 @@ bool asiAlgo_STEPWithMeta::writeColors(const Handle(XSControl_WorkSession)& WS)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_STEPWithMeta::SetColorMode(const bool colormode)
+void asiAlgo_WriteSTEPWithMeta::SetColorMode(const bool colormode)
 {
   m_bColorMode = colormode;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_STEPWithMeta::GetColorMode() const
+bool asiAlgo_WriteSTEPWithMeta::GetColorMode() const
 {
   return m_bColorMode;
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_STEPWithMeta::makeSTEPStyles(STEPConstruct_Styles&                        Styles,
-                                          const TopoDS_Shape&                          S,
-                                          Handle(StepVisual_StyledItem)&               override,
-                                          TopTools_MapOfShape&                         Map,
-                                          STEPConstruct_DataMapOfAsciiStringTransient& DPDCs,
-                                          STEPConstruct_DataMapOfPointTransient&       ColRGBs)
+void asiAlgo_WriteSTEPWithMeta::makeSTEPStyles(STEPConstruct_Styles&                        Styles,
+                                               const TopoDS_Shape&                          S,
+                                               Handle(StepVisual_StyledItem)&               override,
+                                               TopTools_MapOfShape&                         Map,
+                                               STEPConstruct_DataMapOfAsciiStringTransient& DPDCs,
+                                               STEPConstruct_DataMapOfPointTransient&       ColRGBs)
 {
   // Skip already processed shapes.
   if ( !Map.Add(S) )

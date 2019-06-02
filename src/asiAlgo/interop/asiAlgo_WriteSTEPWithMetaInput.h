@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_STEPWithMetaInput_h
-#define asiAlgo_STEPWithMetaInput_h
+#ifndef asiAlgo_WriteSTEPWithMetaInput_h
+#define asiAlgo_WriteSTEPWithMetaInput_h
 
 // asiAlgo includes
 #include <asiAlgo.h>
@@ -41,12 +41,12 @@
 //-----------------------------------------------------------------------------
 
 //! Input data provider for the STEP writer with metadata.
-class asiAlgo_STEPWithMetaInput : public Standard_Transient
+class asiAlgo_WriteSTEPWithMetaInput : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_STEPWithMetaInput, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_WriteSTEPWithMetaInput, Standard_Transient)
 
 public:
 

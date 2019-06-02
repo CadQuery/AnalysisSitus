@@ -28,11 +28,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_STEPWithMeta_h
-#define asiAlgo_STEPWithMeta_h
+#ifndef asiAlgo_WriteSTEPWithMeta_h
+#define asiAlgo_WriteSTEPWithMeta_h
 
 // asiAlgo includes
-#include <asiAlgo_STEPWithMetaInput.h>
+#include <asiAlgo_WriteSTEPWithMetaInput.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -45,30 +45,30 @@
 
 //! STEP writer enriched with possibility to write not only shapes but
 //! also some metadata such as colors.
-class asiAlgo_STEPWithMeta : public ActAPI_IAlgorithm
+class asiAlgo_WriteSTEPWithMeta : public ActAPI_IAlgorithm
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_STEPWithMeta, ActAPI_IAlgorithm)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_WriteSTEPWithMeta, ActAPI_IAlgorithm)
 
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_STEPWithMeta(ActAPI_ProgressEntry progress = NULL,
-                         ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_WriteSTEPWithMeta(ActAPI_ProgressEntry progress = NULL,
+                              ActAPI_PlotterEntry  plotter  = NULL);
 
   asiAlgo_EXPORT
-    asiAlgo_STEPWithMeta(const Handle(XSControl_WorkSession)& WS,
-                         const bool                           scratch = true,
-                         ActAPI_ProgressEntry                 progress = NULL,
-                         ActAPI_PlotterEntry                  plotter  = NULL);
+    asiAlgo_WriteSTEPWithMeta(const Handle(XSControl_WorkSession)& WS,
+                              const bool                           scratch = true,
+                              ActAPI_ProgressEntry                 progress = NULL,
+                              ActAPI_PlotterEntry                  plotter  = NULL);
 
 public:
 
   //! Sets input data adaptor.
   //! \param[in] input input data provider.
-  void SetInput(const Handle(asiAlgo_STEPWithMetaInput)& input)
+  void SetInput(const Handle(asiAlgo_WriteSTEPWithMetaInput)& input)
   {
     m_input = input;
   }
@@ -119,11 +119,8 @@ private:
   MoniTool_DataMapOfShapeTransient m_mapCompMDGPR; //!< Auxiliary map.
 
   //! Input data adaptor.
-  Handle(asiAlgo_STEPWithMetaInput) m_input;
+  Handle(asiAlgo_WriteSTEPWithMetaInput) m_input;
 
 };
 
-
-
-
-#endif // _STEPCAFControl_Writer_HeaderFile
+#endif

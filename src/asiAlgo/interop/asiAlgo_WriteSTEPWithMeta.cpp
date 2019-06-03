@@ -85,7 +85,7 @@ asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(const Handle(XSControl_Work
 //-----------------------------------------------------------------------------
 
 void asiAlgo_WriteSTEPWithMeta::Init(const Handle(XSControl_WorkSession)& WS,
-                                    const bool scratch)
+                                     const bool                           scratch)
 {
   WS->SelectNorm("STEP");
   m_writer.SetWS(WS, scratch);
@@ -120,7 +120,7 @@ bool asiAlgo_WriteSTEPWithMeta::Perform(const TCollection_AsciiString& filename)
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_WriteSTEPWithMeta::transfer(STEPControl_Writer&             writer,
-                                        const STEPControl_StepModelType mode)
+                                         const STEPControl_StepModelType mode)
 {
   Handle(STEPControl_ActorWrite)
     Actor = Handle(STEPControl_ActorWrite)::DownCast( writer.WS()->NormAdaptor()->ActorWrite() );
@@ -161,14 +161,15 @@ bool asiAlgo_WriteSTEPWithMeta::transfer(STEPControl_Writer&             writer,
 
 //-----------------------------------------------------------------------------
 
-static int FindEntities(const Handle(Transfer_FinderProcess) &FP,
-                        const TopoDS_Shape &S,
-                        TopLoc_Location &L,
-                        TColStd_SequenceOfTransient &seqRI)
+static int FindEntities(const Handle(Transfer_FinderProcess)& FP,
+                        const TopoDS_Shape&                   S,
+                        TopLoc_Location&                      L,
+                        TColStd_SequenceOfTransient&          seqRI)
 {
   Handle(StepRepr_RepresentationItem) item = STEPConstruct::FindEntity(FP, S, L);
 
-  if ( !item.IsNull() ) {
+  if ( !item.IsNull() )
+  {
     seqRI.Append(item);
     return 1;
   }

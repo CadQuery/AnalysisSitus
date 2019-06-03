@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 May 2019
+// Created on: 02 June 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiEngine_STEPWriterInput.h>
+#include <asiEngine_STEPReaderOutput.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
@@ -39,84 +39,44 @@
 
 //-----------------------------------------------------------------------------
 
-asiEngine_STEPWriterInput::asiEngine_STEPWriterInput(const Handle(asiEngine_Model)& M)
-: asiAlgo_WriteSTEPWithMetaInput (),
+asiEngine_STEPReaderOutput::asiEngine_STEPReaderOutput(const Handle(asiEngine_Model)& M)
+: asiAlgo_ReadSTEPWithMetaOutput (),
   m_model                        (M)
-{
-  asiEngine_Part api(m_model);
-  api.GetMetadataElems(m_metaElems);
-}
+{}
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiEngine_STEPWriterInput::GetShape() const
+void asiEngine_STEPReaderOutput::SetShape(const TopoDS_Shape& shape)
 {
-  return m_model->GetPartNode()->GetShape();
-}
-
-//-----------------------------------------------------------------------------
-
-int asiEngine_STEPWriterInput::GetNumSubShapes() const
-{
-  if ( m_metaElems.IsNull() )
-    return 0;
-
-  return m_metaElems->Length();
-}
-
-//-----------------------------------------------------------------------------
-
-TopoDS_Shape asiEngine_STEPWriterInput::GetSubShape(const int zeroBasedIdx) const
-{
-  const Handle(asiData_ElemMetadataNode)&
-    elemNode = Handle(asiData_ElemMetadataNode)::DownCast( m_metaElems->Value(zeroBasedIdx + 1) );
+  asiEngine_Part partApi(m_model);
   //
-  return elemNode->GetShape();
+  partApi.Update( shape, NULL, !m_model->GetPartNode()->IsKeepTessParams() );
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiEngine_STEPWriterInput::HasColor(const TopoDS_Shape& shape) const
+void asiEngine_STEPReaderOutput::SetColor(const TopoDS_Shape&   subshape,
+                                          const Quantity_Color& color)
 {
-  Handle(asiData_ElemMetadataNode) metaNode = this->elemByShape(shape);
+  Handle(asiData_ElemMetadataNode) elemNode = this->elemByShape(subshape);
   //
-  if ( metaNode.IsNull() )
-    return false;
+  if ( elemNode.IsNull() || !elemNode->IsWellFormed() )
+    return;
 
-  return true;
-}
+  // Convert color to a persistent form.
+  double colComponents[3] = { color.Red(), color.Green(), color.Blue() };
+  const int iCol = asiVisu_Utils::ColorToInt(colComponents);
 
-//-----------------------------------------------------------------------------
-
-Quantity_Color
-  asiEngine_STEPWriterInput::GetColor(const TopoDS_Shape& shape) const
-{
-  Handle(asiData_ElemMetadataNode) metaNode = this->elemByShape(shape);
-  //
-  if ( metaNode.IsNull() )
-    return Quantity_Color(1., 1., 1., Quantity_TOC_RGB);
-
-  QColor qCol = asiVisu_Utils::IntToColor( metaNode->GetColor() );
-
-  return Quantity_Color(qCol.redF(), qCol.greenF(), qCol.blueF(), Quantity_TOC_RGB);
+  // Store color.
+  elemNode->SetColor(iCol);
 }
 
 //-----------------------------------------------------------------------------
 
 Handle(asiData_ElemMetadataNode)
-  asiEngine_STEPWriterInput::elemByShape(const TopoDS_Shape& shape) const
+  asiEngine_STEPReaderOutput::elemByShape(const TopoDS_Shape& shape) const
 {
-  if ( m_metaElems.IsNull() )
-    return NULL;
+  asiEngine_Part partApi(m_model);
 
-  for ( ActAPI_HNodeList::Iterator nit(*m_metaElems); nit.More(); nit.Next() )
-  {
-    const Handle(asiData_ElemMetadataNode)&
-      metaNode = Handle(asiData_ElemMetadataNode)::DownCast( nit.Value() );
-
-    if ( metaNode->GetShape().IsSame(shape) )
-      return metaNode;
-  }
-
-  return NULL;
+  return partApi.FindElemMetadata(shape, true);
 }

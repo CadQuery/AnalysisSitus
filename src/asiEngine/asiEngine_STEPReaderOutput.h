@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 May 2019
+// Created on: 02 June 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,60 +28,40 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_STEPWriterInput_h
-#define asiEngine_STEPWriterInput_h
+#ifndef asiEngine_STEPReaderOutput_h
+#define asiEngine_STEPReaderOutput_h
 
 // asiEngine includes
 #include <asiEngine_Model.h>
 
 // asiAlgo includes
-#include <asiAlgo_WriteSTEPWithMetaInput.h>
+#include <asiAlgo_ReadSTEPWithMetaOutput.h>
 
 //-----------------------------------------------------------------------------
 
-//! Input data provider for the STEP writer with metadata.
-class asiEngine_STEPWriterInput : public asiAlgo_WriteSTEPWithMetaInput
+//! Input data adaptor for the STEP reader with metadata.
+class asiEngine_STEPReaderOutput : public asiAlgo_ReadSTEPWithMetaOutput
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiEngine_STEPWriterInput, asiAlgo_WriteSTEPWithMetaInput)
+  DEFINE_STANDARD_RTTI_INLINE(asiEngine_STEPReaderOutput, asiAlgo_ReadSTEPWithMetaOutput)
 
 public:
 
   //! Ctor accepting the Data Model instance.
   //! \param[in] M Data Model to export.
   asiEngine_EXPORT
-    asiEngine_STEPWriterInput(const Handle(asiEngine_Model)& M);
+    asiEngine_STEPReaderOutput(const Handle(asiEngine_Model)& M);
 
 public:
 
-  //! \return shape to write.
-  asiEngine_EXPORT virtual TopoDS_Shape
-    GetShape() const;
+  asiEngine_EXPORT virtual void
+    SetShape(const TopoDS_Shape& shape);
 
-  //! \return number of subshapes to be resolved by the STEP writer as
-  //!         individual entities to attach metadata to.
-  asiEngine_EXPORT virtual int
-    GetNumSubShapes() const;
-
-  //! Accessor for a subshape by its zero-based index.
-  //! \param[in] zeroBasedIdx zero-based index of a sub-shape to access.
-  //! \return transient pointer to a sub-shape.
-  asiEngine_EXPORT virtual TopoDS_Shape
-    GetSubShape(const int zeroBasedIdx) const;
-
-  //! Checks whether the passed shape has color or not.
-  //! \param[in] shape shape in question.
-  //! \return false if no color is attached, true -- otherwise.
-  asiEngine_EXPORT virtual bool
-    HasColor(const TopoDS_Shape& shape) const;
-
-  //! Accessor for the color associated with the given shape.
-  //! \param[in] shape shape in question.
-  //! \return attached color.
-  asiEngine_EXPORT virtual Quantity_Color
-    GetColor(const TopoDS_Shape& shape) const;
+  asiEngine_EXPORT virtual void
+    SetColor(const TopoDS_Shape&   subshape,
+             const Quantity_Color& color);
 
 protected:
 
@@ -95,9 +75,6 @@ protected:
 
   //! Data Model instance.
   Handle(asiEngine_Model) m_model;
-
-  //! All Metadata Element Nodes.
-  Handle(ActAPI_HNodeList) m_metaElems;
 
 };
 

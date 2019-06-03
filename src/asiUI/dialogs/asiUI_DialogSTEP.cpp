@@ -32,11 +32,13 @@
 #include <asiUI_DialogSTEP.h>
 
 // asiAlgo includes
-#include <asiAlgo_WriteSTEPWithMeta.h>
+#include <asiAlgo_ReadSTEPWithMeta.h>
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_WriteSTEPWithMeta.h>
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_STEPReaderOutput.h>
 #include <asiEngine_STEPWriterInput.h>
 
 // asiUI includes
@@ -347,31 +349,39 @@ void asiUI_DialogSTEP::proceed_Read()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   m_notifier.SetMessageKey("Load STEP");
-  m_notifier.Init(2);
 
-  // Read STEP
-  TopoDS_Shape shape;
-  if ( !asiAlgo_STEP(m_notifier, m_plotter).Read(QStr2AsciiStr(this->Filename), false, shape) )
+  // Prepare output
+  Handle(asiEngine_STEPReaderOutput)
+    output = new asiEngine_STEPReaderOutput( Handle(asiEngine_Model)::DownCast(m_model) );
+
+  // Prepare translator
+  asiAlgo_ReadSTEPWithMeta reader(m_notifier, m_plotter);
+  reader.SetOutput(output);
+
+  // Load from STEP
+  m_model->OpenCommand(); // tx start
   {
-    std::cout << "Error: cannot read STEP file" << std::endl;
-    QApplication::restoreOverrideCursor();
-    return;
+    if ( !reader.Perform( QStr2AsciiStr(this->Filename) ) )
+    {
+      m_notifier.SendLogMessage(LogErr(Normal) << "STEP reader failed.");
+      QApplication::restoreOverrideCursor();
+
+      m_model->AbortCommand();
+      return;
+    }
   }
+  m_model->CommitCommand();
+
+  //// Read STEP
+  //TopoDS_Shape shape;
+  //if ( !asiAlgo_STEP(m_notifier, m_plotter).Read(QStr2AsciiStr(this->Filename), false, shape) )
+  //{
+  //  std::cout << "Error: cannot read STEP file" << std::endl;
+  //  QApplication::restoreOverrideCursor();
+  //  return;
+  //}
+
   m_notifier.SendLogMessage( LogNotice(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(this->Filename) );
-  m_notifier.StepProgress(1);
-  m_notifier.SetMessageKey("Update accelerating structures");
-
-  // Update part
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(m_model);
-  //
-  M->OpenCommand(); // tx start
-  {
-    asiEngine_Part(M).Update( shape, NULL, !M->GetPartNode()->IsKeepTessParams() );
-  }
-  M->CommitCommand(); // tx commit
-
-  // Finalize
-  m_notifier.StepProgress(1);
   m_notifier.SetProgressStatus(Progress_Succeeded);
   QApplication::restoreOverrideCursor();
 }

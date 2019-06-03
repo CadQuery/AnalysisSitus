@@ -14,6 +14,7 @@ set (H_FILES
   asiEngine_Model.h
   asiEngine_Part.h
   asiEngine_RE.h
+  asiEngine_STEPReaderOutput.h
   asiEngine_STEPWriterInput.h
   asiEngine_Tessellation.h
   asiEngine_TolerantShapes.h
@@ -28,6 +29,7 @@ set (CPP_FILES
   asiEngine_Model.cpp
   asiEngine_Part.cpp
   asiEngine_RE.cpp
+  asiEngine_STEPReaderOutput.cpp
   asiEngine_STEPWriterInput.cpp
   asiEngine_Tessellation.cpp
   asiEngine_TolerantShapes.cpp

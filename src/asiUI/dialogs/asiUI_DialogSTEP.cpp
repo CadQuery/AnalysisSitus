@@ -325,12 +325,6 @@ void asiUI_DialogSTEP::proceed_Write()
   if ( !writer.Perform( QStr2AsciiStr(filename) ) )
     m_notifier.SendLogMessage(LogErr(Normal) << "STEP writer failed.");
 
-  // Save
-  /*if ( !asiAlgo_STEP(m_notifier).Write( targetShape, QStr2AsciiStr(filename) ) )
-  {
-    std::cout << "Error: cannot save shape" << std::endl;
-  }*/
-
   QApplication::restoreOverrideCursor();
 }
 

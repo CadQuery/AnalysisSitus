@@ -102,7 +102,7 @@ bool asiAlgo_EulerKFMV::perform(const bool doApply)
       // Update face.
       std::vector<TopoDS_Shape> modified;
       //
-      if ( !m_history->GetModified(face, modified) )
+      if ( !m_history->GetLastModified(face, modified) )
       {
         m_progress.SendLogMessage(LogErr(Normal) << "Modification on face expected.");
         return false;

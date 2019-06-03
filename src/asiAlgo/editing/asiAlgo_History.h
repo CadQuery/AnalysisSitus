@@ -377,51 +377,36 @@ public:
 
   //! \brief Gathers modifications of the given shape.
   //!
-  //! This function does not perform deep search in a history. It only takes
-  //! the direct children of a history record, i.e., gives a one-step history
-  //! delta.
-  //!
   //! \param[in]  shape    (sub-)shape in question.
   //! \param[out] modified image (sub-)shapes.
   //!
   //! \return false if no modified (sub-)shapes are available for
   //!         the (sub-)shape in question.
   asiAlgo_EXPORT bool
-    GetModified(const TopoDS_Shape&        shape,
-                std::vector<TopoDS_Shape>& modified) const;
+    GetLastModified(const TopoDS_Shape&        shape,
+                    std::vector<TopoDS_Shape>& modified) const;
+
+  //! \brief Gathers modifications of the given shape.
+  //!
+  //! \param[in]  shape    (sub-)shape in question.
+  //! \param[out] modified image history items.
+  //!
+  //! \return false if no modified (sub-)shapes are available for
+  //!         the (sub-)shape in question.
+  asiAlgo_EXPORT bool
+    GetLastModified(const TopoDS_Shape&   shape,
+                    std::vector<t_item*>& modified) const;
 
   //! \brief Returns single modification of the given shape.
-  //!
-  //! This function does not perform deep search in a history. It only takes
-  //! the direct children of a history record, i.e., gives a one-step history
-  //! delta.
   //!
   //! \param[in] shape (sub-)shape in question.
   //!
   //! \return null shape if no modified (sub-)shapes are available for
   //!         the (sub-)shape in question. Else, the first image is returned.
   asiAlgo_EXPORT TopoDS_Shape
-    GetModified(const TopoDS_Shape& shape) const;
-
-  //! \brief Returns single modification of the given shape or the shape itself.
-  //!
-  //! This function does not perform deep search in a history. It only takes
-  //! the direct children of a history record, i.e., gives a one-step history
-  //! delta. If no modification is available for the passed shape, the argument
-  //! shape is returned.
-  //!
-  //! \param[in] shape (sub-)shape in question.
-  //!
-  //! \return argument shape if no modified (sub-)shapes are available for
-  //!         the (sub-)shape in question. Else, the first image is returned.
-  asiAlgo_EXPORT TopoDS_Shape
-    GetModifiedOrArg(const TopoDS_Shape& shape) const;
+    GetLastModified(const TopoDS_Shape& shape) const;
 
   //! \brief Returns last modification of the given shape or the shape itself.
-  //!
-  //! This function perform deep iteration in a history to reach the ultimate
-  //! leaf. If no modification is available for the passed shape, the argument
-  //! shape is returned.
   //!
   //! \param[in] shape (sub-)shape in question.
   //!
@@ -432,8 +417,8 @@ public:
 
   //! \brief Returns last image of the given shape or the shape itself.
   //!
-  //! This method is similar to GetLastImageOrArg(). Howeverm if the shape
-  //! in question was deleted, it results an empty shape.
+  //! This method is similar to GetLastImageOrArg(). However, if the shape
+  //! in question was deleted, it results with an empty shape.
   //!
   //! \param[in] shape (sub-)shape in question.
   //!

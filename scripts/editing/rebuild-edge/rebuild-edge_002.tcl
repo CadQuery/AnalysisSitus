@@ -62,7 +62,7 @@ init-naming
 # Apply geometric operators.
 rebuild-edge -name edge_310; donly
 
-# Check metadata
+# Check metadata.
 set pid 1
 set refMetaNum 13
 #

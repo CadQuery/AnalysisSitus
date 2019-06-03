@@ -33,12 +33,15 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_STEPReaderOutput.h>
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
 // asiAlgo includes
+#include <asiAlgo_ReadSTEPWithMeta.h>
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
 //-----------------------------------------------------------------------------
@@ -75,15 +78,39 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
 
   TCollection_AsciiString filename(argv[1]);
 
-  // Read STEP
-  TopoDS_Shape shape;
-  if ( !asiAlgo_STEP( interp->GetProgress() ).Read(filename, false, shape) )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read STEP file.");
-    return TCL_ERROR;
-  }
+  // Prepare output
+  Handle(asiEngine_STEPReaderOutput)
+    output = new asiEngine_STEPReaderOutput(cmdEngine::model);
 
-  onModelLoaded(shape);
+  // Prepare translator
+  asiAlgo_ReadSTEPWithMeta reader( interp->GetProgress(),
+                                   interp->GetPlotter() );
+  reader.SetOutput(output);
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Load from STEP
+  cmdEngine::model->OpenCommand(); // tx start
+  {
+    if ( !reader.Perform(filename) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "STEP reader failed.");
+      //
+      cmdEngine::model->AbortCommand();
+      return TCL_ERROR;
+    }
+  }
+  cmdEngine::model->CommitCommand();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Load STEP file")
+
+  // Update viewer.
+  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  // Update object browser.
+  cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

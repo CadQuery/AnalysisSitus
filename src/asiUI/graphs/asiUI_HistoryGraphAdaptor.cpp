@@ -91,6 +91,11 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     //
     const int itemId = hit.GetIndex();
 
+    ///
+    if ( shape.ShapeType() != TopAbs_FACE )
+      continue;
+    ///
+
     // Register id
     idsArr->InsertNextValue(itemId);
 

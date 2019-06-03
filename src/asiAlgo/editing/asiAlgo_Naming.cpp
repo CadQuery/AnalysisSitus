@@ -208,7 +208,7 @@ bool asiAlgo_Naming::Actualize(const TopoDS_Shape& newShape)
     // Adjust mapping between names and alive sub-shapes.
     std::vector<TopoDS_Shape> modified;
     //
-    if ( m_history->GetModified(oldShape, modified) )
+    if ( m_history->GetLastModified(oldShape, modified) )
     {
       // Get all topological elements which substitute the old shape.
       this->actualizeImages(modified, newTopograph, nameAttrBase, false);

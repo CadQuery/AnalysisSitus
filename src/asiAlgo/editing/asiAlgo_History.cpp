@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_History.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // OCCT includes
 #include <NCollection_Map.hxx>
 
@@ -138,19 +141,15 @@ bool asiAlgo_History::AddModified(const TopoDS_Shape& before,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_History::GetModified(const TopoDS_Shape&        shape,
-                                  std::vector<TopoDS_Shape>& modified) const
+bool asiAlgo_History::GetLastModified(const TopoDS_Shape&        shape,
+                                      std::vector<TopoDS_Shape>& modified) const
 {
-  // Get item for the shape in question.
-  t_item* pSeedItem = this->findItem(shape);
+  std::vector<t_item*> leafItems;
   //
-  if ( !pSeedItem || !pSeedItem->Modified.size() )
+  if ( !this->GetLastModified(shape, leafItems) )
     return false;
 
-  // Collect leafs of MODIFIED evolution.
-  std::vector<t_item*> leafItems;
-  this->gatherLeafs(pSeedItem, Evolution_Modified, leafItems);
-  //
+  // Convert to the collection of shapes.
   for ( size_t k = 0; k < leafItems.size(); ++k )
     modified.push_back(leafItems[k]->TransientPtr);
 
@@ -159,11 +158,28 @@ bool asiAlgo_History::GetModified(const TopoDS_Shape&        shape,
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiAlgo_History::GetModified(const TopoDS_Shape& shape) const
+bool asiAlgo_History::GetLastModified(const TopoDS_Shape&   shape,
+                                      std::vector<t_item*>& modified) const
+{
+  // Get item for the shape in question.
+  t_item* pSeedItem = this->findItem(shape);
+  //
+  if ( !pSeedItem || !pSeedItem->Modified.size() )
+    return false;
+
+  // Collect leafs of MODIFIED evolution.
+  this->gatherLeafs(pSeedItem, Evolution_Modified, modified);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Shape asiAlgo_History::GetLastModified(const TopoDS_Shape& shape) const
 {
   std::vector<TopoDS_Shape> modified;
   //
-  if ( !this->GetModified(shape, modified) || !modified.size() )
+  if ( !this->GetLastModified(shape, modified) || !modified.size() )
     return TopoDS_Shape();
 
   return modified[0];
@@ -171,35 +187,14 @@ TopoDS_Shape asiAlgo_History::GetModified(const TopoDS_Shape& shape) const
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiAlgo_History::GetModifiedOrArg(const TopoDS_Shape& shape) const
+TopoDS_Shape asiAlgo_History::GetLastModifiedOrArg(const TopoDS_Shape& shape) const
 {
   std::vector<TopoDS_Shape> modified;
   //
-  if ( !this->GetModified(shape, modified) || !modified.size() )
+  if ( !this->GetLastModified(shape, modified) || !modified.size() )
     return shape;
 
   return modified[0];
-}
-
-//-----------------------------------------------------------------------------
-
-TopoDS_Shape
-  asiAlgo_History::GetLastModifiedOrArg(const TopoDS_Shape& shape) const
-{
-  TopoDS_Shape result, nextArg = shape;
-  bool toStop = false;
-  do
-  {
-    result = this->GetModifiedOrArg(nextArg);
-
-    if ( nextArg.IsPartner(result) )
-      toStop = true;
-    else
-      nextArg = result;
-  }
-  while ( !toStop );
-
-  return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -208,6 +203,15 @@ TopoDS_Shape asiAlgo_History::GetLastImageOrArg(const TopoDS_Shape& shape) const
 {
   if ( this->IsDeleted(shape) )
     return TopoDS_Shape();
+
+  // Get leafs through modification evolution to check if they are deleted.
+  std::vector<t_item*> leafItems;
+  //
+  this->GetLastModified(shape, leafItems);
+  //
+  for ( size_t k = 0; k < leafItems.size(); ++k )
+    if ( leafItems[k]->IsDeleted )
+      return TopoDS_Shape();
 
   return this->GetLastModifiedOrArg(shape);
 }
@@ -374,7 +378,7 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
   {
     t_item* pThisLeaf = thisLeafs[l];
     //
-    if ( !pThisLeaf->IsActive || pThisLeaf->IsDeleted )
+    if ( pThisLeaf->IsDeleted )
       continue; // Skip inactive elements.
 
     // Find a root in the supplied history which continues tracing the
@@ -387,10 +391,15 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
       if ( pThisLeaf->TransientPtr.IsPartner(pOtherRoot->TransientPtr) )
       {
         pThisLeaf->IsActive = false;
-        pThisLeaf->Modified.push_back( pOtherRoot->DeepCopy(m_items) );
+        pThisLeaf->Modified = pOtherRoot->DeepCopy(m_items)->Modified;
         //
         if ( !mergedRoots.Contains(pOtherRoot) )
           mergedRoots.Add(pOtherRoot);
+
+        if ( pThisLeaf->TransientPtr.ShapeType() == TopAbs_FACE )
+          m_progress.SendLogMessage(LogInfo(Normal) << "Knitting history at %1 -> %2."
+                                                    << asiAlgo_Utils::ShapeAddrWithPrefix(pThisLeaf->TransientPtr).c_str()
+                                                    << asiAlgo_Utils::ShapeAddrWithPrefix(pOtherRoot->TransientPtr).c_str() );
 
         ++numJoints;
       }
@@ -402,15 +411,17 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
     m_progress.SendLogMessage(LogWarn(Normal) << "Concatenation is not contiguous. "
                                                  "The successive history will be added from its roots.");
   //
-  if ( numJoints == thisLeafs.size() )
+  if ( thisLeafs.size() && ( numJoints == thisLeafs.size() ) )
     m_progress.SendLogMessage(LogNotice(Normal) << "One-to-one history joint.");
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "History was merged at %1 nodes." << numJoints);
 
   // Add non-merged roots as new roots in the concatenated history.
   for ( size_t r = 0; r < otherRoots.size(); ++r )
   {
     t_item* pOtherRoot = otherRoots[r];
     //
-    if ( !mergedRoots.Contains(pOtherRoot) )
+    if ( !pOtherRoot->IsDeleted && !mergedRoots.Contains(pOtherRoot) )
       this->AddRoot( pOtherRoot->DeepCopy(m_items) );
   }
 }

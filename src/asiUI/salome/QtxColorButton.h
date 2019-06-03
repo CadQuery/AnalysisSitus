@@ -23,6 +23,8 @@
 #ifndef QTXCOLORBUTTON_H
 #define QTXCOLORBUTTON_H
 
+#pragma warning(disable : 4251 4718)
+
 #include "Qtx.h"
 
 #pragma warning(push, 0)
@@ -31,8 +33,6 @@
 #include <QPixmap>
 #include <QToolButton>
 #pragma warning(pop)
-
-#pragma warning(disable : 4251)
 
 class QPaintDevice;
 
@@ -86,6 +86,6 @@ private:
   QToolButton*  myAutoButton;
 };
 
-#pragma warning(default : 4714)
+#pragma warning(default : 4714 4718)
 
 #endif

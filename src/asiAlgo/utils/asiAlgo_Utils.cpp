@@ -3066,7 +3066,7 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
                                Handle(Geom_BSplineCurve)& result,
                                ActAPI_ProgressEntry       progress)
 {
-  #if defined USE_MOBIUS
+#if defined USE_MOBIUS
   if ( curve1->Degree() != curve2->Degree() )
   {
     progress.SendLogMessage(LogErr(Normal) << "Cannot join curves of different degrees.");
@@ -3116,6 +3116,11 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
 
   return true;
 #else
+  asiAlgo_NotUsed(curve1);
+  asiAlgo_NotUsed(curve2);
+  asiAlgo_NotUsed(order);
+  asiAlgo_NotUsed(result);
+
   progress.SendLogMessage(LogErr(Normal) << "This function is not available.");
   return false;
 #endif;
@@ -3153,6 +3158,11 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
   result = curve1;
   return true;
 #else
+  asiAlgo_NotUsed(curves);
+  asiAlgo_NotUsed(order);
+  asiAlgo_NotUsed(result);
+
+  progress.SendLogMessage(LogErr(Normal) << "This function is not available.");
   return false;
 #endif;
 }

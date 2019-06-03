@@ -870,9 +870,6 @@ void asiUI_ControlsAnalysis::onEdgeCurvature()
    *  Prepare inputs
    * ================ */
 
-  bool noPlot           = false;
-  bool noAlongCurvature = false;
-
   // Get numerical values.
   int    numPts      = 100;
   double scaleFactor = 1.0;

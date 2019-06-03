@@ -249,6 +249,8 @@ bool asiTest_AAG::checkNamesVersusIds(const Handle(asiAlgo_AAG)&    aag,
                                       const TopAbs_ShapeEnum        shapeType,
                                       ActAPI_ProgressEntry          progress)
 {
+  asiTest_NotUsed(naming);
+
   TopTools_IndexedMapOfShape mapOfShapes;
   aag->RequestMapOf(shapeType, mapOfShapes);
 

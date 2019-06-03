@@ -32,9 +32,11 @@
 #include <asiUI_DialogSmoothAngleTol.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QGroupBox>
 #include <QLabel>
 #include <QSizePolicy>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

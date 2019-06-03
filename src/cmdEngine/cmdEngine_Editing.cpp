@@ -1343,13 +1343,13 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get fairing coefficient.
-  const double lambda = Atof(argv[3]);
-
   // Perform fairing.
   Handle(Geom_BSplineCurve) result;
   //
 #if defined USE_MOBIUS
+  // Get fairing coefficient.
+  const double lambda = Atof(argv[3]);
+
   // Convert to Mobius curve.
   mobius::cascade_BSplineCurve toMobius(occtBCurve);
   toMobius.DirectConvert();
@@ -1422,12 +1422,12 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
-  // Get fairing coefficient.
-  const double lambda = Atof(argv[3]);
-
   Handle(Geom_BSplineSurface) result;
 
 #if defined USE_MOBIUS
+  // Get fairing coefficient.
+  const double lambda = Atof(argv[3]);
+
   // Convert to Mobius surface.
   mobius::cascade_BSplineSurface converter(occtBSurface);
   converter.DirectConvert();

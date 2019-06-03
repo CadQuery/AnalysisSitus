@@ -36,7 +36,7 @@
 #include <Eigen/Dense>
 #pragma warning(default : 4701 4702)
 
-#define COUT_DEBUG
+#undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif

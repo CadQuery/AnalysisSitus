@@ -22,8 +22,10 @@
 
 #include "QDS_LineEdit.h"
 
+#pragma warning(push, 0)
 #include <QLineEdit>
 #include <QValidator>
+#pragma warning(pop)
 
 /*
   \class QDS_LineEdit

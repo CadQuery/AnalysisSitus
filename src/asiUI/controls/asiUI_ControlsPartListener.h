@@ -36,7 +36,9 @@
 #include <asiUI_ControlsPart.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 #pragma warning(disable : 4251)
 

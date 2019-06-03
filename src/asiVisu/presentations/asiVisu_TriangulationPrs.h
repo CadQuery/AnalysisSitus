@@ -42,7 +42,9 @@
 #include <Standard_Type.hxx>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QColor>
+#pragma warning(pop)
 
 //! Presentation class for Triangulation Node.
 class asiVisu_TriangulationPrs : public asiVisu_Prs

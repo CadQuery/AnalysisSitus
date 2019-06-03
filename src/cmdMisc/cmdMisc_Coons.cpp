@@ -155,6 +155,7 @@ void cmdMisc::Commands_Coons(const Handle(asiTcl_Interp)&      interp,
     "\t Builds bilinear Coons patch on the passed boundary curves.",
     //
     __FILE__, group, MISC_BuildCoonsLinear);
-
+#else
+  cmdMisc_NotUsed(interp);
 #endif
 }

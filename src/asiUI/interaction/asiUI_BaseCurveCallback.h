@@ -41,7 +41,9 @@
 #pragma warning(pop)
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 //! Base class for interaction callbacks to work with 3D curves.
 class asiUI_BaseCurveCallback : public QObject,

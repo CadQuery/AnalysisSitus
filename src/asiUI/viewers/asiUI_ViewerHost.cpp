@@ -38,7 +38,9 @@
 #include <asiEngine_Model.h>
 
 // Qt-VTK includes
+#pragma warning(push, 0)
 #include <QVTKWidget.h>
+#pragma warning(pop)
 
 // Qt includes
 #pragma warning(push, 0)

@@ -24,7 +24,9 @@
 
 #include "QDS_Datum.h"
 
+#pragma warning(push, 0)
 #include <QTextCodec>
+#pragma warning(pop)
 
 #include <DDS_DicItem.h>
 #include <DDS_Dictionary.h>

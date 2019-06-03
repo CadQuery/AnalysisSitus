@@ -47,9 +47,11 @@
 #include <ActAPI_INode.h>
 #include <ActAPI_IPlotter.h>
 
-// Mobius includes
-#include <mobius/cascade.h>
-#include <mobius/core_IPlotter.h>
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade.h>
+  #include <mobius/core_IPlotter.h>
+#endif
 
 // STD includes
 #include <vector>
@@ -675,6 +677,8 @@ protected:
 
 //-----------------------------------------------------------------------------
 
+#if defined USE_MOBIUS
+
 //! Imperative plotter to redirect the visual debugging requests of Mobius to
 //! the standard drawing facilities of Analysis Situs.
 class asiUI_IVMobius : public mobius::core_IPlotter
@@ -899,5 +903,7 @@ private:
   Handle(ActAPI_IPlotter) m_plotter; //!< Standard plotter.
 
 };
+
+#endif // USE_MOBIUS
 
 #endif

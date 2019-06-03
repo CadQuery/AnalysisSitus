@@ -41,7 +41,9 @@
 #include <asiAlgo_Utils.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QGroupBox>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

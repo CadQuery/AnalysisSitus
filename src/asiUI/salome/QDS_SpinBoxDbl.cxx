@@ -22,7 +22,9 @@
 
 #include "QDS_SpinBoxDbl.h"
 
+#pragma warning(push, 0)
 #include <QtxDoubleSpinBox.h>
+#pragma warning(pop)
 
 /*
   \class QDS_SpinBoxDbl

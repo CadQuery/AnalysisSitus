@@ -49,7 +49,7 @@
 #include <stdarg.h>
 #include <clocale>
 
-#pragma warning(disable : 4996 4714 4127)
+#pragma warning(disable : 4996 4714 4127 4718)
 
 #define BICOLOR_CHANGE_HUE
 

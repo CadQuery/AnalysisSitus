@@ -2715,6 +2715,7 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
 {
+#if defined USE_MOBIUS
   if ( argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
@@ -2779,6 +2780,13 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
                                                         << projUV.U() << projUV.V() );
 
   return TCL_OK;
+#else
+  cmdEngine_NotUsed(argc);
+  cmdEngine_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
 }
 
 //-----------------------------------------------------------------------------

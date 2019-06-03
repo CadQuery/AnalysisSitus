@@ -3154,6 +3154,7 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
 {
+#if defined USE_MOBIUS
   if ( argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
@@ -3225,6 +3226,13 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
   IV->BROWSER_ON();
 
   return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
 }
 
 //-----------------------------------------------------------------------------

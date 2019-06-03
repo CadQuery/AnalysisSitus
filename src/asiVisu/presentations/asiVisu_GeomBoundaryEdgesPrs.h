@@ -39,7 +39,9 @@
 #include <asiData_BoundaryEdgesNode.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QColor>
+#pragma warning(pop)
 
 // VTK includes
 #include <vtkActor.h>

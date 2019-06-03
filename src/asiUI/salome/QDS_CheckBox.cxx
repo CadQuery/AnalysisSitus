@@ -22,7 +22,9 @@
 
 #include "QDS_CheckBox.h"
 
+#pragma warning(push, 0)
 #include <QCheckBox>
+#pragma warning(pop)
 
 /*
   \class QDS_CheckBox

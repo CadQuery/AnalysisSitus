@@ -46,7 +46,9 @@
 #pragma warning(pop)
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 // Indices of items in the algorithmic history graph
 #define ARRNAME_HISTORY_ITEM_IDS "HistoryItemIds"

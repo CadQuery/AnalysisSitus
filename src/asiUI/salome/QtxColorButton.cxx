@@ -412,16 +412,3 @@ QList<QColor> QtxColorButton::colorsList() const
   }
   return lst;
 }
-
-/*!
-  \fn void QtxColorButton::clicked( QColor color );
-  \brief This signal is emitted when the widget button is clicked by
-         the user.
-  \param color current color
-*/
-
-/*!
-  \fn void QtxColorButton::changed( QColor color );
-  \brief This signal is emitted when the current color is changed.
-  \param color new current color
-*/

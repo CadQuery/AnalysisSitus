@@ -41,7 +41,9 @@
 #pragma warning(pop)
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 //! Callback for operations in Face Domain viewer.
 class asiUI_PDomainCallback : public QObject,

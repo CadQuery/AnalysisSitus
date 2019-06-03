@@ -22,12 +22,14 @@
 
 #include "QDS_Datum.h"
 
+#pragma warning(push, 0)
 #include <QLayout>
 #include <QVariant>
 #include <QTimer>
 #include <QEvent>
 #include <QMessageBox>
 #include <QApplication>
+#pragma warning(pop)
 
 #include "QDS_Validator.h"
 #include <DDS_Dictionary.h>

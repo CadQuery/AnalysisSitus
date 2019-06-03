@@ -461,9 +461,11 @@ int RE_FairContourLines(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 #else
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
 
-  return false;
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  return TCL_ERROR;
 #endif
 }
 
@@ -822,9 +824,11 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 #else
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
 
-  return false;
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  return TCL_ERROR;
 #endif
 }
 
@@ -957,9 +961,11 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 #else
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
 
-  return false;
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "This feature is not available.");
+  return TCL_ERROR;
 #endif
 }
 
@@ -1107,6 +1113,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
   //
   if ( isMobius )
   {
+#if defined USE_MOBIUS
     t_ptr<t_plane> mobPlane;
 
     // Prepare point cloud.
@@ -1122,6 +1129,9 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     }
 
     resPln = cascade::GetOpenCascadePlane(mobPlane)->Pln();
+#else
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+#endif
   }
   else
   {

@@ -22,7 +22,9 @@
 
 #include "QDS_TextEdit.h"
 
+#pragma warning(push, 0)
 #include <QTextEdit>
+#pragma warning(pop)
 
 /*
   \class QDS_TextEdit

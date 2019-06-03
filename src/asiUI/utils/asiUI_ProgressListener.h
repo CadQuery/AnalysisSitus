@@ -39,7 +39,9 @@
 #include <ActAPI_IProgressNotifier.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QObject>
+#pragma warning(pop)
 
 //! Default slots for reaction on algorithmic events.
 class asiUI_ProgressListener : public QObject

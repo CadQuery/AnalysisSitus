@@ -58,10 +58,12 @@
 #include <vtkVersion.h>
 
 // Qt includes
+#pragma warning(push, 0)
 #include <QApplication>
 #include <QMenu>
 #include <QPushButton>
 #include <QVBoxLayout>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 

@@ -50,9 +50,7 @@ asiVisu_PartDataProvider::asiVisu_PartDataProvider()
 //! \param partNode [in] Part Node.
 asiVisu_PartDataProvider::asiVisu_PartDataProvider(const Handle(asiData_PartNode)& partNode)
 : asiVisu_DataProvider(), m_node(partNode)
-{
-  m_colorSource = new asiVisu_ShapeColorSourceMeta( m_node->GetMetadata() );
-}
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -106,8 +104,13 @@ double asiVisu_PartDataProvider::GetAngularDeflection() const
 
 //-----------------------------------------------------------------------------
 
-Handle(asiVisu_ShapeColorSource) asiVisu_PartDataProvider::GetColorSource() const
+Handle(asiVisu_ShapeColorSource)
+  asiVisu_PartDataProvider::PrepareColorSource()
 {
+  // Actualize color source from the persistent storage.
+  m_colorSource = new asiVisu_ShapeColorSourceMeta( m_node->GetMetadata() );
+
+  // Return.
   return m_colorSource;
 }
 

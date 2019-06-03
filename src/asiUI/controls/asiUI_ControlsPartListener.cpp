@@ -34,6 +34,9 @@
 // asiVisu includes
 #include <asiVisu_PartPrs.h>
 
+// asiAlgo includes
+#include <asiAlgo_Timer.h>
+
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkCellTreeLocator.h>
@@ -216,6 +219,9 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
 void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll,
                                                         const bool populateBrowser)
 {
+  TIMER_NEW
+  TIMER_GO
+
   m_cf->Progress.SetMessageKey("Actualize presentations");
   m_cf->Progress.Init(1);
 
@@ -245,6 +251,9 @@ void asiUI_ControlsPartListener::reinitializeEverything(const bool fitAll,
 
   m_cf->Progress.StepProgress(1);
   m_cf->Progress.SetProgressStatus(Progress_Succeeded);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_cf->Progress, "Reinitialize UI & visualization")
 }
 
 //-----------------------------------------------------------------------------

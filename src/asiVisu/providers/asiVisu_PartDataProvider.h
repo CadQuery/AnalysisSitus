@@ -77,7 +77,7 @@ public:
     GetAngularDeflection() const;
 
   asiVisu_EXPORT Handle(asiVisu_ShapeColorSource)
-    GetColorSource() const;
+    PrepareColorSource();
 
 public:
 

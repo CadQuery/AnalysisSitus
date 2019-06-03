@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_ReadSTEPWithMeta.h>
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_Timer.h>
 #include <asiAlgo_WriteSTEPWithMeta.h>
 
 // asiEngine includes
@@ -358,6 +359,9 @@ void asiUI_DialogSTEP::proceed_Read()
   asiAlgo_ReadSTEPWithMeta reader(m_notifier, m_plotter);
   reader.SetOutput(output);
 
+  TIMER_NEW
+  TIMER_GO
+
   // Load from STEP
   m_model->OpenCommand(); // tx start
   {
@@ -372,14 +376,8 @@ void asiUI_DialogSTEP::proceed_Read()
   }
   m_model->CommitCommand();
 
-  //// Read STEP
-  //TopoDS_Shape shape;
-  //if ( !asiAlgo_STEP(m_notifier, m_plotter).Read(QStr2AsciiStr(this->Filename), false, shape) )
-  //{
-  //  std::cout << "Error: cannot read STEP file" << std::endl;
-  //  QApplication::restoreOverrideCursor();
-  //  return;
-  //}
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Load STEP file")
 
   m_notifier.SendLogMessage( LogNotice(Normal) << "Part loaded from STEP file %1" << QStr2AsciiStr(this->Filename) );
   m_notifier.SetProgressStatus(Progress_Succeeded);

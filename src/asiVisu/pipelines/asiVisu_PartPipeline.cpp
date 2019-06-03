@@ -91,18 +91,20 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
     // source only. The source changes, so the cache needs nullification
     this->clearCache();
 
-    // Configure data source
+    /* Configure data source */
+
+    // Set AAG.
     if ( !DP->GetAAG().IsNull() )
-    {
       m_source->SetAAG( DP->GetAAG() );
-    }
     else
-    {
       m_source->SetShape( DP->GetShape() );
-    }
+
+    // Pass tessellation parameters.
     m_source->SetTessellationParams( DP->GetLinearDeflection(),
                                      DP->GetAngularDeflection() );
-    m_source->SetColorSource( DP->GetColorSource() );
+
+    // Pass color source.
+    m_source->SetColorSource( DP->PrepareColorSource() );
 
     // Bind to a Data Node using information key
     asiVisu_PartNodeInfo::Store( DP->GetNodeID(), this->Actor() );

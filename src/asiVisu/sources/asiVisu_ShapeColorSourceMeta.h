@@ -35,9 +35,15 @@
 #include <asiVisu_ShapeColorSource.h>
 #include <asiVisu_Utils.h>
 
+// asiAlgo includes
+#include <asiAlgo_ShapePartnerHasher.h>
+
 // asiData includes
 #include <asiData_MetadataNode.h>
 #include <asiData_PartNode.h>
+
+// OpenCascade includes
+#include <NCollection_DataMap.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -59,27 +65,37 @@ public:
   asiVisu_ShapeColorSourceMeta(const Handle(asiData_MetadataNode)& node)
   : asiVisu_ShapeColorSource (),
     m_metaNode               (node)
-  {}
+  {
+    // Prepare cache.
+    for ( Handle(ActAPI_IChildIterator) cit = m_metaNode->GetChildIterator();
+          cit->More(); cit->Next() )
+    {
+      Handle(asiData_ElemMetadataNode)
+        emn = Handle(asiData_ElemMetadataNode)::DownCast( cit->Value() );
+
+      TopoDS_Shape shape  = emn->GetShape();
+      const int    icolor = emn->GetColor();
+
+      m_shapeColorMap.Bind(shape, icolor);
+    }
+
+    // Get Part Node for faster access.
+    m_partNode = Handle(asiData_PartNode)::DownCast( m_metaNode->GetParentNode() );
+  }
 
 public:
 
-  //! Returns color (as an integer value) for the given face ID.
+  //! Returns color (as an integer value) for the given face ID. This data
+  //! source uses internal cache to access colors by faces. Such caching
+  //! technique is more efficient than searching in the persistent storage.
   //! \param[in] faceId one-based ID of a face.
   //! \return color.
   virtual int GetFaceColor(const int faceId) const
   {
-    if ( m_metaNode.IsNull() )
-      return -1; // Null check.
-
-    // Get parent Node which is the Part Node. We will take AAG to access
-    // faces by indices.
-    Handle(asiData_PartNode)
-      partNode = Handle(asiData_PartNode)::DownCast( m_metaNode->GetParentNode() );
-    //
-    Handle(asiAlgo_AAG) aag = partNode->GetAAG();
+    Handle(asiAlgo_AAG) aag = m_partNode->GetAAG();
     //
     if ( aag.IsNull() )
-      return -1;
+      return -1; // Null check.
 
     // Check if the ID in question is valid.
     if ( !aag->HasFace(faceId) )
@@ -89,20 +105,25 @@ public:
     const TopoDS_Face& face = aag->GetFace(faceId);
 
     // Find metadata element for the shape in question.
-    Handle(asiData_ElemMetadataNode)
-      faceMetaNode = m_metaNode->FindElemMetadata(face);
+    const int* pColor = m_shapeColorMap.Seek(face);
     //
-    if ( faceMetaNode.IsNull() )
+    if ( !pColor )
       return -1;
 
-    // Get persistent color as integer.
-    const int color = faceMetaNode->GetColor();
-    return color;
+    // Return color packed as integer value.
+    return *pColor;
   }
 
 protected:
 
-  Handle(asiData_MetadataNode) m_metaNode; //!< Metadata Node.
+  //! Cache of shapes versus colors.
+  NCollection_DataMap<TopoDS_Shape, int, asiAlgo_ShapePartnerHasher> m_shapeColorMap;
+
+  //! Part Node.
+  Handle(asiData_PartNode) m_partNode;
+
+  //! Metadata Node.
+  Handle(asiData_MetadataNode) m_metaNode;
 
 };
 

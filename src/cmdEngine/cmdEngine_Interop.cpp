@@ -107,10 +107,12 @@ int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Load STEP file")
 
   // Update viewer.
-  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   // Update object browser.
-  cmdEngine::cf->ObjectBrowser->Populate();
+  if ( cmdEngine::cf && cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

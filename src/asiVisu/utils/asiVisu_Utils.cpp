@@ -186,73 +186,72 @@ bool asiVisu_Utils::AdjustCamera(vtkRenderer*       theRenderer,
   if ( !theRenderer )
     return false;
 
-  vtkCamera* anActiveCamera = theRenderer->GetActiveCamera();
-  if ( !anActiveCamera )
+  vtkCamera* pActiveCamera = theRenderer->GetActiveCamera();
+  if ( !pActiveCamera )
     return false;
 
-  double aBounds[6];
-  int anActorCount = ComputeVisiblePropBounds(theRenderer, aBounds, thePropsToSkip);
+  double bounds[6];
+  int numActors = ComputeVisiblePropBounds(theRenderer, bounds, thePropsToSkip);
 
-  if ( anActorCount )
+  if ( numActors )
   {
-    double aLength = aBounds[1] - aBounds[0];
-    aLength = Max(aBounds[3] - aBounds[2], aLength );
-    aLength = Max(aBounds[5] - aBounds[4], aLength );
+    double length = bounds[1] - bounds[0];
+    length = Max(bounds[3] - bounds[2], length );
+    length = Max(bounds[5] - bounds[4], length );
 
-    if ( aLength < MIN_DISTANCE )
+    if ( length < MIN_DISTANCE )
       return false;
 
-    double aWidth =
-      Sqrt( (aBounds[1] - aBounds[0]) * (aBounds[1] - aBounds[0]) +
-            (aBounds[3] - aBounds[2]) * (aBounds[3] - aBounds[2]) +
-            (aBounds[5] - aBounds[4]) * (aBounds[5] - aBounds[4]) );
+    double width =
+      Sqrt( (bounds[1] - bounds[0]) * (bounds[1] - bounds[0]) +
+            (bounds[3] - bounds[2]) * (bounds[3] - bounds[2]) +
+            (bounds[5] - bounds[4]) * (bounds[5] - bounds[4]) );
 
-    if ( aWidth < MIN_DISTANCE )
+    if ( width < MIN_DISTANCE )
       return false;
 
-    double aViewPlaneNormal[3];
+    double viewPlaneNormal[3];
     if ( isDefaultNorm )
     {
-      aViewPlaneNormal[0] =  0.57;
-      aViewPlaneNormal[1] = -0.57;
-      aViewPlaneNormal[2] =  0.57;
+      viewPlaneNormal[0] =  0.57;
+      viewPlaneNormal[1] = -0.57;
+      viewPlaneNormal[2] =  0.57;
     }
     else
-      anActiveCamera->GetViewPlaneNormal(aViewPlaneNormal);
+      pActiveCamera->GetViewPlaneNormal(viewPlaneNormal);
 
-    double aCenter[3] = {0.0, 0.0, 0.0};
-    aCenter[0] = (aBounds[0] + aBounds[1]) / 2.0;
-    aCenter[1] = (aBounds[2] + aBounds[3]) / 2.0;
-    aCenter[2] = (aBounds[4] + aBounds[5]) / 2.0;
-    anActiveCamera->SetFocalPoint(aCenter[0], aCenter[1], aCenter[2]);
+    double center[3] = {0.0, 0.0, 0.0};
+    center[0] = (bounds[0] + bounds[1]) / 2.0;
+    center[1] = (bounds[2] + bounds[3]) / 2.0;
+    center[2] = (bounds[4] + bounds[5]) / 2.0;
+    pActiveCamera->SetFocalPoint(center[0], center[1], center[2]);
 
-    double aViewAngle = anActiveCamera->GetViewAngle();
-    double aDistance =
-      2.0 * aWidth / Tan(aViewAngle * vtkMath::Pi() / 360.0);
+    double viewAngle = pActiveCamera->GetViewAngle();
+    double distance =
+      2 * width / Tan(viewAngle * vtkMath::Pi() / 360.0);
 
     double aViewUp[3];
-    anActiveCamera->GetViewUp(aViewUp);
-    if ( Abs( vtkMath::Dot(aViewUp, aViewPlaneNormal) ) > 0.999 )
-      anActiveCamera->SetViewUp(-aViewUp[2], aViewUp[0], aViewUp[1]);
+    pActiveCamera->GetViewUp(aViewUp);
+    if ( Abs( vtkMath::Dot(aViewUp, viewPlaneNormal) ) > 0.999 )
+      pActiveCamera->SetViewUp(-aViewUp[2], aViewUp[0], aViewUp[1]);
 
     // Update the camera
-    anActiveCamera->SetPosition(aCenter[0] + aDistance*aViewPlaneNormal[0],
-                                aCenter[1] + aDistance*aViewPlaneNormal[1],
-                                aCenter[2] + aDistance*aViewPlaneNormal[2]);
+    pActiveCamera->SetPosition(center[0] + distance*viewPlaneNormal[0],
+                               center[1] + distance*viewPlaneNormal[1],
+                               center[2] + distance*viewPlaneNormal[2]);
 
     // Find size of the viewport
-    int* aViewPortSize = theRenderer->GetSize();
-    if ( aViewPortSize[0] < aViewPortSize[1] ) 
-      aWidth *=
-        double(aViewPortSize[1]) / double(aViewPortSize[0]);
+    int* pViewPortSize = theRenderer->GetSize();
+    if ( pViewPortSize[0] < pViewPortSize[1] ) 
+      width *= double(pViewPortSize[1]) / double(pViewPortSize[0]);
 
     if ( doScaling )
-      anActiveCamera->SetParallelScale(aWidth / 2.0);
+      pActiveCamera->SetParallelScale(width / 2.5);
   }
 
   AdjustCameraClippingRange(theRenderer);
 
-  return anActorCount > 0;
+  return numActors > 0;
 }
 
 //-----------------------------------------------------------------------------

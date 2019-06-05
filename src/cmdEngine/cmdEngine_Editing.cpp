@@ -133,7 +133,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       asiAlgo_RecognizeBlends recognizer( tempAAG,
                                           progress,
                                           NULL
-                                          /*interp->GetPlotter()*/ );
+                                          /*plotter*/ );
       //
       if ( !recognizer.Perform(radius) )
       {
@@ -154,7 +154,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     }
 
     // Choose any face for suppression.
-    const int fid = fids.GetMinimalMapped();
+    const int fid = fids.GetMaximalMapped();
     //
     if ( nonSuppressibleFaces.Contains( tempAAG->GetFace(fid) ) )
     {
@@ -164,9 +164,11 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
       fids.Remove( fid );
       continue;
     }
+    //
+    progress.SendLogMessage(LogWarn(Normal) << "Next face to suppress: %1." << fid);
 
     // Prepare tool.
-    asiAlgo_SuppressBlendChain suppressor(tempAAG/*, history*/, progress, plotter);
+    asiAlgo_SuppressBlendChain suppressor(tempAAG/*, history*/, progress/*, plotter*/);
     //
     if ( !suppressor.Perform(fid) )
     {
@@ -198,6 +200,11 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     const TopoDS_Shape& incRes = suppressor.GetResult();
     //
     result = incRes;
+
+    {
+      TCollection_AsciiString name("incRes_fid_");// name += fid;
+      plotter.REDRAW_SHAPE( name, BRepBuilderAPI_Copy(incRes) );
+    }
 
     // Merge history.
     history->Concatenate( suppressor.GetHistory() );
@@ -2077,8 +2084,8 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   int numSuppressedChains = 0;
   if ( !SuppressBlendsIncrementally( aag, maxRadius, result, history,
                                      numSuppressedChains,
-                                     interp->GetProgress()/*,
-                                     interp->GetPlotter()*/ ) )
+                                     interp->GetProgress(),
+                                     interp->GetPlotter() ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
     return TCL_ERROR;

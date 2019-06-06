@@ -202,7 +202,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     result = incRes;
 
     {
-      TCollection_AsciiString name("incRes_fid_");// name += fid;
+      TCollection_AsciiString name("incRes_fid_"); name += fid;
       plotter.REDRAW_SHAPE( name, BRepBuilderAPI_Copy(incRes) );
     }
 

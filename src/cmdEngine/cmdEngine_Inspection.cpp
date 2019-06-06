@@ -41,9 +41,13 @@
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
+#include <asiAlgo_AttrBlendCandidate.h>
+#include <asiAlgo_BlendType.h>
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_CompleteEdgeLoop.h>
+#include <asiAlgo_ExtractFeatures.h>
+#include <asiAlgo_FeatureType.h>
 #include <asiAlgo_MeshCheckInter.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_RecognizeBlends.h>
@@ -77,6 +81,51 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+
+//-----------------------------------------------------------------------------
+
+//! \brief Function to filter the extracted blend candidates by type.
+class cmdEngine_ExtractBlendsFilter : public asiAlgo_ExtractFeaturesFilter
+{
+public:
+
+  // OCCT RTTI.
+  DEFINE_STANDARD_RTTI_INLINE(cmdEngine_ExtractBlendsFilter, asiAlgo_ExtractFeaturesFilter)
+
+public:
+
+  //! Ctor accepting the target blend type.
+  //! \param[in] blendType type of interest.
+  cmdEngine_ExtractBlendsFilter(const asiAlgo_BlendType blendType)
+  : asiAlgo_ExtractFeaturesFilter(), m_blendType(blendType)
+  {}
+
+public:
+
+  //! If the returned flag is true, the attribute and its corresponding
+  //! face is accepted.
+  //! \param[in] attr AAG node attribute to check.
+  //! \return true to accepts, false -- to deny.
+  virtual bool operator()(const Handle(asiAlgo_FeatureAttrFace)& attr) const
+  {
+    Handle(asiAlgo_AttrBlendCandidate)
+      bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+    //
+    if ( bcAttr.IsNull() )
+      return false;
+
+    // Filter by type.
+    if ( bcAttr->Kind != m_blendType )
+      return false;
+
+    return true;
+  }
+
+private:
+
+  asiAlgo_BlendType m_blendType; //!< Blend type of interest.
+
+};
 
 //-----------------------------------------------------------------------------
 
@@ -2468,7 +2517,7 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
 {
-  if ( argc != 1 && argc != 3 && argc != 5 )
+  if ( argc > 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -2487,6 +2536,10 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   if ( interp->GetKeyValue(argc, argv, "radius", maxRadiusStr) )
     maxRadius = maxRadiusStr.RealValue();
 
+  // Get EBF/VBF qualifier.
+  const bool isEbf = interp->HasKeyword(argc, argv, "ebf");
+  const bool isVbf = interp->HasKeyword(argc, argv, "vbf");
+
   // Get part.
   Handle(asiData_PartNode)
     partNode = cmdEngine::model->GetPartNode();
@@ -2503,8 +2556,8 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   // Perform recognition.
   asiAlgo_RecognizeBlends recognizer( partShape,
                                       partAAG,
-                                      interp->GetProgress()/*,
-                                      interp->GetPlotter()*/ );
+                                      interp->GetProgress(),
+                                      interp->GetPlotter() );
   //
   if ( !recognizer.Perform(fid, maxRadius) )
   {
@@ -2512,9 +2565,36 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Highlight the detected faces.
-  const TColStd_PackedMapOfInteger& resIndices = recognizer.GetResultIndices();
+  // Get the detected faces.
+  TColStd_PackedMapOfInteger resIndices;
   //
+  if ( !isEbf && !isVbf || isEbf && isVbf )
+  {
+    resIndices = recognizer.GetResultIndices();
+  }
+  else
+  {
+    // Prepare tool to extract features from AAG.
+    asiAlgo_ExtractFeatures extractor(interp->GetProgress(), NULL);
+    extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
+                                   asiAlgo_AttrBlendCandidate::GUID() );
+
+    // Use extraction filter.
+    Handle(cmdEngine_ExtractBlendsFilter)
+      filter = new cmdEngine_ExtractBlendsFilter(isEbf ? BlendType_Ordinary : BlendType_Vertex);
+
+    // Extract features.
+    Handle(asiAlgo_ExtractFeaturesResult) featureRes;
+    if ( !extractor.Perform(partAAG, featureRes, filter) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
+      return TCL_ERROR;
+    }
+    //
+    featureRes->GetFaceIndices(resIndices);
+  }
+
+  // Highlight the detected faces.
   if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
     asiEngine_Part( cmdEngine::model,
                     cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
@@ -3068,10 +3148,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("recognize-blends",
     //
-    "recognize-blends [-radius r] [-fid id]\n"
+    "recognize-blends [-radius r] [-fid id] [-ebf|-vbf]\n"
     "\t Recognizes all blend faces in AAG representing the part. The optional\n"
     "\t '-fid' key allows to specify the face ID to start recognition from.\n"
-    "\t The optional '-radius' key allows to limit the recognized radius.",
+    "\t The optional '-radius' key allows to limit the recognized radius.\n"
+    "\t The optional '-ebf|-vbf' keys allows you to find the blend faces of\n"
+    "\t a certain type (EBF = edge-blend face, VBF = vertex-blend face).",
     //
     __FILE__, group, ENGINE_RecognizeBlends);
 

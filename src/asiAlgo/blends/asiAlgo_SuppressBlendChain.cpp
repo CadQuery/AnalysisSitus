@@ -109,6 +109,13 @@ namespace asiAlgo_AAGIterationRule
         {
           Handle(asiAlgo_AttrBlendCandidate)
             bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+          //
+          if ( bcAttr->Kind == BlendType_Uncertain )
+          {
+            m_problematicFaces.Add(fid);
+            m_bAllInitialized = false;
+            return true; // Block further iterations.
+          }
 
           // Prepare topological conditions.
           Handle(asiAlgo_BlendTopoConditionFFIsolated)
@@ -235,78 +242,6 @@ asiAlgo_SuppressBlendChain::asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_SuppressBlendChain::Perform(const TColStd_PackedMapOfInteger& faceIds)
-{
-  m_iSuppressedChains = 0;
-
-  /* ===================================
-   *  Initialize topological conditions
-   * =================================== */
-
-  TIMER_NEW
-  TIMER_GO
-
-  // Identify all topological conditions.
-  m_workflow.topoCondition = new asiAlgo_HBlendTopoConditionMap;
-
-  // Loop over the seed faces.
-  for ( TColStd_MapIteratorOfPackedMapOfInteger sit(faceIds); sit.More(); sit.Next() )
-  {
-    const int faceId = sit.Key();
-
-    // Attempt to recognize topological conditions for the passed faces.
-    if ( !this->initTopoConditions(faceId) )
-    {
-      m_progress.SendLogMessage(LogWarn(Normal) << "Face %1 will be skipped: topological condition is not recognized."
-                                                << faceId);
-      continue;
-    }
-
-    m_iSuppressedChains++;
-  }
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Initialize topo conditions")
-
-  /* ================================
-   *  Perform topological operations
-   * ================================ */
-
-  TIMER_RESET
-  TIMER_GO
-
-  TopoDS_Shape targetShape;
-
-  if ( !this->performTopoOperations(targetShape) )
-    return false;
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Topological reduction")
-
-  /* ==============================
-   *  Perform geometric operations
-   * ============================== */
-
-  TIMER_RESET
-  TIMER_GO
-
-  if ( !this->performGeomOperations(targetShape) )
-    return false;
-
-  // Set output.
-  m_result = targetShape;
-
-  // Set history.
-  m_history->AddModified(m_aag->GetMasterCAD(), m_result);
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
 bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
 {
   m_iSuppressedChains = 0;
@@ -325,6 +260,19 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Initialize topo conditions")
 
+  /* =======================================================
+   *  Check if the chain in question is suppressible or not
+   * ======================================================= */
+
+  TIMER_RESET
+  TIMER_GO
+
+   if ( !this->checkChainSuppressible() )
+     return false;
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Check if chain is suppressible")
+
   /* ================================
    *  Perform topological operations
    * ================================ */
@@ -350,15 +298,19 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   if ( !this->performGeomOperations(targetShape) )
     return false;
 
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
+
+  /* ==========
+   *  Finalize
+   * ========== */
+
   // Set output.
   m_result            = targetShape;
   m_iSuppressedChains = 1;
 
   // Set history.
   m_history->AddModified(m_aag->GetMasterCAD(), m_result);
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
 
   return true;
 }
@@ -570,4 +522,11 @@ void asiAlgo_SuppressBlendChain::updateEdges2Rebuild(const Handle(asiAlgo_Histor
 
   // Set the result.
   m_workflow.edges2Rebuild = updated;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_SuppressBlendChain::checkChainSuppressible() const
+{
+  return true;
 }

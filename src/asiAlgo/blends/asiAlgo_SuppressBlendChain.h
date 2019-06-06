@@ -76,12 +76,6 @@ public:
 
 public:
 
-  //! Performs suppression of a blend chain given a set of seed indices.
-  //! \param[in] faceIds 1-based IDs of the seed faces.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    Perform(const TColStd_PackedMapOfInteger& faceIds);
-
   //! Performs suppression of a blend chain given a seed face index.
   //! \param[in] faceId 1-based ID of the seed face.
   //! \return true in case of success, false -- otherwise.
@@ -158,6 +152,12 @@ protected:
   //! \param[in] history modification history to apply.
   asiAlgo_EXPORT void
     updateEdges2Rebuild(const Handle(asiAlgo_History)& history);
+
+  //! Checks whether the recognized chain faces for a suppressible
+  //! configuration.
+  //! \return true/false;
+  asiAlgo_EXPORT bool
+    checkChainSuppressible() const;
 
 // INPUTS:
 protected:

@@ -21,14 +21,8 @@ if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
-# Recognize and kill blends.
-set fids [recognize-blends -radius 11]
-#
-if { [llength $fids] != 2 } {
-  error "Unexpected number of recognized blend faces."
-}
-#
-if { [kill-blends {*}$fids] != 1 } {
+# Kill blends incrementally.
+if { [kill-blends-inc 11] != 1 } {
   error "Unexpected number of suppressed blend chains."
 }
 

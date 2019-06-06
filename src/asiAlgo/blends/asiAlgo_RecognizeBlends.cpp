@@ -87,7 +87,6 @@ private:
 
 };
 
-
 //-----------------------------------------------------------------------------
 
 //! Namespace for all AAG iteration rules used by blends recognizer.

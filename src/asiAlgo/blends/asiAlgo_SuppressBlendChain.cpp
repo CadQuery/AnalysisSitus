@@ -528,5 +528,61 @@ void asiAlgo_SuppressBlendChain::updateEdges2Rebuild(const Handle(asiAlgo_Histor
 
 bool asiAlgo_SuppressBlendChain::checkChainSuppressible() const
 {
+  /* Check if all cross-edges are referenced twice by the blend faces
+     in a chain. */
+
+  // Gather all cross edges of a chain into a single collection.
+  TColStd_PackedMapOfInteger allCrossEdgeIndices;
+  TColStd_PackedMapOfInteger allBlendFaceIndices;
+  //
+  for ( asiAlgo_HBlendTopoConditionMap::Iterator cit(*m_workflow.topoCondition);
+        cit.More(); cit.Next() )
+  {
+    const int fid = cit.Key();
+
+    // Get attribute.
+    Handle(asiAlgo_FeatureAttr)
+      attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+    //
+    if ( !attr.IsNull() )
+    {
+      Handle(asiAlgo_AttrBlendCandidate)
+        bcAttr = Handle(asiAlgo_AttrBlendCandidate)::DownCast(attr);
+
+      // Collect indices of cross edges
+      allCrossEdgeIndices.Unite(bcAttr->CrossEdgeIndices);
+      allBlendFaceIndices.Add(fid);
+    }
+  }
+
+  // Check every cross-edge.
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(allCrossEdgeIndices);
+        eit.More(); eit.Next() )
+  {
+    const int          eid = eit.Key();
+    const TopoDS_Edge& E   = TopoDS::Edge( m_aag->RequestMapOfEdges()(eid) );
+
+    int numOccurrences = 0;
+    const TopTools_ListOfShape&
+      E_faces = m_aag->RequestMapOfEdgesFaces().FindFromKey(E);
+    //
+    for ( TopTools_ListIteratorOfListOfShape fit(E_faces); fit.More(); fit.Next() )
+    {
+      const TopoDS_Face& F   = TopoDS::Face( fit.Value() );
+      const int          fid = m_aag->GetFaceId(F);
+
+      if ( allBlendFaceIndices.Contains(fid) )
+        ++numOccurrences;
+    }
+
+    if ( numOccurrences != 2 )
+    {
+      m_progress.SendLogMessage(LogWarn(Normal) << "Cross-edge %1 has %2 occurrence(s) while 2 is expected."
+                                                << eid << numOccurrences);
+      return false;
+    }
+  }
+
+  m_progress.SendLogMessage(LogInfo(Normal) << "Blend chain seems to be suppressible.");
   return true;
 }

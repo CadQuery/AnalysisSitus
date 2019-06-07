@@ -57,7 +57,8 @@ public:
   //! Pipelines.
   enum PipelineId
   {
-    Pipeline_Main = 1, //!< Face geometry.
+    Pipeline_DomainLoop = 1, //!< Edges in the parametric domain.
+    Pipeline_Extremities     //!< Extremity points of p-curves in (u,v).
   };
 
 public:

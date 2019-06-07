@@ -159,6 +159,14 @@ protected:
   asiAlgo_EXPORT bool
     checkChainSuppressible() const;
 
+  //! Checks whether the passed face is valid or not. If not, the algorithm
+  //! returns false as it assumes that the face was corrupted on edge
+  //! reconstruction.
+  //! \param[in] face face to check.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    isValidFace(const TopoDS_Face& face) const;
+
 // INPUTS:
 protected:
 

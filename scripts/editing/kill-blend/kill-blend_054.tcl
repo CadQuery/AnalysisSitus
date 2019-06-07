@@ -6,10 +6,10 @@ set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1
 set ref_nshe     1
-set ref_nf       223
-set ref_nw       295
-set ref_ne       631
-set ref_nv       398
+set ref_nf       71
+set ref_nw       71
+set ref_ne       181
+set ref_nv       112
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)
@@ -29,16 +29,10 @@ if { [check-euler 0] != 1 } {
   error "Euler-Poincare property is not equal to the expected value."
 }
 
-init-naming
-kev -name edge_16
-kev -name edge_86
-kef -face face_19 -kedge edge_81 -sedge edge_85
-rebuild-edge -name edge_85
-rebuild-edge -name edge_82
-rebuild-edge -name edge_88
-rebuild-edge -name edge_17
-set-tolerance 0.01
-# rebuild-edge -name edge_15
+# Kill blend chains incrementally.
+if { [kill-blends-inc] != 1 } {
+  error "Unexpected number of suppressed blend chains."
+}
 
 # Check Euler-Poincare property of the manifold after modification.
 if { [check-euler 0] != 1 } {

@@ -58,15 +58,15 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
 {
   Handle(asiData_FaceNode) face_n = Handle(asiData_FaceNode)::DownCast(N);
 
-  // Initialize working part
+  // Initialize Part Node.
   m_partNode = Handle(asiData_PartNode)::DownCast( face_n->GetParentNode() );
 
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
 
   // Pipelines for face
-  this->addPipeline        ( Pipeline_Main, new asiVisu_FaceDomainPipeline );
-  this->assignDataProvider ( Pipeline_Main, DP );
+  this->addPipeline        ( Pipeline_DomainLoop, new asiVisu_FaceDomainPipeline );
+  this->assignDataProvider ( Pipeline_DomainLoop, DP );
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
@@ -114,7 +114,7 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
   sel_pl->Actor()->GetProperty()->SetColor(sel_color[0], sel_color[1], sel_color[2]);
   sel_pl->Actor()->GetProperty()->SetLineWidth( asiVisu_Utils::DefaultPickLineWidth() + 1 );
   sel_pl->Actor()->GetProperty()->SetPointSize( asiVisu_Utils::DefaultHilightPointSize() );
-  sel_pl->Actor()->SetPickable(0);
+  sel_pl->Actor()->SetPickable(1);
   sel_pl->Mapper()->ScalarVisibilityOff();
   //
   sel_pl->Actor()->GetProperty()->SetOpacity(1.0);
@@ -167,7 +167,7 @@ void asiVisu_GeomFacePrs::beforeInitPipelines()
 void asiVisu_GeomFacePrs::afterInitPipelines()
 {
   Handle(asiVisu_FaceDataProvider)
-    DP = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProvider(Pipeline_Main) );
+    DP = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProvider(Pipeline_DomainLoop) );
 
   // Get working face
   const int   F_idx = DP->GetFaceIndexAmongFaces();

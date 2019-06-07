@@ -37,6 +37,7 @@
 #include <asiAlgo_BlendTopoConditionFFIsolated.h>
 #include <asiAlgo_BlendTopoConditionFFOrdinaryEBF.h>
 #include <asiAlgo_BlendTopoConditionFFOrdinaryVBF.h>
+#include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_RebuildEdge.h>
 #include <asiAlgo_Timer.h>
 
@@ -300,6 +301,38 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Rebuild edges")
+
+  /* =========================================================
+   *  Check if the affected faces are valid after suppression
+   * ========================================================= */
+
+  TIMER_RESET
+  TIMER_GO
+
+  std::vector<asiAlgo_History::t_item*> leafItems;
+  m_history->GetLeafs(leafItems, TopAbs_FACE);
+
+  // Check faces.
+  for ( size_t k = 0; k < leafItems.size(); ++k )
+  {
+    // Skip deleted blends.
+    if ( leafItems[k]->IsDeleted )
+      continue;
+
+    // Check alive faces.
+    const TopoDS_Face& affectedFace = TopoDS::Face(leafItems[k]->TransientPtr);
+    //
+    if ( !this->isValidFace(affectedFace) )
+    {
+      m_plotter.REDRAW_SHAPE("affectedFace_INVALID", affectedFace, Color_Red);
+      m_progress.SendLogMessage(LogWarn(Normal) << "One of the affected faces becomes invalid "
+                                                   "after processing. Abort is required.");
+      return false;
+    }
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Check validity of faces")
 
   /* ==========
    *  Finalize
@@ -585,4 +618,16 @@ bool asiAlgo_SuppressBlendChain::checkChainSuppressible() const
 
   m_progress.SendLogMessage(LogInfo(Normal) << "Blend chain seems to be suppressible.");
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_SuppressBlendChain::isValidFace(const TopoDS_Face& face) const
+{
+  // This calibrated value is used to compensate weird tolerances which
+  // happen to be insufficient to cover tiny contour gaps.
+  const double tol = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+
+  return asiAlgo_CheckValidity::HasAllClosedWires(face, tol) &&
+        !asiAlgo_CheckValidity::HasEdgesWithoutVertices(face);
 }

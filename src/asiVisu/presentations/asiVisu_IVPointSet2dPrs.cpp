@@ -31,7 +31,7 @@
 // Own include
 #include <asiVisu_IVPointSet2dPrs.h>
 
-// A-Situs (visualization) includes
+// asiVisu includes
 #include <asiVisu_IVPointSet2dDataProvider.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_Utils.h>

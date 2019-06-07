@@ -201,6 +201,7 @@ bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
     //
     result = incRes;
 
+    if ( !plotter.Plotter().IsNull() )
     {
       TCollection_AsciiString name("incRes_fid_"); name += fid;
       plotter.REDRAW_SHAPE( name, BRepBuilderAPI_Copy(incRes) );
@@ -1267,8 +1268,8 @@ int ENGINE_RebuildEdge(const Handle(asiTcl_Interp)& interp,
 
   // Prepare algorithm.
   asiAlgo_RebuildEdge oper( part_n->GetShape(),
-                            interp->GetProgress(),
-                            interp->GetPlotter() );
+                            interp->GetProgress()/*,
+                            interp->GetPlotter()*/ );
   //
   if ( hasNaming )
     oper.SetHistory( part_n->GetNaming()->GetHistory() );
@@ -1991,8 +1992,8 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   int numSuppressedChains = 0;
   if ( !SuppressBlendsIncrementally( aag, maxRadius, result, history,
                                      numSuppressedChains,
-                                     interp->GetProgress(),
-                                     interp->GetPlotter() ) )
+                                     interp->GetProgress()/*,
+                                     interp->GetPlotter()*/ ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
     return TCL_ERROR;

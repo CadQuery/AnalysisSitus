@@ -14,7 +14,7 @@
    viewBox="0 0 699.88061 1047.4821"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="situ-incremental-blends-suppression.svg">
   <defs
      id="defs4">
@@ -973,15 +973,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.65"
-     inkscape:cx="451.52958"
-     inkscape:cy="577.67187"
+     inkscape:zoom="1.3"
+     inkscape:cx="366.6152"
+     inkscape:cy="307.50674"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="1072"
+     inkscape:window-height="1027"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -992,7 +992,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1381,7 +1381,7 @@
            y="100.93363" /></flowRegion><flowPara
          id="flowPara4142-6-5-6-7-2-6"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.5px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI'">Success</flowPara></flowRoot>    <flowRoot
-       transform="translate(206.55342,-178.97508)"
+       transform="translate(207.77239,-182.23865)"
        xml:space="preserve"
        id="flowRoot4136-1-4-0-3-1-57-6"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -1483,7 +1483,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <flowRoot
-       transform="matrix(-1,0,0,1,761.2771,186.82544)"
+       transform="matrix(-1,0,0,1,761.2771,182.78698)"
        xml:space="preserve"
        id="flowRoot4136-1-4-0-3-1-57-6-4"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -1589,7 +1589,7 @@
        d="m 748.17193,217.46133 c -0.0658,1.97275 -0.10912,9.83507 3.86967,9.95006 4.23377,0.12236 3.85938,-7.66024 3.85938,-10.02754"
        style="fill:none;stroke:#000000;stroke-width:0.93749994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <flowRoot
-       transform="translate(208.99135,187.14893)"
+       transform="translate(207.77238,183.11047)"
        xml:space="preserve"
        id="flowRoot4136-1-4-0-3-1-57-63"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -1657,7 +1657,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <flowRoot
-       transform="translate(206.55342,0.51222706)"
+       transform="translate(207.77239,0.51222706)"
        xml:space="preserve"
        id="flowRoot4136-1-4-0-3-1-57-6-3"
        style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
@@ -1910,5 +1910,17 @@
            x="202.14285"
            y="100.93363" /></flowRegion><flowPara
          id="flowPara4142-6-0-9-1"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI Bold'">Outer contour</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:22.5px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI Bold'">Outer contour</flowPara></flowRoot>    <flowRoot
+       transform="translate(29.287278,341.38224)"
+       xml:space="preserve"
+       id="flowRoot4136-1-4-0-3-1-57-63-6"
+       style="font-style:normal;font-weight:normal;line-height:0.01%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+         id="flowRegion4138-8-4-6-3-4-54-2-9"><rect
+           id="rect4140-3-4-4-2-6-65-1-1"
+           width="221.42857"
+           height="95"
+           x="202.14285"
+           y="100.93363" /></flowRegion><flowPara
+         id="flowPara4142-6-5-6-7-1-5-5-4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI'">+</flowPara></flowRoot>  </g>
 </svg>

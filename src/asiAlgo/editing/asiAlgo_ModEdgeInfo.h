@@ -121,10 +121,10 @@ public:
     plotter.DRAW_SHAPE(situation.e_s2_t1, Color_Blue, 1.0, true, "Situation.e_s2_t1");
     plotter.DRAW_SHAPE(situation.e_s2_t2, Color_Blue, 1.0, true, "Situation.e_s2_t2");
     //
-    plotter.DRAW_SHAPE(situation.f_s1, Color_Red,  0.25,       "Situation.f_s1");
-    plotter.DRAW_SHAPE(situation.f_s2, Color_Blue, 0.25,       "Situation.f_s2");
-    plotter.DRAW_SHAPE(situation.f_t1, Color_Red,  0.95, true, "Situation.f_t1");
-    plotter.DRAW_SHAPE(situation.f_t2, Color_Blue, 0.95, true, "Situation.f_t2");
+    plotter.DRAW_SHAPE(situation.f_s1, Color_Red,  0.55, false, "Situation.f_s1");
+    plotter.DRAW_SHAPE(situation.f_s2, Color_Blue, 0.55, false, "Situation.f_s2");
+    plotter.DRAW_SHAPE(situation.f_t1, Color_Red,  0.95, false, "Situation.f_t1");
+    plotter.DRAW_SHAPE(situation.f_t2, Color_Blue, 0.95, false, "Situation.f_t2");
     //
     plotter.DRAW_SHAPE(situation.v_s1_s2_t1, Color_Red,  1.0, true, "Situation.v_s1_s2_t1");
     plotter.DRAW_SHAPE(situation.v_s1_s2_t2, Color_Blue, 1.0, true, "Situation.v_s1_s2_t2");

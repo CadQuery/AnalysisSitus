@@ -77,6 +77,7 @@ set (blends_H_FILES
   blends/asiAlgo_RecognizeEBF.h
   blends/asiAlgo_RecognizeVBF.h
   blends/asiAlgo_SuppressBlendChain.h
+  blends/asiAlgo_SuppressBlendsInc.h
 )
 set (blends_CPP_FILES
   blends/asiAlgo_AttrBlendCandidate.cpp
@@ -89,6 +90,7 @@ set (blends_CPP_FILES
   blends/asiAlgo_RecognizeEBF.cpp
   blends/asiAlgo_RecognizeVBF.cpp
   blends/asiAlgo_SuppressBlendChain.cpp
+  blends/asiAlgo_SuppressBlendsInc.cpp
 )
 
 #------------------------------------------------------------------------------

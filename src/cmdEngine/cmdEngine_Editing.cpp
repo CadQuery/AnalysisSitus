@@ -53,6 +53,7 @@
 #include <asiAlgo_RepatchFaces.h>
 #include <asiAlgo_SmallEdges.h>
 #include <asiAlgo_SuppressBlendChain.h>
+#include <asiAlgo_SuppressBlendsInc.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_TopoAttrOrientation.h>
 #include <asiAlgo_TopoKill.h>
@@ -93,143 +94,6 @@
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
 #endif
-
-//-----------------------------------------------------------------------------
-
-bool SuppressBlendsIncrementally(const Handle(asiAlgo_AAG)& aag,
-                                 const double               radius,
-                                 TopoDS_Shape&              result,
-                                 Handle(asiAlgo_History)&   history,
-                                 int&                       numSuppressedChains,
-                                 ActAPI_ProgressEntry       progress = NULL,
-                                 ActAPI_PlotterEntry        plotter  = NULL)
-{
-  // Prepare a history instance to merge histories incrementally.
-  if ( history.IsNull() )
-    history = new asiAlgo_History(progress, plotter);
-
-  // Initialize outputs.
-  result              = aag->GetMasterCAD();
-  numSuppressedChains = 0;
-
-  TColStd_PackedMapOfInteger fids;
-
-  // Faces to skip as already tried and known to be non-suppressible. Here
-  // we use transient pointers to avoid any confusion with renumbering.
-  TopTools_IndexedMapOfShape nonSuppressibleFaces;
-
-  // Perform main loop for incremental suppression.
-  bool                recognize = true;
-  bool                stop      = false;
-  Handle(asiAlgo_AAG) tempAAG   = aag;
-  //
-  do
-  {
-    if ( recognize )
-    {
-      recognize = false;
-
-      // Perform recognition starting from the guess face.
-      asiAlgo_RecognizeBlends recognizer( tempAAG,
-                                          progress,
-                                          NULL
-                                          /*plotter*/ );
-      //
-      if ( !recognizer.Perform(radius) )
-      {
-        progress.SendLogMessage(LogWarn(Normal) << "Recognition failed.");
-        return false;
-      }
-      //
-      fids = recognizer.GetResultIndices();
-    }
-
-    std::cout << "Num. faces remaining: " << fids.Extent() << std::endl;
-
-    if ( !fids.Extent() )
-    {
-      progress.SendLogMessage(LogInfo(Normal) << "No faces remaining for suppression.");
-      stop = true;
-      continue;
-    }
-
-    // Choose any face for suppression.
-    const int fid = fids.GetMaximalMapped();
-    //
-    if ( nonSuppressibleFaces.Contains( tempAAG->GetFace(fid) ) )
-    {
-      progress.SendLogMessage(LogWarn(Normal) << "Skip non-suppressible face. Keep going...");
-
-      recognize = false; // Try next face.
-      fids.Remove( fid );
-      continue;
-    }
-    //
-    progress.SendLogMessage(LogWarn(Normal) << "Next face to suppress: %1." << fid);
-
-    // Prepare tool.
-    asiAlgo_SuppressBlendChain suppressor(tempAAG/*, history*/, progress/*, plotter*/);
-    //
-    if ( !suppressor.Perform(fid) )
-    {
-      progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
-
-      recognize = false; // Try next face.
-      fids.Subtract( suppressor.GetChainIds() );
-      fids.Remove( fid );
-
-      // Add non-suppressible faces.
-      TopTools_IndexedMapOfShape lastChainFaces = suppressor.GetChainFaces();
-      //
-      nonSuppressibleFaces.Add( tempAAG->GetFace(fid) );
-      for ( int k = 1; k <= lastChainFaces.Extent(); ++k )
-        nonSuppressibleFaces.Add( lastChainFaces(k) );
-
-      continue;
-    }
-
-    if ( suppressor.GetNumSuppressedChains() == 0 )
-    {
-      stop = true;
-      continue;
-    }
-
-    numSuppressedChains += suppressor.GetNumSuppressedChains();
-
-    // Get result.
-    const TopoDS_Shape& incRes = suppressor.GetResult();
-    //
-    result = incRes;
-
-    if ( !plotter.Plotter().IsNull() )
-    {
-      TCollection_AsciiString name("incRes_fid_"); name += fid;
-      plotter.REDRAW_SHAPE( name, BRepBuilderAPI_Copy(incRes) );
-    }
-
-    // Merge history.
-    history->Concatenate( suppressor.GetHistory() );
-
-    // Adjust the collection of remaining faces.
-    fids.Subtract( suppressor.GetChainIds() );
-    fids.Remove( fid );
-    //
-    if ( fids.IsEmpty() )
-    {
-      stop = true;
-      continue;
-    }
-
-    // Update AAG.
-    tempAAG = new asiAlgo_AAG(incRes, false);
-    recognize = true;
-  }
-  while ( !stop );
-
-  //result = tempAAG->GetMasterCAD();
-
-  return true;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -1990,10 +1854,11 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
 
   // Perform suppression incrementally.
   int numSuppressedChains = 0;
-  if ( !SuppressBlendsIncrementally( aag, maxRadius, result, history,
-                                     numSuppressedChains,
-                                     interp->GetProgress()/*,
-                                     interp->GetPlotter()*/ ) )
+  //
+  asiAlgo_SuppressBlendsInc incSuppress( interp->GetProgress(), NULL );
+  //
+  if ( !incSuppress.Perform( aag, maxRadius, result, history,
+                             numSuppressedChains) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
     return TCL_ERROR;

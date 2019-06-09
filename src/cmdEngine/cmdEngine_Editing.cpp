@@ -1860,8 +1860,16 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   if ( !incSuppress.Perform( aag, maxRadius, result, history,
                              numSuppressedChains) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
-    return TCL_ERROR;
+    if ( !interp->GetProgress().IsCancelling() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Incremental suppression failed.");
+      return TCL_ERROR;
+    }
+    else
+    {
+      interp->GetProgress().SendLogMessage(LogNotice(Normal) << "Incremental suppression cancelled.");
+      return TCL_OK;
+    }
   }
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of suppressed blend chains: %1."
                                                        << numSuppressedChains);

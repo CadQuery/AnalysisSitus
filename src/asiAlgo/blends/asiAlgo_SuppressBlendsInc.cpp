@@ -54,6 +54,9 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
                                         Handle(asiAlgo_History)&   history,
                                         int&                       numSuppressedChains) const
 {
+  m_progress.SetMessageKey("Incremental blend suppression");
+  m_progress.Init();
+
   // Prepare a history instance to merge histories incrementally.
   if ( history.IsNull() )
     history = new asiAlgo_History(m_progress, m_plotter);
@@ -87,13 +90,24 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
       if ( !recognizer.Perform(radius) )
       {
         m_progress.SendLogMessage(LogWarn(Normal) << "Recognition failed.");
+        m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
         return false;
       }
       //
       fids = recognizer.GetResultIndices();
     }
 
-    std::cout << "Num. faces remaining: " << fids.Extent() << std::endl;
+    if ( m_progress.IsCancelling() )
+    {
+      m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Cancelled);
+      return false;
+    }
+
+    // Update progress message.
+    TCollection_AsciiString msg("Num. faces remaining: ");
+    msg += fids.Extent();
+    //
+    m_progress.SetMessageKey(msg);
 
     if ( !fids.Extent() )
     {
@@ -176,5 +190,6 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
   }
   while ( !stop );
 
+  m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
   return true;
 }

@@ -83,20 +83,26 @@ void asiAlgo_AttrBlendCandidate::DumpGraphically(ActAPI_PlotterEntry plotter) co
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->SpringEdgeIndices);
         mit.More(); mit.Next() )
   {
-    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ), Color_Green, 1.0, true, "DUMP spring edge" );
+    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ),
+                        ActAPI_Color(0., 150./255., 240./255., Quantity_TOC_RGB),
+                        1.0, true, "DUMP spring edge" );
   }
 
   // Draw cross edges.
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->CrossEdgeIndices);
         mit.More(); mit.Next() )
   {
-    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ), Color_Red, 1.0, true, "DUMP cross edge" );
+    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ),
+                                          ActAPI_Color(230./255, 10./255, 10./255., Quantity_TOC_RGB),
+                                          1.0, true, "DUMP cross edge" );
   }
 
   // Draw terminating edges.
   for ( TColStd_MapIteratorOfPackedMapOfInteger mit(this->TerminatingEdgeIndices);
         mit.More(); mit.Next() )
   {
-    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ), Color_Magenta, 1.0, true, "DUMP terminating edge" );
+    plotter.DRAW_SHAPE( allEdges.FindKey( mit.Key() ),
+                        ActAPI_Color(220./255., 0., 220./255., Quantity_TOC_RGB),
+                        1.0, true, "DUMP terminating edge" );
   }
 }

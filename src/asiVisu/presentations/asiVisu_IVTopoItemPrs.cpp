@@ -63,6 +63,8 @@ asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& N)
 
   // Configure
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
+  pl->Actor()->GetProperty()->SetLineWidth(5.0f);
+  pl->Actor()->GetProperty()->RenderLinesAsTubesOn();
 }
 
 //! Factory method for Presentation.

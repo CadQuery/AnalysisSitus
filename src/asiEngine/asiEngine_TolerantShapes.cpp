@@ -53,8 +53,10 @@ void asiEngine_TolerantShapes::Populate(const TopoDS_Shape& shape,
   const double resolution = Precision::Confusion()*0.1;
 
   // Get max and min possible tolerances.
+  asiAlgo_CheckValidity checker;
+  //
   const double minToler  = Precision::Confusion() - resolution;
-  const double maxToler  = asiAlgo_CheckValidity::MaxTolerance(shape) + resolution;
+  const double maxToler  = checker.MaxTolerance(shape) + resolution;
   const double tolerStep = (maxToler - minToler) / numRanges;
 
   // Initialize lookup table.

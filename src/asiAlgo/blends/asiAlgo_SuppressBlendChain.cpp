@@ -624,10 +624,22 @@ bool asiAlgo_SuppressBlendChain::checkChainSuppressible() const
 
 bool asiAlgo_SuppressBlendChain::isValidFace(const TopoDS_Face& face) const
 {
+  asiAlgo_CheckValidity checker;
+
   // This calibrated value is used to compensate weird tolerances which
   // happen to be insufficient to cover tiny contour gaps.
-  const double tol = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+  const double tol = checker.MaxTolerance(face)*5.0;
 
-  return asiAlgo_CheckValidity::HasAllClosedWires(face, tol) &&
-        !asiAlgo_CheckValidity::HasEdgesWithoutVertices(face);
+  // Perform basic check.
+  bool ok = checker.HasAllClosedWires(face, tol) &&
+           !checker.HasEdgesWithoutVertices(face);
+  //
+  if ( !ok )
+    return false;
+
+  // Check for self-intersections in the domain of the face.
+  if ( checker.HasDomainSelfIntersections(face) )
+    return false;
+
+  return true;
 }

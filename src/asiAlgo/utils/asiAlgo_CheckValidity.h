@@ -54,8 +54,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_CheckValidity(ActAPI_ProgressEntry progress,
-                          ActAPI_PlotterEntry  plotter);
+    asiAlgo_CheckValidity(ActAPI_ProgressEntry progress = NULL,
+                          ActAPI_PlotterEntry  plotter  = NULL);
 
 public:
 
@@ -72,7 +72,7 @@ public:
   //! point membership classification (PMC) test for an "infinite" point.
   //! \param[in] solid body to check.
   //! \return true if the body is finite.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     IsFinite(const TopoDS_Solid& solid);
 
   //! Checks whether the passed face has all contours (wires)
@@ -80,7 +80,7 @@ public:
   //! test.
   //! \param[in] face face to check.
   //! \return true if face is Ok, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasAllClosedWires(const TopoDS_Face& face);
 
   //! Checks whether the passed face has all contours (wires)
@@ -89,7 +89,7 @@ public:
   //! \param[in] coincConfusion3d coincidence confusion tolerance. This value
   //!                             is used to recognize points as coincident.
   //! \return true if face is Ok, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasAllClosedWires(const TopoDS_Face& face,
                       const double       coincConfusion3d);
 
@@ -99,20 +99,20 @@ public:
   //! \param[in] coincConfusion3d coincidence confusion tolerance. This value
   //!                             is used to recognize points as coincident.
   //! \return true if wire is Ok, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     IsClosedGeometrically(const TopoDS_Wire& wire,
                           const TopoDS_Face& face,
                           const double       coincConfusion3d);
 
   //! Checks whether the passed face contains any edges without vertices.
   //! \param[in] face face to check.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasEdgesWithoutVertices(const TopoDS_Face& face);
 
   //! Returns maximum tolerance value bound to the passed shape.
   //! \param[in] shape shape to check.
   //! \return maximum tolerance value.
-  asiAlgo_EXPORT static double
+  asiAlgo_EXPORT double
     MaxTolerance(const TopoDS_Shape& shape);
 
   //! Checks for the given edge if it has distinct orientations of its
@@ -120,8 +120,14 @@ public:
   //! orientation and one vertex with REVERSED orientation.
   //! \param[in] edge edge to check.
   //! \return true in case of validity, false -- otherwise.
-  asiAlgo_EXPORT static bool
+  asiAlgo_EXPORT bool
     HasDistinctVertexOrientations(const TopoDS_Edge& edge);
+
+  //! Checks if the passed shape has any intersecting pcurves in its domain.
+  //! \param[in] face face to check.
+  //! \return true if any self-intersections exist, false -- otherwise.
+  asiAlgo_EXPORT bool
+    HasDomainSelfIntersections(const TopoDS_Face& face);
 
 };
 

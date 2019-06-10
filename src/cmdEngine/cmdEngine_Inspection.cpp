@@ -1828,6 +1828,8 @@ int ENGINE_CheckFinite(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  asiAlgo_CheckValidity checker;
+
   // Check contained solids.
   bool isOneSolid = (solids.Extent() == 1);
   bool areAllOk   = true;
@@ -1839,7 +1841,7 @@ int ENGINE_CheckFinite(const Handle(asiTcl_Interp)& interp,
     solidIdx++;
 
     // Check next solid.
-    const bool isNextOk = asiAlgo_CheckValidity::IsFinite(solid);
+    const bool isNextOk = checker.IsFinite(solid);
     //
     if ( !isNextOk && areAllOk )
       areAllOk = false;
@@ -1889,6 +1891,8 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
   // Get Part shape.
   TopoDS_Shape partSh = part_n->GetShape();
 
+  asiAlgo_CheckValidity checker;
+
   // Check each face individually.
   bool isOk = true;
   //
@@ -1901,10 +1905,10 @@ int ENGINE_CheckContours(const Handle(asiTcl_Interp)& interp,
     if ( globTolerance )
       locTolerance = globTolerance;
     else
-      locTolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+      locTolerance = checker.MaxTolerance(face)*5.0;
 
     // Check closeness.
-    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, locTolerance) )
+    if ( !checker.HasAllClosedWires(face, locTolerance) )
     {
       isOk = false;
       break;
@@ -1936,7 +1940,7 @@ int ENGINE_GetTolerance(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
 
   // Return max tolerance to the interpreter.
-  *interp << asiAlgo_CheckValidity::MaxTolerance( part_n->GetShape() );
+  *interp << asiAlgo_CheckValidity().MaxTolerance( part_n->GetShape() );
 
   return TCL_OK;
 }
@@ -2456,12 +2460,14 @@ int ENGINE_CheckVerticesOri(const Handle(asiTcl_Interp)& interp,
   TopTools_IndexedMapOfShape edgesMap;
   TopExp::MapShapes(partShape, TopAbs_EDGE, edgesMap);
 
+  asiAlgo_CheckValidity checker;
+
   // Check edges.
   for ( int k = 1; k <= edgesMap.Extent(); ++k )
   {
     const TopoDS_Edge& edge = TopoDS::Edge( edgesMap(k) );
 
-    if ( !asiAlgo_CheckValidity::HasDistinctVertexOrientations(edge) )
+    if ( !checker.HasDistinctVertexOrientations(edge) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Edge %1 has non-distinguishable vertices."
                                                           << k);

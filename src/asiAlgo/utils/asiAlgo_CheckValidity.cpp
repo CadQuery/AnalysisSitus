@@ -32,11 +32,17 @@
 #include <asiAlgo_CheckValidity.h>
 
 // OCCT includes
+#include <Bnd_Box2d.hxx>
+#include <BndLib_Add2dCurve.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
+#include <Geom2dAdaptor_Curve.hxx>
+#include <Geom2dInt_GInter.hxx>
+#include <IntRes2d_Domain.hxx>
+#include <ShapeAnalysis_Edge.hxx>
 #include <ShapeAnalysis_ShapeTolerance.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -53,6 +59,19 @@
 //! Auxiliary toolkit for shape validity checker.
 namespace CheckShapeAux
 {
+  //! Evaluates 3D point as `S(c2d(t))`.
+  //! \param[in] surf  host surface.
+  //! \param[in] c2d   two-dimensional parametric curve.
+  //! \param[in] param parameter to evaluate the host geometry in.
+  //! \return three-dimensional point.
+  gp_Pnt GetPointOnSurf(const Handle(Geom_Surface)& surf,
+                        const Geom2dAdaptor_Curve&  c2d,
+                        const double                param)
+  {
+    gp_Pnt2d aP2d = c2d.Value(param);
+    return surf->Value( aP2d.X(), aP2d.Y() );
+  }
+
   //! Checks whether the given list of shapes contains the passed shape.
   //! \param L [in] list to check.
   //! \param S [in] entry to find.
@@ -902,3 +921,121 @@ bool asiAlgo_CheckValidity::HasDistinctVertexOrientations(const TopoDS_Edge& edg
   return isForwardFound && isReversedFound;
 }
 
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face)
+{
+  const double         conf = Precision::Confusion();
+  const double         tol  = this->MaxTolerance(face);
+  Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+
+  // Get all edges.
+  TopTools_IndexedMapOfShape edgesMap;
+  TopExp::MapShapes(face, TopAbs_EDGE, edgesMap);
+
+  // Get all pcurves and build their bounding boxes.
+  std::vector<TopoDS_Edge>               edges;
+  std::vector<Handle(Geom2d_Curve)>      pcurves;
+  std::vector<Bnd_Box2d>                 aabbs;
+  std::vector<std::pair<double, double>> paramLimits; // (first, last) curve parameters.
+  //
+  for ( int k = 1; k <= edgesMap.Extent(); ++k )
+  {
+    const TopoDS_Edge& E = TopoDS::Edge( edgesMap(k) );
+
+    // Get pcurve.
+    double f, l;
+    Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(E, face, f, l);
+    //
+    if ( c2d.IsNull() )
+      continue;
+
+    // Add edge.
+    edges.push_back(E);
+
+    // Add pcurve.
+    pcurves.push_back(c2d);
+
+    // Compute bounding box.
+    Bnd_Box2d aabb;
+    BndLib_Add2dCurve::Add(c2d, conf, aabb);
+    //
+    aabbs.push_back(aabb);
+
+    // Add parameter pair.
+    paramLimits.push_back( std::pair<double, double>(f, l) );
+  }
+
+  const int numCurves = int( pcurves.size() );
+
+  // Check for intersections.
+  TColStd_PackedMapOfInteger checked;
+  for ( int i = 0; i < numCurves; ++i )
+  {
+    if ( checked.Contains(i) ) continue;
+
+    TopoDS_Vertex V1f = ShapeAnalysis_Edge().FirstVertex(edges[i]);
+    TopoDS_Vertex V1l = ShapeAnalysis_Edge().LastVertex(edges[i]);
+
+    for ( int j = 0; j < numCurves; ++j )
+    {
+      if ( i == j ) continue;
+
+      if ( aabbs[i].IsOut(aabbs[j]) ) continue; // Fast intersection test.
+
+      /* Precise check */
+
+      TopoDS_Vertex V2f = ShapeAnalysis_Edge().FirstVertex(edges[j]);
+      TopoDS_Vertex V2l = ShapeAnalysis_Edge().LastVertex(edges[j]);
+
+      // Perform intersection.
+      Geom2dAdaptor_Curve c1(pcurves[i], paramLimits[i].first, paramLimits[i].second);
+      Geom2dAdaptor_Curve c2(pcurves[j], paramLimits[j].first, paramLimits[j].second);
+      //
+      Geom2dInt_GInter inter(c1, c2, conf, tol);
+      //
+      if ( !inter.IsDone() ) continue;
+
+      // Consult intersection results.
+      int numHits = 0;
+      const int numInter = inter.NbPoints();
+      for ( int k = 1; k <= numInter; ++k )
+      {
+        const IntRes2d_IntersectionPoint& IP  = inter.Point(k);
+        const IntRes2d_Transition&        tr1 = IP.TransitionOfFirst();
+        const IntRes2d_Transition&        tr2 = IP.TransitionOfSecond();
+        //
+        if ( tr1.PositionOnCurve() != IntRes2d_Middle &&
+             tr2.PositionOnCurve() != IntRes2d_Middle ) continue;
+
+        const double pOn1 = IP.ParamOnFirst();
+        const double pOn2 = IP.ParamOnSecond();
+
+        /* Check in 3D */
+
+        // Get intersection points.
+        gp_Pnt P1 = CheckShapeAux::GetPointOnSurf(surf, c1, pOn1);
+        gp_Pnt P2 = CheckShapeAux::GetPointOnSurf(surf, c2, pOn2);
+
+        const bool hitExtremityC1 = ( P1.Distance( BRep_Tool::Pnt(V1f) ) < tol || 
+                                      P1.Distance( BRep_Tool::Pnt(V1l) ) < tol );
+        const bool hitExtremityC2 = ( P2.Distance( BRep_Tool::Pnt(V2f) ) < tol || 
+                                      P2.Distance( BRep_Tool::Pnt(V2l) ) < tol );
+
+        if ( hitExtremityC1 && hitExtremityC2 ) continue;
+
+        ++numHits;
+
+        m_plotter.DRAW_POINT(P1, Color_Yellow, "ip2d1");
+        m_plotter.DRAW_POINT(P2, Color_Yellow, "ip2d2");
+      }
+
+      if ( numHits > 0 )
+        return true;
+    }
+
+    checked.Add(i);
+  }
+
+  return false;
+}

@@ -169,7 +169,7 @@ bool asiAlgo_RepatchFaces::Perform(const std::vector<TopoDS_Face>& faces)
   const TopoDS_Shape& shape = killer.GetResult();
 
   // Sew.
-  BRepBuilderAPI_Sewing Sewer( asiAlgo_CheckValidity::MaxTolerance(shape), true, false, false, false );
+  BRepBuilderAPI_Sewing Sewer( asiAlgo_CheckValidity().MaxTolerance(shape), true, false, false, false );
   Sewer.Add(shape);
   Sewer.Add(repatchF);
   //

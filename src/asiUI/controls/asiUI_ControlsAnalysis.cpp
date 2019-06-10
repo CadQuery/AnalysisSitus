@@ -272,7 +272,7 @@ void asiUI_ControlsAnalysis::onCheckToler()
 
   // Output max tolerance.
   m_notifier.SendLogMessage( LogInfo(Normal) << "Max tolerance: %1."
-                                             << asiAlgo_CheckValidity::MaxTolerance(shape2Check) );
+                                             << asiAlgo_CheckValidity().MaxTolerance(shape2Check) );
 
   // Update UI.
   m_browser->Populate();
@@ -301,6 +301,8 @@ void asiUI_ControlsAnalysis::onCheckContours()
   // Get Part shape.
   TopoDS_Shape partSh = part_n->GetShape();
 
+  asiAlgo_CheckValidity checker;
+
   // Check each face individually.
   bool isOk = true;
   //
@@ -313,10 +315,10 @@ void asiUI_ControlsAnalysis::onCheckContours()
     if ( globTolerance )
       locTolerance = globTolerance;
     else
-      locTolerance = asiAlgo_CheckValidity::MaxTolerance(face)*5.0;
+      locTolerance = checker.MaxTolerance(face)*5.0;
 
     // Check closeness.
-    if ( !asiAlgo_CheckValidity::HasAllClosedWires(face, locTolerance) )
+    if ( !checker.HasAllClosedWires(face, locTolerance) )
     {
       isOk = false;
       break;

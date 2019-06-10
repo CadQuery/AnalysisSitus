@@ -334,6 +334,10 @@ void asiUI_Logger::logMessage(const QString&                    message,
     hiliColor = QColor(255, 120, 120);
   }
 
+  // Put in standard output.
+  std::cout << QStr2AsciiStr(this->toString(TS) + prefix + msg).ToCString() << std::endl;
+
+  // Put in UI.
   this->putText(this->toString(TS) + prefix + msg, hiliColor);
 }
 

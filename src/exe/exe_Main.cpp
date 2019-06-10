@@ -178,11 +178,7 @@ int main(int argc, char** argv)
 
     // Check result.
     if ( ret != TCL_OK )
-    {
-      interp->PrintLastError();
-      //
       std::cout << "Batch mode finished with error code " << ret << "." << std::endl;
-    }
     else
       std::cout << "Batch mode finished finished successfully (error code " << ret << ")." << std::endl;
 

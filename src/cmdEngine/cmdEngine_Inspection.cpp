@@ -2905,6 +2905,81 @@ int ENGINE_CheckPartContains(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckSelfInter(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  const bool isInteractive = (argc == 1);
+
+  // Get Part Node to access the selected faces.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
+  TopoDS_Shape        shape = partNode->GetShape();
+
+  // Get index of the base face.
+  int fid = 0;
+  //
+  if ( isInteractive )
+  {
+    TColStd_PackedMapOfInteger fids;
+    //
+    asiEngine_Part partAPI( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+    partAPI.GetHighlightedFaces(fids);
+
+    if ( fids.Extent() != 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, select a single 'guess face'.");
+      return TCL_ERROR;
+    }
+    //
+    fid = fids.GetMinimalMapped();
+  }
+  else
+  {
+    TCollection_AsciiString argStr(argv[1]);
+    //
+    if ( !argStr.IsIntegerValue() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face ID is not an integer value.");
+      return TCL_ERROR;
+    }
+
+    fid = atoi(argv[1]);
+    //
+    if ( !partNode->GetAAG()->HasFace(fid) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face %1 does not exist in the working part."
+                                                          << fid);
+      return TCL_ERROR;
+    }
+  }
+
+  // Get face in question.
+  const TopoDS_Face& face = partNode->GetAAG()->GetFace(fid);
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Check domain self-intersections.
+  asiAlgo_CheckValidity checker( interp->GetProgress(),
+                                 interp->GetPlotter() );
+  //
+  *interp << checker.HasDomainSelfIntersections(face, false);
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "check-self-inter")
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -3210,4 +3285,13 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks whether the part contains the shape <shapeName> as its sub-shape.",
     //
     __FILE__, group, ENGINE_CheckPartContains);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-self-inter",
+    //
+    "check-self-inter [fid]\n"
+    "\t Checks the parametric domain of the passed/selected face for\n"
+    "\t self-intersections.",
+    //
+    __FILE__, group, ENGINE_CheckSelfInter);
 }

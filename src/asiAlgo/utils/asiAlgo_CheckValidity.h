@@ -124,10 +124,13 @@ public:
     HasDistinctVertexOrientations(const TopoDS_Edge& edge);
 
   //! Checks if the passed shape has any intersecting pcurves in its domain.
-  //! \param[in] face face to check.
+  //! \param[in] face        face to check.
+  //! \param[in] stopAtFirst Boolean flag indicating whether the check should
+  //!                        be interrupted on the first found self-intersection.
   //! \return true if any self-intersections exist, false -- otherwise.
   asiAlgo_EXPORT bool
-    HasDomainSelfIntersections(const TopoDS_Face& face);
+    HasDomainSelfIntersections(const TopoDS_Face& face,
+                               const bool         stopAtFirst);
 
 };
 

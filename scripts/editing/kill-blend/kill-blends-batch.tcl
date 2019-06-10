@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 
 set workdir "C:/Work/AnalysisSitus/data/cad"
-set targetExt "stp"
+set targetExt "brep"
 set outputFile "C:/users/ssv/desktop/kill-blends-batch-log.txt"
 
 set filenames []
@@ -48,8 +48,8 @@ set numFacesTotal 0
 foreach inFilename $filenames {
   puts "Next model to check: $inFilename"
   clear
-  if { [catch {load-step $inFilename}] } {
-    puts stderr "error: cannot read STEP file."
+  if { [catch {load-brep $inFilename}] } {
+    puts stderr "error: cannot read CAD file."
     continue
   }
 
@@ -65,7 +65,7 @@ foreach inFilename $filenames {
     set numChains [kill-blends-inc]
   } err] } {
     incr numFaulty
-    puts stderr "error: kill-blend-inc returned error $err."
+    puts stderr "error: kill-blend-inc returned error."
   }
 
   set validityAfter [check-validity]
@@ -75,6 +75,8 @@ foreach inFilename $filenames {
   get-summary ncompAfter ncompsoAfter nsoAfter nsheAfter nfAfter nwAfter neAfter nvAfter
 
   puts $FILE "$inFilename"
+
+  set numFaces 0
 
   if { $numChains == 0 } {
     puts $FILE "\t no blend chains were suppressed."

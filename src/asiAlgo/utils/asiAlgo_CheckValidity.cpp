@@ -923,7 +923,8 @@ bool asiAlgo_CheckValidity::HasDistinctVertexOrientations(const TopoDS_Edge& edg
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face)
+bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face,
+                                                       const bool         stopAtFirst)
 {
   const double         conf = Precision::Confusion();
   const double         tol  = this->MaxTolerance(face);
@@ -969,7 +970,9 @@ bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face)
   const int numCurves = int( pcurves.size() );
 
   // Check for intersections.
+  int numHits = 0;
   TColStd_PackedMapOfInteger checked;
+  //
   for ( int i = 0; i < numCurves; ++i )
   {
     if ( checked.Contains(i) ) continue;
@@ -997,7 +1000,6 @@ bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face)
       if ( !inter.IsDone() ) continue;
 
       // Consult intersection results.
-      int numHits = 0;
       const int numInter = inter.NbPoints();
       for ( int k = 1; k <= numInter; ++k )
       {
@@ -1026,16 +1028,18 @@ bool asiAlgo_CheckValidity::HasDomainSelfIntersections(const TopoDS_Face& face)
 
         ++numHits;
 
-        m_plotter.DRAW_POINT(P1, Color_Yellow, "ip2d1");
-        m_plotter.DRAW_POINT(P2, Color_Yellow, "ip2d2");
+        // Graphical dump.
+        m_plotter.DRAW_POINT(P1,         Color_Yellow, "ip3d1");
+        m_plotter.DRAW_POINT(P2,         Color_Yellow, "ip3d2");
+        m_plotter.DRAW_POINT(IP.Value(), Color_Yellow, "ip2d");
       }
 
-      if ( numHits > 0 )
+      if ( stopAtFirst && numHits > 0 )
         return true;
     }
 
     checked.Add(i);
   }
 
-  return false;
+  return numHits > 0;
 }

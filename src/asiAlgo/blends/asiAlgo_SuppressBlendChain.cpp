@@ -638,7 +638,7 @@ bool asiAlgo_SuppressBlendChain::isValidFace(const TopoDS_Face& face) const
     return false;
 
   // Check for self-intersections in the domain of the face.
-  if ( checker.HasDomainSelfIntersections(face) )
+  if ( checker.HasDomainSelfIntersections(face, true) ) // Stop at first intersection found.
     return false;
 
   return true;

@@ -3,7 +3,7 @@
 # the specified target directory.
 #------------------------------------------------------------------------------
 
-set workdir "C:/Work/AnalysisSitus/data/cad"
+set workdir "C:/Work/AnalysisSitus/data/cad/blends"
 set targetExt "brep"
 set outputFile "C:/users/ssv/desktop/kill-blends-batch-log.txt"
 
@@ -41,13 +41,17 @@ find_files [lindex $workdir 0] $targetExt
 set FILE [open $outputFile "w"]
 
 # Load each model and check.
+set fileIdx 0
 set numFaulty 0
 set numChainsTotal 0
 set numFacesTotal 0
 #
 foreach inFilename $filenames {
-  puts "Next model to check: $inFilename"
+  incr fileIdx
+  puts ">>> Next ($fileIdx) file to process: $inFilename"
+
   clear
+
   if { [catch {load-brep $inFilename}] } {
     puts stderr "error: cannot read CAD file."
     continue

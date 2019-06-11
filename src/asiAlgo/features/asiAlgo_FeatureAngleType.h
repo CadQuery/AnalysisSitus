@@ -41,10 +41,12 @@
 //! of machined features from a 3D solid model", 1988.
 enum asiAlgo_FeatureAngleType
 {
-  FeatureAngleType_Undefined = -1,
-  FeatureAngleType_Concave   =  0,
-  FeatureAngleType_Convex    =  1,
-  FeatureAngleType_Smooth    =  2
+  FeatureAngleType_Undefined     = -1,
+  FeatureAngleType_Concave       =  0,
+  FeatureAngleType_Convex        =  1,
+  FeatureAngleType_Smooth        =  2,
+  FeatureAngleType_SmoothConcave =  3,
+  FeatureAngleType_SmoothConvex  =  4
 };
 
 #endif

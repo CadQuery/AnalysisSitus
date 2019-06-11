@@ -287,28 +287,30 @@ public:
                                    double&                        blueF)
   {
     switch ( angle )
-  {
-    case FeatureAngleType_Concave:
-      redF   = 1.0;
-      greenF = 0.0;
-      blueF  = 0.0;
-      break;
-    case FeatureAngleType_Convex:
-      redF   = 0.0;
-      greenF = 1.0;
-      blueF  = 0.0;
-      break;
-    case FeatureAngleType_Smooth:
-      redF   = 0.0;
-      greenF = 0.0;
-      blueF  = 1.0;
-      break;
-    case FeatureAngleType_Undefined:
-    default:
-      redF   = 1.0;
-      greenF = 1.0;
-      blueF  = 1.0;
-  }
+    {
+      case FeatureAngleType_SmoothConcave:
+      case FeatureAngleType_Concave:
+        redF   = 1.0;
+        greenF = 0.0;
+        blueF  = 0.0;
+        break;
+      case FeatureAngleType_SmoothConvex:
+      case FeatureAngleType_Convex:
+        redF   = 0.0;
+        greenF = 1.0;
+        blueF  = 0.0;
+        break;
+      case FeatureAngleType_Smooth:
+        redF   = 0.0;
+        greenF = 0.0;
+        blueF  = 1.0;
+        break;
+      case FeatureAngleType_Undefined:
+      default:
+        redF   = 1.0;
+        greenF = 1.0;
+        blueF  = 1.0;
+    }
   }
 
   double static TrimInf(const double val,

@@ -271,13 +271,9 @@ TColStd_PackedMapOfInteger
 
 TColStd_PackedMapOfInteger
   asiAlgo_AAG::GetNeighbors(const int                         face_idx,
-                            const TColStd_PackedMapOfInteger& edge_ids) const
+                            const TColStd_PackedMapOfInteger& edge_ids)
 {
   TColStd_PackedMapOfInteger result;
-
-  // Get all edges
-  TopTools_IndexedMapOfShape allEdges;
-  TopExp::MapShapes(m_master, TopAbs_EDGE, allEdges);
 
   // Get neighbor faces
   const TColStd_PackedMapOfInteger& neighbor_ids = this->GetNeighbors(face_idx);
@@ -644,7 +640,8 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != FeatureAngleType_Concave )
+      if ( attr->GetAngle() != FeatureAngleType_Concave &&
+           attr->GetAngle() != FeatureAngleType_SmoothConcave )
       {
         isAllConcave = false;
 
@@ -1164,6 +1161,10 @@ void asiAlgo_AAG::dumpArcJSON(const t_arc&      arc,
     angleTypeStr = "concave";
   else if ( arcAttrAngle->GetAngle() == FeatureAngleType_Smooth )
     angleTypeStr = "smooth";
+  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConcave )
+    angleTypeStr = "smooth concave";
+  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConvex )
+    angleTypeStr = "smooth convex";
   else
     angleTypeStr = "undefined";
 

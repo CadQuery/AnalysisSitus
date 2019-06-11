@@ -202,8 +202,12 @@ protected:
         const int attr = angles->GetVariantValue(line).ToInt();
         if ( attr == FeatureAngleType_Convex )
           return vtkColor4ub(40, 190, 0, 255);
+        else if ( attr == FeatureAngleType_SmoothConvex )
+          return vtkColor4ub(10, 255, 0, 255);
         else if ( attr == FeatureAngleType_Concave )
           return vtkColor4ub(190, 40, 0, 255);
+        else if ( attr == FeatureAngleType_SmoothConcave )
+          return vtkColor4ub(255, 10, 0, 255);
       }
 
       // Topology graph only

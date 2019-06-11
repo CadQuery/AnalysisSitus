@@ -405,6 +405,12 @@ TCollection_AsciiString
     case FeatureAngleType_Smooth:
       result = "smooth";
       break;
+    case FeatureAngleType_SmoothConcave:
+      result = "smooth concave";
+      break;
+    case FeatureAngleType_SmoothConvex:
+      result = "smooth convex";
+      break;
     case FeatureAngleType_Undefined:
     default:
       result = "undefined";

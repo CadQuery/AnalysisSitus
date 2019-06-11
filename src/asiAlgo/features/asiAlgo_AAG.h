@@ -475,7 +475,7 @@ public:
   //! \return indices of the neighbor faces.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
     GetNeighbors(const int                         face_idx,
-                 const TColStd_PackedMapOfInteger& edge_ids) const;
+                 const TColStd_PackedMapOfInteger& edge_ids);
 
   //! Returns full collection of neighbor faces.
   //! \return neighborhood data.

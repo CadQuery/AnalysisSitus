@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_CheckDihedralAngle.h>
+#include <asiAlgo_FeatureAttrAngle.h>
 
 // OCCT includes
 #include <BRep_Builder.hxx>
@@ -166,16 +167,31 @@ void asiAlgo_FindSmoothEdges::detect(const TopoDS_Face&          F,
                                      const TopoDS_Face&          G,
                                      TopTools_IndexedMapOfShape& smoothEdges) const
 {
-  // Check angle between the two faces
-  TopTools_IndexedMapOfShape commonEdges;
-  asiAlgo_CheckDihedralAngle dihAngle(NULL, NULL);
+  const int fid = m_aag->GetFaceId(F);
+  const int gid = m_aag->GetFaceId(G);
   //
-  asiAlgo_FeatureAngleType angle = dihAngle.AngleBetweenFaces(F, G, true, 0.0, commonEdges);
+  asiAlgo_AAG::t_arc arc(fid, gid);
 
-  if ( angle == FeatureAngleType_Smooth )
+  // Get arc attribute which stores the angle properties.
+  const Handle(asiAlgo_FeatureAttr)& arcAttrBase = m_aag->GetArcAttribute(arc);
+  //
+  Handle(asiAlgo_FeatureAttrAngle)
+    arcAttrAngle = Handle(asiAlgo_FeatureAttrAngle)::DownCast(arcAttrBase);
+
+  if ( arcAttrAngle->GetAngle() == FeatureAngleType_Smooth ||
+       arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConvex ||
+       arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConcave )
   {
-    for ( int i = 1; i <= commonEdges.Extent(); ++i )
-      smoothEdges.Add( commonEdges(i) );
+    // Collect common edges.
+    const TColStd_PackedMapOfInteger eids = arcAttrAngle->GetEdgeIndices();
+    //
+    for ( TColStd_MapIteratorOfPackedMapOfInteger eit(eids); eit.More(); eit.Next() )
+    {
+      const int eid = eit.Key();
+      const TopoDS_Shape& E = m_aag->RequestMapOfEdges()(eid);
+      //
+      smoothEdges.Add(E);
+    }
   }
 }
 

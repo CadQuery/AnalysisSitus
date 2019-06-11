@@ -285,11 +285,15 @@ asiAlgo_FeatureAngleType
   std::cout << "Angle is " << angle << std::endl;
 #endif
 
+  bool isSmooth = false;
+
   // 3 degrees is the default angular tolerance to recognize smooth angles.
   const double ang_tol = Max(smoothAngularTol, 3.0/180.0*M_PI);
   //
   if ( Abs(Abs(angRad) - M_PI) < ang_tol )
   {
+    isSmooth = true;
+
     if ( allowSmooth )
       return FeatureAngleType_Smooth;
 
@@ -359,9 +363,9 @@ asiAlgo_FeatureAngleType
   // Classify angle
   asiAlgo_FeatureAngleType angleType = FeatureAngleType_Undefined;
   if ( angRad < 0 )
-    angleType = FeatureAngleType_Convex;
+    angleType = isSmooth ? FeatureAngleType_SmoothConvex : FeatureAngleType_Convex;
   else
-    angleType = FeatureAngleType_Concave;
+    angleType = isSmooth ? FeatureAngleType_SmoothConcave : FeatureAngleType_Concave;
 
   return angleType;
 }

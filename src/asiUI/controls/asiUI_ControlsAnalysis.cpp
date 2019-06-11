@@ -1200,7 +1200,9 @@ void asiUI_ControlsAnalysis::classifyDihAngle(const TopoDS_Face&          F,
     pTargetMap  = &concaveEdges;
     pTargetComp = &concaveEdgesComp;
   }
-  else if ( angleType == FeatureAngleType_Smooth )
+  else if ( angleType == FeatureAngleType_Smooth ||
+            angleType == FeatureAngleType_SmoothConvex ||
+            angleType == FeatureAngleType_SmoothConcave )
   {
     pTargetMap  = &smoothEdges;
     pTargetComp = &smoothEdgesComp;

@@ -75,6 +75,7 @@
 #include <BRepTopAdaptor_FClass2d.hxx>
 #include <GCPnts_UniformAbscissa.hxx>
 #include <Geom_BoundedSurface.hxx>
+#include <GeomConvert.hxx>
 #include <GeomLib.hxx>
 #include <gp_Quaternion.hxx>
 #include <Precision.hxx>
@@ -2344,6 +2345,54 @@ int ENGINE_MoveTriangulation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_ConvertToBSurf(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 3 && argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_IVSurfaceNode)
+    node = Handle(asiData_IVSurfaceNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find surface object with name %1." << argv[2]);
+    return TCL_ERROR;
+  }
+
+  double uMin, uMax, vMin, vMax;
+  node->GetLimits(uMin, uMax, vMin, vMax);
+
+  // Get shape to convert.
+  Handle(Geom_Surface) surf = node->GetSurface();
+  //
+  if ( surf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Target surface is null.");
+    return TCL_ERROR;
+  }
+
+  // Apply limits.
+  Handle(Geom_RectangularTrimmedSurface)
+    tsurf = new Geom_RectangularTrimmedSurface(surf, uMin, uMax, vMin, vMax);
+
+  // Convert.
+  Handle(Geom_BSplineSurface) bsurf = GeomConvert::SurfaceToBSplineSurface(tsurf);
+
+  if ( interp->HasKeyword(argc, argv, "cubic") )
+    bsurf->IncreaseDegree(3, 3);
+
+  // Set as result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], bsurf, Color_Default);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -2649,4 +2698,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t to the global X, Y, Z axes.",
     //
     __FILE__, group, ENGINE_MoveTriangulation);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("convert-to-bsurf",
+    //
+    "convert-to-bsurf res surfName [-cubic]\n"
+    "\t Converts the surface with the given name to B-surface. The trimming\n"
+    "\t parameters are taken from the corresponding Data Node.",
+    //
+    __FILE__, group, ENGINE_ConvertToBSurf);
 }

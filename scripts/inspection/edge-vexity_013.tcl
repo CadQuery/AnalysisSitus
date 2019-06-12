@@ -5,6 +5,8 @@ set datafile cad/situ/vexity/situ_vexity_013.brep
 #  0: concave
 #  1: convex
 #  2: smooth
+#  3: smooth concave
+#  4: smooth convex
 set ref_vexity 1
 
 # Read input geometry.

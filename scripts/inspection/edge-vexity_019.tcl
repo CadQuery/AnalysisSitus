@@ -5,7 +5,9 @@ set datafile cad/situ/vexity/situ_vexity_019.brep
 #  0: concave
 #  1: convex
 #  2: smooth
-set ref_vexity 0
+#  3: smooth concave
+#  4: smooth convex
+set ref_vexity 3
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)

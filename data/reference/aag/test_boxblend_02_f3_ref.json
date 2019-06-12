@@ -73,17 +73,17 @@
     ["1", "4", "convex"],
     ["1", "5", "convex"],
     ["1", "6", "convex"],
-    ["2", "3", "convex"],
+    ["2", "3", "smooth convex"],
     ["2", "4", "convex"],
     ["2", "7", "convex"],
-    ["3", "5", "convex"],
+    ["3", "5", "smooth convex"],
     ["3", "8", "convex"],
     ["4", "6", "convex"],
     ["4", "7", "convex"],
     ["5", "6", "convex"],
-    ["5", "8", "convex"],
+    ["5", "8", "smooth convex"],
     ["6", "7", "convex"],
     ["6", "8", "convex"],
-    ["7", "8", "convex"]
+    ["7", "8", "smooth convex"]
   ]
 }

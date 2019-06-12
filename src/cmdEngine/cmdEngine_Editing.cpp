@@ -1857,8 +1857,8 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   //
   asiAlgo_SuppressBlendsInc incSuppress( interp->GetProgress(), NULL );
   //
-  if ( !incSuppress.Perform( aag, maxRadius, result, history,
-                             numSuppressedChains) )
+  if ( !incSuppress.Perform(aag, maxRadius, result, history,
+                            numSuppressedChains) )
   {
     if ( !interp->GetProgress().IsCancelling() )
     {

@@ -282,7 +282,7 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
       return TCL_OK;
     }
 
-    // Set shape to convert.
+    // Get shape to convert.
     shapeToSet = node->GetShape();
     linDefl    = node->GetLinearDeflection();
     angDefl    = node->GetAngularDeflection();

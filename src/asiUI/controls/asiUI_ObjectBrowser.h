@@ -144,6 +144,8 @@ protected slots:
   void onSaveToBREP            ();
   void onSetAsPart             ();
   //
+  void onSaveToXYZ             ();
+  //
   void onPrintParameters       ();
   void onCopyName              ();
   //

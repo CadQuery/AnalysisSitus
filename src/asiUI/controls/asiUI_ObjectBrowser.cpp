@@ -531,10 +531,19 @@ void asiUI_ObjectBrowser::onSetAsPart()
   Handle(asiData_IVTopoItemNode)
     topoNode = Handle(asiData_IVTopoItemNode)::DownCast(selected_n);
 
+  // Get shape to convert.
+  TopoDS_Shape shapeToSet = topoNode->GetShape();
+  const double linDefl    = topoNode->GetLinearDeflection();
+  const double angDefl    = topoNode->GetAngularDeflection();
+
   // Modify Data Model.
+  Handle(asiData_PartNode) part_n;
   m_model->OpenCommand();
   {
-    asiEngine_Part(m_model).Update( topoNode->GetShape() );
+    part_n = asiEngine_Part(m_model).Update(shapeToSet);
+    //
+    part_n->SetLinearDeflection(linDefl);
+    part_n->SetAngularDeflection(angDefl);
   }
   m_model->CommitCommand();
 
@@ -546,8 +555,34 @@ void asiUI_ObjectBrowser::onSetAsPart()
       m_viewers[k]->PrsMgr()->DeRenderPresentation(topoNode);
 
     // Actualize part.
-    if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented( m_model->GetPartNode() ) )
-      m_viewers[k]->PrsMgr()->Actualize( m_model->GetPartNode() );
+    if ( dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]) )
+      m_viewers[k]->PrsMgr()->Actualize(part_n);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onSaveToXYZ()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_IVPointSetNode) ) )
+    return;
+
+  Handle(asiData_IVPointSetNode)
+    ptsNode = Handle(asiData_IVPointSetNode)::DownCast(selected_n);
+
+  QString filename = asiUI_Common::selectXYZFile(asiUI_Common::OpenSaveAction_Save);
+
+  // Get point cloud.
+  Handle(asiAlgo_BaseCloud<double>) pts = ptsNode->GetPoints();
+
+  // Save points.
+  if ( !pts->SaveAs( QStr2AsciiStr(filename).ToCString() ) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot save point cloud.");
+    return;
   }
 }
 
@@ -804,6 +839,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
         pMenu->addSeparator();
         pMenu->addAction( "Save to BREP...", this, SLOT( onSaveToBREP () ) );
         pMenu->addAction( "Set as part",     this, SLOT( onSetAsPart  () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_IVPointSetNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Save to XYZ...", this, SLOT( onSaveToXYZ () ) );
       }
 
       if ( node->IsKind( STANDARD_TYPE(asiData_TessNode) ) )

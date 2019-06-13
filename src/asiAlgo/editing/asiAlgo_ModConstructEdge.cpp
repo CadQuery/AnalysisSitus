@@ -435,6 +435,11 @@ GeomAbs_Shape
 bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
 {
   // Build child-parent maps.
+  //
+  // IMPORTANT: these maps are not cached in AAG because here we are in the
+  //            middle of shape modification process. The best practice is
+  //            to build AAG in the frozen states of geometry only, while
+  //            working on the transient body to obtain those states.
   asiAlgo_IndexedDataMapOfTShapeListOfShape edgeFaceMap, vertexEdgeMap;
   //
   asiAlgo_Utils::MapTShapesAndAncestors(m_shape, TopAbs_EDGE,   TopAbs_FACE, edgeFaceMap);

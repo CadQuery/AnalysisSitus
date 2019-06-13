@@ -100,7 +100,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
   isCandidateBlend = false;
 
   // Get face of interest and its host surface
-  const TopoDS_Face&  A  = m_aag->GetFace(face_idx);
+  const TopoDS_Face& A = m_aag->GetFace(face_idx);
   BRepAdaptor_Surface AS(A);
 
   // Get all smoothly connected neighbor faces
@@ -161,19 +161,19 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     gp_Pnt2d UV;
     {
       ShapeAnalysis_Surface SAS( AS.Surface().Surface() );
-      UV = SAS.ValueOfUV(P, 1.0e-4);
+      UV = SAS.ValueOfUV(P, 1.0e-2);
     }
 
     // Solve point inversion problem for P on B
     gp_Pnt2d ST;
     {
       ShapeAnalysis_Surface SAS( BS.Surface().Surface() );
-      ST = SAS.ValueOfUV(P, 1.0e-4);
+      ST = SAS.ValueOfUV(P, 1.0e-2);
     }
 
     // Calculate differential properties
-    BRepLProp_SLProps AProps(AS, UV.X(), UV.Y(), 2, 1e-7);
-    BRepLProp_SLProps BProps(BS, ST.X(), ST.Y(), 2, 1e-7);
+    BRepLProp_SLProps AProps(AS, UV.X(), UV.Y(), 2, 1e-5);
+    BRepLProp_SLProps BProps(BS, ST.X(), ST.Y(), 2, 1e-5);
     //
     if ( !AProps.IsCurvatureDefined() )
     {

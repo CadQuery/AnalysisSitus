@@ -59,7 +59,7 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
 
   // Prepare a history instance to merge histories incrementally.
   if ( history.IsNull() )
-    history = new asiAlgo_History(m_progress, m_plotter);
+    history = new asiAlgo_History(/*m_progress, m_plotter*/);
 
   // Initialize outputs.
   result              = aag->GetMasterCAD();
@@ -83,9 +83,9 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
       recognize = false;
 
       // Perform recognition starting from the guess face.
-      asiAlgo_RecognizeBlends recognizer( tempAAG,
+      asiAlgo_RecognizeBlends recognizer( tempAAG/*,
                                           m_progress,
-                                          m_plotter );
+                                          m_plotter*/ );
       //
       if ( !recognizer.Perform(radius) )
       {
@@ -103,12 +103,6 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
       return false;
     }
 
-    // Update progress message.
-    TCollection_AsciiString msg("Num. faces remaining: ");
-    msg += fids.Extent();
-    //
-    m_progress.SetMessageKey(msg);
-
     if ( !fids.Extent() )
     {
       m_progress.SendLogMessage(LogInfo(Normal) << "No faces remaining for suppression.");
@@ -121,21 +115,21 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
     //
     if ( nonSuppressibleFaces.Contains( tempAAG->GetFace(fid) ) )
     {
-      m_progress.SendLogMessage(LogWarn(Normal) << "Skip non-suppressible face. Keep going...");
+      //m_progress.SendLogMessage(LogWarn(Normal) << "Skip non-suppressible face. Keep going...");
 
       recognize = false; // Try next face.
       fids.Remove( fid );
       continue;
     }
     //
-    m_progress.SendLogMessage(LogWarn(Normal) << "Next face to suppress: %1." << fid);
+    //m_progress.SendLogMessage(LogWarn(Normal) << "Next face to suppress: %1." << fid);
 
     // Prepare tool.
-    asiAlgo_SuppressBlendChain suppressor(tempAAG, m_progress, m_plotter);
+    asiAlgo_SuppressBlendChain suppressor(tempAAG/*, m_progress, m_plotter*/);
     //
     if ( !suppressor.Perform(fid) )
     {
-      m_progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
+      //m_progress.SendLogMessage(LogWarn(Normal) << "Next face suppression failed. Keep going...");
 
       recognize = false; // Try next face.
       fids.Subtract( suppressor.GetChainIds() );
@@ -158,6 +152,10 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
     }
 
     numSuppressedChains += suppressor.GetNumSuppressedChains();
+
+    // Update progress message.
+    TCollection_AsciiString msg("Num. faces remaining: "); msg += fids.Extent();
+    m_progress.SetMessageKey(msg);
 
     // Get result.
     const TopoDS_Shape& incRes = suppressor.GetResult();

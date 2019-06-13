@@ -688,7 +688,7 @@ bool asiAlgo_CheckValidity::IsClosedGeometrically(const TopoDS_Wire& wire,
   // resolution gives unreliable 2D tolerances. However, we think that using
   // such resolutions is still better than application of three-dimensional
   // tolerances in two-dimensional space.
-  BRepAdaptor_Surface bas(face);
+  GeomAdaptor_Surface bas( BRep_Tool::Surface(face) );
   //
   const double uToler      = bas.UResolution(coincConfusion3d);
   const double vToler      = bas.VResolution(coincConfusion3d);

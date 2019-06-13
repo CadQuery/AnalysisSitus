@@ -646,21 +646,40 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
    *  Smart face suppression
    * ======================== */
 
-  // Get face index.
-  const int fidx = atoi(argv[1]);
+  // Get face indices.
+  TColStd_PackedMapOfInteger fids;
   //
-  if ( fidx < 1 )
+  for ( int i = 1; i < argc; ++i )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
-    return TCL_OK;
+    if ( interp->IsKeyword(argv[i], "defeat") ) continue;
+
+    // Process next face index.
+    const int fidx = atoi(argv[i]);
+    //
+    if ( fidx < 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face index should be 1-based.");
+      return TCL_ERROR;
+    }
+    //
+    fids.Add(fidx);
   }
 
   // Get Part Node.
   Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
   TopoDS_Shape             part   = part_n->GetShape();
+  Handle(asiAlgo_AAG)      aag    = part_n->GetAAG();
 
-  // Get map of sub-shapes with respect to those the passed index is relevant.
-  const TopoDS_Shape& face2Kill = part_n->GetAAG()->GetMapOfFaces()(fidx);
+  // Collect faces to kill.
+  TopTools_ListOfShape faces2Kill;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(fids); fit.More(); fit.Next() )
+  {
+    const int          fid       = fit.Key();
+    const TopoDS_Face& face2Kill = aag->GetFace(fid);
+
+    faces2Kill.Append(face2Kill);
+  }
 
   TIMER_NEW
   TIMER_GO
@@ -669,9 +688,9 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape result;
   //
   if ( !asiAlgo_Utils::BooleanRemoveFaces( part,
-                                           face2Kill,
+                                           faces2Kill,
                                            false, // Parallel mode.
-                                           false, // Whether to track history.
+                                           true, // Whether to track history.
                                            result,
                                            interp->GetProgress() ) )
   {
@@ -2467,8 +2486,8 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-face",
     //
-    "kill-face <faceIndex|-name 'faceName'> [-defeat]\n"
-    "\t Kills face with the passed 1-based index from the active part.\n"
+    "kill-face <fid1 [fid2 [...]] | <fid|-name 'faceName'>> [-defeat]\n"
+    "\t Kills faces with the passed 1-based indices from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
     "\t modify geometry. Moreover, unlike Euler operator, this function\n"
     "\t does not preserve the topological consistency of the CAD part.\n"

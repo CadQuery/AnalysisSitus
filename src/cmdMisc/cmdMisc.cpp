@@ -3286,11 +3286,9 @@ int MISC_InvertPoints(const Handle(asiTcl_Interp)& interp,
   // Get points.
   Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
 
-  // Disable UI immediate updates for better performance.
-  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
-  //
-  IV->REPAINT_OFF();
-  IV->BROWSER_OFF();
+  // Resulting collections.
+  Handle(asiAlgo_BaseCloud<double>) ptsInverted = new asiAlgo_BaseCloud<double>;
+  Handle(asiAlgo_BaseCloud<double>) ptsFailed   = new asiAlgo_BaseCloud<double>;
 
   // Loop over the points and invert each one to the surface.
   for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
@@ -3304,7 +3302,8 @@ int MISC_InvertPoints(const Handle(asiTcl_Interp)& interp,
     {
       std::cout << "Failed point num. " << k << std::endl;
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
-      interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Red, "pfaulty");
+      //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Red, "pfaulty");
+      ptsFailed->AddElement( cascade::GetOpenCascadePnt(xyz).XYZ() );
       continue;
     }
 
@@ -3313,18 +3312,20 @@ int MISC_InvertPoints(const Handle(asiTcl_Interp)& interp,
     // Evaluate surface for the obtained (u,v) coordinates.
     t_xyz S;
     mobSurf->Eval(projUV.U(), projUV.V(), S);
-    //
-    interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Yellow, "p");
-    interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(S), Color_Green, "proj");
-    interp->GetPlotter().DRAW_LINK(cascade::GetOpenCascadePnt(xyz), cascade::GetOpenCascadePnt(S), Color_Red, "plink");
+    ////
+    //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Yellow, "p");
+    //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(S), Color_Green, "proj");
+    //interp->GetPlotter().DRAW_LINK(cascade::GetOpenCascadePnt(xyz), cascade::GetOpenCascadePnt(S), Color_Red, "plink");
 
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
-                                                          << projUV.U() << projUV.V() );
+    //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
+    //                                                      << projUV.U() << projUV.V() );
+    //
+    ptsInverted->AddElement( cascade::GetOpenCascadePnt(S).XYZ() );
   }
 
-  // Update UI.
-  IV->REPAINT_ON();
-  IV->BROWSER_ON();
+  // Render point clouds.
+  interp->GetPlotter().REDRAW_POINTS("ptsFailed",   ptsFailed->GetCoordsArray(),   Color_Red);
+  interp->GetPlotter().REDRAW_POINTS("ptsInverted", ptsInverted->GetCoordsArray(), Color_Green);
 
   return TCL_OK;
 #else

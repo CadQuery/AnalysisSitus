@@ -44,6 +44,9 @@
 #include <asiEngine_RE.h>
 #include <asiEngine_Triangulation.h>
 
+// asiUI includes
+#include <asiUI_IV.h>
+
 #if defined USE_MOBIUS
   // Mobius includes
   #include <mobius/cascade.h>
@@ -1087,7 +1090,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
 {
-  if ( argc != 3 && argc != 4 )
+  if ( argc != 3 && argc != 4 && argc != 7 && argc != 8 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1107,6 +1110,17 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
 
   // Get points.
   Handle(asiAlgo_BaseCloud<double>) ptsCloud = ptsNode->GetPoints();
+
+  // Get limits (if any).
+  double uMin = 0., uMax = 0., vMin = 0., vMax = 0.;
+  //
+  if ( argc == 7 || argc == 8 )
+  {
+    uMin = atof(argv[3]);
+    uMax = atof(argv[4]);
+    vMin = atof(argv[5]);
+    vMax = atof(argv[6]);
+  }
 
   // Build average t_plane.
   gp_Pln resPln;
@@ -1144,8 +1158,23 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     }
   }
 
+  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+
   // Set the result.
-  interp->GetPlotter().REDRAW_SURFACE(argv[1], new Geom_Plane(resPln), Color_Default);
+  IV->REDRAW_SURFACE(argv[1], new Geom_Plane(resPln), Color_Default);
+
+  // Set limits (if passed).
+  Handle(asiData_IVSurfaceNode)
+    ivSurf = Handle(asiData_IVSurfaceNode)::DownCast( IV->GetLastNode() );
+  //
+  if ( !ivSurf.IsNull() && uMin && uMax && vMin && vMax )
+  {
+    cmdRE::model->OpenCommand();
+    {
+      ivSurf->SetLimits(uMin, uMax, vMin, vMax);
+    }
+    cmdRE::model->CommitCommand();
+  }
 
   return TCL_OK;
 }
@@ -1285,7 +1314,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",
     //
-    "re-make-average-plane res pointsName [-mobius]\n"
+    "re-make-average-plane res pointsName [umin umax vmin vmax] [-mobius]\n"
     "\t Approximates the given point cloud with a plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);

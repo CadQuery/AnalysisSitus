@@ -63,6 +63,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -1233,7 +1234,7 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
                     const char**                 argv)
 {
 #if defined USE_MOBIUS
-  if ( argc != 3 )
+  if ( argc != 3 && argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1260,6 +1261,8 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
   }
 
+  const bool isOCC = interp->HasKeyword(argc, argv, "opencascade");
+
   // Get B-surface.
   Handle(Geom_BSplineSurface)
     occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
@@ -1281,6 +1284,11 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
   Handle(asiAlgo_BaseCloud<double>) ptsInverted = new asiAlgo_BaseCloud<double>;
   Handle(asiAlgo_BaseCloud<double>) ptsFailed   = new asiAlgo_BaseCloud<double>;
 
+  ShapeAnalysis_Surface sas(occtBSurface);
+
+  TIMER_NEW
+  TIMER_GO
+
   // Loop over the points and invert each one to the surface.
   for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
   {
@@ -1288,13 +1296,23 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
 
     // Invert point.
     t_uv projUV;
-    //
-    if ( !mobSurf->InvertPoint(xyz, projUV) )
+
+    if ( !isOCC )
     {
-      std::cout << "Failed point num. " << k << std::endl;
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
-      ptsFailed->AddElement( cascade::GetOpenCascadePnt(xyz).XYZ() );
-      continue;
+      if ( !mobSurf->InvertPoint(xyz, projUV) )
+      {
+        std::cout << "Failed point num. " << k << std::endl;
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
+        ptsFailed->AddElement( cascade::GetOpenCascadePnt(xyz).XYZ() );
+        continue;
+      }
+    }
+    else // Project using OpenCascade kernel for experimenting.
+    {
+      gp_Pnt2d occUV = sas.ValueOfUV(cascade::GetOpenCascadePnt(xyz), 1e-6);
+      //
+      projUV.SetU( occUV.X() );
+      projUV.SetV( occUV.Y() );
     }
 
     // Evaluate surface for the obtained (u,v) coordinates.
@@ -1303,6 +1321,9 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
     //
     ptsInverted->AddElement( cascade::GetOpenCascadePnt(S).XYZ() );
   }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "re-invert-points")
 
   // Render point clouds.
   interp->GetPlotter().REDRAW_POINTS("ptsFailed",   ptsFailed->GetCoordsArray(),   Color_Red);
@@ -1422,7 +1443,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-invert-points",
     //
-    "re-invert-bpoles surfName ptsName\n"
+    "re-invert-bpoles surfName ptsName [-opencascade]\n"
     "\t Inverts the passed point cloud to the B-surface with the given name.",
     //
     __FILE__, group, RE_InvertPoints);

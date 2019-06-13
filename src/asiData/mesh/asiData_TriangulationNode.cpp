@@ -74,7 +74,7 @@ void asiData_TriangulationNode::Init()
   this->SetBVH(NULL);
 
   // Set Presentation values
-  this->SetHasColor    (false);
+  this->SetHasColor    (true);
   this->SetColor       (2500134); // Sort of dark color.
   this->SetDisplayMode (1);       // Shading.
   this->SetHasVertices (false);

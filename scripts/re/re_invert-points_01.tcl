@@ -13,4 +13,4 @@ re-make-average-plane p pts -2 2 -2 2 -mobius; hide p
 convert-to-bsurf bp p -cubic
 
 # Invert all points.
-misc-invert-points bp pts
+re-invert-points bp pts

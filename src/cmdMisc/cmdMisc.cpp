@@ -3237,108 +3237,6 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int MISC_InvertPoints(const Handle(asiTcl_Interp)& interp,
-                      int                          argc,
-                      const char**                 argv)
-{
-#if defined USE_MOBIUS
-  if ( argc != 3 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Find Surface Node by name.
-  Handle(asiData_IVSurfaceNode)
-    surfNode = Handle(asiData_IVSurfaceNode)::DownCast( interp->GetModel()->FindNodeByName(argv[1]) );
-  //
-  if ( surfNode.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
-                                                        << argv[1]);
-    return TCL_OK;
-  }
-
-  // Find Points Node by name.
-  Handle(asiData_IVPointSetNode)
-    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( interp->GetModel()->FindNodeByName(argv[2]) );
-  //
-  if ( pointsNode.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a point cloud."
-                                                        << argv[2]);
-    return TCL_OK;
-  }
-
-  // Get B-surface.
-  Handle(Geom_BSplineSurface)
-    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
-  //
-  if ( occtBSurface.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
-    return TCL_OK;
-  }
-
-  // Convert to Mobius B-surface.
-  t_ptr<t_bsurf>
-    mobSurf = cascade::GetMobiusBSurface(occtBSurface);
-
-  // Get points.
-  Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
-
-  // Resulting collections.
-  Handle(asiAlgo_BaseCloud<double>) ptsInverted = new asiAlgo_BaseCloud<double>;
-  Handle(asiAlgo_BaseCloud<double>) ptsFailed   = new asiAlgo_BaseCloud<double>;
-
-  // Loop over the points and invert each one to the surface.
-  for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
-  {
-    t_xyz xyz = cascade::GetMobiusPnt( pts->GetElement(k) );
-
-    // Invert point.
-    t_uv projUV;
-    //
-    if ( !mobSurf->InvertPoint(xyz, projUV) )
-    {
-      std::cout << "Failed point num. " << k << std::endl;
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
-      //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Red, "pfaulty");
-      ptsFailed->AddElement( cascade::GetOpenCascadePnt(xyz).XYZ() );
-      continue;
-    }
-
-    std::cout << "Inverted point num. " << k << std::endl;
-
-    // Evaluate surface for the obtained (u,v) coordinates.
-    t_xyz S;
-    mobSurf->Eval(projUV.U(), projUV.V(), S);
-    ////
-    //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(xyz), Color_Yellow, "p");
-    //interp->GetPlotter().DRAW_POINT(cascade::GetOpenCascadePnt(S), Color_Green, "proj");
-    //interp->GetPlotter().DRAW_LINK(cascade::GetOpenCascadePnt(xyz), cascade::GetOpenCascadePnt(S), Color_Red, "plink");
-
-    //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
-    //                                                      << projUV.U() << projUV.V() );
-    //
-    ptsInverted->AddElement( cascade::GetOpenCascadePnt(S).XYZ() );
-  }
-
-  // Render point clouds.
-  interp->GetPlotter().REDRAW_POINTS("ptsFailed",   ptsFailed->GetCoordsArray(),   Color_Red);
-  interp->GetPlotter().REDRAW_POINTS("ptsInverted", ptsInverted->GetCoordsArray(), Color_Green);
-
-  return TCL_OK;
-#else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
-
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
-  return TCL_ERROR;
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3525,14 +3423,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts the control points of a B-surface to itself.",
     //
     __FILE__, group, MISC_InvertBPoles);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("misc-invert-points",
-    //
-    "misc-invert-bpoles surfName ptsName\n"
-    "\t Inverts the passed points to a B-surface.",
-    //
-    __FILE__, group, MISC_InvertPoints);
 
   // Load sub-modules.
   Commands_Coons(interp, data);

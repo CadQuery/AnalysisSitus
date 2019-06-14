@@ -1289,6 +1289,17 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
   TIMER_NEW
   TIMER_GO
 
+  // Prepare memory arena.
+  t_ptr<t_alloc2d> localAlloc = new t_alloc2d;
+  //
+  const int memBlock_BSplineSurfEvalD2U      = 0;
+  const int memBlock_BSplineSurfEvalD2V      = 1;
+  const int memBlock_BSplineSurfEvalInternal = 2;
+  //
+  localAlloc->Allocate(3, mobSurf->GetDegree_U() + 1, true);
+  localAlloc->Allocate(3, mobSurf->GetDegree_V() + 1, true);
+  localAlloc->Allocate(2, 2 + 1,                      true);
+
   // Loop over the points and invert each one to the surface.
   for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
   {
@@ -1299,7 +1310,11 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
 
     if ( !isOCC )
     {
-      if ( !mobSurf->InvertPoint(xyz, projUV) )
+      if ( !mobSurf->InvertPoint(xyz, projUV, 1e-6,
+                                 localAlloc,
+                                 memBlock_BSplineSurfEvalD2U,
+                                 memBlock_BSplineSurfEvalD2V,
+                                 memBlock_BSplineSurfEvalInternal) )
       {
         std::cout << "Failed point num. " << k << std::endl;
         interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");

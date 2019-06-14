@@ -7,7 +7,7 @@ load-points pts $datadir/$datafile
 fit
 
 # Make average plane.
-re-make-average-plane p pts -50 50 -50 50 -mobius; hide p
+re-make-average-plane p pts -80 80 -80 80 -mobius; hide p
 
 # Convert plane to a bicubic B-surface.
 convert-to-bsurf bp p -cubic

@@ -36,6 +36,7 @@
 #include <asiAlgo_MeshInterPlane.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_PlateOnEdges.h>
+#include <asiAlgo_PurifyCloud.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -699,7 +700,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Get parametric curve.
@@ -714,7 +715,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Convert curve using a dedicated Mobius utility.
@@ -752,14 +753,14 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot prepare sections (error code %1)."
                                                          << skinner.GetErrorCode() );
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   if ( !skinner.BuildIsosU() )
   {
     interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build U isos (error code %1)."
                                                          << skinner.GetErrorCode() );
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Fair skinning curves.
@@ -788,7 +789,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
       {
         interp->GetProgress().SendLogMessage( LogErr(Normal) << "Fairing failed for iso-U curve %1."
                                                              << int(k) );
-        return TCL_OK;
+        return TCL_ERROR;
       }
 
       // Override U iso in the skinner.
@@ -811,7 +812,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build interpolant surface (error code %1)."
                                                          << skinner.GetErrorCode() );
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Get skinned surface.
@@ -871,7 +872,7 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Get parametric curve.
@@ -886,7 +887,7 @@ int RE_InterpMulticurve(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Add curve to the collection of curves for synchronous interpolation.
@@ -996,7 +997,7 @@ int RE_JoinCurves(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a data object with name '%1'."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Get parametric curve.
@@ -1011,7 +1012,7 @@ int RE_JoinCurves(const Handle(asiTcl_Interp)& interp,
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of Node with ID %1."
                                                           << argv[k]);
-      return TCL_OK;
+      return TCL_ERROR;
     }
 
     // Add curve to the collection of curves for synchronous interpolation.
@@ -1031,7 +1032,7 @@ int RE_JoinCurves(const Handle(asiTcl_Interp)& interp,
                                    interp->GetProgress() ) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot join curves.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Set result.
@@ -1199,7 +1200,7 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
   if ( partNode.IsNull() || !partNode->IsWellFormed() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
   //
   TopoDS_Shape shape = partNode->GetShape();
@@ -1247,7 +1248,7 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
                                                         << argv[1]);
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Find Points Node by name.
@@ -1270,7 +1271,7 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
   if ( occtBSurface.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
-    return TCL_OK;
+    return TCL_ERROR;
   }
 
   // Convert to Mobius B-surface.
@@ -1352,6 +1353,41 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;
 #endif
+}
+
+//-----------------------------------------------------------------------------
+
+int RE_PurifyCloud(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Points Node by name.
+  Handle(asiData_IVPointSetNode)
+    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( interp->GetModel()->FindNodeByName(argv[2]) );
+  //
+  if ( pointsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a point cloud."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Get point cloud.
+  Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints(), res;
+
+  // Purify.
+  asiAlgo_PurifyCloud purify( interp->GetProgress(), interp->GetPlotter() );
+  //
+  purify.Perform3d(atof(argv[3]), pts, res);
+
+  // Set the result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], res->GetCoordsArray(), Color_Default);
+  return TCL_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -1462,4 +1498,13 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts the passed point cloud to the B-surface with the given name.",
     //
     __FILE__, group, RE_InvertPoints);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-purify-cloud",
+    //
+    "re-purify-cloud resPtsName ptsName tol3d\n"
+    "\t Purifies point cloud by removing near-coincident points. The precision\n"
+    "\t used for coincidence test is passed as <tol3d> argument.",
+    //
+    __FILE__, group, RE_PurifyCloud);
 }

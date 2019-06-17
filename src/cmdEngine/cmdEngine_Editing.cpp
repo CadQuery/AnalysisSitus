@@ -2412,6 +2412,68 @@ int ENGINE_ConvertToBSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_ConvertPlaneToBSurf(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_IVSurfaceNode)
+    node = Handle(asiData_IVSurfaceNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find surface object with name %1." << argv[2]);
+    return TCL_ERROR;
+  }
+
+  double uMin, uMax, vMin, vMax;
+  node->GetLimits(uMin, uMax, vMin, vMax);
+
+  // Get surface to convert.
+  Handle(Geom_Plane) surf = Handle(Geom_Plane)::DownCast( node->GetSurface() );
+  //
+  if ( surf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Target surface is null or not a plane.");
+    return TCL_ERROR;
+  }
+
+  // Convert to Mobius plane.
+  mobius::t_ptr<mobius::t_plane> plane = mobius::cascade::GetMobiusPlane(surf);
+
+  // Apply limits.
+  plane->SetLimits(uMin, uMax, vMin, vMax);
+
+  // Convert to B-surface.
+  mobius::t_ptr<mobius::t_bsurf>
+    bsurf = plane->ToBSurface( atoi(argv[3]), atoi(argv[4]) );
+  //
+  if ( bsurf.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot convert a plane to a B-surface.");
+    return TCL_ERROR;
+  }
+
+  // Set as result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], mobius::cascade::GetOpenCascadeBSurface(bsurf), Color_Default);
+
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& data)
 {
@@ -2726,4 +2788,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t parameters are taken from the corresponding Data Node.",
     //
     __FILE__, group, ENGINE_ConvertToBSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("convert-plane-to-bsurf",
+    //
+    "convert-plane-to-bsurf res surfName uDeg vDeg\n"
+    "\t Converts the planar surface with the given name to B-surface. The trimming\n"
+    "\t parameters are taken from the corresponding Data Node. The desired degrees\n"
+    "\t are specified via <uDeg> and <vDeg> arguments.",
+    //
+    __FILE__, group, ENGINE_ConvertPlaneToBSurf);
 }

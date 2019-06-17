@@ -1124,7 +1124,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     vMax = atof(argv[6]);
   }
 
-  // Build average t_plane.
+  // Build average plane.
   gp_Pln resPln;
   //
   if ( isMobius )
@@ -1135,7 +1135,6 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     // Prepare point cloud.
     t_ptr<t_pcloud> mobPts = new t_pcloud( ptsCloud->GetCoords() );
 
-    // Build average t_plane.
     geom_BuildAveragePlane planeAlgo;
     //
     if ( !planeAlgo.Build(mobPts, mobPlane) )

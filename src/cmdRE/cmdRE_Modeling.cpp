@@ -1409,7 +1409,7 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
                   const char**                 argv)
 {
 #if defined USE_MOBIUS
-  if ( argc != 5 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1434,17 +1434,39 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
   for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
     mobPts->AddPoint( cascade::GetMobiusPnt( pts->GetElement(k) ) );
 
-  // Approximate.
-  geom_ApproxBSurf approx( mobPts, atoi(argv[3]), atoi(argv[4]) );
-  //
-  if ( !approx.Perform() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
-    return TCL_ERROR;
-  }
+  t_ptr<t_bsurf> resSurf;
 
-  // Get result.
-  const t_ptr<t_bsurf>& resSurf = approx.GetResult();
+  if ( argc == 5 )
+  {
+    // Approximate.
+    geom_ApproxBSurf approx( mobPts, atoi(argv[3]), atoi(argv[4]) );
+    //
+    if ( !approx.Perform() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
+      return TCL_ERROR;
+    }
+
+    // Get result.
+    resSurf = approx.GetResult();
+  }
+  else if ( argc == 4 ) /* Initial surface is specified */
+  {
+    // Find Surface Node by name.
+    Handle(asiData_IVSurfaceNode)
+      surfNode = Handle(asiData_IVSurfaceNode)::DownCast( interp->GetModel()->FindNodeByName(argv[3]) );
+    //
+    if ( surfNode.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
+                                                          << argv[3]);
+      return TCL_ERROR;
+    }
+
+    // Get surface.
+    Handle(Geom_BSplineSurface)
+      bsurfOcc = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  }
 
   // Set the result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1], cascade::GetOpenCascadeBSurface(resSurf), Color_Default);
@@ -1579,7 +1601,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-approx-surf",
     //
-    "re-approx-surf resSurf ptsName uDegree vDegree\n"
+    "re-approx-surf resSurf ptsName {uDegree vDegree | initSurf}\n"
     "\t Approximates point cloud with B-surface.",
     //
     __FILE__, group, RE_ApproxSurf);

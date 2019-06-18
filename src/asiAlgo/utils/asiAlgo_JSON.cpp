@@ -222,6 +222,8 @@ void asiAlgo_JSON::DumpSurface(const Handle(Geom_Surface)& surface,
   out << ",\n        V_max: " << vMax;
   out <<  "\n    }"; // End 'domain'.
 
+  /* B-surface */
+
   if ( surface->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
   {
     Handle(Geom_BSplineSurface)
@@ -290,6 +292,26 @@ void asiAlgo_JSON::DumpSurface(const Handle(Geom_Surface)& surface,
         out << ",";
     }
     out << "\n        }"; // End 'poles'.
+    out << "\n    }"; // End 'properties'.
+  }
+
+  /* Plane surface */
+
+  else if ( surface->IsInstance( STANDARD_TYPE(Geom_Plane) ) )
+  {
+    Handle(Geom_Plane)
+      psurf = Handle(Geom_Plane)::DownCast(surface);
+
+    const gp_Ax3& axes = psurf->Position();
+    //
+    const gp_Pnt& O  = axes.Location();
+    const gp_Dir& d1 = axes.XDirection();
+    const gp_Dir& d2 = axes.YDirection();
+
+    out << ",\n    properties: {"; // Begin 'properties'.
+    out <<  "\n        origin: " << "[" << O.X() << ", " << O.Y() << ", " << O.Z() << "]";
+    out << ",\n        d1: " << "[" << d1.X() << ", " << d1.Y() << ", " << d1.Z() << "]";
+    out << ",\n        d2: " << "[" << d2.X() << ", " << d2.Y() << ", " << d2.Z() << "]";
     out << "\n    }"; // End 'properties'.
   }
 

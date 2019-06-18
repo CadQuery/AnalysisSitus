@@ -51,9 +51,11 @@
 #if defined USE_MOBIUS
   // Mobius includes
   #include <mobius/cascade.h>
+  #include <mobius/geom_ApproxBSurf.h>
   #include <mobius/geom_BuildAveragePlane.h>
   #include <mobius/geom_InterpolateMultiCurve.h>
   #include <mobius/geom_FairBCurve.h>
+  #include <mobius/geom_PlaneSurface.h>
   #include <mobius/geom_SkinSurface.h>
 
   using namespace mobius;
@@ -1124,8 +1126,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     vMax = atof(argv[6]);
   }
 
-  // Build average plane.
-  gp_Pln resPln;
+  Handle(Geom_Surface) resPlane;
   //
   if ( isMobius )
   {
@@ -1135,6 +1136,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     // Prepare point cloud.
     t_ptr<t_pcloud> mobPts = new t_pcloud( ptsCloud->GetCoords() );
 
+    // Build average plane.
     geom_BuildAveragePlane planeAlgo;
     //
     if ( !planeAlgo.Build(mobPts, mobPlane) )
@@ -1143,26 +1145,37 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
       return TCL_ERROR;
     }
 
-    resPln = cascade::GetOpenCascadePlane(mobPlane)->Pln();
+    // Project point cloud to plane to determine the parametric bounds.
+    mobPlane->TrimByPoints(mobPts);
+
+    // Convert plane to B-surf.
+    t_ptr<t_bsurf> mobPlaneBSurf = mobPlane->ToBSurface(3, 3);
+
+    // Convert to OpenCascade structure.
+    resPlane = cascade::GetOpenCascadeBSurface(mobPlaneBSurf);
 #else
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
 #endif
   }
   else
   {
+    gp_Pln pln;
+
     asiAlgo_PlaneOnPoints planeOnPoints( interp->GetProgress(), interp->GetPlotter() );
     //
-    if ( !planeOnPoints.Build(ptsCloud, resPln) )
+    if ( !planeOnPoints.Build(ptsCloud, pln) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build average plane.");
       return TCL_ERROR;
     }
+
+    resPlane = new Geom_Plane(pln);
   }
 
   Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
 
   // Set the result.
-  IV->REDRAW_SURFACE(argv[1], new Geom_Plane(resPln), Color_Default);
+  IV->REDRAW_SURFACE(argv[1], resPlane, Color_Default);
 
   // Set limits (if passed).
   Handle(asiData_IVSurfaceNode)
@@ -1391,6 +1404,62 @@ int RE_PurifyCloud(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Find Points Node by name.
+  Handle(asiData_IVPointSetNode)
+    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( interp->GetModel()->FindNodeByName(argv[2]) );
+  //
+  if ( pointsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a point cloud."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Get point cloud.
+  Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
+
+  // Convert to Mobius point cloud.
+  t_ptr<t_pcloud> mobPts = new t_pcloud;
+  //
+  for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
+    mobPts->AddPoint( cascade::GetMobiusPnt( pts->GetElement(k) ) );
+
+  // Approximate.
+  geom_ApproxBSurf approx( mobPts, atoi(argv[3]), atoi(argv[4]) );
+  //
+  if ( !approx.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
+    return TCL_ERROR;
+  }
+
+  // Get result.
+  const t_ptr<t_bsurf>& resSurf = approx.GetResult();
+
+  // Set the result.
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], cascade::GetOpenCascadeBSurface(resSurf), Color_Default);
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -1506,4 +1575,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t used for coincidence test is passed as <tol3d> argument.",
     //
     __FILE__, group, RE_PurifyCloud);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-approx-surf",
+    //
+    "re-approx-surf resSurf ptsName uDegree vDegree\n"
+    "\t Approximates point cloud with B-surface.",
+    //
+    __FILE__, group, RE_ApproxSurf);
 }

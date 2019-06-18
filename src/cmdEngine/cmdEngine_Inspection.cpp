@@ -2826,44 +2826,72 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
   Handle(asiData_IVSurfaceNode)
     surfNode = Handle(asiData_IVSurfaceNode)::DownCast(node);
 
-  // Get B-surface.
-  Handle(Geom_BSplineSurface)
-    occtBSurface = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+  // Get surface.
+  Handle(Geom_Surface) occtSurface = surfNode->GetSurface();
   //
-  if ( occtBSurface.IsNull() )
+  if ( occtSurface.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is not a B-spline surface.");
-    return TCL_OK;
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is null.");
+    return TCL_ERROR;
   }
 
-  // Convert to Mobius B-surface.
-  t_ptr<t_bsurf>
-    mobSurf = cascade::GetMobiusBSurface(occtBSurface);
-
-  // Set diagnostic tools.
-  t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
+  // Depending on the surface type, use different inversion approaches.
+  double ures = 0., vres = 0.;
   //
-  mobSurf->SetDiagnosticTools( NULL, core_PlotterEntry(ivMob) );
-
-  // Invert point.
-  t_uv projUV;
-  //
-  if ( !mobSurf->InvertPoint(t_xyz(px, py, pz), projUV) )
+  if ( occtSurface->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion failed.");
+    // Convert to Mobius B-surface.
+    t_ptr<t_bsurf>
+      mobSurf = cascade::GetMobiusBSurface( Handle(Geom_BSplineSurface)::DownCast(occtSurface) );
+
+    // Set diagnostic tools.
+    t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
+    //
+    mobSurf->SetDiagnosticTools( NULL, core_PlotterEntry(ivMob) );
+
+    // Invert point.
+    t_uv projUV;
+    //
+    if ( !mobSurf->InvertPoint(t_xyz(px, py, pz), projUV) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Point inversion onto B-surface failed.");
+      return TCL_ERROR;
+    }
+
+    // Set result.
+    ures = projUV.U();
+    vres = projUV.V();
+  }
+  else if ( occtSurface->IsKind( STANDARD_TYPE(Geom_Plane) ) )
+  {
+    // Convert to Mobius plane.
+    t_ptr<t_plane>
+      mobSurf = cascade::GetMobiusPlane( Handle(Geom_Plane)::DownCast(occtSurface) );
+
+    // Invert point.
+    t_uv projUV;
+    //
+    mobSurf->InvertPoint(t_xyz(px, py, pz), projUV);
+
+    // Set result.
+    ures = projUV.U();
+    vres = projUV.V();
+  }
+  else
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Non-supported surface type.");
     return TCL_ERROR;
   }
 
   // Evaluate surface for the obtained (u,v) coordinates.
-  t_xyz S;
-  mobSurf->Eval(projUV.U(), projUV.V(), S);
+  gp_Pnt P = occtSurface->Value(ures, vres);
   //
-  interp->GetPlotter().REDRAW_POINT("proj", cascade::GetOpenCascadePnt(S), Color_Green);
-  interp->GetPlotter().REDRAW_LINK("plink", gp_Pnt(px, py, pz), cascade::GetOpenCascadePnt(S), Color_Red);
+  interp->GetPlotter().REDRAW_POINT("proj", P, Color_Green);
+  interp->GetPlotter().REDRAW_LINK("plink", gp_Pnt(px, py, pz), P, Color_Red);
 
   // Dump the result to the notifier.
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Projection (u, v) = (%1, %2)."
-                                                        << projUV.U() << projUV.V() );
+                                                        << ures << vres );
 
   return TCL_OK;
 #else

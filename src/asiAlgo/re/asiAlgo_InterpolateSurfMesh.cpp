@@ -50,7 +50,6 @@
 #include <GCE2d_MakeSegment.hxx>
 #include <Geom_Plane.hxx>
 #include <GeomLib.hxx>
-#include <NCollection_CellFilter.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 #include <ShapeExtend_WireData.hxx>
@@ -59,53 +58,26 @@
 // Standard includes
 #include <algorithm>
 
-#undef DRAW_DEBUG
+#define DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
 
 //-----------------------------------------------------------------------------
 
-struct t_gridNode
+void RemoveCoincidentPoints(const double                                          prec,
+                            std::vector<asiAlgo_InterpolateSurfMesh::t_gridNode>& IntListNC,
+                            TColStd_PackedMapOfInteger&                           keptIndices)
 {
-  int    id;              //!< Global 0-based ID.
-  bool   isContourPoint;  //!< Whether this point is a pole on a contour.
-  bool   isSampledPoint;  //!< Whether this point is a sampled point.
-  bool   isMeshNodePoint; //!< Whether this point corresponds to a mesh node.
-  gp_XY  uvInit;          //!< (u,v) coordinates on the initial surface.
-  gp_XYZ xyzInit;         //!< (x,y,z) coordinates on the initial surface.
-  gp_XY  uv;              //!< (u,v) coordinates on the final surface.
-  gp_XYZ xyz;             //!< (x,y,z) coordinates on the final surface.
-
-  //! Default ctor.
-  t_gridNode()
-  : id              (-1),
-    isContourPoint  (false),
-    isSampledPoint  (false),
-    isMeshNodePoint (false)
-  {}
-
-  bool operator<(const t_gridNode& other)
-  {
-    return this->uvInit.X() < other.uvInit.X();
-  }
-};
-
-//-----------------------------------------------------------------------------
-
-void RemoveCoincidentPoints(const double                prec,
-                            std::vector<t_gridNode>&    IntListNC,
-                            TColStd_PackedMapOfInteger& keptIndices)
-{
-  std::vector<t_gridNode> purifiedList;
+  std::vector<asiAlgo_InterpolateSurfMesh::t_gridNode> purifiedList;
   int ip = 0;
   do
   {
-    const t_gridNode& p = IntListNC[ip];
+    const asiAlgo_InterpolateSurfMesh::t_gridNode& p = IntListNC[ip];
 
     // Traverse till the end skipping all coincident points
     int jp = ip + 1, p_best_idx = ip;
-    t_gridNode p_next, p_best = p;
+    asiAlgo_InterpolateSurfMesh::t_gridNode p_next, p_best = p;
     for ( ; ; )
     {
       ip = jp;
@@ -130,74 +102,13 @@ void RemoveCoincidentPoints(const double                prec,
 
 //-----------------------------------------------------------------------------
 
-//! Auxiliary class to search for coincident spatial points.
-class InspectXY : public NCollection_CellFilter_InspectorXY
-{
-public:
-
-  typedef gp_XY Target;
-
-  //! Constructor accepting resolution distance and point.
-  InspectXY(const double resolution, const gp_XY& P) : m_fResolution(resolution), m_bFound(false), m_P(P) {}
-
-  //! \return true/false depending on whether the node was found or not.
-  bool IsFound() const { return m_bFound; }
-
-  //! Implementation of inspection method.
-  NCollection_CellFilter_Action Inspect(const gp_XY& Target)
-  {
-    m_bFound = ( (m_P - Target).SquareModulus() <= Square(m_fResolution) );
-    return CellFilter_Keep;
-  }
-
-private:
-
-  gp_XY  m_P;           //!< Source point.
-  bool   m_bFound;      //!< Whether two points are coincident or not.
-  double m_fResolution; //!< Resolution to check for coincidence.
-
-};
-
-//-----------------------------------------------------------------------------
-
-//! Auxiliary class to search for coincident tessellation nodes.
-class InspectNode : public InspectXY
-{
-public:
-
-  typedef t_gridNode Target;
-
-  //! Constructor accepting resolution distance and point.
-  InspectNode(const double resolution, const t_gridNode& P) : InspectXY(resolution, P.uvInit), m_iID(-1) {}
-
-  int GetID() const { return m_iID; }
-
-  //! Implementation of inspection method.
-  NCollection_CellFilter_Action Inspect(const t_gridNode& Target)
-  {
-    InspectXY::Inspect(Target.uvInit);
-
-    if ( InspectXY::IsFound() )
-      m_iID = Target.id;
-
-    return CellFilter_Keep;
-  }
-
-private:
-
-  int m_iID; //!< Found target ID.
-
-};
-
-//-----------------------------------------------------------------------------
-
-bool appendNodeInGlobalCollection(t_gridNode&                          node,
-                                  int&                                 globalNodeId,
-                                  std::vector<t_gridNode>&             allNodes,
-                                  NCollection_CellFilter<InspectNode>& NodeFilter)
+bool appendNodeInGlobalCollection(asiAlgo_InterpolateSurfMesh::t_gridNode&                          node,
+                                  int&                                                              globalNodeId,
+                                  std::vector<asiAlgo_InterpolateSurfMesh::t_gridNode>&             allNodes,
+                                  NCollection_CellFilter<asiAlgo_InterpolateSurfMesh::InspectNode>& NodeFilter)
 {
   const double prec = Precision::Confusion();
-  InspectNode Inspect(prec, node);
+  asiAlgo_InterpolateSurfMesh::InspectNode Inspect(prec, node);
   gp_XY XY_min = Inspect.Shift( node.uvInit, -prec );
   gp_XY XY_max = Inspect.Shift( node.uvInit,  prec );
 
@@ -219,6 +130,43 @@ bool appendNodeInGlobalCollection(t_gridNode&                          node,
   }
 
   return false; // Not added.
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_InterpolateSurfMesh::CollectInteriorNodes(const Handle(Poly_Triangulation)&  tris,
+                                                       const std::vector<gp_XYZ>&         contour,
+                                                       const bool                         boxClipping,
+                                                       Handle(asiAlgo_BaseCloud<double>)& pts,
+                                                       ActAPI_ProgressEntry               progress,
+                                                       ActAPI_PlotterEntry                plotter)
+{
+  // Working variables.
+  Handle(Geom_Plane) plane;     // Average plane.
+  int                curID = 0; // Index of the last added points.
+  double             size = 0.; // Characteristics size.
+
+  // Cell filter.
+  NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
+
+  // Get all mesh nodes bounded by the contour.
+  std::vector<t_gridNode> reperNodes;
+  //
+  if ( !collectInteriorNodes(tris, contour, boxClipping,
+                             NodeFilter, plane, reperNodes, curID, size,
+                             progress, plotter) )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Cannot collect interior mesh nodes.");
+    return false;
+  }
+
+  // Construct the result.
+  pts = new asiAlgo_BaseCloud<double>;
+  //
+  for ( size_t k = 0; k < reperNodes.size(); ++k )
+    pts->AddElement(reperNodes[k].xyzInit);
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -254,147 +202,28 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
                                                   Handle(Geom_BSplineSurface)& result)
 {
 #ifdef USE_MOBIUS
-  // Get center point and bounding box of the contour.
-  gp_XYZ  P_center;
-  Bnd_Box contourAABB;
-  //
-  for ( size_t k = 0; k < contour.size(); ++k )
-  {
-    P_center += contour[k];
-    contourAABB.Update( contour[k].X(), contour[k].Y(), contour[k].Z() );
-  }
-  //
-  P_center /= int( contour.size() );
+  // Average plane.
+  Handle(Geom_Plane) plane;
 
-  // Build average plane.
-  gp_Pln pln;
-  asiAlgo_PlaneOnPoints planeBuilder(m_progress, m_plotter);
-  //
-  if ( !planeBuilder.Build(contour, pln) )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot build average plane.");
-    return false;
-  }
-  //
-  Handle(Geom_Plane) plane = new Geom_Plane(pln);
-
-  // Get characteristic size.
-  double size = 0.0;
-  //
-  for ( size_t k = 0; k < contour.size(); ++k )
-    size = Max( size, (contour[k] - P_center).Modulus() );
-  //
-  size *= 1.1;
-
-#if defined DRAW_DEBUG
-  m_plotter.DRAW_SURFACE(plane, size, size, Color_Green, 0.5, "avrgPlane");
-
-  // Get bounding box of the contour.
-  double xMin, yMin, zMin, xMax, yMax, zMax;
-  contourAABB.Get(xMin, yMin, zMin, xMax, yMax, zMax);
-  //
-  TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
-  //
-  m_plotter.DRAW_SHAPE(bndbox, Color_Yellow, 1.0, true, "contourAABB");
-#endif
-
-  /* ==============================================================
-   *  Get image of the contour in (U,V) space of the average plane
-   * ============================================================== */
-
-  // Working tools and variables
+  // Index of the last added points.
   int curID = 0;
+
+  // Characteristics size.
+  double size = 0.;
+
+  // Cell filter.
   NCollection_CellFilter<InspectNode> NodeFilter( Precision::Confusion() );
 
-  // Prepare a collection of grid points which will be interpolated ultimately.
+  // Get all mesh nodes bounded by the contour.
   std::vector<t_gridNode> allNodes, reperNodes;
-
-  // Project points on surface.
-  for ( size_t k = 0; k < contour.size(); ++k )
-  {
-    ShapeAnalysis_Surface SAS(plane);
-    gp_Pnt2d UV = SAS.ValueOfUV(contour[k], 1.0e-1);
-
-    //interp->GetPlotter().DRAW_POINT(UV,                      Color_Yellow, "UV");
-    //interp->GetPlotter().DRAW_POINT(gp_XY( UV.X(), 0      ), Color_Red,    "U");
-    //interp->GetPlotter().DRAW_POINT(gp_XY( 0,      UV.Y() ), Color_Green,  "V");
-
-    //interp->GetPlotter().DRAW_LINK(gp_XY( UV.X(), 0      ), gp_XY( UV.X(),  size   ), Color_White, "U_iso_p");
-    //interp->GetPlotter().DRAW_LINK(gp_XY( UV.X(), 0      ), gp_XY( UV.X(), -size   ), Color_White, "U_iso_m");
-    //interp->GetPlotter().DRAW_LINK(gp_XY( 0,      UV.Y() ), gp_XY( size,    UV.Y() ), Color_White, "V_iso_p");
-    //interp->GetPlotter().DRAW_LINK(gp_XY( 0,      UV.Y() ), gp_XY(-size,    UV.Y() ), Color_White, "V_iso_m");
-
-    // Prepare a grid node structure.
-    t_gridNode node;
-    node.isContourPoint  = true;
-    node.isSampledPoint  = false;
-    node.isMeshNodePoint = false;
-    node.uvInit          = UV.XY();
-    node.xyzInit         = contour[k];
-
-    // Add node.
-    ::appendNodeInGlobalCollection(node, curID, reperNodes, NodeFilter);
-  }
-
-  ShapeExtend_WireData mkWire;
-  for ( size_t k = 1; k < reperNodes.size(); ++k )
-  {
-    mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(reperNodes[k-1].uvInit, reperNodes[k].uvInit).Value(), plane).Edge() );
-  }
-  mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(reperNodes[reperNodes.size()-1].uvInit, reperNodes[0].uvInit).Value(), plane).Edge() );
   //
-  const TopoDS_Wire& W = mkWire.WireAPIMake();
-
-  TopoDS_Face F = BRepBuilderAPI_MakeFace(plane->Pln(), W, false);
-  //
-  ShapeFix_Face ShapeHealer(F);
-  ShapeHealer.Perform();
-  F = ShapeHealer.Face();
-
-#if defined DRAW_DEBUG
-  m_plotter.REDRAW_SHAPE("W", W, Color_Red, 1.0, true);
-  m_plotter.REDRAW_SHAPE("F", F);
-#endif
-
-  /* ====================================
-   *  Add points representing mesh nodes
-   * ==================================== */
-
-  asiAlgo_ClassifyPointFace classifier(F, 1e-4, 1e-4);
-
-  const TColgp_Array1OfPnt& triNodes = m_tris->Nodes();
-
-  for ( int k = triNodes.Lower(); k <= triNodes.Upper(); ++k )
+  if ( !collectInteriorNodes(m_tris, contour, true,
+                             NodeFilter, plane, reperNodes, curID, size,
+                             m_progress, m_plotter) )
   {
-    const gp_Pnt& triNode = triNodes(k);
-    //
-    if ( contourAABB.IsOut(triNode) )
-      continue;
-
-    ShapeAnalysis_Surface SAS(plane);
-    gp_Pnt2d UV = SAS.ValueOfUV(triNode, 1.0e-1);
-
-    // Classify against the two-dimensional contour.
-    if ( classifier(UV) != Membership_In )
-      continue;
-
-    // Prepare a grid node structure.
-    t_gridNode node;
-    node.isContourPoint  = false;
-    node.isSampledPoint  = false;
-    node.isMeshNodePoint = true;
-    node.uvInit          = UV.XY();
-    node.xyzInit         = triNode.XYZ();
-
-    // Add node.
-    ::appendNodeInGlobalCollection(node, curID, reperNodes, NodeFilter);
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot collect interior mesh nodes.");
+    return false;
   }
-
-  //for ( size_t k = 0; k < allNodes.size(); ++k )
-  //{
-  //  interp->GetPlotter().DRAW_POINT(allNodes[k].uvInit,  allNodes[k].isContourPoint ? Color_Red : Color_Blue, "uvInit");
-  //  interp->GetPlotter().DRAW_POINT(allNodes[k].xyzInit, allNodes[k].isContourPoint ? Color_Red : Color_Blue, "xyzInit");
-  //}
 
   /* ====================================================================
    *  For each image point, generate all possible variants of grid nodes
@@ -674,6 +503,172 @@ bool asiAlgo_InterpolateSurfMesh::performInternal(const std::vector<gp_XYZ>&   c
   asiAlgo_NotUsed(degU);
   asiAlgo_NotUsed(degV);
   asiAlgo_NotUsed(result);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius library is not available.");
+  return false;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_InterpolateSurfMesh::collectInteriorNodes(const Handle(Poly_Triangulation)&    tris,
+                                                       const std::vector<gp_XYZ>&           contour,
+                                                       const bool                           boxClipping,
+                                                       NCollection_CellFilter<InspectNode>& filter,
+                                                       Handle(Geom_Plane)&                  avrPlane,
+                                                       std::vector<t_gridNode>&             pts,
+                                                       int&                                 lastPtIdx,
+                                                       double&                              size,
+                                                       ActAPI_ProgressEntry                 progress,
+                                                       ActAPI_PlotterEntry                  plotter)
+{
+#ifdef USE_MOBIUS
+  // Get center point and bounding box of the contour.
+  gp_XYZ  P_center;
+  Bnd_Box contourAABB;
+  //
+  for ( size_t k = 0; k < contour.size(); ++k )
+  {
+    P_center += contour[k];
+    contourAABB.Update( contour[k].X(), contour[k].Y(), contour[k].Z() );
+  }
+  //
+  P_center /= int( contour.size() );
+
+  // Build average plane.
+  gp_Pln pln;
+  asiAlgo_PlaneOnPoints planeBuilder(progress, plotter);
+  //
+  if ( !planeBuilder.Build(contour, pln) )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Cannot build average plane.");
+    return false;
+  }
+  //
+  avrPlane = new Geom_Plane(pln);
+
+  // Get characteristic size.
+  size = 0.0;
+  //
+  for ( size_t k = 0; k < contour.size(); ++k )
+    size = Max( size, (contour[k] - P_center).Modulus() );
+  //
+  size *= 1.1;
+
+#if defined DRAW_DEBUG
+  plotter.DRAW_SURFACE(avrPlane, -size, size, -size, size, Color_Green, 0.5, "avrgPlane");
+
+  if ( boxClipping )
+  {
+    // Get bounding box of the contour.
+    double xMin, yMin, zMin, xMax, yMax, zMax;
+    contourAABB.Get(xMin, yMin, zMin, xMax, yMax, zMax);
+    //
+    TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
+    //
+    plotter.DRAW_SHAPE(bndbox, Color_Yellow, 1.0, true, "contourAABB");
+  }
+#endif
+
+  /* ==============================================================
+   *  Get image of the contour in (U,V) space of the average plane
+   * ============================================================== */
+
+  // Project points on surface.
+  for ( size_t k = 0; k < contour.size(); ++k )
+  {
+    ShapeAnalysis_Surface SAS(avrPlane);
+    gp_Pnt2d UV = SAS.ValueOfUV(contour[k], 1.0e-1);
+
+#if defined DRAW_DEBUG
+    plotter.DRAW_POINT(UV,                      Color_Yellow, "UV");
+    plotter.DRAW_POINT(gp_XY( UV.X(), 0      ), Color_Red,    "U");
+    plotter.DRAW_POINT(gp_XY( 0,      UV.Y() ), Color_Green,  "V");
+
+    plotter.DRAW_LINK(gp_XY( UV.X(), 0      ), gp_XY( UV.X(),  size   ), Color_White, "U_iso_p");
+    plotter.DRAW_LINK(gp_XY( UV.X(), 0      ), gp_XY( UV.X(), -size   ), Color_White, "U_iso_m");
+    plotter.DRAW_LINK(gp_XY( 0,      UV.Y() ), gp_XY( size,    UV.Y() ), Color_White, "V_iso_p");
+    plotter.DRAW_LINK(gp_XY( 0,      UV.Y() ), gp_XY(-size,    UV.Y() ), Color_White, "V_iso_m");
+#endif
+
+    // Prepare a grid node structure.
+    t_gridNode node;
+    node.isContourPoint  = true;
+    node.isSampledPoint  = false;
+    node.isMeshNodePoint = false;
+    node.uvInit          = UV.XY();
+    node.xyzInit         = contour[k];
+
+    // Add node.
+    ::appendNodeInGlobalCollection(node, lastPtIdx, pts, filter);
+  }
+
+  ShapeExtend_WireData mkWire;
+  for ( size_t k = 1; k < pts.size(); ++k )
+  {
+    mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(pts[k-1].uvInit, pts[k].uvInit).Value(), avrPlane).Edge() );
+  }
+  mkWire.Add( BRepBuilderAPI_MakeEdge(GCE2d_MakeSegment(pts[pts.size()-1].uvInit, pts[0].uvInit).Value(), avrPlane).Edge() );
+  //
+  const TopoDS_Wire& W = mkWire.WireAPIMake();
+
+  TopoDS_Face F = BRepBuilderAPI_MakeFace(avrPlane->Pln(), W, false);
+  //
+  ShapeFix_Face ShapeHealer(F);
+  ShapeHealer.Perform();
+  F = ShapeHealer.Face();
+
+#if defined DRAW_DEBUG
+  plotter.REDRAW_SHAPE("W", W, Color_Red, 1.0, true);
+  plotter.REDRAW_SHAPE("F", F);
+#endif
+
+  /* ====================================
+   *  Add points representing mesh nodes
+   * ==================================== */
+
+  asiAlgo_ClassifyPointFace classifier(F, 1e-4, 1e-4);
+
+  const TColgp_Array1OfPnt& triNodes = tris->Nodes();
+
+  for ( int k = triNodes.Lower(); k <= triNodes.Upper(); ++k )
+  {
+    const gp_Pnt& triNode = triNodes(k);
+    //
+    if ( boxClipping && contourAABB.IsOut(triNode) )
+      continue;
+
+    ShapeAnalysis_Surface SAS(avrPlane);
+    gp_Pnt2d UV = SAS.ValueOfUV(triNode, 1.0e-1);
+
+    // Classify against the two-dimensional contour.
+    if ( classifier(UV) != Membership_In )
+      continue;
+
+    // Prepare a grid node structure.
+    t_gridNode node;
+    node.isContourPoint  = false;
+    node.isSampledPoint  = false;
+    node.isMeshNodePoint = true;
+    node.uvInit          = UV.XY();
+    node.xyzInit         = triNode.XYZ();
+
+    // Add node.
+    ::appendNodeInGlobalCollection(node, lastPtIdx, pts, filter);
+  }
+
+#if defined DRAW_DEBUG
+  for ( size_t k = 0; k < pts.size(); ++k )
+  {
+    plotter.DRAW_POINT(pts[k].uvInit,  pts[k].isContourPoint ? Color_Green : Color_Blue, "uvInit");
+    plotter.DRAW_POINT(pts[k].xyzInit, pts[k].isContourPoint ? Color_Green : Color_Blue, "xyzInit");
+  }
+#endif
+
+  return true;
+#else
+  asiAlgo_NotUsed(contour);
+  asiAlgo_NotUsed(pts);
 
   m_progress.SendLogMessage(LogErr(Normal) << "Mobius library is not available.");
   return false;

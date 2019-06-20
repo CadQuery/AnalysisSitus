@@ -123,6 +123,22 @@ public:
   asiEngine_EXPORT Handle(asiData_ReVertexNode)
     Create_Vertex(const gp_XYZ& coords, const gp_XYZ& norm);
 
+public:
+
+  //! Collects all points constituting the discrete boundary of the Patch Node.
+  //! \param[in]  patch Patch Node in question.
+  //! \param[out] pts   collected points.
+  asiEngine_EXPORT void
+    CollectBoundaryPoints(const Handle(asiData_RePatchNode)& patch,
+                          std::vector<gp_XYZ>&               pts) const;
+
+  //! Collects the points corresponding to the vertices of a Patch Node.
+  //! \param[in]  patch Patch Node in question.
+  //! \param[out] pts   collected points.
+  asiEngine_EXPORT void
+    CollectVertexPoints(const Handle(asiData_RePatchNode)& patch,
+                        std::vector<gp_XYZ>&               pts) const;
+
 };
 
 #endif

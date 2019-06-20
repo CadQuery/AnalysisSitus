@@ -366,7 +366,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     edgeNode->GetPolyline(pts);
     //
     Handle(Geom_BSplineCurve) curve;
-    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, 0.1, curve) )
+    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, 1.0, curve) )
     {
       interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
                                                             << edgeNode->GetName() );
@@ -1409,7 +1409,7 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
                   const char**                 argv)
 {
 #if defined USE_MOBIUS
-  if ( argc != 4 && argc != 5 )
+  if ( argc != 4 && argc != 5 && argc != 6 && argc != 7 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1425,6 +1425,13 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  // Get fairing coefficient.
+  double lambda = 0.;
+  TCollection_AsciiString lambdaStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "lambda", lambdaStr) )
+    lambda = lambdaStr.RealValue();
+
   // Get point cloud.
   Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
 
@@ -1436,21 +1443,27 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
 
   t_ptr<t_bsurf> resSurf;
 
-  if ( argc == 5 )
+  if ( argc == 5 || argc == 7 )
   {
+    TIMER_NEW
+    TIMER_GO
+
     // Approximate.
     geom_ApproxBSurf approx( mobPts, atoi(argv[3]), atoi(argv[4]) );
     //
-    if ( !approx.Perform() )
+    if ( !approx.Perform(lambda) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
       return TCL_ERROR;
     }
 
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Approximate (passed degrees)")
+
     // Get result.
     resSurf = approx.GetResult();
   }
-  else if ( argc == 4 ) /* Initial surface is specified */
+  else if ( argc == 4 || argc == 6 ) /* Initial surface is specified */
   {
     // Find Surface Node by name.
     Handle(asiData_IVSurfaceNode)
@@ -1466,6 +1479,32 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
     // Get surface.
     Handle(Geom_BSplineSurface)
       bsurfOcc = Handle(Geom_BSplineSurface)::DownCast( surfNode->GetSurface() );
+    //
+    if ( bsurfOcc.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed surface is not a B-surface.");
+      return TCL_ERROR;
+    }
+
+    t_ptr<t_bsurf> initSurf = cascade::GetMobiusBSurface(bsurfOcc);
+
+    TIMER_NEW
+    TIMER_GO
+
+    // Approximate.
+    geom_ApproxBSurf approx(mobPts, initSurf);
+    //
+    if ( !approx.Perform(lambda) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
+      return TCL_ERROR;
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Approximate (passed initial surface)")
+
+    // Get result.
+    resSurf = approx.GetResult();
   }
 
   // Set the result.
@@ -1568,7 +1607,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",
     //
-    "re-make-average-plane res pointsName [umin umax vmin vmax] [-mobius]\n"
+    "re-make-average-plane res pointsName [{umin umax vmin vmax | -mobius}]\n"
     "\t Approximates the given point cloud with a plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);

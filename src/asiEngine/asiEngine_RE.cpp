@@ -304,3 +304,71 @@ Handle(asiData_ReVertexNode)
   // Return the just created Node.
   return vertex_n;
 }
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::CollectBoundaryPoints(const Handle(asiData_RePatchNode)& patch,
+                                         std::vector<gp_XYZ>&               pts) const
+{
+  // Iterate over the coedges.
+  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    //
+    if ( coedge.IsNull() || !coedge->IsWellFormed() )
+      continue;
+
+    // Get referenced edge to access the geometry.
+    Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
+    //
+    if ( edge.IsNull() || !edge->IsWellFormed() )
+      continue;
+
+    std::vector<gp_XYZ> edgePts;
+    edge->GetPolyline(edgePts);
+
+    // Add points to the result.
+    for ( size_t k = 0; k < edgePts.size(); ++k )
+      pts.push_back(edgePts[k]);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::CollectVertexPoints(const Handle(asiData_RePatchNode)& patch,
+                                       std::vector<gp_XYZ>&               pts) const
+{
+  NCollection_Map<ActAPI_DataObjectId> visited; // Visited vertices.
+
+  // Iterate over the coedges.
+  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    //
+    if ( coedge.IsNull() || !coedge->IsWellFormed() )
+      continue;
+
+    // Get referenced edge to access the geometry.
+    Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
+    //
+    if ( edge.IsNull() || !edge->IsWellFormed() )
+      continue;
+
+    Handle(asiData_ReVertexNode) vf = edge->GetFirstVertex();
+    Handle(asiData_ReVertexNode) vl = edge->GetLastVertex();
+
+    if ( !visited.Contains( vf->GetId() ) )
+    {
+      visited.Add( vf->GetId() );
+      pts.push_back( vf->GetPoint() );
+    }
+
+    if ( !visited.Contains( vl->GetId() ) )
+    {
+      visited.Add( vl->GetId() );
+      pts.push_back( vl->GetPoint() );
+    }
+  }
+}

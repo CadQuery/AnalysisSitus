@@ -32,6 +32,7 @@
 #define asiAlgo_InterpolateSurfMesh_h
 
 // asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_BVHFacets.h>
 
 // Active Data includes
@@ -39,6 +40,7 @@
 
 // OCCT includes
 #include <Geom_BSplineSurface.hxx>
+#include <NCollection_CellFilter.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -49,6 +51,101 @@ public:
 
   // OCCT RTTI
   DEFINE_STANDARD_RTTI_INLINE(asiAlgo_InterpolateSurfMesh, ActAPI_IAlgorithm)
+
+public:
+
+  asiAlgo_EXPORT static bool
+    CollectInteriorNodes(const Handle(Poly_Triangulation)&  tris,
+                         const std::vector<gp_XYZ>&         contour,
+                         const bool                         boxClipping,
+                         Handle(asiAlgo_BaseCloud<double>)& pts,
+                         ActAPI_ProgressEntry               progress,
+                         ActAPI_PlotterEntry                plotter);
+
+public:
+
+  //! Structure representing the grid node.
+  struct t_gridNode
+  {
+    int    id;              //!< Global 0-based ID.
+    bool   isContourPoint;  //!< Whether this point is a pole on a contour.
+    bool   isSampledPoint;  //!< Whether this point is a sampled point.
+    bool   isMeshNodePoint; //!< Whether this point corresponds to a mesh node.
+    gp_XY  uvInit;          //!< (u,v) coordinates on the initial surface.
+    gp_XYZ xyzInit;         //!< (x,y,z) coordinates on the initial surface.
+    gp_XY  uv;              //!< (u,v) coordinates on the final surface.
+    gp_XYZ xyz;             //!< (x,y,z) coordinates on the final surface.
+
+    //! Default ctor.
+    t_gridNode()
+    : id              (-1),
+      isContourPoint  (false),
+      isSampledPoint  (false),
+      isMeshNodePoint (false)
+    {}
+
+    bool operator<(const t_gridNode& other)
+    {
+      return this->uvInit.X() < other.uvInit.X();
+    }
+  };
+
+  //! Auxiliary class to search for coincident spatial points.
+  class InspectXY : public NCollection_CellFilter_InspectorXY
+  {
+  public:
+
+    typedef gp_XY Target;
+
+    //! Constructor accepting resolution distance and point.
+    InspectXY(const double resolution, const gp_XY& P) : m_fResolution(resolution), m_bFound(false), m_P(P) {}
+
+    //! \return true/false depending on whether the node was found or not.
+    bool IsFound() const { return m_bFound; }
+
+    //! Implementation of inspection method.
+    NCollection_CellFilter_Action Inspect(const gp_XY& Target)
+    {
+      m_bFound = ( (m_P - Target).SquareModulus() <= Square(m_fResolution) );
+      return CellFilter_Keep;
+    }
+
+  private:
+
+    gp_XY  m_P;           //!< Source point.
+    bool   m_bFound;      //!< Whether two points are coincident or not.
+    double m_fResolution; //!< Resolution to check for coincidence.
+
+  };
+
+  //! Auxiliary class to search for coincident tessellation nodes.
+  class InspectNode : public InspectXY
+  {
+  public:
+
+    typedef t_gridNode Target;
+
+    //! Constructor accepting resolution distance and point.
+    InspectNode(const double resolution, const t_gridNode& P) : InspectXY(resolution, P.uvInit), m_iID(-1) {}
+
+    int GetID() const { return m_iID; }
+
+    //! Implementation of inspection method.
+    NCollection_CellFilter_Action Inspect(const t_gridNode& Target)
+    {
+      InspectXY::Inspect(Target.uvInit);
+
+      if ( InspectXY::IsFound() )
+        m_iID = Target.id;
+
+      return CellFilter_Keep;
+    }
+
+  private:
+
+    int m_iID; //!< Found target ID.
+
+  };
 
 public:
 
@@ -87,6 +184,18 @@ protected:
                     const int                    degU,
                     const int                    degV,
                     Handle(Geom_BSplineSurface)& result);
+
+  asiAlgo_EXPORT static bool
+    collectInteriorNodes(const Handle(Poly_Triangulation)&    tris,
+                         const std::vector<gp_XYZ>&           contour,
+                         const bool                           boxClipping,
+                         NCollection_CellFilter<InspectNode>& filter,
+                         Handle(Geom_Plane)&                  avrPlane,
+                         std::vector<t_gridNode>&             pts,
+                         int&                                 lastPtIdx,
+                         double&                              size,
+                         ActAPI_ProgressEntry                 progress,
+                         ActAPI_PlotterEntry                  plotter);
 
 protected:
 

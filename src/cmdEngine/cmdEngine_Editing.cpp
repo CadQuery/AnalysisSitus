@@ -1377,7 +1377,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   result = toOpenCascade.GetOpenCascadeSurface();
 
   // Draw result.
-  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Green : Color_Red);
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], result, (resEnergy < initEnergy) ? Color_Default : Color_Red);
 
   return TCL_OK;
 #else

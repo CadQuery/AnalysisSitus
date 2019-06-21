@@ -342,9 +342,9 @@ int RE_UpdatePlane(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int RE_ExtractInteriorNodes(const Handle(asiTcl_Interp)& interp,
-                            int                          argc,
-                            const char**                 argv)
+int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
 {
   if ( argc != 3 )
   {
@@ -450,12 +450,12 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_UpdatePlane);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-extract-interior-nodes",
+  interp->AddCommand("re-get-inner-points",
     //
-    "re-extract-interior-nodes resName patchName\n"
+    "re-get-inner-points resName patchName\n"
     "\t Extracts the mesh nodes which are bounded by the contour of the given\n"
     "\t patch specified as <patchName>. The extracted nodes are collected in the\n"
     "\t point cloud specified as <resName>.",
     //
-    __FILE__, group, RE_ExtractInteriorNodes);
+    __FILE__, group, RE_GetInnerPoints);
 }

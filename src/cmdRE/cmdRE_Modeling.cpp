@@ -1409,7 +1409,7 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
                   const char**                 argv)
 {
 #if defined USE_MOBIUS
-  if ( argc != 4 && argc != 5 && argc != 6 && argc != 7 )
+  if (argc != 7 && argc != 8 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1432,6 +1432,9 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
   if ( interp->GetKeyValue(argc, argv, "lambda", lambdaStr) )
     lambda = lambdaStr.RealValue();
 
+  // Has init surf.
+  const bool hasInitSurf = interp->HasKeyword(argc, argv, "init");
+
   // Get point cloud.
   Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
 
@@ -1443,7 +1446,7 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
 
   t_ptr<t_bsurf> resSurf;
 
-  if ( argc == 5 || argc == 7 )
+  if ( !hasInitSurf )
   {
     TIMER_NEW
     TIMER_GO
@@ -1463,16 +1466,16 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
     // Get result.
     resSurf = approx.GetResult();
   }
-  else if ( argc == 4 || argc == 6 ) /* Initial surface is specified */
+  else /* Initial surface is specified */
   {
     // Find Surface Node by name.
     Handle(asiData_IVSurfaceNode)
-      surfNode = Handle(asiData_IVSurfaceNode)::DownCast( interp->GetModel()->FindNodeByName(argv[3]) );
+      surfNode = Handle(asiData_IVSurfaceNode)::DownCast( interp->GetModel()->FindNodeByName(argv[4]) );
     //
     if ( surfNode.IsNull() )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a surface."
-                                                          << argv[3]);
+                                                          << argv[4]);
       return TCL_ERROR;
     }
 
@@ -1486,14 +1489,38 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
       return TCL_ERROR;
     }
 
+    // Check if the boundary is requested to be constrained.
+    const bool isPinned = interp->HasKeyword(argc, argv, "pinned");
+
+    // Convert to Mobius form.
     t_ptr<t_bsurf> initSurf = cascade::GetMobiusBSurface(bsurfOcc);
 
     TIMER_NEW
     TIMER_GO
 
-    // Approximate.
+    // Prepare approximation tool.
     geom_ApproxBSurf approx(mobPts, initSurf);
-    //
+
+    // Constraint the boundary.
+    if ( isPinned )
+    {
+      const int nPolesU = int( initSurf->GetPoles().size() );
+      const int nPolesV = int( initSurf->GetPoles()[0].size() );
+      //
+      for ( int i = 0; i < nPolesU; ++i )
+      {
+        approx.AddPinnedPole( i, 0 );
+        approx.AddPinnedPole( i, nPolesV - 1 );
+      }
+      //
+      for ( int j = 0; j < nPolesV; ++j )
+      {
+        approx.AddPinnedPole( 0, j );
+        approx.AddPinnedPole( nPolesU - 1, j );
+      }
+    }
+
+    // Approximate.
     if ( !approx.Perform(lambda) )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Approximation failed.");
@@ -1640,7 +1667,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-approx-surf",
     //
-    "re-approx-surf resSurf ptsName {uDegree vDegree | initSurf}\n"
+    "re-approx-surf resSurf ptsName {uDegree vDegree | -init initSurf} <-lambda coeff> [-pinned|-pinned2]\n"
     "\t Approximates point cloud with B-surface.",
     //
     __FILE__, group, RE_ApproxSurf);

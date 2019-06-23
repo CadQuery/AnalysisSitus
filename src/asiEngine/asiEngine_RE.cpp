@@ -372,3 +372,32 @@ void asiEngine_RE::CollectVertexPoints(const Handle(asiData_RePatchNode)& patch,
     }
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::CollectContourTriangles(const Handle(asiData_RePatchNode)& patch,
+                                           TColStd_PackedMapOfInteger&        tris) const
+{
+  // Iterate over the coedges.
+  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    //
+    if ( coedge.IsNull() || !coedge->IsWellFormed() )
+      continue;
+
+    // Get referenced edge to access the geometry.
+    Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
+    //
+    if ( edge.IsNull() || !edge->IsWellFormed() )
+      continue;
+
+    // Accumulate all indices into one collection.
+    Handle(HIntArray) inds = edge->GetPolylineTriangles();
+    //
+    if ( !inds.IsNull() )
+      for ( int i = inds->Lower(); i <= inds->Upper(); ++i )
+        tris.Add( inds->Value(i) );
+  }
+}

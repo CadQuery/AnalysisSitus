@@ -139,6 +139,13 @@ public:
     CollectVertexPoints(const Handle(asiData_RePatchNode)& patch,
                         std::vector<gp_XYZ>&               pts) const;
 
+  //! Collects all triangles interacting with the boundary of the given patch.
+  //! \param[in]  patch Patch Node in question.
+  //! \param[out] tris  indices of triangles.
+  asiEngine_EXPORT void
+    CollectContourTriangles(const Handle(asiData_RePatchNode)& patch,
+                            TColStd_PackedMapOfInteger&        tris) const;
+
 };
 
 #endif

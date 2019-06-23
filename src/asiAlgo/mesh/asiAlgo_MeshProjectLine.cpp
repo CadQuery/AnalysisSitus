@@ -52,7 +52,8 @@ asiAlgo_MeshProjectLine::asiAlgo_MeshProjectLine(const Handle(asiAlgo_BVHFacets)
 
 bool asiAlgo_MeshProjectLine::Perform(const gp_XYZ&        P1,
                                       const gp_XYZ&        P2,
-                                      std::vector<gp_XYZ>& result,
+                                      std::vector<gp_XYZ>& res,
+                                      std::vector<int>&    resIndices,
                                       const double         diagRatio) const
 {
   // Choose precision.
@@ -60,7 +61,8 @@ bool asiAlgo_MeshProjectLine::Perform(const gp_XYZ&        P1,
   const double prec     = aabbDiag*diagRatio;
 
   // Add the first point.
-  result.push_back(P1);
+  res.push_back(P1);
+  resIndices.push_back(-1);
 
   // Prepare deque of points.
   std::deque<gp_XYZ> ptsDeque;
@@ -108,10 +110,23 @@ bool asiAlgo_MeshProjectLine::Perform(const gp_XYZ&        P1,
       return false;
     }
 
+#if defined DRAW_DEBUG
+    std::cout << "Hit facet index: " << midPtFacetIndex << std::endl;
+    //
+    asiAlgo_BVHFacets::t_facet facet = m_facets->GetFacet(midPtFacetIndex);
+    //
+    gp_Pnt N1(facet.P0.x(), facet.P0.y(), facet.P0.z());
+    gp_Pnt N2(facet.P1.x(), facet.P1.y(), facet.P1.z());
+    gp_Pnt N3(facet.P2.x(), facet.P2.y(), facet.P2.z());
+    //
+    m_plotter.DRAW_TRIANGLE(N1, N2, N3, Color_Red, "facet");
+#endif
+
     // Check if distance precision is reached.
     if ( (nextPt - prevPt).Modulus() < prec )
     {
-      result.push_back(nextPt);
+      res.push_back( hitMidPt.XYZ() );
+      resIndices.push_back(m_facets->GetFacet(midPtFacetIndex).FaceIndex);
 
       // Rearrange deque.
       ptsDeque.pop_back();

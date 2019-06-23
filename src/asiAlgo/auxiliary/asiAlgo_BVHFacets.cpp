@@ -403,24 +403,28 @@ bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& trian
   if ( triangulation.IsNull() )
     return false;
 
-  for ( int t = 1; t <= triangulation->NbTriangles(); ++t )
+  // Internal collections of triangles and nodes
+  const Poly_Array1OfTriangle& triangles = triangulation->Triangles();
+  const TColgp_Array1OfPnt&    nodes     = triangulation->Nodes();
+
+  for ( int elemId = triangles.Lower(); elemId <= triangles.Upper(); ++elemId )
   {
-    const Poly_Triangle& tri = triangulation->Triangles().Value(t);
+    const Poly_Triangle& tri = triangles(elemId);
 
     int n1, n2, n3;
     tri.Get(n1, n2, n3);
 
-    gp_Pnt P0 = triangulation->Nodes().Value(n1);
+    gp_Pnt P0 = nodes(n1);
     P0.Transform(loc);
     //
-    gp_Pnt P1 = triangulation->Nodes().Value(n2);
+    gp_Pnt P1 = nodes(n2);
     P1.Transform(loc);
     //
-    gp_Pnt P2 = triangulation->Nodes().Value(n3);
+    gp_Pnt P2 = nodes(n3);
     P2.Transform(loc);
 
     // Create a new facet
-    t_facet facet(face_idx);
+    t_facet facet(face_idx == -1 ? elemId : face_idx);
 
     // Initialize nodes
     facet.P0 = BVH_Vec4d(P0.X(), P0.Y(), P0.Z(), 0.0);

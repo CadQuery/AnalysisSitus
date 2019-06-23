@@ -458,7 +458,9 @@ bool
 
     // Add midpoints.
     std::vector<gp_XYZ> projPts;
-    if ( !this->projectLine(prevPt, finalPt, projPts) )
+    std::vector<int>    projInds;
+    //
+    if ( !this->projectLine(prevPt, finalPt, projPts, projInds) )
     {
       m_notifier.SendLogMessage(LogErr(Normal) << "Line projection failed.");
       return false;
@@ -466,11 +468,11 @@ bool
     //
     if ( projPts.size() > 2 )
       for ( size_t k = 0; k < projPts.size() - 1; ++k )
-        lastEdgeNode->AddPolylinePole(projPts[k]);
+        lastEdgeNode->AddPolylinePole(projPts[k], projInds[k]);
 
     // Add hitted point.
     lastEdgeNode->SetFirstVertexIndex(0);
-    lastEdgeNode->SetLastVertexIndex( lastEdgeNode->AddPolylinePole(finalPt) );
+    lastEdgeNode->SetLastVertexIndex( lastEdgeNode->AddPolylinePole(finalPt, -1) );
   }
 
   // Get edges shared by the target vertex and complete contour by adding
@@ -803,13 +805,14 @@ Handle(asiData_ReVertexNode)
 
 bool asiUI_PickContourCallback::projectLine(const gp_XYZ&        p1,
                                             const gp_XYZ&        p2,
-                                            std::vector<gp_XYZ>& result)
+                                            std::vector<gp_XYZ>& result,
+                                            std::vector<int>&    inds)
 {
   // Tool for line projection.
   asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
 
   // Add midpoints.
-  if ( !ProjectLineMesh.Perform(p1, p2, result, 0.001) )
+  if ( !ProjectLineMesh.Perform(p1, p2, result, inds, 0.001) )
   {
     m_notifier.SendLogMessage(LogErr(Normal) << "Cannot project line to mesh.");
     return false;
@@ -879,7 +882,9 @@ Handle(asiData_ReCoEdgeNode)
 
       // Add midpoints.
       std::vector<gp_XYZ> projPts;
-      if ( !this->projectLine(prevPt, target->GetPoint(), projPts) )
+      std::vector<int>    projInds;
+      //
+      if ( !this->projectLine(prevPt, target->GetPoint(), projPts, projInds) )
       {
         m_model->AbortCommand();
         return false;
@@ -887,11 +892,11 @@ Handle(asiData_ReCoEdgeNode)
       //
       if ( projPts.size() > 2 )
         for ( size_t k = 0; k < projPts.size() - 1; ++k )
-          prevEdgeNode->AddPolylinePole(projPts[k]);
+          prevEdgeNode->AddPolylinePole(projPts[k], projInds[k]);
 
       // Add hitted point.
       prevEdgeNode->SetFirstVertexIndex(0);
-      prevEdgeNode->SetLastVertexIndex( prevEdgeNode->AddPolylinePole( target->GetPoint() ) );
+      prevEdgeNode->SetLastVertexIndex( prevEdgeNode->AddPolylinePole(target->GetPoint(), -1) );
     }
   }
 

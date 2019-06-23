@@ -63,6 +63,7 @@ public:
     PID_VertexFirstIdx, //!< Index of the pole in the polyline which corresponds to the first vertex.
     PID_VertexLastIdx,  //!< Index of the pole in the polyline which corresponds to the last vertex.
     PID_Polyline,       //!< Polyline representation of the edge.
+    PID_PolylineInds,   //!< Indices of the triangles corresponding to polyline poles.
     PID_Curve,          //!< Curve representation of the edge.
   //--------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
@@ -104,6 +105,11 @@ public:
   asiData_EXPORT void
     SetPolyline(const Handle(HRealArray)& coords);
 
+  //! Sets array storing the indices of triangles the polyline is snapped to.
+  //! \param[in] indices array to store.
+  asiData_EXPORT void
+    SetPolylineTriangles(const Handle(HIntArray)& indices);
+
   //! \return number of poles in the polyline representation of the edge.
   asiData_EXPORT int
     GetNumPolylinePoles() const;
@@ -117,6 +123,10 @@ public:
   asiData_EXPORT void
     GetPolyline(std::vector<gp_XYZ>& pts) const;
 
+  //! \return array storing the indices of polyline's triangles.
+  asiData_EXPORT Handle(HIntArray)
+    GetPolylineTriangles() const;
+
   //! Returns a point by its zero-based index in the persistent array.
   //! \param[in] zeroBasedIndex 0-based index of the point to access.
   //! \return coordinates of the point in question.
@@ -124,10 +134,11 @@ public:
     GetPolylinePole(const int zeroBasedIndex) const;
 
   //! Adds another point to the polyline.
-  //! \param[in] point point to add.
+  //! \param[in] point  point to add.
+  //! \param[in] triIdx 1-based index of the corresponding triangle.
   //! \return 0-based index of the just added point.
   asiData_EXPORT int
-    AddPolylinePole(const gp_XYZ& point);
+    AddPolylinePole(const gp_XYZ& point, const int triIdx = -1);
 
   //! Returns the stored geometry.
   //! \return stored geometry.

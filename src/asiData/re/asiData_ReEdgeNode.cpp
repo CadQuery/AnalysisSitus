@@ -52,6 +52,7 @@ asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,       PID_VertexFirstIdx);
   REGISTER_PARAMETER(Int,       PID_VertexLastIdx);
   REGISTER_PARAMETER(RealArray, PID_Polyline);
+  REGISTER_PARAMETER(IntArray,  PID_PolylineInds);
   REGISTER_PARAMETER(Shape,     PID_Curve);
 }
 
@@ -74,6 +75,7 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   this->InitParameter(PID_VertexFirstIdx, "First vertex index");
   this->InitParameter(PID_VertexLastIdx,  "Last vertex index");
   this->InitParameter(PID_Polyline,       "Polyline representation");
+  this->InitParameter(PID_PolylineInds,   "Polyline triangles");
   this->InitParameter(PID_Curve,          "Parametric curve representation");
 
   if ( !vfirst.IsNull() )
@@ -84,6 +86,7 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
 
   // Set default values.
   ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) )       ->SetArray( NULL );
+  ActParamTool::AsIntArray  ( this->Parameter(PID_PolylineInds) )   ->SetArray( NULL );
   ActParamTool::AsShape     ( this->Parameter(PID_Curve) )          ->SetShape( TopoDS_Shape() );
   ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue(-1);
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue(-1);
@@ -108,6 +111,13 @@ void asiData_ReEdgeNode::SetName(const TCollection_ExtendedString& name)
 void asiData_ReEdgeNode::SetPolyline(const Handle(HRealArray)& coords)
 {
   ActParamTool::AsRealArray( this->Parameter(PID_Polyline) )->SetArray(coords);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetPolylineTriangles(const Handle(HIntArray)& indices)
+{
+  ActParamTool::AsIntArray( this->Parameter(PID_PolylineInds) )->SetArray(indices);
 }
 
 //-----------------------------------------------------------------------------
@@ -153,6 +163,13 @@ void asiData_ReEdgeNode::GetPolyline(std::vector<gp_XYZ>& pts) const
 
 //-----------------------------------------------------------------------------
 
+Handle(HIntArray) asiData_ReEdgeNode::GetPolylineTriangles() const
+{
+  return ActParamTool::AsIntArray( this->Parameter(PID_PolylineInds) )->GetArray();
+}
+
+//-----------------------------------------------------------------------------
+
 gp_XYZ asiData_ReEdgeNode::GetPolylinePole(const int zeroBasedIndex) const
 {
   // Get array of coordinates
@@ -173,7 +190,7 @@ gp_XYZ asiData_ReEdgeNode::GetPolylinePole(const int zeroBasedIndex) const
 
 //-----------------------------------------------------------------------------
 
-int asiData_ReEdgeNode::AddPolylinePole(const gp_XYZ& point)
+int asiData_ReEdgeNode::AddPolylinePole(const gp_XYZ& point, const int triIndx)
 {
   // Change the array of coordinates.
   Handle(HRealArray)
@@ -184,6 +201,14 @@ int asiData_ReEdgeNode::AddPolylinePole(const gp_XYZ& point)
   coords = ActAux_ArrayUtils::Append<HRealArray, Handle(HRealArray), double>( coords, point.Z() );
   //
   this->SetPolyline(coords);
+
+  // Change the array of triangle indices.
+  Handle(HIntArray)
+    indices = ActParamTool::AsIntArray( this->Parameter(PID_PolylineInds) )->GetArray();
+  //
+  indices = ActAux_ArrayUtils::Append<HIntArray, Handle(HIntArray), int>( indices, triIndx );
+  //
+  this->SetPolylineTriangles(indices);
 
   // Get index of the just added point.
   const int newIndex = coords->Length() / 3 - 1;

@@ -137,7 +137,8 @@ protected:
   bool
     projectLine(const gp_XYZ&        p1,
                 const gp_XYZ&        p2,
-                std::vector<gp_XYZ>& pts);
+                std::vector<gp_XYZ>& pts,
+                std::vector<int>&    inds);
 
 private:
 

@@ -61,15 +61,17 @@ public:
 public:
 
   //! Performs projection.
-  //! \param[in]  P1        starting point.
-  //! \param[in]  P2        ending point.
-  //! \param[out] result    result polyline.
-  //! \param[in]  diagRatio AABB ratio to control the precision.
+  //! \param[in]  P1         starting point.
+  //! \param[in]  P2         ending point.
+  //! \param[out] res        result polyline.
+  //! \param[out] resIndices indices of the corresponding triangles.
+  //! \param[in]  diagRatio  AABB ratio to control the precision.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     Perform(const gp_XYZ&        P1,
             const gp_XYZ&        P2,
-            std::vector<gp_XYZ>& result,
+            std::vector<gp_XYZ>& res,
+            std::vector<int>&    resIndices,
             const double         diagRatio = 0.001) const;
 
 protected:

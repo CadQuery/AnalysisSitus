@@ -3330,3 +3330,76 @@ TopoDS_Shape
 
   return TopoDS_Shape(); // Not found.
 }
+
+//-----------------------------------------------------------------------------
+
+Handle(Poly_Triangulation)
+  asiAlgo_Utils::GetSubMesh(const Handle(Poly_Triangulation)& mesh,
+                            const TColStd_PackedMapOfInteger& elems)
+{
+  // Prepare triangulation.
+  std::vector<Poly_Triangle> selectedTrisVec;
+  std::vector<gp_Pnt>        selectedTrisNodesVec;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(elems); eit.More(); eit.Next() )
+  {
+    const int tid = eit.Key();
+    //
+    if ( tid == -1 )
+      continue;
+
+    const Poly_Triangle& triangle = mesh->Triangle(tid);
+
+    int n1, n2, n3;
+    triangle.Get(n1, n2, n3);
+
+    const gp_Pnt& P1 = mesh->Node(n1);
+    const gp_Pnt& P2 = mesh->Node(n2);
+    const gp_Pnt& P3 = mesh->Node(n3);
+
+    // Populate the new collections of nodes and triangles.
+    int k = int( selectedTrisNodesVec.size() ) + 1;
+    //
+    selectedTrisNodesVec.push_back(P1);
+    selectedTrisNodesVec.push_back(P2);
+    selectedTrisNodesVec.push_back(P3);
+    //
+    selectedTrisVec.push_back( Poly_Triangle(k, k + 1, k + 2) );
+  }
+
+  const int numSelectedNodes = int( selectedTrisNodesVec.size() );
+  const int numSelectedTris  = int( selectedTrisVec.size() );
+
+  // Populate new array of mesh nodes.
+  TColgp_Array1OfPnt selectedNodesArr(1, numSelectedNodes);
+  for ( int i = 1; i <= numSelectedNodes; ++i )
+    selectedNodesArr.ChangeValue(i) = selectedTrisNodesVec[i - 1];
+
+  // Populate new array of mesh elements.
+  Poly_Array1OfTriangle selectedTrisArr(1, numSelectedTris);
+  for ( int i = 1; i <= numSelectedTris; ++i )
+    selectedTrisArr.ChangeValue(i) = selectedTrisVec[i - 1];
+
+  // Create new triangulation and return.
+  Handle(Poly_Triangulation)
+    selectedTris = new Poly_Triangulation(selectedNodesArr, selectedTrisArr);
+
+  return selectedTris;
+}
+
+//-----------------------------------------------------------------------------
+
+gp_XYZ asiAlgo_Utils::ComputeAveragePoint(const std::vector<gp_XYZ>& pts)
+{
+  // Get center point.
+  gp_XYZ P_center;
+  //
+  for ( size_t k = 0; k < pts.size(); ++k )
+  {
+    P_center += pts[k];
+  }
+  //
+  P_center /= int( pts.size() );
+
+  return P_center;
+}

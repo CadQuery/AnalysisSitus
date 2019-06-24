@@ -68,9 +68,11 @@ protected:
 
 protected:
 
-  Handle(asiEngine_Model) m_model;    //!< Data Model instance.
-  ActAPI_ProgressEntry    m_progress; //!< Progress notifier.
-  ActAPI_PlotterEntry     m_plotter;  //!< Imperative plotter.
+  Handle(asiEngine_Model) m_model; //!< Data Model instance.
+
+  /* Diagnostic tools */
+  mutable ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  mutable ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

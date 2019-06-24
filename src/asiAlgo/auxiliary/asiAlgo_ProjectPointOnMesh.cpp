@@ -103,18 +103,18 @@ struct ProjectionInfoMesh
 
 //-----------------------------------------------------------------------------
 
-static void projectPntToTriangle(const gp_Pnt& thePnt,
-                                 const asiAlgo_BVHFacets::t_facet& theTD,
-                                 ProjectionInfoMesh& theProjection,
-                                 const int theIdx)
+static void projectPntToTriangle(const gp_Pnt&                     P,
+                                 const asiAlgo_BVHFacets::t_facet& facet,
+                                 ProjectionInfoMesh&               projection,
+                                 const int                         idx)
 {
-  gp_Pnt aTri1(theTD.P0.x(), theTD.P0.y(), theTD.P0.z());
-  gp_Pnt aTri2(theTD.P1.x(), theTD.P1.y(), theTD.P1.z());
-  gp_Pnt aTri3(theTD.P2.x(), theTD.P2.y(), theTD.P2.z());
+  gp_Pnt T1( facet.P0.x(), facet.P0.y(), facet.P0.z() );
+  gp_Pnt T2( facet.P1.x(), facet.P1.y(), facet.P1.z() );
+  gp_Pnt T3( facet.P2.x(), facet.P2.y(), facet.P2.z() );
 
-  gp_Pnt aProj;
-  const double aSqDist = asiAlgo_BVHAlgo::squaredDistancePointTriangle(thePnt, aTri1, aTri2, aTri3, theTD.N, aProj);
-  theProjection.UpdateValues(aProj, aSqDist, theIdx);
+  gp_Pnt proj;
+  const double sqDist = asiAlgo_BVHAlgo::squaredDistancePointTriangle(P, T1, T2, T3, facet.N, proj);
+  projection.UpdateValues(proj, sqDist, idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -127,24 +127,24 @@ asiAlgo_ProjectPointOnMesh::asiAlgo_ProjectPointOnMesh(const Handle(asiAlgo_BVHF
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_ProjectPointOnMesh::IntersectLeaves(const BVH_Vec4i&    theLeaf,
-                                                 const gp_Pnt&       theSourcePoint,
-                                                 ProjectionInfoMesh& theProjection) const
+void asiAlgo_ProjectPointOnMesh::IntersectLeaves(const BVH_Vec4i&    leaf,
+                                                 const gp_Pnt&       sourcePoint,
+                                                 ProjectionInfoMesh& projection) const
 {
-  // Loop over the tentative facets
-  for (int aTrgIdx = theLeaf.y(); aTrgIdx <= theLeaf.z(); ++aTrgIdx)
+  // Loop over the tentative facets.
+  for ( int facetIdx = leaf.y(); facetIdx <= leaf.z(); ++facetIdx )
   {
-    // Get triangle.
-    const asiAlgo_BVHFacets::t_facet& aTD = m_facets->GetFacet(aTrgIdx);
+    // Get facet.
+    const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(facetIdx);
 
     // Calculate projection and minimal distance between point and triangle.
-    projectPntToTriangle(theSourcePoint, aTD, theProjection, aTrgIdx);
+    projectPntToTriangle(sourcePoint, facet, projection, facetIdx);
   }
 }
 
 //-----------------------------------------------------------------------------
 
-gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& thePnt)
+gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
 {
   ProjectionInfoMesh aProjected;
 
@@ -160,7 +160,7 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& thePnt)
     const asiAlgo_BVHFacets::t_facet& aTD = m_facets->GetFacet(anIdx[i]);
 
     // Calculate projection and minimal distance between point and triangle.
-    projectPntToTriangle(thePnt, aTD, aProjected, anIdx[i]);
+    projectPntToTriangle(P, aTD, aProjected, anIdx[i]);
   }
 
   for (asiAlgo_BVHIterator it(BVH); it.More(); it.Next())
@@ -170,7 +170,7 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& thePnt)
     if (it.IsLeaf())
     {
       // Perform precise test
-      IntersectLeaves(aNodeData, thePnt, aProjected);
+      IntersectLeaves(aNodeData, P, aProjected);
     }
     else // sub-volume
     {
@@ -179,8 +179,8 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& thePnt)
       const BVH_Vec4d& aMinPntRgh1 = BVH->MinPoint(aNodeData.z());
       const BVH_Vec4d& aMaxPntRgh1 = BVH->MaxPoint(aNodeData.z());
 
-      bool anOut1 = isOut(aMinPntLft1, aMaxPntLft1, thePnt, Sqrt(aProjected.mySqDistance));
-      bool anOut2 = isOut(aMinPntRgh1, aMaxPntRgh1, thePnt, Sqrt(aProjected.mySqDistance));
+      bool anOut1 = isOut(aMinPntLft1, aMaxPntLft1, P, Sqrt(aProjected.mySqDistance));
+      bool anOut2 = isOut(aMinPntRgh1, aMaxPntRgh1, P, Sqrt(aProjected.mySqDistance));
 
       if (anOut1)
         it.BlockLeft();
@@ -190,9 +190,9 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& thePnt)
     }
   }
 
-  m_triIdx.clear();
+  m_facetIds.clear();
   for(int i = 0; i <= aProjected.myIdx; ++i)
-    m_triIdx.push_back(aProjected.myTriIdx[i]);
+    m_facetIds.push_back(aProjected.myTriIdx[i]);
 
   return aProjected.myProjectedPoint;
 }

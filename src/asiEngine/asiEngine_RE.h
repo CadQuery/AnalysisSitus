@@ -146,6 +146,36 @@ public:
     CollectContourTriangles(const Handle(asiData_RePatchNode)& patch,
                             TColStd_PackedMapOfInteger&        tris) const;
 
+  //! Computes midpoint for the outer contour of the given patch.
+  //! \param[in] patch patch in question.
+  //! \return midpoint.
+  asiEngine_EXPORT gp_XYZ
+    ComputeMidPoint(const Handle(asiData_RePatchNode)& patch) const;
+
+  //! Extracts the piece of triangulation bounded by the contour of the given
+  //! patch. This method implements the following algorithm:
+  //!
+  //! - Find triangles covered by the contour (the indices of these triangles
+  //!   are known at contour construction time, so here we do not need to
+  //!   do any PMC tests).
+  //! - Compute the center point of the contour and project it to the mesh in
+  //!   order to selected a triangle somewhere inside the region of interest.
+  //! - Traverse the neighbor triangles starting from the picked center until
+  //!   the boundary triangles are reached. All the traversed triangles are
+  //!   added to the result.
+  //!
+  //! This method works in assumption that there is connectivity relationship
+  //! between the triangles of the source mesh. Otherwise, the traversal
+  //! procedure will immediately stop in the center triangle.
+  //!
+  //! \param[in]  patch  patch in question.
+  //! \param[out] region extracted region of the input mesh bounded by the
+  //!                    patch contour.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    ExtractBoundedRegion(const Handle(asiData_RePatchNode)& patch,
+                         Handle(Poly_Triangulation)&        region) const;
+
 };
 
 #endif

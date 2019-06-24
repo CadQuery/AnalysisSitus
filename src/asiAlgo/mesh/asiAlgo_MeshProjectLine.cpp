@@ -99,7 +99,7 @@ bool asiAlgo_MeshProjectLine::Perform(const gp_XYZ&        P1,
 
     // Hit facet for the midpoint.
     gp_Pnt hitMidPt        = m_projectPtMesh->Perform(midPt);
-    int    midPtFacetIndex = (m_projectPtMesh->GetTriIdx().size() ? m_projectPtMesh->GetTriIdx()[0] : -1);
+    int    midPtFacetIndex = (m_projectPtMesh->GetFacetIds().size() ? m_projectPtMesh->GetFacetIds()[0] : -1);
     //
     const bool isProjected = (midPtFacetIndex != -1);
     //

@@ -31,8 +31,20 @@
 // Own include
 #include <asiEngine_RE.h>
 
+// asiAlgo includes
+#include <asiAlgo_ProjectPointOnMesh.h>
+
 // Active Data includes
 #include <ActData_UniqueNodeName.h>
+
+// OCCT includes
+#include <Poly_CoherentNode.hxx>
+#include <Poly_CoherentTriangulation.hxx>
+
+#define DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -400,4 +412,164 @@ void asiEngine_RE::CollectContourTriangles(const Handle(asiData_RePatchNode)& pa
       for ( int i = inds->Lower(); i <= inds->Upper(); ++i )
         tris.Add( inds->Value(i) );
   }
+}
+
+//-----------------------------------------------------------------------------
+
+gp_XYZ asiEngine_RE::ComputeMidPoint(const Handle(asiData_RePatchNode)& patch) const
+{
+  std::vector<gp_XYZ> pts;
+  this->CollectBoundaryPoints(patch, pts);
+
+  return asiAlgo_Utils::ComputeAveragePoint(pts);
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_RE::ExtractBoundedRegion(const Handle(asiData_RePatchNode)& patch,
+                                     Handle(Poly_Triangulation)&        region) const
+{
+  // Get indices of the triangles constituting the contour coverage.
+  TColStd_PackedMapOfInteger boundaryInds;
+  this->CollectContourTriangles(patch, boundaryInds);
+  //
+  if ( boundaryInds.IsEmpty() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "No triangles are covered by the patch contour.");
+    return false;
+  }
+
+  // Get working triangulation.
+  Handle(Poly_Triangulation) tris = m_model->GetTriangulationNode()->GetTriangulation();
+
+  // Get BVH from the working triangulation.
+  Handle(asiAlgo_BVHFacets) bvh = m_model->GetTriangulationNode()->GetBVH();
+
+#if defined DRAW_DEBUG
+  {
+    // Extract sub-mesh.
+    m_plotter.REDRAW_TRIANGULATION("bndTris",
+                                   asiAlgo_Utils::GetSubMesh(tris, boundaryInds),
+                                   Color_Red, 1.0);
+  }
+#endif
+
+  // Get center point of the contour.
+  gp_XYZ center = this->ComputeMidPoint(patch);
+
+#if defined DRAW_DEBUG
+  {
+    m_plotter.REDRAW_POINT("center", center, Color_Red);
+  }
+#endif
+
+  // Project midpoint to extract the central facet.
+  asiAlgo_ProjectPointOnMesh pointToMesh(bvh, m_progress, m_plotter);
+  //
+  gp_Pnt centerProj     = pointToMesh.Perform(center);
+  int    centerFacetInd = pointToMesh.GetFacetIds().size() ? pointToMesh.GetFacetIds()[0] : -1;
+  //
+  if ( centerFacetInd == -1 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to pick up a central facet of the bounded region.");
+    return false;
+  }
+
+  // Convert facet index to triangle index.
+  const int centerTriangleId = bvh->GetFacet(centerFacetInd).FaceIndex;
+
+  // Index of the central facet should be decremented as in the coherent
+  // triangulation we have 0-based indexation.
+  const int cohCenterTriangleId = centerTriangleId - 1;
+
+  // Construct a coherent triangulation which stores the connectivity
+  // of mesh elements.
+  Handle(Poly_CoherentTriangulation)
+    cohTris = new Poly_CoherentTriangulation(tris);
+
+#if defined DRAW_DEBUG
+  {
+    const Poly_CoherentTriangle& cohTri = cohTris->Triangle(cohCenterTriangleId);
+    //
+    const int N1 = cohTri.Node(0);
+    const int N2 = cohTri.Node(1);
+    const int N3 = cohTri.Node(2);
+
+    m_plotter.REDRAW_TRIANGLE("centralFacetCoh", cohTris->Node(N1), cohTris->Node(N2), cohTris->Node(N3), Color_Blue);
+  }
+
+  {
+    const Poly_Triangle& tri = tris->Triangle(centerTriangleId);
+    //
+    int N1, N2, N3;
+    tri.Get(N1, N2, N3);
+
+    m_plotter.REDRAW_TRIANGLE("centralFacet", tris->Node(N1), tris->Node(N2), tris->Node(N3), Color_Green);
+  }
+#endif
+
+  // Prepare the collection of boundary triangles.
+  NCollection_Map<const Poly_CoherentTriangle*> boundary;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger tit(boundaryInds); tit.More(); tit.Next() )
+  {
+    const int id = tit.Key();
+    //
+    if ( id == -1 ) continue;
+
+    const int cohId = id - 1; // Minus one for coherent notation.
+    boundary.Add( &cohTris->Triangle(cohId) );
+  }
+
+  // Prepare the collection of seeds.
+  std::vector<const Poly_CoherentTriangle*> seeds;
+  seeds.push_back( &cohTris->Triangle(cohCenterTriangleId) );
+
+  // Prepare the collection of already processed triangles.
+  NCollection_Map<const Poly_CoherentTriangle*> processed;
+
+  // Correspondence of old-to-new node IDs in the resulting mesh.
+  NCollection_DataMap<int> nodeIds;
+
+  // Starting from the seed (center) triangle, traverse all neighbors until
+  // the boundary triangles are reached.
+  Handle(Poly_CoherentTriangulation) extracted = new Poly_CoherentTriangulation;
+  //
+  for ( size_t k = 0; k < seeds.size(); ++k )
+  {
+    const Poly_CoherentTriangle* seed = seeds[k];
+    //
+    if ( processed.Contains(seed) )
+      continue; // Already processed.
+
+    const Poly_CoherentTriangle* conn0 = seed->GetConnectedTri(0);
+    const Poly_CoherentTriangle* conn1 = seed->GetConnectedTri(1);
+    const Poly_CoherentTriangle* conn2 = seed->GetConnectedTri(2);
+
+    if ( !boundary.Contains(conn0) )
+      seeds.push_back(conn0);
+    else
+      std::cout << "Reached boundary on connection 0." << std::endl;
+
+    if ( !boundary.Contains(conn1) )
+      seeds.push_back(conn1);
+    else
+      std::cout << "Reached boundary on connection 1." << std::endl;
+
+    if ( !boundary.Contains(conn2) )
+      seeds.push_back(conn2);
+    else
+      std::cout << "Reached boundary on connection 2." << std::endl;
+
+    // Add to the list of processed so that not to traverse again.
+    processed.Add(seed);
+
+    // Add to result.
+    //extracted->AddTriangle( seed->Node(0), seed->Node(1), seed->Node(2) );
+  }
+
+  // Set result and return.
+  region = extracted->GetTriangulation();
+  return true;
 }

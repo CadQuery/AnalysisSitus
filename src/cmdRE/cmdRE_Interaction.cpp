@@ -351,17 +351,6 @@ int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // Get Triangulation.
-  Handle(asiData_TriangulationNode) tris_n = cmdRE::model->GetTriangulationNode();
-  //
-  Handle(Poly_Triangulation) tris = tris_n->GetTriangulation();
-  //
-  if ( tris.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is null.");
-    return TCL_ERROR;
-  }
-
   // Get Patch Node.
   Handle(asiData_RePatchNode)
     patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
@@ -376,88 +365,17 @@ int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
   // Prepare service API.
   asiEngine_RE api( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
 
-  // Get triangles covered by contour.
-  TColStd_PackedMapOfInteger indices;
-  api.CollectContourTriangles(patchNode, indices);
+  // Get triangles captured by contour.
+  Handle(Poly_Triangulation) regionTris;
   //
-  if ( indices.IsEmpty() )
+  if ( !api.ExtractBoundedRegion(patchNode, regionTris) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "No triangles are covered by contour of patch '%1'."
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot extract the region captured by contour of patch '%1'."
                                                         << argv[2]);
     return TCL_ERROR;
   }
 
-  // Prepare triangulation to draw.
-  std::vector<Poly_Triangle> selectedTrisVec;
-  std::vector<gp_Pnt> selectedTrisNodesVec;
-  //
-  for ( TColStd_MapIteratorOfPackedMapOfInteger eit(indices); eit.More(); eit.Next() )
-  {
-    const int tid = eit.Key();
-    //
-    if ( tid == -1 )
-      continue;
-
-    const Poly_Triangle& triangle = tris->Triangle(tid);
-
-    int n1, n2, n3;
-    triangle.Get(n1, n2, n3);
-
-    const gp_Pnt& P1 = tris->Node(n1);
-    const gp_Pnt& P2 = tris->Node(n2);
-    const gp_Pnt& P3 = tris->Node(n3);
-
-    int k = int( selectedTrisNodesVec.size() ) + 1;
-    //
-    selectedTrisNodesVec.push_back(P1);
-    selectedTrisNodesVec.push_back(P2);
-    selectedTrisNodesVec.push_back(P3);
-
-    selectedTrisVec.push_back( Poly_Triangle(k, k + 1, k + 2) );
-  }
-
-  const int numSelectedNodes = int( selectedTrisNodesVec.size() );
-  const int numSelectedTris  = int( selectedTrisVec.size() );
-
-  TColgp_Array1OfPnt selectedNodesArr(1, numSelectedNodes);
-  //
-  for ( int i = 1; i <= numSelectedNodes; ++i )
-  {
-    selectedNodesArr.ChangeValue(i) = selectedTrisNodesVec[i - 1];
-  }
-
-  Poly_Array1OfTriangle selectedTrisArr(1, numSelectedTris);
-  //
-  for ( int i = 1; i <= numSelectedTris; ++i )
-  {
-    selectedTrisArr.ChangeValue(i) = selectedTrisVec[i - 1];
-  }
-
-  Handle(Poly_Triangulation)
-    selectedTris = new Poly_Triangulation(selectedNodesArr, selectedTrisArr);
-
-  interp->GetPlotter().REDRAW_TRIANGULATION("tris", selectedTris, Color_Red, 1.0);
-
-  //// Get contour.
-  //std::vector<gp_XYZ> contourPts;
-  //api.CollectVertexPoints(patchNode, contourPts);
-
-  //// Prepare interpolation tool.
-  //Handle(asiAlgo_BaseCloud<double>) interiorPts;
-  ////
-  //if ( !asiAlgo_InterpolateSurfMesh::CollectInteriorNodes( tris_n->GetTriangulation(),
-  //                                                         contourPts,
-  //                                                         true,
-  //                                                         interiorPts,
-  //                                                         interp->GetProgress(),
-  //                                                         interp->GetPlotter() ) )
-  //{
-  //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot collect interior points.");
-  //  return TCL_ERROR;
-  //}
-
-  // Set result.
-  //interp->GetPlotter().REDRAW_POINTS(argv[1], interiorPts->GetCoordsArray(), Color_White);
+  interp->GetPlotter().REDRAW_TRIANGULATION("region", regionTris, Color_Blue, 1.0);
 
   return TCL_OK;
 }

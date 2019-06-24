@@ -1117,6 +1117,22 @@ namespace asiAlgo_Utils
     FindBySubshape(const TopTools_ListOfShape& parts,
                    const TopoDS_Shape&         subshape);
 
+  //! Extracts sub-triangulation from the given source by the passed indices.
+  //! Only the mesh elements with the passed indices will be returned in a new
+  //! triangulation.
+  //! \param[in] mesh  source triangulation.
+  //! \param[in] elems elements to keep.
+  //! \return sub-triangulation.
+  asiAlgo_EXPORT Handle(Poly_Triangulation)
+    GetSubMesh(const Handle(Poly_Triangulation)& mesh,
+               const TColStd_PackedMapOfInteger& elems);
+
+  //! Computes the average point for the passed point set.
+  //! \param[in] pts point set in question.
+  //! \return average point.
+  asiAlgo_EXPORT gp_XYZ
+    ComputeAveragePoint(const std::vector<gp_XYZ>& pts);
+
 };
 
 #endif

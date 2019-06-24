@@ -38,7 +38,7 @@ struct ProjectionInfoMesh;
 
 //-----------------------------------------------------------------------------
 
-//! Class intended for projection of the point onto triangulation.
+//! Utility for projection of the point onto triangulation.
 class asiAlgo_ProjectPointOnMesh : public asiAlgo_BVHAlgo
 {
 public:
@@ -56,21 +56,21 @@ public:
 
   //! \brief Returns projection of the given point onto a triangulation
   asiAlgo_EXPORT gp_Pnt
-    Perform(const gp_Pnt& thePnt);
+    Perform(const gp_Pnt& P);
 
 public:
 
-  //! \brief Returns triangle id from the last call.
-  const std::vector<int>& GetTriIdx() const
+  //! \brief Returns facet id from the last call.
+  const std::vector<int>& GetFacetIds() const
   {
-    return m_triIdx;
+    return m_facetIds;
   }
 
 protected:
 
-  void IntersectLeaves(const BVH_Vec4i& theLeaf,
-                       const gp_Pnt& theSourcePoint,
-                       ProjectionInfoMesh& theProjection) const;
+  void IntersectLeaves(const BVH_Vec4i&    leaf,
+                       const gp_Pnt&       sourcePoint,
+                       ProjectionInfoMesh& projection) const;
 
 private:
 
@@ -79,7 +79,7 @@ private:
 protected:
 
   //! Index of the triangle with minimal distance for the last Perform call.
-  std::vector<int> m_triIdx;
+  std::vector<int> m_facetIds;
 
 };
 

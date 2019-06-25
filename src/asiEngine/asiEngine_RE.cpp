@@ -530,7 +530,10 @@ bool
   NCollection_Map<const Poly_CoherentTriangle*> processed;
 
   // Correspondence of old-to-new node IDs in the resulting mesh.
-  NCollection_DataMap<int> nodeIds;
+  NCollection_DataMap<int, int> nodeIds;
+  int nextNodeId = 1;
+  std::vector<gp_XYZ> newNodes;
+  std::vector<Poly_Triangle> newTriangles;
 
   // Starting from the seed (center) triangle, traverse all neighbors until
   // the boundary triangles are reached.
@@ -565,11 +568,59 @@ bool
     // Add to the list of processed so that not to traverse again.
     processed.Add(seed);
 
-    // Add to result.
-    //extracted->AddTriangle( seed->Node(0), seed->Node(1), seed->Node(2) );
+    const int oldNodeId0 = seed->Node(0);
+    const int oldNodeId1 = seed->Node(1);
+    const int oldNodeId2 = seed->Node(2);
+    //
+    int newNodeId0, newNodeId1, newNodeId2;
+
+    if ( nodeIds.IsBound(oldNodeId0) )
+      newNodeId0 = nodeIds(oldNodeId0);
+    else
+    {
+      newNodeId0 = nextNodeId++;
+      nodeIds.Bind(oldNodeId0, newNodeId0);
+      newNodes.push_back( cohTris->Node(oldNodeId0) );
+    }
+    //
+    if ( nodeIds.IsBound(oldNodeId1) )
+      newNodeId1 = nodeIds(oldNodeId1);
+    else
+    {
+      newNodeId1 = nextNodeId++;
+      nodeIds.Bind(oldNodeId1, newNodeId1);
+      newNodes.push_back( cohTris->Node(oldNodeId1) );
+    }
+    //
+    if ( nodeIds.IsBound(oldNodeId2) )
+      newNodeId2 = nodeIds(oldNodeId2);
+    else
+    {
+      newNodeId2 = nextNodeId++;
+      nodeIds.Bind(oldNodeId2, newNodeId2);
+      newNodes.push_back( cohTris->Node(oldNodeId2) );
+    }
+
+    // Add triangle.
+    newTriangles.push_back( Poly_Triangle(newNodeId0, newNodeId1, newNodeId2) );
   }
 
+  // Construct resulting triangulation.
+  TColgp_Array1OfPnt    newNodesArr( 1, int( newNodes.size() ) );
+  Poly_Array1OfTriangle newTrisArr( 1, int( newTriangles.size() ) );
+  //
+  for ( int i = 1; i <= newNodesArr.Length(); ++i )
+    newNodesArr(i) = newNodes[i - 1];
+  //
+  for ( int i = 1; i <= newTrisArr.Length(); ++i )
+    newTrisArr(i) = newTriangles[i - 1];
+
   // Set result and return.
-  region = extracted->GetTriangulation();
+  region = new Poly_Triangulation(newNodesArr, newTrisArr);
+
+#if defined DRAW_DEBUG
+  m_plotter.REDRAW_TRIANGULATION("region", region, Color_Blue, 1.0);
+#endif
+
   return true;
 }

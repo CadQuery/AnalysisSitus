@@ -375,8 +375,17 @@ int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  interp->GetPlotter().REDRAW_TRIANGULATION("region", regionTris, Color_Blue, 1.0);
+  // Get nodes of the captured region.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  for ( int i = 1; i <= regionTris->NbNodes(); ++i )
+  {
+    const gp_Pnt& P = regionTris->Node(i);
+    pts->AddElement( P.X(), P.Y(), P.Z() );
+  }
 
+  // Set the result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], pts->GetCoordsArray(), Color_Default);
   return TCL_OK;
 }
 

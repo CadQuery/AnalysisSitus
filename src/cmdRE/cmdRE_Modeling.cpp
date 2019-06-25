@@ -313,7 +313,17 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
 
   std::vector<Handle(asiData_ReEdgeNode)> edgeNodes;
 
-  if ( argc == 1 )
+  bool                    hasToler = false;
+  double                  toler = 1.0;
+  TCollection_AsciiString tolerStr;
+  //
+  if ( interp->GetKeyValue(argc, argv, "toler", tolerStr) )
+  {
+    hasToler = true;
+    toler    = tolerStr.RealValue();
+  }
+
+  if ( argc == 1 || (argc == 3 && hasToler) )
   {
     /* Collect all edges */
 
@@ -366,7 +376,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     edgeNode->GetPolyline(pts);
     //
     Handle(Geom_BSplineCurve) curve;
-    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, 1.0, curve) )
+    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, toler, curve) )
     {
       interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
                                                             << edgeNode->GetName() );
@@ -1566,7 +1576,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-contour-lines",
     //
-    "re-build-contour-lines [edgeName1 [edgeName2 ...]]\n"
+    "re-build-contour-lines [edgeName1 [edgeName2 ...]] [-toler toler]\n"
     "\t Constructs contour lines either for all patches or for the passed\n"
     "\t edges only.",
     //

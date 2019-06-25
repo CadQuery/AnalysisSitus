@@ -103,7 +103,6 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
   copy->m_nodeAttributes    = this->m_nodeAttributes;
   copy->m_bAllowSmooth      = this->m_bAllowSmooth;
   copy->m_fSmoothAngularTol = this->m_fSmoothAngularTol;
-  copy->m_naming            = this->m_naming;
   //
   return copy;
 }

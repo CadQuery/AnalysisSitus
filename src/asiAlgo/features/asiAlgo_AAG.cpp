@@ -514,13 +514,15 @@ Handle(asiAlgo_FeatureAttr)
   asiAlgo_AAG::GetNodeAttribute(const int            node,
                                 const Standard_GUID& attr_id) const
 {
-  if ( !m_nodeAttributes.IsBound(node) )
+  const t_attr_set* attrSetPtr = m_nodeAttributes.Seek(node);
+  if ( attrSetPtr == NULL )
     return NULL;
 
-  if ( !m_nodeAttributes(node).GetMap().IsBound(attr_id) )
+  const Handle(asiAlgo_FeatureAttr)* attrPtr = (*attrSetPtr).Seek(attr_id);
+  if ( attrPtr == NULL )
     return NULL;
 
-  return m_nodeAttributes(node)(attr_id);
+  return (*attrPtr);
 }
 
 //-----------------------------------------------------------------------------
@@ -528,14 +530,15 @@ Handle(asiAlgo_FeatureAttr)
 bool asiAlgo_AAG::RemoveNodeAttribute(const int            node,
                                       const Standard_GUID& attr_id)
 {
-  if ( !m_nodeAttributes.IsBound(node) )
+  t_attr_set* attrSetPtr = m_nodeAttributes.ChangeSeek(node);
+  if ( attrSetPtr == NULL )
     return false;
 
-  if ( !m_nodeAttributes(node).GetMap().IsBound(attr_id) )
+  const Handle(asiAlgo_FeatureAttr)* attrPtr = (*attrSetPtr).Seek(attr_id);
+  if ( attrPtr == NULL )
     return false;
 
-  m_nodeAttributes(node).ChangeMap().UnBind(attr_id);
-  return true;
+  return (*attrSetPtr).ChangeMap().UnBind(attr_id);
 }
 
 //-----------------------------------------------------------------------------
@@ -558,13 +561,11 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
   if ( attr->IsKind( STANDARD_TYPE(asiAlgo_FeatureAttrFace) ) )
     Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->SetFaceId(node);
 
-  if ( !m_nodeAttributes.IsBound(node) )
+  t_attr_set* attrSetPtr = m_nodeAttributes.ChangeSeek(node);
+  if ( attrSetPtr == NULL )
     m_nodeAttributes.Bind( node, t_attr_set(attr) );
   else
-  {
-    t_attr_set& attr_set = m_nodeAttributes.ChangeFind(node);
-    attr_set.Add(attr);
-  }
+    (*attrSetPtr).Add(attr);
 
   return true;
 }
@@ -596,7 +597,8 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != FeatureAngleType_Convex )
+      if ( attr->GetAngle() != FeatureAngleType_Convex &&
+           attr->GetAngle() != FeatureAngleType_SmoothConvex )
       {
         isAllConvex = false;
 
@@ -656,7 +658,6 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
   return resultFaces.Extent() > 0;
 }
 
-
 //-----------------------------------------------------------------------------
 
 void asiAlgo_AAG::Remove(const TopTools_IndexedMapOfShape& faces)
@@ -701,8 +702,9 @@ void asiAlgo_AAG::Remove(const TColStd_PackedMapOfInteger& faceIndices)
       m_arcAttributes.UnBind( t_arc(face_idx, neighbor_idx) );
 
       // Kill the corresponding chunks from the list of neighbors
-      if ( m_neighborsStack.top().IsBound(neighbor_idx) )
-        m_neighborsStack.top().ChangeFind(neighbor_idx).Subtract(faceIndices);
+      TColStd_PackedMapOfInteger* mapPtr = m_neighborsStack.top().ChangeSeek(neighbor_idx);
+      if ( mapPtr != NULL )
+        (*mapPtr).Subtract(faceIndices);
     }
 
     // Unbind node
@@ -895,35 +897,35 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
   //---------------------------------------------------------------------------
 
-  // Put main adjacency matrix to the stack of graph states
+  // Put main adjacency matrix to the stack of graph states.
   m_neighborsStack.push( t_adjacency() );
 
   //---------------------------------------------------------------------------
 
   ShapeAnalysis_Edge sae;
 
-  // Extract all sub-shapes with unique indices from the master CAD
+  // Extract all sub-shapes with unique indices from the master CAD.
   if ( cachedMaps & CachedMap_SubShapes )
     TopExp::MapShapes(masterCAD, m_subShapes);
 
-  // Extract all faces with unique indices from the master CAD
+  // Extract all faces with unique indices from the master CAD.
   if ( cachedMaps & CachedMap_Faces )
     TopExp::MapShapes(masterCAD, TopAbs_FACE, m_faces);
 
-  // Extract all edges with unique indices from the master CAD
+  // Extract all edges with unique indices from the master CAD.
   if ( cachedMaps & CachedMap_Edges )
     TopExp::MapShapes(masterCAD, TopAbs_EDGE, m_edges);
 
-  // Extract all vertices with unique indices from the master CAD
+  // Extract all vertices with unique indices from the master CAD.
   if ( cachedMaps & CachedMap_Vertices )
     TopExp::MapShapes(masterCAD, TopAbs_VERTEX, m_vertices);
 
-  // Build child-parent map for edges and their faces
+  // Build child-parent map for edges and their faces.
   if ( cachedMaps & CachedMap_EdgesFaces )
     TopExp::MapShapesAndAncestors(masterCAD, TopAbs_EDGE, TopAbs_FACE, m_edgesFaces);
 
   // Fill adjacency map with empty buckets and provide all required
-  // treatment for each individual face
+  // treatment for each individual face.
   for ( int f = 1; f <= m_faces.Extent(); ++f )
   {
     m_neighborsStack.top().Bind( f, TColStd_PackedMapOfInteger() );
@@ -931,7 +933,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
     const TopoDS_Face& face = TopoDS::Face( m_faces(f) );
 
     // Special treatment deserve those faces having seam edges. Such faces
-    // get their own attributes
+    // get their own attributes.
     for ( TopExp_Explorer exp(face, TopAbs_EDGE); exp.More(); exp.Next() )
     {
       const TopoDS_Edge& edge = TopoDS::Edge( exp.Current() );
@@ -943,7 +945,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
         // Notice that smooth transitions are not allowed here. This is because
         // the following treatment is designed for periodic faces, and we normally
-        // have self-transition of quality C1 and better there
+        // have self-transition of quality C1 and better there.
         double angRad = 0.0;
         //
         const asiAlgo_FeatureAngleType
@@ -978,7 +980,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
 void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 {
-  // Create dihedral angle calculation
+  // Prepare dihedral angle calculation.
   asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
 
   // Now analyze the face pairs
@@ -988,13 +990,13 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
     TColStd_PackedMapOfInteger& face_links = m_neighborsStack.top().ChangeFind(face_idx);
     const TopoDS_Face&          face       = TopoDS::Face( m_faces.FindKey(face_idx) );
 
-    // Add all the rest faces as neighbors
+    // Add all the rest faces as neighbors.
     for ( TopTools_ListIteratorOfListOfShape lit2(mateFaces); lit2.More(); lit2.Next() )
     {
       const int linked_face_idx = m_faces.FindIndex( lit2.Value() );
 
       if ( linked_face_idx == face_idx )
-        continue; // Skip the same index to avoid loop arcs in the graph
+        continue; // Skip the same index to avoid loop arcs in the graph.
 
       if ( face_links.Contains(linked_face_idx) )
         continue;
@@ -1002,7 +1004,7 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
       face_links.Add(linked_face_idx);
 
       // The graph is not oriented, so we do not want to compute arc
-      // attribute G-F is previously we have already done F-G attribution
+      // attribute G-F is previously we have already done F-G attribution.
       t_arc arc(face_idx, linked_face_idx);
       if ( m_arcAttributes.IsBound(arc) )
         continue;
@@ -1017,7 +1019,7 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 
       // Here we let client code decide whether to allow smooth transitions
       // or not. Smooth transition normally requires additional processing
-      // in order to classify feature angle as concave or convex
+      // in order to classify feature angle as concave or convex.
       double angRad = 0.0;
       //
       const asiAlgo_FeatureAngleType

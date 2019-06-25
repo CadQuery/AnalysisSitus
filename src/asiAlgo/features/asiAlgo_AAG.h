@@ -490,7 +490,6 @@ public:
     GetNeighborhood() const;
 
   //! Returns all faces of the master model.
-  //! If the map is empty, it is constructed.
   //! \return all faces.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfFaces() const;

@@ -271,13 +271,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       return TCL_ERROR;
     }
 
-    // Construct face for the naturally bounded surface.
-    if ( patchFace.IsNull() )
-      patchFace = BRepBuilderAPI_MakeFace( patchSurf, Precision::Confusion() );
-
-    TCollection_AsciiString patchName("patch_"); patchName += patchNode->GetId();
-    //
-    interp->GetPlotter().REDRAW_SHAPE(patchName, patchFace, Color_White);
+    interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_Default, "patch");
   }
 
   cmdRE::model->CommitCommand();

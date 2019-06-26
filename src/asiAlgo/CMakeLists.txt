@@ -19,6 +19,7 @@ set (aux_H_FILES
   auxiliary/asiAlgo_BVHIterator.h
   auxiliary/asiAlgo_CheckContour.h
   auxiliary/asiAlgo_CheckToler.h
+  auxiliary/asiAlgo_CheckValidity.h
   auxiliary/asiAlgo_Classifier.h
   auxiliary/asiAlgo_ClassifyPointFace.h
   auxiliary/asiAlgo_CompleteEdgeLoop.h
@@ -35,6 +36,7 @@ set (aux_H_FILES
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_ProjectPointOnMesh.h
   auxiliary/asiAlgo_ReapproxContour.h
+  auxiliary/asiAlgo_Utils.h
 )
 set (aux_CPP_FILES
   auxiliary/asiAlgo_BVHAlgo.cpp
@@ -42,6 +44,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_BVHIterator.cpp
   auxiliary/asiAlgo_CheckContour.cpp
   auxiliary/asiAlgo_CheckToler.cpp
+  auxiliary/asiAlgo_CheckValidity.cpp
   auxiliary/asiAlgo_Classifier.cpp
   auxiliary/asiAlgo_ClassifyPointFace.cpp
   auxiliary/asiAlgo_CompleteEdgeLoop.cpp
@@ -54,6 +57,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_ProjectPointOnMesh.cpp
   auxiliary/asiAlgo_ReapproxContour.cpp
+  auxiliary/asiAlgo_Utils.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -358,23 +362,19 @@ set (re_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (utils_H_FILES
-  utils/asiAlgo_CheckValidity.h
   utils/asiAlgo_FileDumper.h
   utils/asiAlgo_JSON.h
   utils/asiAlgo_Logger.h
   utils/asiAlgo_MemChecker.h
   utils/asiAlgo_Timer.h
   utils/asiAlgo_TimeStamp.h
-  utils/asiAlgo_Utils.h
   utils/asiAlgo_Variable.h
 )
 set (utils_CPP_FILES
-  utils/asiAlgo_CheckValidity.cpp
   utils/asiAlgo_FileDumper.cpp
   utils/asiAlgo_JSON.cpp
   utils/asiAlgo_Logger.cpp
   utils/asiAlgo_TimeStamp.cpp
-  utils/asiAlgo_Utils.cpp
 )
 
 #------------------------------------------------------------------------------

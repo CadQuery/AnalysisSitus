@@ -78,7 +78,6 @@ public:
   asiAlgo_EXPORT void
     Dump(ActAPI_PlotterEntry plotter) const;
 
-
 public:
 
   //! Returns true if the face <F> has been modified.

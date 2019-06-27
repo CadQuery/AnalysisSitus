@@ -136,10 +136,11 @@ public:
   //! \return transient pointer by persistent name.
   TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
   {
-    if ( !m_namedAliveShapes.IsBound(name) )
+    const TopoDS_Shape* shapePtr = m_namedAliveShapes.Seek(name);
+    if ( shapePtr == NULL )
       return TopoDS_Shape();
 
-    return m_namedAliveShapes(name);
+    return *shapePtr;
   }
 
   //! Attempts to find a name registered for the passed shape.

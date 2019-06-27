@@ -41,12 +41,14 @@
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
+#include <asiAlgo_AAGIterator.h>
 #include <asiAlgo_AttrBlendCandidate.h>
 #include <asiAlgo_BlendType.h>
 #include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_CompleteEdgeLoop.h>
 #include <asiAlgo_ExtractFeatures.h>
+#include <asiAlgo_FeatureAttrBaseFace.h>
 #include <asiAlgo_FeatureType.h>
 #include <asiAlgo_MeshCheckInter.h>
 #include <asiAlgo_MeshConvert.h>
@@ -3008,6 +3010,80 @@ int ENGINE_CheckSelfInter(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_RecognizeBaseFaces(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape        partShape = partNode->GetShape();
+  Handle(asiAlgo_AAG) partAAG   = partNode->GetAAG();
+
+  // Loop over the AAG.
+  for ( asiAlgo_AAGRandomIterator it(partAAG); it.More(); it.Next() )
+  {
+    const int fid = it.GetFaceId();
+
+    // Get face to check the number of wires.
+    const TopoDS_Face& face = partAAG->GetFace(fid);
+
+    // Get the number of wires.
+    TopTools_IndexedMapOfShape wires;
+    TopExp::MapShapes(face, TopAbs_WIRE, wires);
+    //
+    const int numWires = wires.Extent();
+
+    if ( numWires > 1 )
+    {
+      // Hook an attribute.
+      Handle(asiAlgo_FeatureAttrBaseFace) attr = new asiAlgo_FeatureAttrBaseFace(0);
+      //
+      partAAG->SetNodeAttribute(fid, attr);
+    }
+  }
+
+  // Prepare tool to extract features from AAG.
+  asiAlgo_ExtractFeatures extractor(interp->GetProgress(), NULL);
+  extractor.RegisterFeatureType( FeatureType_UNDEFINED,
+                                 asiAlgo_FeatureAttrBaseFace::GUID() );
+
+  // Extract features.
+  TColStd_PackedMapOfInteger resIndices;
+  //
+  Handle(asiAlgo_ExtractFeaturesResult) featureRes;
+  if ( !extractor.Perform(partAAG, featureRes) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Feature extraction failed.");
+    return TCL_ERROR;
+  }
+  //
+  featureRes->GetFaceIndices(resIndices);
+
+  // Highlight the detected faces.
+  if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
+    asiEngine_Part( cmdEngine::model,
+                    cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
+
+  // Dump to result.
+  *interp << resIndices;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -3322,4 +3398,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t self-intersections.",
     //
     __FILE__, group, ENGINE_CheckSelfInter);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("recognize-base-faces",
+    //
+    "recognize-base-faces\n"
+    "\t Recognizes all base faces, i.e., the faces where features may exis.",
+    //
+    __FILE__, group, ENGINE_RecognizeBaseFaces);
 }

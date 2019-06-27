@@ -206,6 +206,7 @@ set (features_H_FILES
   features/asiAlgo_ExtractFeatures.h
   features/asiAlgo_ExtractFeaturesResult.h
   features/asiAlgo_FeatureAngleType.h
+  features/asiAlgo_FeatureAttrBaseFace.h
   features/asiAlgo_FeatureAttr.h
   features/asiAlgo_FeatureAttrAdjacency.h
   features/asiAlgo_FeatureAttrAngle.h

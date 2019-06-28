@@ -64,7 +64,7 @@ bool asiAlgo_IntersectCS::operator()(const Handle(Geom_Surface)&   S,
   //
   if ( !intCS.IsDone() )
   {
-    m_progress.SendLogMessage( LogErr(Normal) << "Curvature/surface intersection failed" );
+    m_progress.SendLogMessage( LogErr(Normal) << "Curve/surface intersection failed." );
     return false;
   }
 
@@ -102,7 +102,7 @@ bool asiAlgo_IntersectCS::operator()(const Handle(Geom_Surface)&   S,
         gp_Dir dcurve(HC_D1), nsurf(HS_N);
 
         const double ang     = acos( dcurve.Dot(nsurf) );
-        const double angDiff = Abs(ang - M_PI/2.);
+        const double angDiff = fabs(ang - M_PI/2.);
 
         if ( angDiff < m_fTangencyTolRad )
         {

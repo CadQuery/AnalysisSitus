@@ -39,12 +39,28 @@
 
 // OCCT includes
 #include <Poly_CoherentNode.hxx>
+#include <Poly_CoherentTriangle.hxx>
 #include <Poly_CoherentTriangulation.hxx>
 
 #define DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
+
+//-----------------------------------------------------------------------------
+
+struct TriangleHasher
+{
+  static int HashCode(const Poly_CoherentTriangle* object, const int upper)
+  {
+    return ::HashCode((Standard_Address*) object, upper);
+  }
+
+  static bool IsEqual(const Poly_CoherentTriangle* object1, const Poly_CoherentTriangle* object2)
+  {
+    return object1 == object2;
+  }
+};
 
 //-----------------------------------------------------------------------------
 
@@ -510,7 +526,7 @@ bool
 #endif
 
   // Prepare the collection of boundary triangles.
-  NCollection_Map<const Poly_CoherentTriangle*> boundary;
+  NCollection_Map<const Poly_CoherentTriangle*, TriangleHasher> boundary;
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger tit(boundaryInds); tit.More(); tit.Next() )
   {
@@ -527,7 +543,7 @@ bool
   seeds.push_back( &cohTris->Triangle(cohCenterTriangleId) );
 
   // Prepare the collection of already processed triangles.
-  NCollection_Map<const Poly_CoherentTriangle*> processed;
+  NCollection_Map<const Poly_CoherentTriangle*, TriangleHasher> processed;
 
   // Correspondence of old-to-new node IDs in the resulting mesh.
   NCollection_DataMap<int, int> nodeIds;

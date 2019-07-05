@@ -47,8 +47,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiEngine_RE(const Handle(asiEngine_Model)& model,
-               ActAPI_ProgressEntry           progress,
-               ActAPI_PlotterEntry            plotter)
+               ActAPI_ProgressEntry           progress = NULL,
+               ActAPI_PlotterEntry            plotter  = NULL)
   //
   : asiEngine_Base(model, progress, plotter) {}
 
@@ -175,6 +175,27 @@ public:
   asiEngine_EXPORT bool
     ExtractBoundedRegion(const Handle(asiData_RePatchNode)& patch,
                          Handle(Poly_Triangulation)&        region) const;
+
+  //! Returns patches which share the passed edge. The patches are classified
+  //! as left and right depending on whether their corresponding coedges are
+  //! collinear with the shared edge or not.
+  //!
+  //! \param[in]  edge       edge in question.
+  //! \param[out] patchLeft  patch on the left (collinear).
+  //! \param[out] patchRight patch on the right.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
+                     Handle(asiData_RePatchNode)&      patchLeft,
+                     Handle(asiData_RePatchNode)&      patchRight) const;
+
+  //! Fills the passed patch with a Coons surface.
+  //! \param[in]  patch patch in question.
+  //! \param[out] surf  constructed surface.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
+                   Handle(Geom_BSplineSurface)&       surf) const;
 
 };
 

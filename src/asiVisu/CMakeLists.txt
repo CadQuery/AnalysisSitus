@@ -213,6 +213,7 @@ set (providers_H_FILES
   providers/asiVisu_PointsFromListDataProvider.h
   providers/asiVisu_ReEdgeCurveDataProvider.h
   providers/asiVisu_ReEdgePolylineDataProvider.h
+  providers/asiVisu_ReEdgeShapeDataProvider.h
   providers/asiVisu_ReVertexDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_SurfaceDataProvider.h
@@ -242,6 +243,7 @@ set (providers_CPP_FILES
   providers/asiVisu_PointsFromListDataProvider.cpp
   providers/asiVisu_ReEdgeCurveDataProvider.cpp
   providers/asiVisu_ReEdgePolylineDataProvider.cpp
+  providers/asiVisu_ReEdgeShapeDataProvider.cpp
   providers/asiVisu_ReVertexDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_SurfaceDeviationDataProvider.cpp

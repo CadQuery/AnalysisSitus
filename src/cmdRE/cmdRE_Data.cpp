@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 December 2018
+// Created on: 05 July 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,63 +28,69 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef cmdRE_h
-#define cmdRE_h
-
-#define cmdRE_NotUsed(x) x
-
-#ifdef cmdRE_EXPORTS
-  #define cmdRE_EXPORT __declspec(dllexport)
-#else
-  #define cmdRE_EXPORT __declspec(dllimport)
-#endif
-
-//-----------------------------------------------------------------------------
-
-// asiTcl includes
-#include <asiTcl_Interp.h>
+// cmdRE includes
+#include <cmdRE.h>
 
 // asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiUI includes
-#include <asiUI_CommonFacilities.h>
+#include <asiEngine_RE.h>
 
 //-----------------------------------------------------------------------------
 
-//! Reverse engineering commands.
-class cmdRE
+int RE_SetPatchSurf(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
 {
-public:
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
 
-  cmdRE_EXPORT static void
-    Factory(const Handle(asiTcl_Interp)&      interp,
-            const Handle(Standard_Transient)& data);
+  // Get patch Node.
+  Handle(asiData_RePatchNode)
+    patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(argv[1]) );
+  //
+  if ( patchNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data object '%1' is not a patch."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
 
-public:
+  // Get surface Node.
+  Handle(asiData_IVSurfaceNode)
+    surfNode = Handle(asiData_IVSurfaceNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
+  //
+  if ( surfNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Data object '%1' is not a surface."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
 
-  cmdRE_EXPORT static void
-    Commands_Data(const Handle(asiTcl_Interp)&      interp,
-                  const Handle(Standard_Transient)& data);
+  // Set surface to patch.
+  cmdRE::model->OpenCommand();
+  {
+    patchNode->SetSurface( surfNode->GetSurface() );
+  }
+  cmdRE::model->CommitCommand();
 
-  cmdRE_EXPORT static void
-    Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
-                         const Handle(Standard_Transient)& data);
+  return TCL_OK;
+}
 
-  cmdRE_EXPORT static void
-    Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
-                      const Handle(Standard_Transient)& data);
+//-----------------------------------------------------------------------------
 
-public:
+void cmdRE::Commands_Data(const Handle(asiTcl_Interp)&      interp,
+                          const Handle(Standard_Transient)& data)
+{
+  cmdRE_NotUsed(data);
+  //
+  static const char* group = "cmdRE";
 
-  cmdRE_EXPORT static void
-    ClearViewers(const bool repaint = true);
-
-public:
-
-  static Handle(asiEngine_Model)        model; //!< Data Model instance.
-  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
-
-};
-
-#endif
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-set-patch-surf",
+    //
+    "re-set-patch-surf patchName surfName\n"
+    "\t Sets new surface for a patch with the given name.",
+    //
+    __FILE__, group, RE_SetPatchSurf);
+}

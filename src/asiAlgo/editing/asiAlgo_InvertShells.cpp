@@ -33,6 +33,7 @@
 
 // OCCT includes
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
 
@@ -49,15 +50,17 @@ asiAlgo_InvertShells::asiAlgo_InvertShells(const TopoDS_Shape&  shape,
 
 bool asiAlgo_InvertShells::Perform()
 {
-  if ( m_shape.ShapeType() == TopAbs_SHELL )
+  if ( m_shape.ShapeType() == TopAbs_SHELL ||
+       m_shape.ShapeType() == TopAbs_FACE )
   {
-    m_result = m_shape.Reversed();
-    m_progress.SendLogMessage(LogInfo(Normal) << "Reverse isolated shell.");
+    m_result = BRepBuilderAPI_Copy(m_shape).Shape().Reversed();
+
+    m_progress.SendLogMessage(LogInfo(Normal) << "Reverse isolated shell (face).");
   }
-  else if ( m_shape.ShapeType() > TopAbs_SHELL )
+  else if ( m_shape.ShapeType() > TopAbs_FACE )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot invert a shape of a topological "
-                                                "type which does not contain shells.");
+                                                "type which does not contain shells or faces.");
     return false;
   }
   else
@@ -84,9 +87,7 @@ void asiAlgo_InvertShells::buildTopoGraphLevel(const TopoDS_Shape& root,
   //         transformations here, we will have an improperly placed result.
   //         E.g., imagine that your root shape is transformed. Then, all its
   //         children will be reverted by OpenCascade because of the logic in
-  //         TopoDS_Builder::Add() which someone (who?!) implemented for his
-  //         convenience. This crappy OpenCascade does not allow me even work
-  //         at the basic level of topology to fucking do what I am fucking want!
+  //         TopoDS_Builder::Add().
   for ( TopoDS_Iterator it(root, false, true); it.More(); it.Next() )
   {
     const TopoDS_Shape& currentShape = it.Value();

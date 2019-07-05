@@ -108,10 +108,6 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE_NotUsed(argc);
   cmdRE_NotUsed(argv);
 
-  //const bool allPatches = (argc == 1);
-
-  const bool isPlate = interp->HasKeyword(argc, argv, "plate");
-
   // Get surface fairing coefficient.
   double fairCoeff = 0.;
   TCollection_AsciiString fairCoeffStr;
@@ -189,86 +185,14 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: '%1'."
                                                           << patchNode->GetName() );
 
-    std::vector<Handle(Geom_BSplineCurve)> curves;
-
-    // Get all edges and approximate them.
-    for ( Handle(ActAPI_IChildIterator) cit = patchNode->GetChildIterator();
-          cit->More(); cit->Next() )
-    {
-      Handle(ActAPI_INode) childNode = cit->Value();
-      //
-      if ( !childNode->IsKind( STANDARD_TYPE(asiData_ReCoEdgeNode) ) )
-      {
-        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of child Node.");
-        //
-        cmdRE::model->AbortCommand();
-        return TCL_ERROR;
-      }
-      //
-      const Handle(asiData_ReCoEdgeNode)&
-        coedgeNode = Handle(asiData_ReCoEdgeNode)::DownCast(childNode);
-      //
-      Handle(asiData_ReEdgeNode) edgeNode = coedgeNode->GetEdge();
-
-      // Dump coedge/edge.
-      interp->GetProgress().SendLogMessage( LogInfo(Normal) <<  "\t CoEdge: %1; Orientation: %2; References edge: %3."
-                                                            <<  coedgeNode->GetId()
-                                                            << (coedgeNode->IsSameSense() ? "forward" : "reversed")
-                                                            <<  edgeNode->GetId() );
-
-      // Get B-curve from edge.
-      Handle(Geom_BSplineCurve)
-        t_bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
-      //
-      if ( t_bcurve.IsNull() )
-      {
-        interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
-                                                             << edgeNode->GetId() );
-        cmdRE::model->AbortCommand();
-        return TCL_ERROR;
-      }
-
-      // Add curve to the collection for filling.
-      curves.push_back(t_bcurve);
-
-      // Update scene.
-      cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
-    }
-
-    // Build patch.
-    TopoDS_Face                 patchFace;
+    // Fill Coons.
     Handle(Geom_BSplineSurface) patchSurf;
     //
-    if ( isPlate || curves.size() != 4 )
+    if ( !reApi.FillPatchCoons(patchNode, patchSurf) )
     {
-      asiAlgo_PlateOnEdges plateOnEdges( interp->GetProgress(),
-                                         interp->GetPlotter() );
-
-      if ( fairCoeff )
-        plateOnEdges.SetFairingCoeff(fairCoeff);
-
-      // Build collection of edges as required by the plate construction
-      // algorithm. Those edges are artificial: natural extremities are used.
-      Handle(TopTools_HSequenceOfShape) edges = new TopTools_HSequenceOfShape;
-      //
-      for ( size_t c = 0; c < curves.size(); ++c )
-        edges->Append( BRepBuilderAPI_MakeEdge(curves[c]) );
-
-      // Build patch.
-      if ( !plateOnEdges.Build(edges, 0, patchSurf, patchFace) )
-      {
-        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate trimmed surface.");
-        //
-        cmdRE::model->AbortCommand();
-        return TCL_ERROR;
-      }
-    }
-    else if ( !asiAlgo_Utils::Fill4Contour(curves, patchSurf) )
-    {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot approximate surface.");
-      //
-      cmdRE::model->AbortCommand();
-      return TCL_ERROR;
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build surface for patch '%1'."
+                                                           << patchNode->GetName() );
+      continue;
     }
 
     interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_Default, "patch");
@@ -1562,7 +1486,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",
     //
-    "re-build-patches [patchName1 [patchName2 ...]] [-plate] [-fair <coeff>]\n"
+    "re-build-patches [patchName1 [patchName2 ...]] [-fair <coeff>]\n"
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, RE_BuildPatches);

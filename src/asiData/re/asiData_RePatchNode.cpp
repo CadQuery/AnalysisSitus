@@ -34,12 +34,19 @@
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
+// OCCT includes
+#include <BRep_Tool.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <Precision.hxx>
+#include <TopoDS.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Default ctor. Registers all involved Parameters.
 asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
 {
-  REGISTER_PARAMETER(Name, PID_Name);
+  REGISTER_PARAMETER(Name,  PID_Name);
+  REGISTER_PARAMETER(Shape, PID_Geometry);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -55,10 +62,13 @@ void asiData_RePatchNode::Init()
 {
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
+
+  // Set default values.
+  this->SetSurface(NULL);
 }
 
 //-----------------------------------------------------------------------------
-// Generic naming
+// Getters/setters
 //-----------------------------------------------------------------------------
 
 //! Accessor for the Node's name.
@@ -73,4 +83,31 @@ TCollection_ExtendedString asiData_RePatchNode::GetName()
 void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}
+
+//! \return stored geometry.
+Handle(Geom_Surface) asiData_RePatchNode::GetSurface() const
+{
+  TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+  //
+  if ( sh.IsNull() || sh.ShapeType() != TopAbs_FACE )
+    return NULL;
+
+  // Extract face and its host geometry
+  const TopoDS_Face& F = TopoDS::Face(sh);
+  //
+  return BRep_Tool::Surface(F);
+}
+
+//! Sets surface to store.
+//! \param[in] surface geometry to store.
+void asiData_RePatchNode::SetSurface(const Handle(Geom_Surface)& surface)
+{
+  // Create a fictive face to take advantage of topology Parameter of Active Data.
+  TopoDS_Face F;
+  if ( !surface.IsNull() )
+    F = BRepBuilderAPI_MakeFace( surface, Precision::Confusion() );
+
+  // Store surface.
+  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(F);
 }

@@ -58,7 +58,9 @@ public:
   enum PipelineId
   {
     Pipeline_Polyline = 1,
-    Pipeline_Curve
+    Pipeline_Curve,
+    Pipeline_CurvePoles,
+    Pipeline_CurveKnots
   };
 
 public:

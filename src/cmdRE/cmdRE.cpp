@@ -97,6 +97,7 @@ void cmdRE::Factory(const Handle(asiTcl_Interp)&      interp,
   }
 
   // Load sub-modules.
+  Commands_Data        (interp, data);
   Commands_Interaction (interp, data);
   Commands_Modeling    (interp, data);
 }

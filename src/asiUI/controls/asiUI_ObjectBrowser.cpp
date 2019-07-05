@@ -39,6 +39,7 @@
 // asiEngine includes
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 #include <asiEngine_Tessellation.h>
 
 // asiVisu includes
@@ -47,6 +48,7 @@
 // asiAlgo includes
 #include <asiAlgo_JSON.h>
 #include <asiAlgo_MeshConvert.h>
+#include <asiAlgo_PatchJointAdaptor.h>
 #include <asiAlgo_Utils.h>
 
 // Qt includes
@@ -93,6 +95,13 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
 
 asiUI_ObjectBrowser::~asiUI_ObjectBrowser()
 {}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::SetPlotter(ActAPI_PlotterEntry plotter)
+{
+  m_plotter = plotter;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -756,6 +765,112 @@ void asiUI_ObjectBrowser::onConvertToTess()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onOptimizeForG1()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+    return;
+
+  Handle(asiData_ReEdgeNode) edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
+
+  // Prepare RE API.
+  asiEngine_RE reApi(m_model, m_progress);
+
+  /* ======================
+   *  Get neighbor patches
+   * ====================== */
+
+  // Get owner patches.
+  Handle(asiData_RePatchNode) leftPatchNode, rightPatchNode;
+  //
+  if ( !reApi.GetPatchesByEdge(edgeNode, leftPatchNode, rightPatchNode) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot get patches by edge.");
+    return;
+  }
+
+  if ( !leftPatchNode.IsNull() )
+    m_progress.SendLogMessage( LogInfo(Normal) << "Left patch: %1." << leftPatchNode->GetName() );
+
+  if ( !rightPatchNode.IsNull() )
+    m_progress.SendLogMessage( LogInfo(Normal) << "Right patch: %1." << rightPatchNode->GetName() );
+
+  if ( leftPatchNode.IsNull() || rightPatchNode.IsNull() )
+    return; // Naked edge.
+
+  // Get surfaces.
+  Handle(Geom_BSplineSurface)
+    surfLeft = Handle(Geom_BSplineSurface)::DownCast( leftPatchNode->GetSurface() );
+  //
+  Handle(Geom_BSplineSurface)
+    surfRight = Handle(Geom_BSplineSurface)::DownCast( rightPatchNode->GetSurface() );
+
+  // Get joint curve.
+  Handle(Geom_Curve) jointCurve = edgeNode->GetCurve();
+
+  /* ================
+   *  Adapt surfaces
+   * ================ */
+
+  asiAlgo_PatchJointAdaptor jointAdaptor(jointCurve, surfLeft, surfRight, m_progress, m_plotter);
+
+  // Extract isoparametric lines.
+  bool                      isoLeftU,   isoRightU;
+  bool                      isoLeftMin, isoRightMin;
+  Handle(Geom_BSplineCurve) isoLeft,    isoRight;
+  //
+  if ( !jointAdaptor.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
+                                 isoRight, isoRightU, isoRightMin) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot extract isoparametric lines "
+                                                "for the neighbor patches.");
+    return;
+  }
+
+  // Graphical dump.
+  m_plotter.REDRAW_SURFACE("surfLeft",  surfLeft,  Color_Default);
+  m_plotter.REDRAW_SURFACE("surfRight", surfRight, Color_Default);
+  //
+  m_plotter.REDRAW_CURVE("isoLeft",  isoLeft,  isoLeftU  ? Color_Red : Color_Green);
+  m_plotter.REDRAW_CURVE("isoRight", isoRight, isoRightU ? Color_Red : Color_Green);
+
+  // Check if the joint is compatible.
+  if ( !jointAdaptor.AlignControlPoles(isoLeft, isoLeftU, isoLeftMin,
+                                       isoRight, isoRightU, isoRightMin) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot align control points.");
+    return;
+  }
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Joint is compatible.");
+
+
+  //// Unify surfaces.
+  //if ( !jointAdaptor.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU) )
+  //{
+  //  m_progress.SendLogMessage(LogErr(Normal) << "Cannot unify surfaces.");
+  //  return;
+  //}
+
+  // Modify Data Model.
+  m_model->OpenCommand();
+  {
+    leftPatchNode  ->SetSurface( jointAdaptor.GetSurfaceLeft() );
+    rightPatchNode ->SetSurface( jointAdaptor.GetSurfaceRight() );
+  }
+  m_model->CommitCommand();
+
+  // Graphical dump.
+  m_plotter.REDRAW_SURFACE("surfLeft",  jointAdaptor.GetSurfaceLeft(),  Color_Default);
+  m_plotter.REDRAW_SURFACE("surfRight", jointAdaptor.GetSurfaceRight(), Color_Default);
+
+  // TODO: NYI
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param[in]     activeNodes currently active Nodes.
 //! \param[in,out] pMenu       menu to populate.
@@ -859,6 +974,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       {
         pMenu->addSeparator();
         pMenu->addAction( "Convert to tessellation",  this, SLOT( onConvertToTess () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Optimize for G1",  this, SLOT( onOptimizeForG1 () ) );
       }
     }
   }

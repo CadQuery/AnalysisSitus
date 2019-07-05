@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 November 2018
+// Created on: 01 July 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,18 +32,18 @@
 #define asiVisu_ReEdgeCurveDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_ShapeDataProvider.h>
+#include <asiVisu_CurveDataProvider.h>
 
 // asiData includes
 #include <asiData_ReEdgeNode.h>
 
-//! Data provider for contour shape.
-class asiVisu_ReEdgeCurveDataProvider : public asiVisu_ShapeDataProvider
+//! Data provider for RE edge as a parametric curve.
+class asiVisu_ReEdgeCurveDataProvider : public asiVisu_CurveDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgeCurveDataProvider, asiVisu_ShapeDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgeCurveDataProvider, asiVisu_CurveDataProvider)
 
 public:
 
@@ -54,10 +54,44 @@ public:
 
 public:
 
-  //! Returns the BREP shape to be visualized.
-  //! \return BREP shape being a container for the parametric curve.
-  asiVisu_EXPORT virtual TopoDS_Shape
-    GetShape() const;
+  //! Returns associated Node ID.
+  //! \return Node ID.
+  virtual ActAPI_DataObjectId GetNodeID() const
+  {
+    return m_node->GetId();
+  }
+
+  //! Unused.
+  virtual Handle(Geom2d_Curve) GetCurve2d(double& f, double& l) const
+  {
+    asiVisu_NotUsed(f);
+    asiVisu_NotUsed(l);
+    return NULL;
+  }
+
+public:
+
+  //! Returns curve type.
+  //! \return dynamic type.
+  asiVisu_EXPORT virtual Handle(Standard_Type)
+    GetCurveType() const;
+
+  //! Returns parametric curve representing the edge.
+  //! \param[out] f first parameter.
+  //! \param[out] l last parameter.
+  //! \return parametric curve.
+  asiVisu_EXPORT virtual Handle(Geom_Curve)
+    GetCurve(double& f, double& l) const;
+
+protected:
+
+  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process. If any Parameter listed by this method is changed
+  //! (more precisely, if its MTime record is updated), the translation must
+  //! be repeated.
+  //! \return list of source Parameters.
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
 protected:
 

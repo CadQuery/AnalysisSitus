@@ -207,6 +207,9 @@ void exe_MainWindow::createDockWindows()
                                                   cf->Prs.Domain,
                                                   cf->ObjectBrowser) );
 
+  // Set plotter back to object browser.
+  cf->ObjectBrowser->SetPlotter(cf->Plotter);
+
   // Set diagnostic tools once we've got plotter.
   cf->Prs.Part->SetDiagnosticTools(cf->Progress, cf->Plotter);
 

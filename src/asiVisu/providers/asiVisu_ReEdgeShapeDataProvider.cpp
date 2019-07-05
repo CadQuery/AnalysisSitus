@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 December 2018
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,63 +28,35 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef cmdRE_h
-#define cmdRE_h
+// Own include
+#include <asiVisu_ReEdgeShapeDataProvider.h>
 
-#define cmdRE_NotUsed(x) x
-
-#ifdef cmdRE_EXPORTS
-  #define cmdRE_EXPORT __declspec(dllexport)
-#else
-  #define cmdRE_EXPORT __declspec(dllimport)
-#endif
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
 
-// asiTcl includes
-#include <asiTcl_Interp.h>
-
-// asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiUI includes
-#include <asiUI_CommonFacilities.h>
-
-//-----------------------------------------------------------------------------
-
-//! Reverse engineering commands.
-class cmdRE
+asiVisu_ReEdgeShapeDataProvider::asiVisu_ReEdgeShapeDataProvider(const Handle(asiData_ReEdgeNode)& N)
+: asiVisu_ShapeDataProvider (),
+  m_node                    (N)
 {
-public:
+  // Set Node ID.
+  m_nodeID = m_node->GetId();
 
-  cmdRE_EXPORT static void
-    Factory(const Handle(asiTcl_Interp)&      interp,
-            const Handle(Standard_Transient)& data);
+  // Set tracked (sensitive) Parameters.
+  Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
+  //
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexFirstRef) );
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexLastRef) );
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Polyline) );
+  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Curve) );
+  //
+  m_params = params;
+}
 
-public:
+//-----------------------------------------------------------------------------
 
-  cmdRE_EXPORT static void
-    Commands_Data(const Handle(asiTcl_Interp)&      interp,
-                  const Handle(Standard_Transient)& data);
-
-  cmdRE_EXPORT static void
-    Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
-                         const Handle(Standard_Transient)& data);
-
-  cmdRE_EXPORT static void
-    Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
-                      const Handle(Standard_Transient)& data);
-
-public:
-
-  cmdRE_EXPORT static void
-    ClearViewers(const bool repaint = true);
-
-public:
-
-  static Handle(asiEngine_Model)        model; //!< Data Model instance.
-  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
-
-};
-
-#endif
+TopoDS_Shape asiVisu_ReEdgeShapeDataProvider::GetShape() const
+{
+  return m_node->GetCurveAsShape();
+}

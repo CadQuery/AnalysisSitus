@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 06 November 2018
+// Created on: 01 July 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,26 +37,36 @@
 //-----------------------------------------------------------------------------
 
 asiVisu_ReEdgeCurveDataProvider::asiVisu_ReEdgeCurveDataProvider(const Handle(asiData_ReEdgeNode)& N)
-: asiVisu_ShapeDataProvider (),
+: asiVisu_CurveDataProvider (),
   m_node                    (N)
-{
-  // Set Node ID.
-  m_nodeID = m_node->GetId();
+{}
 
-  // Set tracked (sensitive) Parameters.
-  Handle(ActAPI_HParameterList) params = new ActAPI_HParameterList;
+//-----------------------------------------------------------------------------
+
+Handle(Standard_Type) asiVisu_ReEdgeCurveDataProvider::GetCurveType() const
+{
+  Handle(Geom_Curve) curve = m_node->GetCurve();
   //
-  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexFirstRef) );
-  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_VertexLastRef) );
-  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Polyline) );
-  params->Append( m_node->Parameter(asiData_ReEdgeNode::PID_Curve) );
-  //
-  m_params = params;
+  if ( curve.IsNull() )
+    return NULL;
+
+  return curve->DynamicType();
 }
 
 //-----------------------------------------------------------------------------
 
-TopoDS_Shape asiVisu_ReEdgeCurveDataProvider::GetShape() const
+Handle(Geom_Curve) asiVisu_ReEdgeCurveDataProvider::GetCurve(double& f, double& l) const
 {
-  return m_node->GetCurveAsShape();
+  return m_node->GetCurve(f, l);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(ActAPI_HParameterList)
+  asiVisu_ReEdgeCurveDataProvider::translationSources() const
+{
+  ActAPI_ParameterStream out;
+  out << m_node->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  return out.List;
 }

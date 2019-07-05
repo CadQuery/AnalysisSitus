@@ -2023,7 +2023,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
     P1S = cascade::GetMobiusBSurface(P1Socc);
 
     // Draw.
-    interp->GetPlotter().REDRAW_SURFACE("P1S", cascade::GetOpenCascadeBSurface(P1S), Color_Red);
+    interp->GetPlotter().REDRAW_SURFACE("P1S", cascade::GetOpenCascadeBSurface(P1S), Color_Default);
   }
 
   // Build P2S.
@@ -2058,7 +2058,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
     P2S = cascade::GetMobiusBSurface(P2Socc);
 
     // Draw.
-    interp->GetPlotter().REDRAW_SURFACE("P2S", cascade::GetOpenCascadeBSurface(P2S), Color_Green);
+    interp->GetPlotter().REDRAW_SURFACE("P2S", cascade::GetOpenCascadeBSurface(P2S), Color_Default);
   }
 
   // Build P12S.
@@ -2086,7 +2086,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
     P12S = cascade::GetMobiusBSurface(P12Socc);
 
     // Draw.
-    interp->GetPlotter().REDRAW_SURFACE("P12S", cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
+    interp->GetPlotter().REDRAW_SURFACE("P12S", cascade::GetOpenCascadeBSurface(P12S), Color_Default);
   }
 
   enum PS
@@ -2147,9 +2147,9 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   const int qcommon = P1S->GetDegree_V();
 
   // Draw.
-  interp->GetPlotter().REDRAW_SURFACE("P1S",  cascade::GetOpenCascadeBSurface(P1S),  Color_Blue);
-  interp->GetPlotter().REDRAW_SURFACE("P2S",  cascade::GetOpenCascadeBSurface(P2S),  Color_Blue);
-  interp->GetPlotter().REDRAW_SURFACE("P12S", cascade::GetOpenCascadeBSurface(P12S), Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("P1S",  cascade::GetOpenCascadeBSurface(P1S),  Color_Default);
+  interp->GetPlotter().REDRAW_SURFACE("P2S",  cascade::GetOpenCascadeBSurface(P2S),  Color_Default);
+  interp->GetPlotter().REDRAW_SURFACE("P12S", cascade::GetOpenCascadeBSurface(P12S), Color_Default);
 
   // Now all patches are of the same degrees and defined on identical knot
   // vectors. It means that all patches are defined on the same basis. Therefore,
@@ -2181,7 +2181,7 @@ int MISC_TestCoons1(const Handle(asiTcl_Interp)& interp,
   t_ptr<t_bsurf>
     mobRes = new t_bsurf(resPoles, Ucommon, Vcommon, pcommon, qcommon);
   //
-  interp->GetPlotter().REDRAW_SURFACE("res-simple", cascade::GetOpenCascadeBSurface(mobRes), Color_Blue);
+  interp->GetPlotter().REDRAW_SURFACE("res-simple", cascade::GetOpenCascadeBSurface(mobRes), Color_Default);
 
   return TCL_OK;
 }

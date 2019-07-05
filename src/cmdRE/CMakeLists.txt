@@ -9,6 +9,7 @@ set (H_FILES
 )
 set (CPP_FILES
   cmdRE.cpp
+  cmdRE_Data.cpp
   cmdRE_Interaction.cpp
   cmdRE_Modeling.cpp
 )

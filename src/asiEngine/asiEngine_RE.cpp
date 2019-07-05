@@ -624,3 +624,163 @@ bool
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_RE::GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
+                                 Handle(asiData_RePatchNode)&      patchLeft,
+                                 Handle(asiData_RePatchNode)&      patchRight) const
+{
+  // Get referrers.
+  Handle(ActAPI_HParameterList) referrers = edge->GetReferrers();
+  //
+  if ( referrers.IsNull() || referrers->Length() == 0 )
+    return false; // No coedges connected to the passed edge (?!)
+
+  // Check referrers.
+  for ( ActAPI_HParameterList::Iterator rit(*referrers); rit.More(); rit.Next() )
+  {
+    Handle(ActData_ReferenceParameter) ref = ActParamTool::AsReference( rit.Value() );
+
+    // Get owning Node for the reference.
+    Handle(asiData_ReCoEdgeNode) coedge = Handle(asiData_ReCoEdgeNode)::DownCast( ref->GetNode() );
+    //
+    if ( coedge.IsNull() )
+      continue;
+
+    if ( coedge->IsSameSense() )
+      patchLeft = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+    else
+      patchRight = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
+                                  Handle(Geom_BSplineSurface)&       surf) const
+{
+  std::vector<Handle(Geom_BSplineCurve)> curves;
+
+  // Iterate over the coedges to collect curves for Coons interpolation. In
+  // this loop, all curves are collected taking into account the orientation
+  // flags stored in coedges, so that the 4-sided contour is properly oriented.
+  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    //
+    if ( coedge.IsNull() || !coedge->IsWellFormed() )
+      continue;
+
+    // Get referenced edge to access the geometry.
+    Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
+    //
+    if ( edge.IsNull() || !edge->IsWellFormed() )
+      continue;
+
+    // Get B-curve.
+    Handle(Geom_BSplineCurve)
+      bcurve = Handle(Geom_BSplineCurve)::DownCast( edge->GetCurve() );
+    //
+    if ( bcurve.IsNull() )
+      return false; // For each edge, there should be a B-curve ready.
+
+    // Collect curves taking into account the orientation of edges.
+    if ( coedge->IsSameSense() )
+      curves.push_back(bcurve);
+    else
+      curves.push_back( Handle(Geom_BSplineCurve)::DownCast( bcurve->Reversed() ) );
+  }
+
+  // Check if the patch is 4-cornered.
+  if ( curves.size() != 4 )
+    return false;
+
+  const double prec = Precision::Confusion();
+
+  // C0 is the first curve in the list (the 1-st edge).
+  Handle(Geom_BSplineCurve) c0, c1, b0, b1;
+  //
+  c0 = curves[0];
+
+  // P00, P10.
+  gp_Pnt p00 = c0->Value( c0->FirstParameter() );
+  gp_Pnt p10 = c0->Value( c0->LastParameter() );
+
+  // B1 is the curve next to C0 which touches C0 at its end point (P01).
+  size_t b1_idx = 0;
+  for ( size_t k = 1; k < 4; ++k )
+  {
+    gp_Pnt Pf = curves[k]->Value( curves[k]->FirstParameter() );
+    if ( Pf.Distance(p10) < prec )
+    {
+      b1     = curves[k];
+      b1_idx = k;
+      break;
+    }
+  }
+  //
+  if ( b1.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot find b1 curve.");
+    return false;
+  }
+
+  // P11.
+  gp_Pnt p11 = b1->Value( b1->LastParameter() );
+
+  // C1 is the curve touching B1 at its end point and reversed.
+  size_t c1_idx = 0;
+  for ( size_t k = 1; k < 4; ++k )
+  {
+    if ( k == b1_idx ) continue;
+
+    gp_Pnt Pf = curves[k]->Value( curves[k]->FirstParameter() );
+    if ( Pf.Distance(p11) < prec )
+    {
+      c1     = Handle(Geom_BSplineCurve)::DownCast( curves[k]->Reversed() );
+      c1_idx = k;
+      break;
+    }
+  }
+  //
+  if ( c1.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot find c1 curve.");
+    return false;
+  }
+
+  // P01.
+  gp_Pnt p01 = c1->Value( c1->FirstParameter() );
+
+  // Get b0.
+  for ( size_t k = 1; k < 4; ++k )
+  {
+    if ( k == b1_idx || k == c1_idx ) continue;
+
+    b0 = Handle(Geom_BSplineCurve)::DownCast( curves[k]->Reversed() );
+  }
+  //
+  if ( b0.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot find b0 curve.");
+    return false;
+  }
+
+  // Build Coons patch.
+  Handle(Geom_BSplineSurface) coonsSurf;
+  if ( !asiAlgo_Utils::FillCoons(c0, c1, b0, b1,
+                                 coonsSurf,
+                                 m_progress, m_plotter) )
+    return false;
+
+  // Set surface.
+  surf = coonsSurf;
+  patch->SetSurface(surf); // Store in the Data Model.
+
+  return true;
+}

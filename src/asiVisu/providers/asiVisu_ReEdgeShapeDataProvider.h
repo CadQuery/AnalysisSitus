@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 December 2018
+// Created on: 06 November 2018
 //-----------------------------------------------------------------------------
 // Copyright (c) 2018-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,62 +28,40 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef cmdRE_h
-#define cmdRE_h
+#ifndef asiVisu_ReEdgeShapeDataProvider_h
+#define asiVisu_ReEdgeShapeDataProvider_h
 
-#define cmdRE_NotUsed(x) x
+// asiVisu includes
+#include <asiVisu_ShapeDataProvider.h>
 
-#ifdef cmdRE_EXPORTS
-  #define cmdRE_EXPORT __declspec(dllexport)
-#else
-  #define cmdRE_EXPORT __declspec(dllimport)
-#endif
+// asiData includes
+#include <asiData_ReEdgeNode.h>
 
-//-----------------------------------------------------------------------------
-
-// asiTcl includes
-#include <asiTcl_Interp.h>
-
-// asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiUI includes
-#include <asiUI_CommonFacilities.h>
-
-//-----------------------------------------------------------------------------
-
-//! Reverse engineering commands.
-class cmdRE
+//! Data provider for contour shape.
+class asiVisu_ReEdgeShapeDataProvider : public asiVisu_ShapeDataProvider
 {
 public:
 
-  cmdRE_EXPORT static void
-    Factory(const Handle(asiTcl_Interp)&      interp,
-            const Handle(Standard_Transient)& data);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReEdgeShapeDataProvider, asiVisu_ShapeDataProvider)
 
 public:
 
-  cmdRE_EXPORT static void
-    Commands_Data(const Handle(asiTcl_Interp)&      interp,
-                  const Handle(Standard_Transient)& data);
-
-  cmdRE_EXPORT static void
-    Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
-                         const Handle(Standard_Transient)& data);
-
-  cmdRE_EXPORT static void
-    Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
-                      const Handle(Standard_Transient)& data);
+  //! Ctor.
+  //! \param[in] N Edge Node to access the geometric data from.
+  asiVisu_EXPORT
+    asiVisu_ReEdgeShapeDataProvider(const Handle(asiData_ReEdgeNode)& N);
 
 public:
 
-  cmdRE_EXPORT static void
-    ClearViewers(const bool repaint = true);
+  //! Returns the BREP shape to be visualized.
+  //! \return BREP shape being a container for the parametric curve.
+  asiVisu_EXPORT virtual TopoDS_Shape
+    GetShape() const;
 
-public:
+protected:
 
-  static Handle(asiEngine_Model)        model; //!< Data Model instance.
-  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
+  Handle(asiData_ReEdgeNode) m_node; //!< Edge Node.
 
 };
 

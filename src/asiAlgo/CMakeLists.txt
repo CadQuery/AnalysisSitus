@@ -350,11 +350,13 @@ set (points_CPP_FILES
 set (re_H_FILES
   re/asiAlgo_BuildCoonsSurf.h
   re/asiAlgo_InterpolateSurfMesh.h
+  re/asiAlgo_PatchJointAdaptor.h
   re/asiAlgo_PlateOnEdges.h
 )
 set (re_CPP_FILES
   re/asiAlgo_BuildCoonsSurf.cpp
   re/asiAlgo_InterpolateSurfMesh.cpp
+  re/asiAlgo_PatchJointAdaptor.cpp
   re/asiAlgo_PlateOnEdges.cpp
 )
 

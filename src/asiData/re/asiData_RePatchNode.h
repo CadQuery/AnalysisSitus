@@ -37,6 +37,9 @@
 // Active Data includes
 #include <ActData_BaseNode.h>
 
+// OCCT includes
+#include <Geom_Surface.hxx>
+
 //! Data Node representing topological patch for reverse engineering.
 class asiData_RePatchNode : public ActData_BaseNode
 {
@@ -54,9 +57,8 @@ public:
   enum ParamId
   {
   //------------------//
-  // Common           //
-  //------------------//
     PID_Name,         //!< Name of the Node.
+    PID_Geometry,     //!< Stored geometry.
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -80,6 +82,14 @@ public:
 
   asiData_EXPORT void
     Init();
+
+public:
+
+  asiData_EXPORT Handle(Geom_Surface)
+    GetSurface() const;
+
+  asiData_EXPORT void
+    SetSurface(const Handle(Geom_Surface)& surface);
 
 protected:
 

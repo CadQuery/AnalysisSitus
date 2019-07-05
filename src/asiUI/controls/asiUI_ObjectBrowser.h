@@ -73,6 +73,11 @@ public:
 
 public:
 
+  //! Sets imperative plotter.
+  //! \param[in] plotter plotter to set.
+  void
+    SetPlotter(ActAPI_PlotterEntry plotter);
+
   //! Adds a viewer to be connected with the object browser to enable typical
   //! visualization commands such as "show", "hide", "show only".
   //! \param[in] pViewer viewer to associate.
@@ -154,6 +159,8 @@ protected slots:
   void onComputeElementalNorms ();
   void onConvertToTris         ();
   void onConvertToTess         ();
+  //
+  void onOptimizeForG1         ();
 
 protected:
 
@@ -173,6 +180,7 @@ protected:
   Handle(asiUI_IParamEditor) m_paramEditor; //!< Associated parameter editor.
   std::vector<asiUI_Viewer*> m_viewers;     //!< Associated viewers.
   ActAPI_ProgressEntry       m_progress;    //!< Progress notifier.
+  ActAPI_PlotterEntry        m_plotter;     //!< Imperative plotter.
 
 };
 

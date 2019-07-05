@@ -561,6 +561,24 @@ namespace asiAlgo_Utils
     Fill4Contour(const std::vector<Handle(Geom_BSplineCurve)>& curves,
                  Handle(Geom_BSplineSurface)&                  result);
 
+  //! Fills the passed contour with a Coons surface.
+  //! \param[in]  C0       curve c0.
+  //! \param[in]  C1       curve c1.
+  //! \param[in]  B0       curve b0.
+  //! \param[in]  B1       curve b1.
+  //! \param[out] result   resulting patch as B-surface.
+  //! \param[in]  progress progress entry.
+  //! \param[in]  plotter  imperative plotter.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    FillCoons(const Handle(Geom_BSplineCurve)& C0,
+              const Handle(Geom_BSplineCurve)& C1,
+              const Handle(Geom_BSplineCurve)& B0,
+              const Handle(Geom_BSplineCurve)& B1,
+              Handle(Geom_BSplineSurface)&     result,
+              ActAPI_ProgressEntry             progress,
+              ActAPI_PlotterEntry              plotter);
+
   //! Fills the passed contour with a parametric surface using the Plate
   //! algorithm of OpenCascade to produce a class A surface.
   //! \param[in]  curves curves defining the contour to fill.

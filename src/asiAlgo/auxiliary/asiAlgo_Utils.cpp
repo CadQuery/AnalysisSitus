@@ -35,14 +35,20 @@
 #include <windows.h>
 
 // asiAlgo includes
+#include <asiAlgo_BuildCoonsSurf.h>
 #include <asiAlgo_ClassifyPointFace.h>
 #include <asiAlgo_Timer.h>
 
 #if defined USE_MOBIUS
+  #include <mobius/bspl_UnifyKnots.h>
   #include <mobius/cascade.h>
   #include <mobius/cascade_Triangulation.h>
+  #include <mobius/geom_CoonsSurfaceLinear.h>
+  #include <mobius/geom_SkinSurface.h>
   #include <mobius/poly_ReadPLY.h>
   #include <mobius/poly_ReadSTL.h>
+
+  using namespace mobius;
 #endif
 
 // OCCT includes
@@ -139,6 +145,63 @@
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef USE_MOBIUS
+
+void asiAlgo_Utils_DrawSurfPts(const t_ptr<geom_Surface>&     surface,
+                               const TCollection_AsciiString& name,
+                               ActAPI_PlotterEntry            plotter)
+{
+  // Sample patch.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  const double uMin = surface->GetMinParameter_U();
+  const double uMax = surface->GetMaxParameter_U();
+  const double vMin = surface->GetMinParameter_V();
+  const double vMax = surface->GetMaxParameter_V();
+  //
+  const double deltaU = (uMax - uMin)/100.;
+  const double deltaV = (vMax - vMin)/100.;
+  //
+  double u = uMin;
+  //
+  bool stopU = false;
+  do
+  {
+    if ( u > uMax )
+      stopU = true;
+    else
+    {
+      double v = vMin;
+      //
+      bool stopV = false;
+      do
+      {
+        if ( v > vMax )
+          stopV = true;
+        else
+        {
+          t_xyz P;
+          surface->Eval(u, v, P);
+
+          pts->AddElement( P.X(), P.Y(), P.Z() );
+
+          v += deltaV;
+        }
+      }
+      while ( !stopV );
+
+      u += deltaU;
+    }
+  }
+  while ( !stopU );
+  //
+  plotter.REDRAW_POINTS(name, pts->GetCoordsArray(), Color_White);
+}
+
 #endif
 
 //-----------------------------------------------------------------------------
@@ -1041,17 +1104,17 @@ bool asiAlgo_Utils::ReadStl(const TCollection_AsciiString& filename,
   progress.SendLogMessage(LogInfo(Normal) << "Use Mobius STL reader.");
 
   // Prepare reader.
-  mobius::poly_ReadSTL reader;
+  poly_ReadSTL reader;
 
   // Read STL.
   if ( !reader.Perform( filename.ToCString() ) )
     return false;
 
   // Get the constructed mesh.
-  const mobius::t_ptr<mobius::poly_Mesh>& mesh = reader.GetResult();
+  const t_ptr<poly_Mesh>& mesh = reader.GetResult();
 
   // Convert to OpenCascade's mesh.
-  mobius::cascade_Triangulation converter(mesh);
+  cascade_Triangulation converter(mesh);
   converter.DirectConvert();
   //
   triangulation = converter.GetOpenCascadeTriangulation();
@@ -1077,14 +1140,14 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
   progress.SendLogMessage(LogInfo(Normal) << "Use Mobius PLY reader.");
 
   // Prepare reader.
-  mobius::poly_ReadPLY reader;
+  poly_ReadPLY reader;
 
   // Read PLY.
   if ( !reader.Perform( filename.ToCString() ) )
     return false;
 
   // Get the constructed mesh.
-  const mobius::t_ptr<mobius::poly_Mesh>& mobMesh = reader.GetResult();
+  const t_ptr<poly_Mesh>& mobMesh = reader.GetResult();
 
   // ...
   // Convert to Active Data mesh.
@@ -1093,12 +1156,12 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
   mesh = new ActData_Mesh;
 
   // Add mesh nodes.
-  for ( mobius::poly_Mesh::VertexIterator vit(mobMesh); vit.More(); vit.Next() )
+  for ( poly_Mesh::VertexIterator vit(mobMesh); vit.More(); vit.Next() )
   {
-    const mobius::poly_VertexHandle vh = vit.Current();
+    const poly_VertexHandle vh = vit.Current();
 
     // Get vertex.
-    mobius::poly_Vertex mobVertex;
+    poly_Vertex mobVertex;
     if ( !mobMesh->GetVertex(vh, mobVertex) )
       continue;
 
@@ -1107,17 +1170,17 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
   }
 
   // Add triangles.
-  for ( mobius::poly_Mesh::TriangleIterator tit(mobMesh); tit.More(); tit.Next() )
+  for ( poly_Mesh::TriangleIterator tit(mobMesh); tit.More(); tit.Next() )
   {
-    const mobius::poly_TriangleHandle th = tit.Current();
+    const poly_TriangleHandle th = tit.Current();
 
     // Get triangle.
-    mobius::poly_Triangle mobTriangle;
+    poly_Triangle mobTriangle;
     if ( !mobMesh->GetTriangle(th, mobTriangle) )
       continue;
 
     // Get node indices.
-    mobius::poly_VertexHandle vh[3];
+    poly_VertexHandle vh[3];
     mobTriangle.GetVertices(vh[0], vh[1], vh[2]);
 
     // Add triangle to Active Data structure.
@@ -1125,17 +1188,17 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
   }
 
   // Add quads.
-  for ( mobius::poly_Mesh::QuadIterator qit(mobMesh); qit.More(); qit.Next() )
+  for ( poly_Mesh::QuadIterator qit(mobMesh); qit.More(); qit.Next() )
   {
-    const mobius::poly_QuadHandle qh = qit.Current();
+    const poly_QuadHandle qh = qit.Current();
 
     // Get quad.
-    mobius::poly_Quad mobQuad;
+    poly_Quad mobQuad;
     if ( !mobMesh->GetQuad(qh, mobQuad) )
       continue;
 
     // Get node indices.
-    mobius::poly_VertexHandle vh[4];
+    poly_VertexHandle vh[4];
     mobQuad.GetVertices(vh[0], vh[1], vh[2], vh[3]);
 
     // Add quad to Active Data structure.
@@ -1655,6 +1718,25 @@ bool asiAlgo_Utils::Fill4Contour(const std::vector<Handle(Geom_BSplineCurve)>& c
   filling.Init(b1, b2, b3, b4);
   //
   result = filling.Surface();
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::FillCoons(const Handle(Geom_BSplineCurve)& C0,
+                              const Handle(Geom_BSplineCurve)& C1,
+                              const Handle(Geom_BSplineCurve)& B0,
+                              const Handle(Geom_BSplineCurve)& B1,
+                              Handle(Geom_BSplineSurface)&     result,
+                              ActAPI_ProgressEntry             progress,
+                              ActAPI_PlotterEntry              plotter)
+{
+  asiAlgo_BuildCoonsSurf buildCoons(C0, C1, B0, B1, progress, plotter);
+  //
+  if ( !buildCoons.Perform() )
+    return false;
+
+  result = buildCoons.GetResult();
   return true;
 }
 
@@ -2668,8 +2750,8 @@ bool asiAlgo_Utils::CalculateBendingEnergy(const Handle(Geom_Surface)& surface,
     occtSurf = Handle(Geom_BSplineSurface)::DownCast(surface);
 
   // Convert to Mobius.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobSurf = mobius::cascade::GetMobiusBSurface(occtSurf);
+  t_ptr<t_bsurf>
+    mobSurf = cascade::GetMobiusBSurface(occtSurf);
 
   // Evaluate bending energy.
   result = mobSurf->ComputeBendingEnergy();
@@ -3082,15 +3164,15 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
   const int degree = curve1->Degree();
 
   // Convert curve 1 to Mobius form.
-  const mobius::t_ptr<mobius::t_bcurve>&
-    mobCurve1 = mobius::cascade::GetMobiusBCurve(curve1);
+  const t_ptr<t_bcurve>&
+    mobCurve1 = cascade::GetMobiusBCurve(curve1);
 
   // Convert curve 2 to Mobius form.
-  const mobius::t_ptr<mobius::t_bcurve>&
-    mobCurve2 = mobius::cascade::GetMobiusBCurve(curve2);
+  const t_ptr<t_bcurve>&
+    mobCurve2 = cascade::GetMobiusBCurve(curve2);
 
   // Get common vector of poles.
-  std::vector<mobius::t_xyz> poles;
+  std::vector<t_xyz> poles;
   //
   for ( int k = 0; k < mobCurve1->GetNumOfPoles(); ++k )
     poles.push_back( mobCurve1->GetPole(k) );
@@ -3114,11 +3196,11 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
     // TODO: perform knot removal here...
   }
 
-  mobius::t_ptr<mobius::t_bcurve>
-    mobResult = new mobius::t_bcurve(poles, U, degree);
+  t_ptr<t_bcurve>
+    mobResult = new t_bcurve(poles, U, degree);
 
   // Convert result to OpenCascade form.
-  result = mobius::cascade::GetOpenCascadeBCurve(mobResult);
+  result = cascade::GetOpenCascadeBCurve(mobResult);
 
   return true;
 #else

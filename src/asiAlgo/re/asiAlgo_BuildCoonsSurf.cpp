@@ -78,6 +78,12 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   t_ptr<t_bcurve> b0 = cascade::GetMobiusBCurve(m_b0);
   t_ptr<t_bcurve> b1 = cascade::GetMobiusBCurve(m_b1);
 
+  // Draw.
+  m_plotter.REDRAW_CURVE("c0", m_c0, Color_Red);
+  m_plotter.REDRAW_CURVE("c1", m_c1, Color_Red);
+  m_plotter.REDRAW_CURVE("b0", m_b0, Color_Blue);
+  m_plotter.REDRAW_CURVE("b1", m_b1, Color_Blue);
+
   // Make `c` curves compatible.
   {
     geom_UnifyBCurves unifyCurves(NULL, NULL);
@@ -119,6 +125,12 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   t_xyz p10 = c0->D0( c0->GetMaxParameter() );
   t_xyz p01 = c1->D0( c1->GetMinParameter() );
   t_xyz p11 = c1->D0( c1->GetMaxParameter() );
+
+  // Draw.
+  m_plotter.REDRAW_POINT("p00", cascade::GetOpenCascadePnt(p00), Color_Yellow);
+  m_plotter.REDRAW_POINT("p01", cascade::GetOpenCascadePnt(p10), Color_Yellow);
+  m_plotter.REDRAW_POINT("p10", cascade::GetOpenCascadePnt(p01), Color_Yellow);
+  m_plotter.REDRAW_POINT("p11", cascade::GetOpenCascadePnt(p11), Color_Yellow);
 
   /* =================================
    *  Build components of Boolean sum
@@ -262,6 +274,11 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
   // Insert V knots to P12S.
   for ( size_t ii = 0; ii < V_addendums[PS_P12S].size(); ++ii )
     P12S->InsertKnot_V(V_addendums[PS_P12S][ii]);
+
+  // Draw.
+  m_plotter.REDRAW_SURFACE("P1S",  cascade::GetOpenCascadeBSurface(P1S),  Color_Default);
+  m_plotter.REDRAW_SURFACE("P2S",  cascade::GetOpenCascadeBSurface(P2S),  Color_Default);
+  m_plotter.REDRAW_SURFACE("P12S", cascade::GetOpenCascadeBSurface(P12S), Color_Default);
 
   // Common knots.
   const std::vector<double>& Ucommon = P1S->GetKnots_U();

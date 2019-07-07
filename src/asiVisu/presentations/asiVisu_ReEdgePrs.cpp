@@ -113,14 +113,14 @@ asiVisu_ReEdgePrs::asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N)
   this->GetPipeline(Pipeline_CurvePoles)->Actor()->SetVisibility(0);
   this->GetPipeline(Pipeline_CurveKnots)->Actor()->SetVisibility(0);
 
-  // Make edge be visualized always on top of the scene.
-  curve_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
-  curve_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
-  curve_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
-  //
-  polyline_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
-  polyline_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
-  polyline_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+  //// Make edge be visualized always on top of the scene.
+  //curve_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
+  //curve_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
+  //curve_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
+  ////
+  //polyline_pl->Mapper()->SetRelativeCoincidentTopologyLineOffsetParameters(0,-66000);
+  //polyline_pl->Mapper()->SetRelativeCoincidentTopologyPolygonOffsetParameters(0,-66000);
+  //polyline_pl->Mapper()->SetRelativeCoincidentTopologyPointOffsetParameter(-66000);
 }
 
 //-----------------------------------------------------------------------------

@@ -42,6 +42,13 @@
 #include <Poly_CoherentTriangle.hxx>
 #include <Poly_CoherentTriangulation.hxx>
 
+#if defined USE_MOBIUS
+  #include <mobius/cascade.h>
+  #include <mobius/geom_BSplineSurface.h>
+
+  using namespace mobius;
+#endif
+
 #define DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
@@ -794,8 +801,56 @@ bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
                                  m_progress, m_plotter) )
     return false;
 
+  // Convert to Mobius.
+  t_ptr<t_bsurf> mobSurf = cascade::GetMobiusBSurface(coonsSurf);
+
+  // Get min number of intermediate knots in each direction.
+  const int numInterKnotsRequired = patch->GetMinNumKnots();
+  const int numInterKnotsU        = mobSurf->GetNumOfInteriorKnots_U();
+  const int numInterKnotsV        = mobSurf->GetNumOfInteriorKnots_V();
+
+  // Add additional knots in U direction.
+  if ( !numInterKnotsU )
+  {
+    const double firstKnot = mobSurf->GetMinParameter_U();
+    const double lastKnot  = mobSurf->GetMaxParameter_U();
+    const double delta     = (lastKnot - firstKnot) / (numInterKnotsRequired + 1);
+
+    // Insert knots.
+    for ( int i = 1; i <= numInterKnotsRequired; ++i )
+    {
+      const double u = firstKnot + i*delta;
+      if ( !mobSurf->InsertKnot_U(u, 1) )
+      {
+        m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in U direction."
+                                                 << u);
+        return false;
+      }
+    }
+  }
+
+  // Add additional knots in V direction.
+  if ( !numInterKnotsV )
+  {
+    const double firstKnot = mobSurf->GetMinParameter_V();
+    const double lastKnot  = mobSurf->GetMaxParameter_V();
+    const double delta     = (lastKnot - firstKnot) / (numInterKnotsRequired + 1);
+
+    // Insert knots.
+    for ( int i = 1; i <= numInterKnotsRequired; ++i )
+    {
+      const double v = firstKnot + i*delta;
+      if ( !mobSurf->InsertKnot_V(v, 1) )
+      {
+        m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in V direction."
+                                                 << v);
+        return false;
+      }
+    }
+  }
+
   // Set surface.
-  surf = coonsSurf;
+  surf = cascade::GetOpenCascadeBSurface(mobSurf);
   patch->SetSurface(surf); // Store in the Data Model.
 
   return true;

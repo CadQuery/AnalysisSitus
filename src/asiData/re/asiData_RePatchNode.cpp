@@ -46,7 +46,9 @@
 asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,  PID_Name);
+  REGISTER_PARAMETER(Group, PID_GeometryGroup);
   REGISTER_PARAMETER(Shape, PID_Geometry);
+  REGISTER_PARAMETER(Int,   PID_MinNumKnots);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct
@@ -60,11 +62,14 @@ Handle(ActAPI_INode) asiData_RePatchNode::Instance()
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_RePatchNode::Init()
 {
-  // Initialize name Parameter
-  this->InitParameter(PID_Name, "Name");
-
   // Set default values.
   this->SetSurface(NULL);
+  this->SetMinNumKnots(2);
+
+  // Initialize Parameters.
+  this->InitParameter(PID_Name,          "Name");
+  this->InitParameter(PID_GeometryGroup, "Geometry",                "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_MinNumKnots,   "Min. intermediate knots", "", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -110,4 +115,17 @@ void asiData_RePatchNode::SetSurface(const Handle(Geom_Surface)& surface)
 
   // Store surface.
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(F);
+}
+
+//! \return stored min number of intermediate knots.
+int asiData_RePatchNode::GetMinNumKnots() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_MinNumKnots) )->GetValue();
+}
+
+//! Sets min number of intermediate knots to use.
+//! \param[in] numKnots number to store.
+void asiData_RePatchNode::SetMinNumKnots(const int numKnots)
+{
+  ActParamTool::AsInt( this->Parameter(PID_MinNumKnots) )->SetValue(numKnots);
 }

@@ -56,10 +56,15 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-    PID_Geometry,     //!< Stored geometry.
-  //------------------//
+  //-------------------//
+    PID_Name,          //!< Name of the Node.
+  //-------------------//
+  // Geometry          //
+  //-------------------//
+    PID_GeometryGroup, //!< Group of geometric props.
+    PID_Geometry,      //!< Stored geometry.
+    PID_MinNumKnots,   //!< Min number of intermediate knots.
+  //-------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -90,6 +95,12 @@ public:
 
   asiData_EXPORT void
     SetSurface(const Handle(Geom_Surface)& surface);
+
+  asiData_EXPORT int
+    GetMinNumKnots() const;
+
+  asiData_EXPORT void
+    SetMinNumKnots(const int numKnots);
 
 protected:
 

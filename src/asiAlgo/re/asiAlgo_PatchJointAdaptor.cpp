@@ -140,7 +140,7 @@ bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve
     return false;
   }
 
-  const double tol3d = core_Precision::Resolution3D();
+  const double tol3d = core_Precision::Resolution3D()*10;
 
   // Check if the poles are coincident with the prescribed precision.
   for ( int i = 0; i < mbIsoLeft->GetNumOfPoles(); ++i )
@@ -153,9 +153,9 @@ bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve
     //
     if ( dist > tol3d )
     {
-      m_progress.SendLogMessage(LogWarn(Normal) << "Distance between poles with indices %1 "
+      m_progress.SendLogMessage(LogWarn(Normal) << "Distance %1 between poles with indices %2 "
                                                    "is greater than confusion tolerance."
-                                                << i);
+                                                << dist << i);
 
       m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(P_left),  Color_Red, "P_left");
       m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(P_right), Color_Red, "P_right");

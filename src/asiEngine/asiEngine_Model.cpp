@@ -35,6 +35,7 @@
 #include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 #include <asiEngine_Tessellation.h>
 #include <asiEngine_TolerantShapes.h>
 #include <asiEngine_Triangulation.h>
@@ -168,6 +169,9 @@ void asiEngine_Model::Clear()
 
     // Delete all Nodes serving imperative visualization
     asiEngine_IV(this).Clean_All();
+
+    // Delete all topology-defining Nodes for reverse engineering.
+    asiEngine_RE(this).Clean_All();
 
     // Let sub-classes do some job
     this->clearCustom();

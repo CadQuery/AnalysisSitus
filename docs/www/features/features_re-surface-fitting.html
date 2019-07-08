@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Analysis Situs: surface fitting for reverse engineering</title>
+  <link rel="shortcut icon" type="image/png" href="../imgs/favicon.png"/>
+  <link rel="stylesheet" type="text/css" href="../css/situ-main-style.css">
+
+  <!-- [begin] Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112292727-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-112292727-2');
+  </script>
+  <!-- [end] Google Analytics -->
+
+ </head>
+<body>
+
+<table width="100%"><tr><td>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td align="left" class="header">
+    <span class="header-logo"><a href="../index.html" class="header-href">Analysis&nbsp;Situs</a></span>
+    &nbsp;
+    ./<a class="header-href" href="../features.html">features</a>/surface fitting
+  </td>
+</tr>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+  <td class="header-menu"><a href='http://quaoar.su/blog/page/analysis-situs'>Download</a></td>
+  <td class="header-menu"><a href="../features.html">Features</a></td>
+  <td class="header-menu"><a href="https://gitlab.com/ssv/AnalysisSitus">Source code</a></td>
+  <td class="header-menu"><a href="../terminology.html">Terminology</a></td>
+  <td class="header-menu"><a href="../references.html">References</a></td>
+</tr>
+</table>
+</td></tr></table>
+
+<h1>Surface fitting</h1>
+
+<h2>Overview</h2>
+
+<p>
+Surface fitting is an essential part of reverse engineering. Many approaches to surface approximation from a point cloud were presented in the literature. The simplest method consists of solving the least-squares problem, starting from a base surface with all properties such as U and V degrees and knot vectors predefined. If the only remaining variables are the coordinates of the control points, the least-squares approximation reduces to a linear problem solved by Gauss elimination. At the same time, the pure least-squares formulation is impractical due to the following main obstacles:
+</p>
+
+<p>
+<ol>
+<li>It remains unclear how to select knot vectors of the base surface. While obviously knot insertion makes the surface more flexible, too many knots yield a highly complicated geometry which is slow to compute and tricky to handle later on. At the same time, the insufficient number of knots often leaves the surface too "rigid," so that it cannot be bent to follow the target point cloud accurately.</li><br/>
+<li>There is an inherent flaw in the least-squares formulation of the approximation problem with the use of B-spline basis functions. Informally speaking, to obtain a meaningful result, you should have good coverage of your base surface with the data points. If not, there remain spans where all spline functions vanish, and the matrix of the corresponding linear system becomes almost or entirely singular. The singularity of the matrix (i.e., equality to zero of its determinant) allows vast numbers as the solution. Putting back those numbers as the coordinates of control poles of the resulting surface yields a highly oscillatory result which is mathematically correct but useless in geometric modeling.</li><br/>
+<li>Inherently, the least-squares formulation pays no attention to the smoothness of the result. Though rigid surfaces such as Bezier are most of the time aesthetically pleasing, switching to a B-spline basis with more and more poles tends to bring a less smooth outcome. The result becomes worse if the input data contains inaccuracies due to noise.</li>
+</ol>
+</p>
+
+<p>The problems outlined above are partially solved by switching to a more sophisticated functional which aggregates a smoothing term with the least-squares one <a href="..\references.html#weiss-2002">[Weiss, 2002]</a>. The additional smoothing term constraints all the control points of the surface. As a result, the matrix becomes regular, and the 2nd problem does not occur. Minimization of the approximate bending energy smooths out the undesired oscillations and yields a more aesthetically pleasing form (3rd problem). Still, the remaining question is how to choose the B-spline basis functions so that the surface is flexible enough while not overcomplicated. The attempts to solve the latter problem of unknown knots distribution led to the adoption of sequential fitting approaches. Such methods employ several fitting attempts followed by the local control of surface deviation. In the areas where the approximation error exceeds the prescribed tolerance, additional knots are inserted, thus making the base surface more flexible in the problematic zones.
+</p>
+
+<h2>Curve network fitting</h2>
+
+<p>
+The problem of the surface fitting is of high inherent complexity. At the same time, there are well-proven approaches which simplify the reverse engineering task by specific preparation of input. The following two requirements are especially practical for the reconstruction of organic shapes:
+</p>
+
+<p>
+<ol>
+<li>The input mesh should be topologized before fitting.</li>
+<li>The surfaces to reconstruct should be kept in their natural boundaries.</li>
+</ol>
+</p>
+
+<p>
+Topologizing the initial mesh serves the purpose of segmentation, which is the critical step of reconstruction. The properly segmented model allows for gentle and precise surface fitting while weak topology makes the quality reengineering too hard if not unfeasible. The second requirement of keeping the surface patches in their natural boundaries let us escape from using the trimmed surfaces, which are tricky to join smoothly. This second requirement affects the way how the topology structure is immersed in the mesh. Necessarily, the pure rectangular network may not express a huge variety of mechanical features whose boundaries are never chosen freely but express the designer's intent. Even so, curve networks are often used in practice. This approach, if automated, requires little user attention and the obtained result is often good enough to unlock the downstream engineering processes (such as FEA, data exchange, direct editing, etc.).
+</p>
+<p>
+The rectangular structure of the curve network is beneficial when selecting the base surfaces for fitting. Each cell of the network allows filling with a Coons patch which in its turn has a precise B-surface representation. Coons patches are often adequate for a valid surface parameterization, especially if the target surface is not so much curved. At the next stage, the base surfaces need to be deformed so that to follow the corresponding region of mesh.
+</p>
+
+</body>
+</html>

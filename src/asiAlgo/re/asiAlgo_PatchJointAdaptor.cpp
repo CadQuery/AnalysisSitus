@@ -64,13 +64,23 @@ bool asiAlgo_PatchJointAdaptor::ExtractIsos(Handle(Geom_BSplineCurve)& isoLeft,
                                             bool&                      isoLeftMin,
                                             Handle(Geom_BSplineCurve)& isoRight,
                                             bool&                      isoRightU,
-                                            bool&                      isoRightMin) const
+                                            bool&                      isoRightMin,
+                                            bool&                      areOpposite) const
 {
   if ( !this->getIso(m_surfLeft, isoLeft, isoLeftU, isoLeftMin) )
     return false;
 
   if ( !this->getIso(m_surfRight, isoRight, isoRightU, isoRightMin) )
     return false;
+
+  // Check if the isos are opposite.
+  gp_Pnt isoLeftOrigin  = isoLeft->Value  ( isoLeft->FirstParameter() );
+  gp_Pnt isoRightOrigin = isoRight->Value ( isoRight->FirstParameter() );
+  //
+  if ( isoLeftOrigin.Distance(isoRightOrigin) < Precision::Confusion() )
+    areOpposite = false;
+  else
+    areOpposite = true;
 
   return true;
 }
@@ -127,7 +137,8 @@ bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& i
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve)& isoLeft,
-                                                  const Handle(Geom_BSplineCurve)& isoRight) const
+                                                  const Handle(Geom_BSplineCurve)& isoRight,
+                                                  const bool                       areOpposite) const
 {
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
@@ -142,11 +153,14 @@ bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve
 
   const double tol3d = core_Precision::Resolution3D()*10;
 
+  // Common number of poles can be taken from any curve.
+  const int numPoles = mbIsoLeft->GetNumOfPoles();
+
   // Check if the poles are coincident with the prescribed precision.
-  for ( int i = 0; i < mbIsoLeft->GetNumOfPoles(); ++i )
+  for ( int i = 0; i < numPoles; ++i )
   {
     const t_xyz& P_left  = mbIsoLeft->GetPole(i);
-    const t_xyz& P_right = mbIsoRight->GetPole(i);
+    const t_xyz& P_right = mbIsoRight->GetPole(areOpposite ? numPoles - 1 - i : i);
 
     // Check distance.
     const double dist = (P_left - P_right).Modulus();
@@ -174,10 +188,11 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
                                                   const bool                       isoLeftMin,
                                                   const Handle(Geom_BSplineCurve)& isoRight,
                                                   const bool                       isoRightU,
-                                                  const bool                       isoRightMin)
+                                                  const bool                       isoRightMin,
+                                                  const bool                       areOpposite)
 {
   // Contract check.
-  if ( !this->IsJointCompatible(isoLeft, isoRight) )
+  if ( !this->IsJointCompatible(isoLeft, isoRight, areOpposite) )
     return false;
 
   // Convert curves to Mobius structures.
@@ -211,13 +226,13 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
 
     // Get row or column of poles from the right surface.
     if ( isoRightU && isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(1, k);
+      pPoleRight = &mbSurfRight->ChangePole(1, areOpposite ? numPoles - 1 - k : k);
     else if ( isoRightU && !isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(mbSurfRight->GetNumOfPoles_U() - 2, k);
+      pPoleRight = &mbSurfRight->ChangePole(mbSurfRight->GetNumOfPoles_U() - 2, areOpposite ? numPoles - 1 - k : k);
     else if ( !isoRightU && isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(k, 1);
+      pPoleRight = &mbSurfRight->ChangePole(areOpposite ? numPoles - 1 - k : k, 1);
     else
-      pPoleRight = &mbSurfRight->ChangePole(k, mbSurfRight->GetNumOfPoles_V() - 2);
+      pPoleRight = &mbSurfRight->ChangePole(areOpposite ? numPoles - 1 - k : k, mbSurfRight->GetNumOfPoles_V() - 2);
 
     polesLeft.push_back(pPoleLeft);
     polesRight.push_back(pPoleRight);

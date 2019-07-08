@@ -817,17 +817,21 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
   asiAlgo_PatchJointAdaptor jointAdaptor(jointCurve, surfLeft, surfRight, m_progress, m_plotter);
 
   // Extract isoparametric lines.
+  bool                      opposite;
   bool                      isoLeftU,   isoRightU;
   bool                      isoLeftMin, isoRightMin;
   Handle(Geom_BSplineCurve) isoLeft,    isoRight;
   //
   if ( !jointAdaptor.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
-                                 isoRight, isoRightU, isoRightMin) )
+                                 isoRight, isoRightU, isoRightMin,
+                                 opposite) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot extract isoparametric lines "
                                                 "for the neighbor patches.");
     return;
   }
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "Isos extracted. Opposite: %1." << opposite);
 
   // Graphical dump.
   m_plotter.REDRAW_SURFACE("surfLeft",  surfLeft,  Color_Default);
@@ -838,7 +842,8 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
 
   // Check if the joint is compatible.
   if ( !jointAdaptor.AlignControlPoles(isoLeft, isoLeftU, isoLeftMin,
-                                       isoRight, isoRightU, isoRightMin) )
+                                       isoRight, isoRightU, isoRightMin,
+                                       opposite) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot align control points.");
     return;

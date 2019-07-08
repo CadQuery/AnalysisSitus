@@ -125,6 +125,12 @@ public:
 
 public:
 
+  //! Cleans up the topological information associated with mesh.
+  asiEngine_EXPORT void
+    Clean_All();
+
+public:
+
   //! Collects all points constituting the discrete boundary of the Patch Node.
   //! \param[in]  patch Patch Node in question.
   //! \param[out] pts   collected points.

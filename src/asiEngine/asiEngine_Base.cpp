@@ -73,6 +73,9 @@ Handle(ActAPI_HNodeList) asiEngine_Base::FindPresentableNodes()
 
 void asiEngine_Base::_cleanChildren(const Handle(ActAPI_INode)& parent)
 {
+  if ( parent.IsNull() )
+    return;
+
   Handle(ActAPI_HNodeList) nodesToDelete = new ActAPI_HNodeList;
 
   // Loop over direct children of a Surfaces Node

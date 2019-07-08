@@ -342,6 +342,13 @@ Handle(asiData_ReVertexNode)
 
 //-----------------------------------------------------------------------------
 
+void asiEngine_RE::Clean_All()
+{
+  this->_cleanChildren( m_model->GetTriangulationNode() );
+}
+
+//-----------------------------------------------------------------------------
+
 void asiEngine_RE::CollectBoundaryPoints(const Handle(asiData_RePatchNode)& patch,
                                          std::vector<gp_XYZ>&               pts) const
 {

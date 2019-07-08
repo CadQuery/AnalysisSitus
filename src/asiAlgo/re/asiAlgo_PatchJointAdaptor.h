@@ -78,6 +78,8 @@ public:
   //! \param[out] isoRightU   indicates if the returned right isoline is U-iso.
   //! \param[out] isoRightMin indicates if the right isoline corresponds to
   //!                         min parametric value.
+  //! \param[out] areOpposite indicates whether the extracted isos are opposite
+  //!                         to each other.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     ExtractIsos(Handle(Geom_BSplineCurve)& isoLeft,
@@ -85,7 +87,8 @@ public:
                 bool&                      isoLeftMin,
                 Handle(Geom_BSplineCurve)& isoRight,
                 bool&                      isoRightU,
-                bool&                      isoRightMin) const;
+                bool&                      isoRightMin,
+                bool&                      areOpposite) const;
 
   //! Makes the surfaces compatible along their joint curve by knot insertion.
   //! \param[in] isoLeft   isoparametric curve of the left surface.
@@ -102,12 +105,15 @@ public:
   //! Checks if the coincident border between the surface patches is
   //! well prepared for smoothing. This method checks that the corner poles
   //! are coincident.
-  //! \param[in] isoLeft  isoparametric curve of the left surface.
-  //! \param[in] isoRight isoparametric curve of the right surface.
+  //! \param[in] isoLeft     isoparametric curve of the left surface.
+  //! \param[in] isoRight    isoparametric curve of the right surface.
+  //! \param[in] areOpposite indicates whether the passed isos have opposite
+  //!                        directions.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     IsJointCompatible(const Handle(Geom_BSplineCurve)& isoLeft,
-                      const Handle(Geom_BSplineCurve)& isoRight) const;
+                      const Handle(Geom_BSplineCurve)& isoRight,
+                      const bool                       areOpposite) const;
 
   //! Aligns control points of the left and right surface patches so that to
   //! ensure C1 continuity (i.e., the tangency vectors and their modules are
@@ -120,6 +126,10 @@ public:
   //! \param[out] isoRightU   indicates if the right isoline is U-iso.
   //! \param[out] isoRightMin indicates if the right isoline corresponds to
   //!                         min parametric value.
+  //! \param[out] areOpposite indicates whether the passed isos have
+  //!                         opposite directions. If so, this method will
+  //!                         traverse the control points of the second patch
+  //!                         in the reversed order compared to the first patch.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     AlignControlPoles(const Handle(Geom_BSplineCurve)& isoLeft,
@@ -127,7 +137,8 @@ public:
                       const bool                       isoLeftMin,
                       const Handle(Geom_BSplineCurve)& isoRight,
                       const bool                       isoRightU,
-                      const bool                       isoRightMin);
+                      const bool                       isoRightMin,
+                      const bool                       areOpposite);
 
 public:
 

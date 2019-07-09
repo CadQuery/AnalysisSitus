@@ -163,7 +163,7 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
     result = incRes;
 
     // Graphical dump.
-    if ( !m_plotter.Plotter().IsNull() )
+    if ( !m_plotter.Access().IsNull() )
     {
       TCollection_AsciiString name("incRes_fid_"); name += fid;
       m_plotter.REDRAW_SHAPE( name, BRepBuilderAPI_Copy(incRes) );

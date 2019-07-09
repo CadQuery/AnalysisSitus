@@ -41,8 +41,10 @@ set (CPP_FILES
 #------------------------------------------------------------------------------
 
 set (func_H_FILES
+  func/asiEngine_BuildPatchFunc.h
 )
 set (func_CPP_FILES
+  func/asiEngine_BuildPatchFunc.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -256,5 +258,5 @@ install (TARGETS asiEngine
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiEngine.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
 
-install (FILES ${H_FILES} DESTINATION framework/include)
+install (FILES ${H_FILES}      DESTINATION framework/include)
 install (FILES ${func_H_FILES} DESTINATION framework/include)

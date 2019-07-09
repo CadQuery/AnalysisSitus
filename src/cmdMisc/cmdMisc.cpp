@@ -3188,7 +3188,7 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
     mobSurf = cascade::GetMobiusBSurface(occtBSurface);
 
   // Disable UI immediate updates for better performance.
-  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
   //
   IV->REPAINT_OFF();
   IV->BROWSER_OFF();

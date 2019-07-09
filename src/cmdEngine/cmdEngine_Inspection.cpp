@@ -161,7 +161,7 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
 
   // Disable visualization for efficiency.
   Handle(asiUI_IV)
-    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
   //
   if ( !IV.IsNull() )
   {
@@ -2847,7 +2847,7 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
       mobSurf = cascade::GetMobiusBSurface( Handle(Geom_BSplineSurface)::DownCast(occtSurface) );
 
     // Set diagnostic tools.
-    t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Plotter() );
+    t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Access() );
     //
     mobSurf->SetDiagnosticTools( NULL, core_PlotterEntry(ivMob) );
 

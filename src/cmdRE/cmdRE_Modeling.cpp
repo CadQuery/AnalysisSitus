@@ -1100,7 +1100,7 @@ int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
     resPlane = new Geom_Plane(pln);
   }
 
-  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Plotter() );
+  Handle(asiUI_IV) IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
 
   // Set the result.
   IV->REDRAW_SURFACE(argv[1], resPlane, Color_Default);

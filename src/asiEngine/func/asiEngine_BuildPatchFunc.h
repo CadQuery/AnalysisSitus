@@ -41,6 +41,7 @@
 //! reverse engineering scenarios.
 //!
 //! Inputs are the Parameters from:
+//! - Min number of knots from the Patch Node.
 //! - Coedge Node 1 under the Patch Node.
 //! - Coedge Node 2 under the Patch Node.
 //! - ...

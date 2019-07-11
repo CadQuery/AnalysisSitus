@@ -65,6 +65,10 @@ public:
     PID_Geometry,      //!< Stored geometry.
     PID_MinNumKnots,   //!< Min number of intermediate knots.
   //-------------------//
+  // Tree Functions    //
+  //-------------------//
+    PID_FuncBuildSurf, //!< Tree Function to build a surface.
+  //-------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 

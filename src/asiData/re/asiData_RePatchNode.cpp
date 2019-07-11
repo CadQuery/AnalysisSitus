@@ -45,10 +45,11 @@
 //! Default ctor. Registers all involved Parameters.
 asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
 {
-  REGISTER_PARAMETER(Name,  PID_Name);
-  REGISTER_PARAMETER(Group, PID_GeometryGroup);
-  REGISTER_PARAMETER(Shape, PID_Geometry);
-  REGISTER_PARAMETER(Int,   PID_MinNumKnots);
+  REGISTER_PARAMETER(Name,         PID_Name);
+  REGISTER_PARAMETER(Group,        PID_GeometryGroup);
+  REGISTER_PARAMETER(Shape,        PID_Geometry);
+  REGISTER_PARAMETER(Int,          PID_MinNumKnots);
+  REGISTER_PARAMETER(TreeFunction, PID_FuncBuildSurf);
 }
 
 //! Returns new DETACHED instance of the Node ensuring its correct

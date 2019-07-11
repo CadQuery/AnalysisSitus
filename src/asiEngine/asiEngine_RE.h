@@ -206,6 +206,11 @@ public:
                    const int                                        minNumKnots,
                    Handle(Geom_BSplineSurface)&                     surf) const;
 
+  //! Reconnects Tree Function aimed at reconstruction of a single patch.
+  //! \param[in] patch target Patch Node.
+  asiEngine_EXPORT void
+    ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& patch) const;
+
 };
 
 #endif

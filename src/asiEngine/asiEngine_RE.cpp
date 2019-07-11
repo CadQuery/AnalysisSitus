@@ -31,6 +31,9 @@
 // Own include
 #include <asiEngine_RE.h>
 
+// asiEngine includes
+#include <asiEngine_BuildPatchFunc.h>
+
 // asiAlgo includes
 #include <asiAlgo_ProjectPointOnMesh.h>
 
@@ -867,4 +870,41 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)
   // Set surface and return.
   surf = cascade::GetOpenCascadeBSurface(mobSurf);
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& patch) const
+{
+  if ( patch.IsNull() || !patch->IsWellFormed() ) // Contract check.
+    return;
+
+  /* Collect input arguments. */
+
+  ActParamStream inputs;
+  inputs << patch->Parameter(asiData_RePatchNode::PID_MinNumKnots);
+
+  // Connect coedges.
+  std::vector<Handle(asiData_ReEdgeNode)> edges;
+  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+
+    inputs << coedge->Parameter(asiData_ReCoEdgeNode::PID_SameSense);
+
+    // Get reference to edge.
+    edges.push_back( coedge->GetEdge() );
+  }
+
+  // Connect edges.
+  for ( size_t k = 0; k < edges.size(); ++k )
+    inputs << edges[k]->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  /* Connect Tree Function. */
+
+  patch->ConnectTreeFunction( asiData_RePatchNode::PID_FuncBuildSurf,
+                              asiEngine_BuildPatchFunc::GUID(),
+                              inputs,
+                              ActParamStream() << patch->Parameter(asiData_RePatchNode::PID_Geometry) );
 }

@@ -32,6 +32,7 @@
 #include <asiEngine_Model.h>
 
 // asiEngine includes
+#include <asiEngine_BuildPatchFunc.h>
 #include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
@@ -333,6 +334,16 @@ void asiEngine_Model::initPartitions()
 void asiEngine_Model::initFunctionDrivers()
 {
   REGISTER_TREE_FUNCTION(ActData_RealEvaluatorFunc);
+  REGISTER_TREE_FUNCTION(asiEngine_BuildPatchFunc);
+
+  /* ===================================
+   *  Bind User Data for Tree Functions
+   * =================================== */
+
+  const Handle(ActData_FuncExecutionCtx)& funcCtx = this->FuncExecutionCtx();
+
+  // Data Model instance for reverse engineering function.
+  funcCtx->BindUserData(asiEngine_BuildPatchFunc::GUID(), this);
 }
 
 //-----------------------------------------------------------------------------

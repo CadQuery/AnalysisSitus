@@ -39,6 +39,21 @@
 
 //! Tree function for automatic (re-)constructing surface patches in
 //! reverse engineering scenarios.
+//!
+//! Inputs are the Parameters from:
+//! - Coedge Node 1 under the Patch Node.
+//! - Coedge Node 2 under the Patch Node.
+//! - ...
+//! - Coedge Node K under the Patch Node.
+//! - Edge Node for the Coedge 1.
+//! - Edge Node for the Coedge 2.
+//! - ...
+//! - Edge Node for the Coedge K.
+//!
+//! Outputs:
+//! - Surface Parameter of the Patch Node.
+//!
+//! The inputs enumerated above are the sensistives of this Tree Function.
 class asiEngine_BuildPatchFunc : public ActData_BaseTreeFunction
 {
 public:
@@ -84,6 +99,15 @@ private:
             const Handle(ActAPI_HParameterList)& outputs,
             const Handle(Standard_Transient)&    userData) const;
 
+  //! This method verifies that the passed list of input Parameters satisfies
+  //! the expected (variable) signature of the Tree Function.
+  //! \param[in] inputs input Parameters.
+  //! \return false if the input arguments are of an unexpected format.
+  virtual bool
+    validateInput(const Handle(ActAPI_HParameterList)& inputs) const;
+
+  //! This method returns empty list because this Tree Function has a variable
+  //! input signature.
   //! \return expected input signature.
   virtual ActAPI_ParameterTypeStream
     inputSignature() const;

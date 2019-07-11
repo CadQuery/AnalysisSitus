@@ -195,13 +195,16 @@ public:
                      Handle(asiData_RePatchNode)&      patchLeft,
                      Handle(asiData_RePatchNode)&      patchRight) const;
 
-  //! Fills the passed patch with a Coons surface.
-  //! \param[in]  patch patch in question.
-  //! \param[out] surf  constructed surface.
+  //! Fills the passed set of coedges with a Coons surface.
+  //! \param[in]  coedges     series of coedges in question.
+  //! \param[in]  minNumKnots min number of knots in the resulting surface
+  //!                         in each curvilinear direction.
+  //! \param[out] surf        constructed surface.
   //! \return true in case of success, false -- otherwise.
   asiEngine_EXPORT bool
-    FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
-                   Handle(Geom_BSplineSurface)&       surf) const;
+    FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)>& coedges,
+                   const int                                        minNumKnots,
+                   Handle(Geom_BSplineSurface)&                     surf) const;
 
 };
 

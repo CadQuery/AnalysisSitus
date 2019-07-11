@@ -690,27 +690,39 @@ bool
 
 //-----------------------------------------------------------------------------
 
-bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
-                                  Handle(Geom_BSplineSurface)&       surf) const
+bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)>& coedges,
+                                  const int                                        minNumKnots,
+                                  Handle(Geom_BSplineSurface)&                     surf) const
 {
+  if ( coedges.size() != 4 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Only 4-sided contours are supported.");
+    return false;
+  }
+
   std::vector<Handle(Geom_BSplineCurve)> curves;
 
   // Iterate over the coedges to collect curves for Coons interpolation. In
   // this loop, all curves are collected taking into account the orientation
   // flags stored in coedges, so that the 4-sided contour is properly oriented.
-  for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
+  for ( size_t k = 0; k < coedges.size(); ++k )
   {
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    const Handle(asiData_ReCoEdgeNode)& coedge = coedges[k];
     //
     if ( coedge.IsNull() || !coedge->IsWellFormed() )
-      continue;
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Null or inconsistent coedge.");
+      return false;
+    }
 
     // Get referenced edge to access the geometry.
     Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
     //
     if ( edge.IsNull() || !edge->IsWellFormed() )
-      continue;
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Null or inconsistent edge.");
+      return false;
+    }
 
     // Get B-curve.
     Handle(Geom_BSplineCurve)
@@ -725,10 +737,6 @@ bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
     else
       curves.push_back( Handle(Geom_BSplineCurve)::DownCast( bcurve->Reversed() ) );
   }
-
-  // Check if the patch is 4-cornered.
-  if ( curves.size() != 4 )
-    return false;
 
   const double prec = Precision::Confusion();
 
@@ -812,7 +820,7 @@ bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
   t_ptr<t_bsurf> mobSurf = cascade::GetMobiusBSurface(coonsSurf);
 
   // Get min number of intermediate knots in each direction.
-  const int numInterKnotsRequired = patch->GetMinNumKnots();
+  const int numInterKnotsRequired = minNumKnots;
   const int numInterKnotsU        = mobSurf->GetNumOfInteriorKnots_U();
   const int numInterKnotsV        = mobSurf->GetNumOfInteriorKnots_V();
 
@@ -856,9 +864,7 @@ bool asiEngine_RE::FillPatchCoons(const Handle(asiData_RePatchNode)& patch,
     }
   }
 
-  // Set surface.
+  // Set surface and return.
   surf = cascade::GetOpenCascadeBSurface(mobSurf);
-  patch->SetSurface(surf); // Store in the Data Model.
-
   return true;
 }

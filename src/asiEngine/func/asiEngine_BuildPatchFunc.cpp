@@ -31,6 +31,9 @@
 // Own include
 #include <asiEngine_BuildPatchFunc.h>
 
+// asiEngine includes
+#include <asiEngine_RE.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -61,9 +64,125 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
                                       const Handle(ActAPI_HParameterList)& outputs,
                                       const Handle(Standard_Transient)&    userData) const
 {
-  // TODO: NYI
+  /* ============================
+   *  Interpret input Parameters
+   * ============================ */
 
-  return 0; // SUCCESS
+  // User data is a Data Model instance.
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
+  //
+  if ( M.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "User data is not a Data Model instance.");
+    return 1; // Error.
+  }
+
+  // Collect coedges.
+  std::vector<Handle(asiData_ReCoEdgeNode)> coedges;
+
+  // Get min number of knots.
+  const int
+    minNumKnots = Handle(ActData_IntParameter)::DownCast( inputs->First() )->GetValue();
+
+  // Collect coedges.
+  int       currIdx    = 1;
+  const int numCoedges = (inputs->Length() + 1) / 2;
+  //
+  for ( ActAPI_HParameterList::Iterator it(*inputs); it.More(); it.Next(), ++currIdx )
+  {
+    if ( currIdx == 1 ) // Skip min number of knots.
+      continue;
+
+    if ( currIdx > numCoedges + 1 )
+      break;
+
+    const Handle(ActAPI_IUserParameter)& uParam = it.Value();
+    //
+    Handle(asiData_ReCoEdgeNode)
+      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( uParam->GetNode() );
+
+    coedges.push_back(coedge);
+  }
+
+  /* =============
+   *  Build patch
+   * ============= */
+
+  asiEngine_RE reApi(M, m_progress, m_plotter);
+
+  // Fill Coons.
+  Handle(Geom_BSplineSurface) bsurf;
+  //
+  if ( !reApi.FillPatchCoons(coedges, minNumKnots, bsurf) )
+    return 1;
+
+  /* =======================
+   *  Set output Parameters
+   * ======================= */
+
+  // Set the surface to the output Parameter indirectly using the Patch Node.
+  Handle(asiData_RePatchNode)
+    patchNode = Handle(asiData_RePatchNode)::DownCast( outputs->First()->GetNode() );
+  //
+  patchNode->SetSurface(bsurf);
+
+  return 0; // Success.
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_BuildPatchFunc::validateInput(const Handle(ActAPI_HParameterList)& inputs) const
+{
+  // Check the number of arguments.
+  const int numArgs = inputs->Length();
+  if ( numArgs % 2 != 0 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Number of arguments is odd.");
+    return false;
+  }
+
+  const int numCoedges = (numArgs - 1) / 2;
+  int       currIdx    = 1;
+
+  // Check Parameter types.
+  for ( ActAPI_HParameterList::Iterator it(*inputs); it.More(); it.Next(), ++currIdx )
+  {
+    const Handle(ActAPI_IUserParameter)& uParam = it.Value();
+
+    if ( currIdx == 1 )
+    {
+      // We expect that "Min number of knots" is connected first.
+      if ( !uParam->IsKind( STANDARD_TYPE(ActData_IntParameter) ) )
+      {
+        m_progress.SendLogMessage( LogErr(Normal) << "Input Parameter %1 is not of the expected type %2."
+                                                  << currIdx << STANDARD_TYPE(ActData_IntParameter)->Name() );
+        return false;
+      }
+    }
+    else if ( currIdx <= numCoedges + 1 )
+    {
+      // We expect that "SameSense" flags are connected then.
+      if ( !uParam->IsKind( STANDARD_TYPE(ActData_BoolParameter) ) )
+      {
+        m_progress.SendLogMessage( LogErr(Normal) << "Input Parameter %1 is not of the expected type %2."
+                                                  << currIdx << STANDARD_TYPE(ActData_BoolParameter)->Name() );
+        return false;
+      }
+    }
+    else
+    {
+      // We expect that curves are connected then.
+      if ( !uParam->IsKind( STANDARD_TYPE(ActData_ShapeParameter) ) )
+      {
+        m_progress.SendLogMessage( LogErr(Normal) << "Input Parameter %1 is not of the expected type %2."
+                                                  << currIdx << STANDARD_TYPE(ActData_ShapeParameter)->Name() );
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -71,7 +190,7 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
 ActAPI_ParameterTypeStream
   asiEngine_BuildPatchFunc::inputSignature() const
 {
-  return ActAPI_ParameterTypeStream() << Parameter_AsciiString;
+  return ActAPI_ParameterTypeStream();
 }
 
 //-----------------------------------------------------------------------------
@@ -79,5 +198,5 @@ ActAPI_ParameterTypeStream
 ActAPI_ParameterTypeStream
   asiEngine_BuildPatchFunc::outputSignature() const
 {
-  return ActAPI_ParameterTypeStream() << Parameter_Triangulation;
+  return ActAPI_ParameterTypeStream() << Parameter_Shape; // Surface patch.
 }

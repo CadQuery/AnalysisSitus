@@ -119,9 +119,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 
     // Complete current edge and this way complete contour.
     if ( !prevCoedgeNode.IsNull() )
-    {
-      this->completeContour(pickedVertex);
-    }
+      this->completeContour(patchNode, pickedVertex);
     else
       this->startNewContour(pickedVertex);
   }
@@ -284,75 +282,8 @@ bool
 //-----------------------------------------------------------------------------
 
 bool
-  asiUI_PickContourCallback::addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                                              const bool                        samesense)
-{
-  asiUI_NotUsed(edge);
-  asiUI_NotUsed(samesense);
-
-  //m_notifier.SendLogMessage(LogInfo(Normal) << "Adding new coedge for the existing edge...");
-
-  //// Get previous edge.
-  //Handle(asiData_ReEdgeNode)
-  //  edgeNode = m_model->GetReTopoNode()->GetCurrentCoEdge()->GetEdge();
-
-  //// Modify data.
-  //m_model->OpenCommand();
-  //{
-  //  // Build new edge.
-  //  if ( this->buildNewEdge(target, true).IsNull() )
-  //  {
-  //    m_model->AbortCommand();
-  //    return false;
-  //  }
-  //}
-  //m_model->CommitCommand();
-
-  //// Update scene.
-  //this->GetViewer()->PrsMgr()->Actualize(edgeNode);
-
-  //// Update object browser.
-  //if ( m_pBrowser )
-  //  m_pBrowser->Populate();
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool
-  asiUI_PickContourCallback::completeContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                                                   const bool                        samesense)
-{
-  asiUI_NotUsed(edge);
-
-  m_notifier.SendLogMessage(LogInfo(Normal) << "Complete contour by adjusting current coedge...");
-
-  Handle(asiData_ReTopoNode)   topoNode   = m_model->GetReTopoNode();
-  Handle(asiData_ReCoEdgeNode) coedgeNode = topoNode->GetCurrentCoEdge();
-
-  m_model->OpenCommand();
-  {
-    coedgeNode->SetSameSense(samesense);
-
-    // Reset current references.
-    topoNode->SetCurrentPatch(NULL);
-    topoNode->SetCurrentCoEdge(NULL);
-    topoNode->SetLastVertex(NULL);
-  }
-  m_model->CommitCommand();
-
-  // Update object browser.
-  if ( m_pBrowser )
-    m_pBrowser->Populate();
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool
-  asiUI_PickContourCallback::completeContour(const Handle(asiData_ReVertexNode)& target)
+  asiUI_PickContourCallback::completeContour(const Handle(asiData_RePatchNode)&  patch,
+                                             const Handle(asiData_ReVertexNode)& target)
 {
   m_model->OpenCommand();
   {
@@ -384,6 +315,11 @@ bool
       // Return failure.
       return false;
     }
+
+    // Connect Tree Function.
+    asiEngine_RE reApi(m_model, m_notifier, m_plotter);
+    //
+    reApi.ReconnectBuildPatchFunc(patch);
   }
   m_model->CommitCommand();
 

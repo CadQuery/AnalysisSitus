@@ -80,15 +80,8 @@ protected:
     addContourEdge(const Handle(asiData_ReVertexNode)& target);
 
   bool
-    addContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                     const bool                        samesense);
-
-  bool
-    completeContourCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                          const bool                        samesense);
-
-  bool
-    completeContour(const Handle(asiData_ReVertexNode)& target);
+    completeContour(const Handle(asiData_RePatchNode)&  patch,
+                    const Handle(asiData_ReVertexNode)& target);
 
   bool
     completeContourRecursively(const Handle(asiData_ReVertexNode)& target,

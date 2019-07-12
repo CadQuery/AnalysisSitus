@@ -176,29 +176,31 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
    * ================ */
 
   cmdRE::model->OpenCommand();
+  {
+    cmdRE::model->FuncExecuteAll();
+  }
+  cmdRE::model->CommitCommand();
 
   // Reconstruct every patch individually.
-  for ( size_t k = 0; k < patchNodes.size(); ++k )
-  {
-    const Handle(asiData_RePatchNode)& patchNode = patchNodes[k];
+  //for ( size_t k = 0; k < patchNodes.size(); ++k )
+  //{
+  //  const Handle(asiData_RePatchNode)& patchNode = patchNodes[k];
 
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: '%1'."
-                                                          << patchNode->GetName() );
+  //  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next patch: '%1'."
+  //                                                        << patchNode->GetName() );
 
-    // Fill Coons.
-    Handle(Geom_BSplineSurface) patchSurf;
-    //
-    if ( !reApi.FillPatchCoons(patchNode, patchSurf) )
-    {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build surface for patch '%1'."
-                                                           << patchNode->GetName() );
-      continue;
-    }
+  //  // Fill Coons.
+  //  Handle(Geom_BSplineSurface) patchSurf;
+  //  //
+  //  if ( !reApi.FillPatchCoons(patchNode, patchSurf) )
+  //  {
+  //    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot build surface for patch '%1'."
+  //                                                         << patchNode->GetName() );
+  //    continue;
+  //  }
 
-    interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_Default, "patch");
-  }
-
-  cmdRE::model->CommitCommand();
+  //  interp->GetPlotter().DRAW_SURFACE(patchSurf, Color_Default, "patch");
+  //}
 
   return TCL_OK;
 }

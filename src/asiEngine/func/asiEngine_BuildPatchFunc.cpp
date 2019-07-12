@@ -101,7 +101,10 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
     Handle(asiData_ReCoEdgeNode)
       coedge = Handle(asiData_ReCoEdgeNode)::DownCast( uParam->GetNode() );
 
-    coedges.push_back(coedge);
+    if ( !coedge.IsNull() )
+      coedges.push_back(coedge);
+    else
+      break;
   }
 
   /* =============
@@ -136,9 +139,9 @@ bool
 {
   // Check the number of arguments.
   const int numArgs = inputs->Length();
-  if ( numArgs % 2 != 0 )
+  if ( numArgs % 2 != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Number of arguments is odd.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Number of arguments is even.");
     return false;
   }
 

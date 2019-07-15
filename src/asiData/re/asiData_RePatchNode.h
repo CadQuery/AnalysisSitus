@@ -64,6 +64,12 @@ public:
     PID_GeometryGroup, //!< Group of geometric props.
     PID_Geometry,      //!< Stored geometry.
     PID_MinNumKnots,   //!< Min number of intermediate knots.
+  //------------------//
+  // Presentation     //
+  //------------------//
+    PID_GroupPrs,     //!< Presentation group.
+    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
+    PID_Color,        //!< Color.
   //-------------------//
   // Tree Functions    //
   //-------------------//
@@ -105,6 +111,18 @@ public:
 
   asiData_EXPORT void
     SetMinNumKnots(const int numKnots);
+
+  asiData_EXPORT void
+    SetHasColor(const bool);
+
+  asiData_EXPORT bool
+    HasColor() const;
+
+  asiData_EXPORT void
+    SetColor(const int);
+
+  asiData_EXPORT int
+    GetColor() const;
 
 protected:
 

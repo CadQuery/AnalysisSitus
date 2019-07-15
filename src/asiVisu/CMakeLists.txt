@@ -73,6 +73,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_PartPipelineBase.h
   pipelines/asiVisu_Pipeline.h
   pipelines/asiVisu_PointsPipeline.h
+  pipelines/asiVisu_RePatchPipeline.h
   pipelines/asiVisu_ShapePipeline.h
   pipelines/asiVisu_SurfaceDeviationPipeline.h
   pipelines/asiVisu_TriangulationLinksPipeline.h
@@ -109,6 +110,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_PartPipelineBase.cpp
   pipelines/asiVisu_Pipeline.cpp
   pipelines/asiVisu_PointsPipeline.cpp
+  pipelines/asiVisu_RePatchPipeline.cpp
   pipelines/asiVisu_ShapePipeline.cpp
   pipelines/asiVisu_SurfaceDeviationPipeline.cpp
   pipelines/asiVisu_TriangulationLinksPipeline.cpp
@@ -145,6 +147,7 @@ set (presentations_H_FILES
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
   presentations/asiVisu_ReEdgePrs.h
+  presentations/asiVisu_RePatchPrs.h
   presentations/asiVisu_ReVertexPrs.h
   presentations/asiVisu_SurfDeviationPrs.h
   presentations/asiVisu_TessellationNormsPrs.h
@@ -176,6 +179,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
   presentations/asiVisu_ReEdgePrs.cpp
+  presentations/asiVisu_RePatchPrs.cpp
   presentations/asiVisu_ReVertexPrs.cpp
   presentations/asiVisu_SurfDeviationPrs.cpp
   presentations/asiVisu_TessellationNormsPrs.cpp
@@ -214,6 +218,7 @@ set (providers_H_FILES
   providers/asiVisu_ReEdgeCurveDataProvider.h
   providers/asiVisu_ReEdgePolylineDataProvider.h
   providers/asiVisu_ReEdgeShapeDataProvider.h
+  providers/asiVisu_RePatchDataProvider.h
   providers/asiVisu_ReVertexDataProvider.h
   providers/asiVisu_ShapeDataProvider.h
   providers/asiVisu_SurfaceDataProvider.h
@@ -244,6 +249,7 @@ set (providers_CPP_FILES
   providers/asiVisu_ReEdgeCurveDataProvider.cpp
   providers/asiVisu_ReEdgePolylineDataProvider.cpp
   providers/asiVisu_ReEdgeShapeDataProvider.cpp
+  providers/asiVisu_RePatchDataProvider.cpp
   providers/asiVisu_ReVertexDataProvider.cpp
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_SurfaceDeviationDataProvider.cpp

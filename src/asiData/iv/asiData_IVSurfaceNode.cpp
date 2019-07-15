@@ -189,7 +189,6 @@ void asiData_IVSurfaceNode::GetLimits(double& uMin, double& uMax,
   vMax = ActParamTool::AsReal( this->Parameter(PID_VMax) )->GetValue();
 }
 
-
 //! Sets the Boolean value indicating whether the color Parameter of this
 //! Data Node is in force.
 //! \param[in] hasColor value to set.

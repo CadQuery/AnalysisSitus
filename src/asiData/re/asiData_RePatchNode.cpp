@@ -49,6 +49,9 @@ asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group,        PID_GeometryGroup);
   REGISTER_PARAMETER(Shape,        PID_Geometry);
   REGISTER_PARAMETER(Int,          PID_MinNumKnots);
+  REGISTER_PARAMETER(Group,        PID_GroupPrs);
+  REGISTER_PARAMETER(Bool,         PID_HasColor);
+  REGISTER_PARAMETER(Int,          PID_Color);
   REGISTER_PARAMETER(TreeFunction, PID_FuncBuildSurf);
 }
 
@@ -64,13 +67,18 @@ Handle(ActAPI_INode) asiData_RePatchNode::Instance()
 void asiData_RePatchNode::Init()
 {
   // Set default values.
-  this->SetSurface(NULL);
-  this->SetMinNumKnots(2);
+  this->SetSurface     (NULL);
+  this->SetMinNumKnots (2);
+  this->SetHasColor    (false);
+  this->SetColor       (2500134); // Sort of dark color.
 
   // Initialize Parameters.
-  this->InitParameter(PID_Name,          "Name");
-  this->InitParameter(PID_GeometryGroup, "Geometry",                "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_MinNumKnots,   "Min. intermediate knots", "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_Name,          "Name");
+  this->InitParameter (PID_GeometryGroup, "Geometry",         "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_MinNumKnots,   "Min. inner knots", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_GroupPrs,      "Presentation",     "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_HasColor,      "Colorized",        "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_Color,         "Color",            "PrsCustomColor", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -129,4 +137,34 @@ int asiData_RePatchNode::GetMinNumKnots() const
 void asiData_RePatchNode::SetMinNumKnots(const int numKnots)
 {
   ActParamTool::AsInt( this->Parameter(PID_MinNumKnots) )->SetValue(numKnots);
+}
+
+//! Sets the Boolean value indicating whether the color Parameter of this
+//! Data Node is in force.
+//! \param[in] hasColor value to set.
+void asiData_RePatchNode::SetHasColor(const bool hasColor)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
+}
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! Color Parameter of this Data Node is in force.
+//! \return true/false.
+bool asiData_RePatchNode::HasColor() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
+}
+
+//! Sets color.
+//! \param[in] color color to set.
+void asiData_RePatchNode::SetColor(const int color)
+{
+  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(color);
+}
+
+//! Accessor for the stored color value.
+//! \return color value.
+int asiData_RePatchNode::GetColor() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
 }

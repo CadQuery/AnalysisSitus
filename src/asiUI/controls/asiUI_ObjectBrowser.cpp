@@ -864,12 +864,23 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
   {
     leftPatchNode  ->SetSurface( jointAdaptor.GetSurfaceLeft() );
     rightPatchNode ->SetSurface( jointAdaptor.GetSurfaceRight() );
+
+    // Execute dependencies.
+    m_model->FuncExecuteAll();
   }
   m_model->CommitCommand();
 
+  // Actualize all patches.
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    // Actualize part.
+    if ( dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]) )
+      m_viewers[k]->PrsMgr()->Actualize( reApi.Get_Patches(), true );
+  }
+
   // Graphical dump.
-  m_plotter.REDRAW_SURFACE("surfLeft",  jointAdaptor.GetSurfaceLeft(),  Color_Default);
-  m_plotter.REDRAW_SURFACE("surfRight", jointAdaptor.GetSurfaceRight(), Color_Default);
+  //m_plotter.REDRAW_SURFACE("surfLeft",  jointAdaptor.GetSurfaceLeft(),  Color_Default);
+  //m_plotter.REDRAW_SURFACE("surfRight", jointAdaptor.GetSurfaceRight(), Color_Default);
 
   // TODO: NYI
 }

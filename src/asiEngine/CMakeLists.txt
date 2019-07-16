@@ -13,6 +13,7 @@ set (H_FILES
   asiEngine_IV.h
   asiEngine_Model.h
   asiEngine_Part.h
+  asiEngine_PatchJointAdaptor.h
   asiEngine_RE.h
   asiEngine_STEPReaderOutput.h
   asiEngine_STEPWriterInput.h
@@ -28,6 +29,7 @@ set (CPP_FILES
   asiEngine_IV.cpp
   asiEngine_Model.cpp
   asiEngine_Part.cpp
+  asiEngine_PatchJointAdaptor.cpp
   asiEngine_RE.cpp
   asiEngine_STEPReaderOutput.cpp
   asiEngine_STEPWriterInput.cpp

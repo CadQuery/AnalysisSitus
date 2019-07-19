@@ -186,12 +186,16 @@ public:
   //! as left and right depending on whether their corresponding coedges are
   //! collinear with the shared edge or not.
   //!
-  //! \param[in]  edge       edge in question.
-  //! \param[out] patchLeft  patch on the left (collinear).
-  //! \param[out] patchRight patch on the right.
+  //! \param[in]  edge        edge in question.
+  //! \param[out] coedgeLeft  coedge on the left (corresponds to the left patch).
+  //! \param[out] coedgeRight coedge on the right (corresponds to the right patch).
+  //! \param[out] patchLeft   patch on the left (collinear).
+  //! \param[out] patchRight  patch on the right.
   //! \return true in case of success, false -- otherwise.
   asiEngine_EXPORT bool
     GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
+                     Handle(asiData_ReCoEdgeNode)&     coedgeLeft,
+                     Handle(asiData_ReCoEdgeNode)&     coedgeRight,
                      Handle(asiData_RePatchNode)&      patchLeft,
                      Handle(asiData_RePatchNode)&      patchRight) const;
 

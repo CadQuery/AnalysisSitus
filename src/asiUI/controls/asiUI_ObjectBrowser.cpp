@@ -783,9 +783,12 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
    * ====================== */
 
   // Get owner patches.
-  Handle(asiData_RePatchNode) leftPatchNode, rightPatchNode;
+  Handle(asiData_ReCoEdgeNode) leftCoedge, rightCoedge;
+  Handle(asiData_RePatchNode)  leftPatchNode, rightPatchNode;
   //
-  if ( !reApi.GetPatchesByEdge(edgeNode, leftPatchNode, rightPatchNode) )
+  if ( !reApi.GetPatchesByEdge(edgeNode,
+                               leftCoedge, rightCoedge,
+                               leftPatchNode, rightPatchNode) )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot get patches by edge.");
     return;

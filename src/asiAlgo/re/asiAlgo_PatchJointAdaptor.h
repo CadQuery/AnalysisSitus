@@ -66,7 +66,27 @@ public:
                               ActAPI_ProgressEntry               progress = NULL,
                               ActAPI_PlotterEntry                plotter  = NULL);
 
+  //! Default ctor.
+  //! \param[in] progress  progress notifier.
+  //! \param[in] plotter   imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_PatchJointAdaptor(ActAPI_ProgressEntry progress = NULL,
+                              ActAPI_PlotterEntry  plotter  = NULL);
+
 public:
+
+  //! Initializes the adaptor.
+  //! \param[in] curve     curve representing the joint.
+  //! \param[in] surfLeft  surface "on the left" if looking traveling along the
+  //!                      joint curve in the direction of its natural
+  //!                      orientation.
+  //! \param[in] surfRight surface "on the right" if looking traveling along the
+  //!                      joint curve in the direction of its natural
+  //!                      orientation.
+  asiAlgo_EXPORT void
+    Init(const Handle(Geom_Curve)&          curve,
+         const Handle(Geom_BSplineSurface)& surfLeft,
+         const Handle(Geom_BSplineSurface)& surfRight);
 
   //! Determines the isoparametric lines of both surfaces which correspond
   //! to the joint curve.

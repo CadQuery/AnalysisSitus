@@ -662,6 +662,8 @@ bool
 
 bool
   asiEngine_RE::GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
+                                 Handle(asiData_ReCoEdgeNode)&     coedgeLeft,
+                                 Handle(asiData_ReCoEdgeNode)&     coedgeRight,
                                  Handle(asiData_RePatchNode)&      patchLeft,
                                  Handle(asiData_RePatchNode)&      patchRight) const
 {
@@ -683,9 +685,15 @@ bool
       continue;
 
     if ( coedge->IsSameSense() )
-      patchLeft = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+    {
+      coedgeLeft = coedge;
+      patchLeft  = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+    }
     else
-      patchRight = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+    {
+      coedgeRight = coedge;
+      patchRight  = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+    }
   }
 
   return true;

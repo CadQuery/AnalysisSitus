@@ -70,6 +70,9 @@ Handle(TColStd_HArray1OfReal)
 Handle(asiAlgo_BaseCloud<double>)
   asiAlgo_PointCloudUtils::AsCloudd(const Handle(TColStd_HArray1OfReal)& arr)
 {
+  if ( arr.IsNull() )
+    return NULL;
+
   Handle(asiAlgo_BaseCloud<double>) result = new asiAlgo_BaseCloud<double>;
   //
   for ( int i = arr->Lower(); i <= arr->Upper(); ++i )
@@ -83,6 +86,9 @@ Handle(asiAlgo_BaseCloud<double>)
 Handle(asiAlgo_BaseCloud<float>)
   asiAlgo_PointCloudUtils::AsCloudf(const Handle(TColStd_HArray1OfReal)& arr)
 {
+  if ( arr.IsNull() )
+    return NULL;
+
   Handle(asiAlgo_BaseCloud<float>) result = new asiAlgo_BaseCloud<float>;
   //
   for ( int i = arr->Lower(); i <= arr->Upper(); ++i )

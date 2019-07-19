@@ -52,6 +52,22 @@ asiAlgo_PatchJointAdaptor::asiAlgo_PatchJointAdaptor(const Handle(Geom_Curve)&  
                                                      ActAPI_PlotterEntry                plotter)
 : ActAPI_IAlgorithm(progress, plotter)
 {
+  this->Init(curve, surfLeft, surfRight);
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_PatchJointAdaptor::asiAlgo_PatchJointAdaptor(ActAPI_ProgressEntry progress,
+                                                     ActAPI_PlotterEntry  plotter)
+: ActAPI_IAlgorithm(progress, plotter)
+{}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PatchJointAdaptor::Init(const Handle(Geom_Curve)&          curve,
+                                     const Handle(Geom_BSplineSurface)& surfLeft,
+                                     const Handle(Geom_BSplineSurface)& surfRight)
+{
   m_curve     = curve;
   m_surfLeft  = surfLeft;
   m_surfRight = surfRight;

@@ -29,324 +29,52 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiAlgo_PatchJointAdaptor.h>
+#include <asiEngine_PatchJointAdaptor.h>
 
-// OCCT includes
-#include <ShapeAnalysis_Surface.hxx>
-
-// Mobius includes
-#include <mobius/bspl_UnifyKnots.h>
-#include <mobius/cascade.h>
-#include <mobius/core_Precision.h>
-#include <mobius/geom_BSplineCurve.h>
-
-// Mobius namespace.
-using namespace mobius;
+// asiEngine includes
+#include <asiEngine_RE.h>
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_PatchJointAdaptor::asiAlgo_PatchJointAdaptor(const Handle(Geom_Curve)&          curve,
-                                                     const Handle(Geom_BSplineSurface)& surfLeft,
-                                                     const Handle(Geom_BSplineSurface)& surfRight,
-                                                     ActAPI_ProgressEntry               progress,
-                                                     ActAPI_PlotterEntry                plotter)
-: ActAPI_IAlgorithm(progress, plotter)
-{
-  m_curve     = curve;
-  m_surfLeft  = surfLeft;
-  m_surfRight = surfRight;
-}
+asiEngine_PatchJointAdaptor::asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
+                                                         ActAPI_ProgressEntry           progress,
+                                                         ActAPI_PlotterEntry            plotter)
+: asiAlgo_PatchJointAdaptor (progress, plotter),
+  m_model                   (model)
+{}
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PatchJointAdaptor::ExtractIsos(Handle(Geom_BSplineCurve)& isoLeft,
-                                            bool&                      isoLeftU,
-                                            bool&                      isoLeftMin,
-                                            Handle(Geom_BSplineCurve)& isoRight,
-                                            bool&                      isoRightU,
-                                            bool&                      isoRightMin,
-                                            bool&                      areOpposite) const
+bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNode)
 {
-  if ( !this->getIso(m_surfLeft, isoLeft, isoLeftU, isoLeftMin) )
-    return false;
-
-  if ( !this->getIso(m_surfRight, isoRight, isoRightU, isoRightMin) )
-    return false;
-
-  // Check if the isos are opposite.
-  gp_Pnt isoLeftOrigin  = isoLeft->Value  ( isoLeft->FirstParameter() );
-  gp_Pnt isoRightOrigin = isoRight->Value ( isoRight->FirstParameter() );
-  //
-  if ( isoLeftOrigin.Distance(isoRightOrigin) < Precision::Confusion() )
-    areOpposite = false;
-  else
-    areOpposite = true;
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& isoLeft,
-                                              const bool                       isoLeftU,
-                                              const Handle(Geom_BSplineCurve)& isoRight,
-                                              const bool                       isoRightU)
-{
-  // Convert curves to Mobius structures.
-  t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
-  t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
-
-  // Convert surfaces to Mobius structures.
-  t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
-  t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
-
-  // Collect knots.
-  std::vector< std::vector<double> > U_all;
-  U_all.push_back( mbIsoLeft  ->GetKnots() );
-  U_all.push_back( mbIsoRight ->GetKnots() );
-
-  // Compute complementary knots.
-  bspl_UnifyKnots Unify;
-  std::vector< std::vector<double> > X = Unify(U_all);
-
-  // Insert knots to the left surface.
-  for ( size_t k = 0; k < X[0].size(); ++k )
+  if ( edgeNode.IsNull() || !edgeNode->IsWellFormed() )
   {
-    if ( isoLeftU )
-      mbSurfLeft->InsertKnot_V(X[0][k]);
-    else
-      mbSurfLeft->InsertKnot_U(X[0][k]);
-  }
-
-  // Insert knots to the right surface.
-  for ( size_t k = 0; k < X[1].size(); ++k )
-  {
-    if ( isoRightU )
-      mbSurfRight->InsertKnot_V(X[1][k]);
-    else
-      mbSurfRight->InsertKnot_U(X[1][k]);
-  }
-
-  // Update surfaces.
-  m_surfLeft  = cascade::GetOpenCascadeBSurface(mbSurfLeft);
-  m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
-
-  return true; // Success.
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve)& isoLeft,
-                                                  const Handle(Geom_BSplineCurve)& isoRight,
-                                                  const bool                       areOpposite) const
-{
-  // Convert curves to Mobius structures.
-  t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
-  t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
-
-  // Check the number of poles.
-  if ( mbIsoLeft->GetNumOfPoles() != mbIsoRight->GetNumOfPoles() )
-  {
-    m_progress.SendLogMessage(LogWarn(Normal) << "Different number of poles at joint curves.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Null or inconsistent edge.");
     return false;
   }
 
-  const double tol3d = core_Precision::Resolution3D()*10;
+  m_edge = edgeNode;
 
-  // Common number of poles can be taken from any curve.
-  const int numPoles = mbIsoLeft->GetNumOfPoles();
+  // Prepare RE API.
+  asiEngine_RE reApi(m_model, m_progress);
 
-  // Check if the poles are coincident with the prescribed precision.
-  for ( int i = 0; i < numPoles; ++i )
+  // Get owner patches.
+  if ( !reApi.GetPatchesByEdge(m_edge,
+                               m_coedgeLeft, m_coedgeRight,
+                               m_patchLeft, m_patchRight) )
   {
-    const t_xyz& P_left  = mbIsoLeft->GetPole(i);
-    const t_xyz& P_right = mbIsoRight->GetPole(areOpposite ? numPoles - 1 - i : i);
-
-    // Check distance.
-    const double dist = (P_left - P_right).Modulus();
-    //
-    if ( dist > tol3d )
-    {
-      m_progress.SendLogMessage(LogWarn(Normal) << "Distance %1 between poles with indices %2 "
-                                                   "is greater than confusion tolerance."
-                                                << dist << i);
-
-      m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(P_left),  Color_Red, "P_left");
-      m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(P_right), Color_Red, "P_right");
-
-      return false;
-    }
-  }
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve)& isoLeft,
-                                                  const bool                       isoLeftU,
-                                                  const bool                       isoLeftMin,
-                                                  const Handle(Geom_BSplineCurve)& isoRight,
-                                                  const bool                       isoRightU,
-                                                  const bool                       isoRightMin,
-                                                  const bool                       areOpposite)
-{
-  // Contract check.
-  if ( !this->IsJointCompatible(isoLeft, isoRight, areOpposite) )
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot get patches by edge.");
     return false;
-
-  // Convert curves to Mobius structures.
-  t_ptr<t_bcurve> mbIsoLeft = cascade::GetMobiusBCurve(isoLeft);
-
-  // Convert surfaces to Mobius structures.
-  t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
-  t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
-
-  const int numPoles = isoLeft->NbPoles();
-
-  // Get middle poles.
-  const std::vector<t_xyz>& polesMid = mbIsoLeft->GetPoles();
-
-  // Collect poles to change.
-  std::vector<t_xyz*> polesLeft, polesRight;
-  //
-  for ( int k = 0; k < numPoles; ++k )
-  {
-    t_xyz* pPoleLeft = NULL, *pPoleRight = NULL;
-
-    // Get row or column of poles from the left surface.
-    if ( isoLeftU && isoLeftMin )
-      pPoleLeft = &mbSurfLeft->ChangePole(1, k);
-    else if ( isoLeftU && !isoLeftMin )
-      pPoleLeft = &mbSurfLeft->ChangePole(mbSurfLeft->GetNumOfPoles_U() - 2, k);
-    else if ( !isoLeftU && isoLeftMin )
-      pPoleLeft = &mbSurfLeft->ChangePole(k, 1);
-    else
-      pPoleLeft = &mbSurfLeft->ChangePole(k, mbSurfLeft->GetNumOfPoles_V() - 2);
-
-    // Get row or column of poles from the right surface.
-    if ( isoRightU && isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(1, areOpposite ? numPoles - 1 - k : k);
-    else if ( isoRightU && !isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(mbSurfRight->GetNumOfPoles_U() - 2, areOpposite ? numPoles - 1 - k : k);
-    else if ( !isoRightU && isoRightMin )
-      pPoleRight = &mbSurfRight->ChangePole(areOpposite ? numPoles - 1 - k : k, 1);
-    else
-      pPoleRight = &mbSurfRight->ChangePole(areOpposite ? numPoles - 1 - k : k, mbSurfRight->GetNumOfPoles_V() - 2);
-
-    polesLeft.push_back(pPoleLeft);
-    polesRight.push_back(pPoleRight);
-
-    m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(*pPoleLeft),  Color_Red,   "pleft");
-    m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(*pPoleRight), Color_Green, "pright");
-    m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(polesMid[k]), Color_Blue,  "pmiddle");
   }
 
-  // Align poles.
-  for ( int k = 0; k < numPoles; ++k )
-  {
-    t_xyz vLeft2Right = (*polesRight[k] - *polesLeft[k]).Normalized();
+  if ( !m_patchLeft.IsNull() )
+    m_progress.SendLogMessage( LogInfo(Normal) << "Left patch: %1." << m_patchLeft->GetName() );
 
-    const double dr = (*polesRight[k] - polesMid[k]).Modulus();
-    const double dl = (*polesLeft[k] - polesMid[k]).Modulus();
+  if ( !m_patchRight.IsNull() )
+    m_progress.SendLogMessage( LogInfo(Normal) << "Right patch: %1." << m_patchRight->GetName() );
 
-    t_xyz newPoleRight = polesMid[k] + vLeft2Right*dr;
-    t_xyz newPoleLeft  = polesMid[k] - vLeft2Right*dl;
-
-    // Update control points.
-    polesRight[k]->SetXYZ(newPoleRight);
-    polesLeft[k]->SetXYZ(newPoleLeft);
-  }
-
-  // Update surfaces.
-  m_surfLeft  = cascade::GetOpenCascadeBSurface(mbSurfLeft);
-  m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
-
-  return true; // Success.
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_PatchJointAdaptor::getIso(const Handle(Geom_BSplineSurface)& surf,
-                                       Handle(Geom_BSplineCurve)&         iso,
-                                       bool&                              isoU,
-                                       bool&                              isoMin) const
-{
-  // Get sample point (midpoint) on the joint curve.
-  const double f = m_curve->FirstParameter();
-  const double l = m_curve->LastParameter();
-  const double m = (f + l)*0.5;
-  //
-  gp_Pnt C = m_curve->Value(m);
-
-  // Projection precision.
-  const double projPrec = 1e-4;
-
-  // Invert point to the left surface.
-  ShapeAnalysis_Surface sas(surf);
-  gp_Pnt2d uv = sas.ValueOfUV(C, projPrec);
-
-  // Step for small perturbation.
-  const double d = (l - f)*0.01;
-
-  // Give the sample paramter a small perturbation to define another point
-  // on the surface and determine which curvilinear coordinate is effective.
-  const double tShifted = m + d;
-  gp_Pnt       CShifted = m_curve->Value(tShifted);
-
-  // Invert the shifted point.
-  gp_Pnt2d uvShifted = sas.ValueOfUV(CShifted, projPrec);
-
-  // Get projection coordinates in (U,V) space.
-  double Cproj_U      = uv.X();
-  double Cproj_V      = uv.Y();
-  double Cproj_U_next = uvShifted.X();
-  double Cproj_V_next = uvShifted.Y();
-
-  // Get natural bounds of the surface.
-  double uMin, uMax, vMin, vMax;
-  surf->Bounds(uMin, uMax, vMin, vMax);
-
-  // Define which curvilinear axis works out this shift. Here we rely on the
-  // fact that the joint curve is an isoparametric curve for both surfaces.
-  bool         isSurfGoesU = false;
-  const double confPrec    = 1e-5;
-  bool         sameSense   = true;
-  bool         isLeftBound = false;
-  //
-  if ( fabs(Cproj_U_next - Cproj_U) < confPrec &&
-       fabs(Cproj_V_next - Cproj_V) > confPrec )
-  {
-    isSurfGoesU = false;
-    sameSense   = (Cproj_V_next - Cproj_V) > 0;
-
-    if ( fabs(Cproj_U - uMin) < projPrec )
-      isLeftBound = true;
-  }
-  else if ( fabs(Cproj_U_next - Cproj_U) > confPrec &&
-            fabs(Cproj_V_next - Cproj_V) < confPrec )
-  {
-    isSurfGoesU = true;
-    sameSense   = (Cproj_U_next - Cproj_U) > 0;
-
-    if ( fabs(Cproj_V - vMin) < projPrec )
-      isLeftBound = true;
-  }
-  else
-    return false; // Singularity.
-
-  if ( isSurfGoesU )
-  {
-    iso  = Handle(Geom_BSplineCurve)::DownCast( surf->VIso(isLeftBound ? vMin : vMax) );
-    isoU = false;
-  }
-  else
-  {
-    iso  = Handle(Geom_BSplineCurve)::DownCast( surf->UIso(isLeftBound ? uMin : uMax) );
-    isoU = true;
-  }
-
-  isoMin = isLeftBound;
+  if ( m_patchRight.IsNull() || m_patchRight.IsNull() )
+    return false; // Naked edge.
 
   return true;
 }

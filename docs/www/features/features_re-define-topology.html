@@ -41,7 +41,9 @@
 </table>
 </td></tr></table>
 
-<h1>Topologizing</h1>
+<h1>Topologize mesh</h1>
+
+<h2>Overview</h2>
 
 <p>
 A typical reverse engineering scenario consists of the following main steps:
@@ -79,7 +81,7 @@ To solve the interoperability issue and also to enable further modeling operatio
 is eventually converted to B-Rep scheme of OpenCascade.
 </p>
 
-<h1>Define contour</h1>
+<h2>Define contour interactively</h2>
 
 <p>
 Contour lines are defined interactively via <span class="code-inline">define-contour</span> command.
@@ -90,6 +92,25 @@ of iterations. To speed up computations, BVH (bounding volume hierarchy) structu
 </p>
 
 <div align="center"><img src="../imgs/project_contour_anim.gif"/></div>
+
+<h2>Anatomy of joint edge</h2>
+
+<p>
+For the sake of the local control over the reverse engineered patches, we have
+implemented an utility class named "joint adaptor." The purpose of this tool is to analyze the local topological
+situation near the given edge and provide all means to modify the corresponding piece of curve network and the
+surface patches filling the corresponding rectangular cells.
+</p>
+
+<div align="center"><img src="../imgs/re_wireframe_02.png"/></div>
+
+<p>
+The Joint Adaptor accepts a single edge as an input and extracts its neighboring topological elements. In the figure
+above, the edge is shown in blue color. The arrow on the edge denotes the <i>geometric (natural) orientation</i> of the edge, i.e.,
+the direction on its host curve determined by its inherent parameterization. The coedge which is agreed with the natural orientation
+of the primary edge is named "left." The opposite coedge is named "right." The same naming rule applies to the corresponding
+patches.
+</p>
 
 </body>
 </html>

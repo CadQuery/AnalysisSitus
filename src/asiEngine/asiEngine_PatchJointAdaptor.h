@@ -28,153 +28,51 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_PatchJointAdaptor_h
-#define asiAlgo_PatchJointAdaptor_h
+#ifndef asiEngine_PatchJointAdaptor_h
+#define asiEngine_PatchJointAdaptor_h
+
+// asiEngine includes
+#include <asiEngine_Model.h>
+
+// asiData includes
+#include <asiData_ReEdgeNode.h>
+#include <asiData_RePatchNode.h>
 
 // asiAlgo includes
-#include <asiAlgo.h>
-
-// Active Data includes
-#include <ActAPI_IAlgorithm.h>
-
-// OCCT includes
-#include <Geom_BSplineCurve.hxx>
-#include <Geom_BSplineSurface.hxx>
+#include <asiAlgo_PatchJointAdaptor.h>
 
 //-----------------------------------------------------------------------------
 
-//! Adaptor for working with a joint curve between two surface patches in
-//! natural bounds.
-class asiAlgo_PatchJointAdaptor : public ActAPI_IAlgorithm
+//! Adaptor for working with a joint edge between two reverse engineering
+//! patches.
+class asiEngine_PatchJointAdaptor : public asiAlgo_PatchJointAdaptor
 {
 public:
 
   //! Ctor.
-  //! \param[in] curve     curve representing the joint.
-  //! \param[in] surfLeft  surface "on the left" if looking traveling along the
-  //!                      joint curve in the direction of its natural
-  //!                      orientation.
-  //! \param[in] surfRight surface "on the right" if looking traveling along the
-  //!                      joint curve in the direction of its natural
-  //!                      orientation.
-  //! \param[in] progress  progress notifier.
-  //! \param[in] plotter   imperative plotter.
-  asiAlgo_EXPORT
-    asiAlgo_PatchJointAdaptor(const Handle(Geom_Curve)&          curve,
-                              const Handle(Geom_BSplineSurface)& surfLeft,
-                              const Handle(Geom_BSplineSurface)& surfRight,
-                              ActAPI_ProgressEntry               progress = NULL,
-                              ActAPI_PlotterEntry                plotter  = NULL);
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_EXPORT
+    asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
+                                ActAPI_ProgressEntry           progress = NULL,
+                                ActAPI_PlotterEntry            plotter  = NULL);
 
 public:
 
-  //! Determines the isoparametric lines of both surfaces which correspond
-  //! to the joint curve.
-  //! \param[out] isoLeft     isoparametric curve of the left surface.
-  //! \param[out] isoLeftU    indicates if the returned left isoline is U-iso.
-  //! \param[out] isoLeftMin  indicates if the left isoline corresponds to
-  //!                         min parametric value.
-  //! \param[out] isoRight    isoparametric curve of the right surface.
-  //! \param[out] isoRightU   indicates if the returned right isoline is U-iso.
-  //! \param[out] isoRightMin indicates if the right isoline corresponds to
-  //!                         min parametric value.
-  //! \param[out] areOpposite indicates whether the extracted isos are opposite
-  //!                         to each other.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    ExtractIsos(Handle(Geom_BSplineCurve)& isoLeft,
-                bool&                      isoLeftU,
-                bool&                      isoLeftMin,
-                Handle(Geom_BSplineCurve)& isoRight,
-                bool&                      isoRightU,
-                bool&                      isoRightMin,
-                bool&                      areOpposite) const;
-
-  //! Makes the surfaces compatible along their joint curve by knot insertion.
-  //! \param[in] isoLeft   isoparametric curve of the left surface.
-  //! \param[in] isoLeftU  indicates if the left isoline is U-iso.
-  //! \param[in] isoRight  isoparametric curve of the right surface.
-  //! \param[in] isoRightU indicates if the right isoline is U-iso.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    UnifySurfaces(const Handle(Geom_BSplineCurve)& isoLeft,
-                  const bool                       isoLeftU,
-                  const Handle(Geom_BSplineCurve)& isoRight,
-                  const bool                       isoRightU);
-
-  //! Checks if the coincident border between the surface patches is
-  //! well prepared for smoothing. This method checks that the corner poles
-  //! are coincident.
-  //! \param[in] isoLeft     isoparametric curve of the left surface.
-  //! \param[in] isoRight    isoparametric curve of the right surface.
-  //! \param[in] areOpposite indicates whether the passed isos have opposite
-  //!                        directions.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    IsJointCompatible(const Handle(Geom_BSplineCurve)& isoLeft,
-                      const Handle(Geom_BSplineCurve)& isoRight,
-                      const bool                       areOpposite) const;
-
-  //! Aligns control points of the left and right surface patches so that to
-  //! ensure C1 continuity (i.e., the tangency vectors and their modules are
-  //! equal).
-  //! \param[out] isoLeft     isoparametric curve of the left surface.
-  //! \param[out] isoLeftU    indicates if the left isoline is U-iso.
-  //! \param[out] isoLeftMin  indicates if the left isoline corresponds to
-  //!                         min parametric value.
-  //! \param[out] isoRight    isoparametric curve of the right surface.
-  //! \param[out] isoRightU   indicates if the right isoline is U-iso.
-  //! \param[out] isoRightMin indicates if the right isoline corresponds to
-  //!                         min parametric value.
-  //! \param[out] areOpposite indicates whether the passed isos have
-  //!                         opposite directions. If so, this method will
-  //!                         traverse the control points of the second patch
-  //!                         in the reversed order compared to the first patch.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    AlignControlPoles(const Handle(Geom_BSplineCurve)& isoLeft,
-                      const bool                       isoLeftU,
-                      const bool                       isoLeftMin,
-                      const Handle(Geom_BSplineCurve)& isoRight,
-                      const bool                       isoRightU,
-                      const bool                       isoRightMin,
-                      const bool                       areOpposite);
-
-public:
-
-  //! \return left surface.
-  const Handle(Geom_BSplineSurface)& GetSurfaceLeft() const
-  {
-    return m_surfLeft;
-  }
-
-  //! \return right surface.
-  const Handle(Geom_BSplineSurface)& GetSurfaceRight() const
-  {
-    return m_surfRight;
-  }
+  //! Initializes adaptor with joint edge.
+  //! \param[in] edgeNode edge representing the joint.
+  asiEngine_EXPORT bool
+    Init(const Handle(asiData_ReEdgeNode)& edgeNode);
 
 protected:
 
-  //! Determines the isoparametric line hich corresponds to the joint curve
-  //! for the passed surface 
-  //! \param[in]  surf   surface in question.
-  //! \param[out] iso    isoparametric curve on the surface.
-  //! \param[out] isoU   indicates if the returned isoline is U-iso.
-  //! \param[out] isoMin indicates if the returned isoline corresponds to the
-  //!                    min parameter value.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    getIso(const Handle(Geom_BSplineSurface)& surf,
-           Handle(Geom_BSplineCurve)&         iso,
-           bool&                              isoU,
-           bool&                              isoMin) const;
-
-protected:
-
-  Handle(Geom_Curve)          m_curve;     //!< Joint curve.
-  Handle(Geom_BSplineSurface) m_surfLeft;  //!< Surface on the left.
-  Handle(Geom_BSplineSurface) m_surfRight; //!< Surface on the right.
+  Handle(asiEngine_Model)      m_model;       //!< Data Model instance.
+  Handle(asiData_ReEdgeNode)   m_edge;        //!< Joint edge.
+  Handle(asiData_ReCoEdgeNode) m_coedgeLeft;  //!< Left coedge.
+  Handle(asiData_ReCoEdgeNode) m_coedgeRight; //!< Rig
+  Handle(asiData_RePatchNode)  m_patchLeft;   //!< Patch on the left.
+  Handle(asiData_RePatchNode)  m_patchRight;  //!< Patch on the right.
 
 };
 

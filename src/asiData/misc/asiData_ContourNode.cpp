@@ -369,7 +369,7 @@ TopoDS_Wire asiData_ContourNode::AsShape(const bool useCache) const
   Handle(asiAlgo_BaseCloud<double>)
     points = asiAlgo_PointCloudUtils::AsCloudd( this->GetCoords() );
   //
-  if ( !points->GetNumberOfElements() )
+  if ( points.IsNull() || !points->GetNumberOfElements() )
     return TopoDS_Wire();
 
   double x0, y0, z0;

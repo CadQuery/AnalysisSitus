@@ -1461,6 +1461,38 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_GetTriangulationNodes(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get triangulation.
+  Handle(Poly_Triangulation)
+    tris = cmdRE::model->GetTriangulationNode()->GetTriangulation();
+  //
+  if ( tris.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is null.");
+    return TCL_ERROR;
+  }
+
+  // Prepare a point cloud.
+  Handle(asiAlgo_BaseCloud<double>) cloud = new asiAlgo_BaseCloud<double>;
+  //
+  for ( int i = tris->Nodes().Lower(); i <= tris->Nodes().Upper(); ++i )
+    cloud->AddElement( tris->Nodes()(i).XYZ() );
+
+  // Set result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], cloud->GetCoordsArray(), Color_Default);
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -1495,9 +1527,9 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_FairContourLines);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-cut-with-t_plane",
+  interp->AddCommand("re-cut-with-plane",
     //
-    "re-cut-with-t_plane res p [-nosort]\n"
+    "re-cut-with-plane res p [-nosort]\n"
     "\t Cuts triangulation with t_plane. If '-nosort' key is passed, the"
     "\t resulting points are not post-processed with K-neighbors hull"
     "\t algorithm thus remaining disordered.",
@@ -1584,4 +1616,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Approximates point cloud with B-surface.",
     //
     __FILE__, group, RE_ApproxSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-get-triangulation-nodes",
+    //
+    "re-get-triangulation-nodes resPtsName\n"
+    "\t Extracts triangulation nodes as a point cloud.",
+    //
+    __FILE__, group, RE_GetTriangulationNodes);
 }

@@ -45,6 +45,83 @@ using namespace mobius;
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_PatchJointAdaptor::AnalyseJoint(const Handle(Geom_Curve)&   curve,
+                                             const Handle(Geom_Surface)& surf,
+                                             bool&                       isSurfGoesU,
+                                             bool&                       isLeftBound,
+                                             double&                     uMin,
+                                             double&                     uMax,
+                                             double&                     vMin,
+                                             double&                     vMax)
+{
+  // Get sample point (midpoint) on the joint curve.
+  const double f = curve->FirstParameter();
+  const double l = curve->LastParameter();
+  const double m = (f + l)*0.5;
+  //
+  gp_Pnt C = curve->Value(m);
+
+  // Projection precision.
+  const double projPrec = 1e-4;
+
+  // Invert point to the left surface.
+  ShapeAnalysis_Surface sas(surf);
+  gp_Pnt2d uv = sas.ValueOfUV(C, projPrec);
+
+  // Step for small perturbation.
+  const double d = (l - f)*0.01;
+
+  // Give the sample paramter a small perturbation to define another point
+  // on the surface and determine which curvilinear coordinate is effective.
+  const double tShifted = m + d;
+  gp_Pnt       CShifted = curve->Value(tShifted);
+
+  // Invert the shifted point.
+  gp_Pnt2d uvShifted = sas.ValueOfUV(CShifted, projPrec);
+
+  // Get projection coordinates in (U,V) space.
+  double Cproj_U      = uv.X();
+  double Cproj_V      = uv.Y();
+  double Cproj_U_next = uvShifted.X();
+  double Cproj_V_next = uvShifted.Y();
+
+  // Initialize output values.
+  surf->Bounds(uMin, uMax, vMin, vMax);
+  //
+  isSurfGoesU = false;
+  isLeftBound = false;
+
+  // Define which curvilinear axis works out this shift. Here we rely on the
+  // fact that the joint curve is an isoparametric curve for both surfaces.
+  const double confPrec    = 1e-5;
+  bool         sameSense   = true;
+  //
+  if ( fabs(Cproj_U_next - Cproj_U) < confPrec &&
+       fabs(Cproj_V_next - Cproj_V) > confPrec )
+  {
+    isSurfGoesU = false;
+    sameSense   = (Cproj_V_next - Cproj_V) > 0;
+
+    if ( fabs(Cproj_U - uMin) < projPrec )
+      isLeftBound = true;
+  }
+  else if ( fabs(Cproj_U_next - Cproj_U) > confPrec &&
+            fabs(Cproj_V_next - Cproj_V) < confPrec )
+  {
+    isSurfGoesU = true;
+    sameSense   = (Cproj_U_next - Cproj_U) > 0;
+
+    if ( fabs(Cproj_V - vMin) < projPrec )
+      isLeftBound = true;
+  }
+  else
+    return false; // Singularity.
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 asiAlgo_PatchJointAdaptor::asiAlgo_PatchJointAdaptor(const Handle(Geom_Curve)&          curve,
                                                      const Handle(Geom_BSplineSurface)& surfLeft,
                                                      const Handle(Geom_BSplineSurface)& surfRight,
@@ -288,68 +365,11 @@ bool asiAlgo_PatchJointAdaptor::getIso(const Handle(Geom_BSplineSurface)& surf,
                                        bool&                              isoU,
                                        bool&                              isoMin) const
 {
-  // Get sample point (midpoint) on the joint curve.
-  const double f = m_curve->FirstParameter();
-  const double l = m_curve->LastParameter();
-  const double m = (f + l)*0.5;
-  //
-  gp_Pnt C = m_curve->Value(m);
-
-  // Projection precision.
-  const double projPrec = 1e-4;
-
-  // Invert point to the left surface.
-  ShapeAnalysis_Surface sas(surf);
-  gp_Pnt2d uv = sas.ValueOfUV(C, projPrec);
-
-  // Step for small perturbation.
-  const double d = (l - f)*0.01;
-
-  // Give the sample paramter a small perturbation to define another point
-  // on the surface and determine which curvilinear coordinate is effective.
-  const double tShifted = m + d;
-  gp_Pnt       CShifted = m_curve->Value(tShifted);
-
-  // Invert the shifted point.
-  gp_Pnt2d uvShifted = sas.ValueOfUV(CShifted, projPrec);
-
-  // Get projection coordinates in (U,V) space.
-  double Cproj_U      = uv.X();
-  double Cproj_V      = uv.Y();
-  double Cproj_U_next = uvShifted.X();
-  double Cproj_V_next = uvShifted.Y();
-
-  // Get natural bounds of the surface.
+  bool isSurfGoesU, isLeftBound;
   double uMin, uMax, vMin, vMax;
-  surf->Bounds(uMin, uMax, vMin, vMax);
-
-  // Define which curvilinear axis works out this shift. Here we rely on the
-  // fact that the joint curve is an isoparametric curve for both surfaces.
-  bool         isSurfGoesU = false;
-  const double confPrec    = 1e-5;
-  bool         sameSense   = true;
-  bool         isLeftBound = false;
   //
-  if ( fabs(Cproj_U_next - Cproj_U) < confPrec &&
-       fabs(Cproj_V_next - Cproj_V) > confPrec )
-  {
-    isSurfGoesU = false;
-    sameSense   = (Cproj_V_next - Cproj_V) > 0;
-
-    if ( fabs(Cproj_U - uMin) < projPrec )
-      isLeftBound = true;
-  }
-  else if ( fabs(Cproj_U_next - Cproj_U) > confPrec &&
-            fabs(Cproj_V_next - Cproj_V) < confPrec )
-  {
-    isSurfGoesU = true;
-    sameSense   = (Cproj_U_next - Cproj_U) > 0;
-
-    if ( fabs(Cproj_V - vMin) < projPrec )
-      isLeftBound = true;
-  }
-  else
-    return false; // Singularity.
+  if ( !AnalyseJoint(m_curve, surf, isSurfGoesU, isLeftBound, uMin, uMax, vMin, vMax) )
+    return false;
 
   if ( isSurfGoesU )
   {

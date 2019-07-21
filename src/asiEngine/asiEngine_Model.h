@@ -57,7 +57,7 @@
 #include <asiData_MetadataNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
-#include <asiData_ReCoEdgeNode.h>
+#include <asiData_ReCoedgeNode.h>
 #include <asiData_ReEdgeNode.h>
 #include <asiData_ReEdgesNode.h>
 #include <asiData_ReTopoNode.h>
@@ -312,9 +312,9 @@ public:
 
   //! Accessor for a Partition instance dedicated to CoEdge Nodes.
   //! \return requested Partition.
-  Handle(asiData_Partition<asiData_ReCoEdgeNode>) GetReCoEdgePartition() const
+  Handle(asiData_Partition<asiData_ReCoedgeNode>) GetReCoEdgePartition() const
   {
-    return Handle(asiData_Partition<asiData_ReCoEdgeNode>)::DownCast( this->Partition(Partition_ReCoEdge) );
+    return Handle(asiData_Partition<asiData_ReCoedgeNode>)::DownCast( this->Partition(Partition_ReCoEdge) );
   }
 
   //! Accessor for a Partition instance dedicated to ReEdge Nodes.

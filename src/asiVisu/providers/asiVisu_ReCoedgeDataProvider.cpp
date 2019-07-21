@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 June 2019
+// Created on: 21 July 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,58 +28,53 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_PatchJointAdaptor_h
-#define asiEngine_PatchJointAdaptor_h
-
-// asiEngine includes
-#include <asiEngine_Model.h>
+// Own include
+#include <asiVisu_ReCoedgeDataProvider.h>
 
 // asiData includes
-#include <asiData_ReEdgeNode.h>
 #include <asiData_RePatchNode.h>
 
-// asiAlgo includes
-#include <asiAlgo_PatchJointAdaptor.h>
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
 
-//! Adaptor for working with a joint edge between two reverse engineering
-//! patches.
-class asiEngine_PatchJointAdaptor : public asiAlgo_PatchJointAdaptor
+asiVisu_ReCoedgeDataProvider::asiVisu_ReCoedgeDataProvider(const Handle(asiData_ReCoedgeNode)& N)
+: asiVisu_DataProvider (),
+  m_node               (N)
+{}
+
+//-----------------------------------------------------------------------------
+
+Handle(Geom_Curve) asiVisu_ReCoedgeDataProvider::GetCurve(double& f, double& l) const
 {
-public:
+  return m_node->GetEdge()->GetCurve(f, l);
+}
 
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_EXPORT
-    asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
-                                ActAPI_ProgressEntry           progress = NULL,
-                                ActAPI_PlotterEntry            plotter  = NULL);
+//-----------------------------------------------------------------------------
 
-public:
+Handle(Geom_Surface) asiVisu_ReCoedgeDataProvider::GetSurface() const
+{
+  Handle(asiData_RePatchNode)
+    patch = Handle(asiData_RePatchNode)::DownCast( m_node->GetParentNode() );
 
-  //! Initializes adaptor with joint edge.
-  //! \param[in] edgeNode edge representing the joint.
-  asiEngine_EXPORT bool
-    Init(const Handle(asiData_ReEdgeNode)& edgeNode);
+  return patch->GetSurface();
+}
 
-protected:
+//-----------------------------------------------------------------------------
 
-  Handle(asiEngine_Model)      m_model;          //!< Data Model instance.
-  Handle(asiData_ReEdgeNode)   m_edge;           //!< Joint edge.
-  //
-  Handle(asiData_RePatchNode)  m_patchLeft;      //!< Patch on the left.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeft;     //!< Left coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftTop;  //!< Left-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftBot;  //!< Left-bottom coedge.
-  //
-  Handle(asiData_RePatchNode)  m_patchRight;     //!< Patch on the right.
-  Handle(asiData_ReCoedgeNode) m_coedgeRight;    //!< Right coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightTop; //!< Right-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightBot; //!< Right-bottom coedge.
+bool asiVisu_ReCoedgeDataProvider::GetSameSense() const
+{
+  return m_node->IsSameSense();
+}
 
-};
+//-----------------------------------------------------------------------------
 
-#endif
+Handle(ActAPI_HParameterList)
+  asiVisu_ReCoedgeDataProvider::translationSources() const
+{
+  ActAPI_ParameterStream out;
+  out << m_node->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  return out.List;
+}

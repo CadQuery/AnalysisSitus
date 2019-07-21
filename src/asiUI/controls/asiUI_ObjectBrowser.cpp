@@ -783,7 +783,7 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
    * ====================== */
 
   // Get owner patches.
-  Handle(asiData_ReCoEdgeNode) leftCoedge, rightCoedge;
+  Handle(asiData_ReCoedgeNode) leftCoedge, rightCoedge;
   Handle(asiData_RePatchNode)  leftPatchNode, rightPatchNode;
   //
   if ( !reApi.GetPatchesByEdge(edgeNode,

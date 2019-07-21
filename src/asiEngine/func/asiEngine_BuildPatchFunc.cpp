@@ -78,7 +78,7 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   }
 
   // Collect coedges.
-  std::vector<Handle(asiData_ReCoEdgeNode)> coedges;
+  std::vector<Handle(asiData_ReCoedgeNode)> coedges;
 
   // Get min number of knots.
   const int
@@ -98,8 +98,8 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
 
     const Handle(ActAPI_IUserParameter)& uParam = it.Value();
     //
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( uParam->GetNode() );
+    Handle(asiData_ReCoedgeNode)
+      coedge = Handle(asiData_ReCoedgeNode)::DownCast( uParam->GetNode() );
 
     if ( !coedge.IsNull() )
       coedges.push_back(coedge);

@@ -35,7 +35,7 @@
 #include <asiEngine_Base.h>
 
 // asiData includes
-#include <asiData_ReCoEdgeNode.h>
+#include <asiData_ReCoedgeNode.h>
 
 //! API for the data model operations related to reverse engineering.
 class asiEngine_RE : public asiEngine_Base
@@ -110,7 +110,7 @@ public:
   //! \param[in] edge      edge to reference.
   //! \param[in] samesense orientation flag.
   //! \return newly created Node.
-  asiEngine_EXPORT Handle(asiData_ReCoEdgeNode)
+  asiEngine_EXPORT Handle(asiData_ReCoedgeNode)
     Create_CoEdge(const Handle(asiData_RePatchNode)& patch,
                   const Handle(asiData_ReEdgeNode)&  edge,
                   const bool                         samesense);
@@ -194,8 +194,8 @@ public:
   //! \return true in case of success, false -- otherwise.
   asiEngine_EXPORT bool
     GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
-                     Handle(asiData_ReCoEdgeNode)&     coedgeLeft,
-                     Handle(asiData_ReCoEdgeNode)&     coedgeRight,
+                     Handle(asiData_ReCoedgeNode)&     coedgeLeft,
+                     Handle(asiData_ReCoedgeNode)&     coedgeRight,
                      Handle(asiData_RePatchNode)&      patchLeft,
                      Handle(asiData_RePatchNode)&      patchRight) const;
 
@@ -206,7 +206,7 @@ public:
   //! \param[out] surf        constructed surface.
   //! \return true in case of success, false -- otherwise.
   asiEngine_EXPORT bool
-    FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)>& coedges,
+    FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)>& coedges,
                    const int                                        minNumKnots,
                    Handle(Geom_BSplineSurface)&                     surf) const;
 
@@ -214,6 +214,20 @@ public:
   //! \param[in] patch target Patch Node.
   asiEngine_EXPORT void
     ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& patch) const;
+
+  //! Returns the coedge which is the next to the passed one in its
+  //! owning patch.
+  //! \param[in] current current coedge.
+  //! \return next coedge.
+  asiEngine_EXPORT Handle(asiData_ReCoedgeNode)
+    GetNext(const Handle(asiData_ReCoedgeNode)& current) const;
+
+  //! Returns the coedge which is the previous to the passed one in its
+  //! owning patch.
+  //! \param[in] current current coedge.
+  //! \return previous coedge.
+  asiEngine_EXPORT Handle(asiData_ReCoedgeNode)
+    GetPrevious(const Handle(asiData_ReCoedgeNode)& current) const;
 
 };
 

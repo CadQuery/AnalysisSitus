@@ -34,11 +34,11 @@
 // asiVisu includes
 #include <asiVisu_BCurveKnotsPipeline.h>
 #include <asiVisu_BCurvePolesPipeline.h>
+#include <asiVisu_CurvePipeline.h>
 #include <asiVisu_PointsPipeline.h>
 #include <asiVisu_ReEdgeCurveDataProvider.h>
 #include <asiVisu_ReEdgePolylineDataProvider.h>
 #include <asiVisu_ReEdgeShapeDataProvider.h>
-#include <asiVisu_ShapePipeline.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -62,10 +62,6 @@ asiVisu_ReEdgePrs::asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N)
   Handle(asiVisu_ReEdgePolylineDataProvider)
     polyline_dp = new asiVisu_ReEdgePolylineDataProvider(edge_n);
 
-  // Create Data Provider for edge as a topological entity.
-  Handle(asiVisu_ReEdgeShapeDataProvider)
-    edge_dp = new asiVisu_ReEdgeShapeDataProvider(edge_n);
-
   // Create Data Provider for edge as a geometric entity.
   Handle(asiVisu_ReEdgeCurveDataProvider)
     curve_dp = new asiVisu_ReEdgeCurveDataProvider(edge_n);
@@ -77,12 +73,11 @@ asiVisu_ReEdgePrs::asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N)
   this->assignDataProvider ( Pipeline_Polyline, polyline_dp );
 
   // Pipeline for curve.
-  Handle(asiVisu_ShapePipeline) curve_pl = new asiVisu_ShapePipeline(false);
-  curve_pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
+  Handle(asiVisu_CurvePipeline) curve_pl = new asiVisu_CurvePipeline;
   curve_pl->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   //
   this->addPipeline        ( Pipeline_Curve, curve_pl );
-  this->assignDataProvider ( Pipeline_Curve, edge_dp );
+  this->assignDataProvider ( Pipeline_Curve, curve_dp );
 
   // Pipeline for poles of b-curves.
   this->addPipeline        ( Pipeline_CurvePoles, new asiVisu_BCurvePolesPipeline );

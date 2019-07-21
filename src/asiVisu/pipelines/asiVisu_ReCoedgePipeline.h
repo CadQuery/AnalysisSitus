@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 June 2019
+// Created on: 21 July 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,57 +28,46 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_PatchJointAdaptor_h
-#define asiEngine_PatchJointAdaptor_h
+#ifndef asiVisu_ReCoedgePipeline_h
+#define asiVisu_ReCoedgePipeline_h
 
-// asiEngine includes
-#include <asiEngine_Model.h>
-
-// asiData includes
-#include <asiData_ReEdgeNode.h>
-#include <asiData_RePatchNode.h>
-
-// asiAlgo includes
-#include <asiAlgo_PatchJointAdaptor.h>
+// asiVisu includes
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_Pipeline.h>
 
 //-----------------------------------------------------------------------------
 
-//! Adaptor for working with a joint edge between two reverse engineering
-//! patches.
-class asiEngine_PatchJointAdaptor : public asiAlgo_PatchJointAdaptor
+//! Visualization pipeline for coedges in RE topology model.
+class asiVisu_ReCoedgePipeline : public asiVisu_Pipeline
 {
 public:
 
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_EXPORT
-    asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
-                                ActAPI_ProgressEntry           progress = NULL,
-                                ActAPI_PlotterEntry            plotter  = NULL);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgePipeline, asiVisu_Pipeline)
 
 public:
 
-  //! Initializes adaptor with joint edge.
-  //! \param[in] edgeNode edge representing the joint.
-  asiEngine_EXPORT bool
-    Init(const Handle(asiData_ReEdgeNode)& edgeNode);
+  asiVisu_EXPORT
+    asiVisu_ReCoedgePipeline();
 
-protected:
+public:
 
-  Handle(asiEngine_Model)      m_model;          //!< Data Model instance.
-  Handle(asiData_ReEdgeNode)   m_edge;           //!< Joint edge.
-  //
-  Handle(asiData_RePatchNode)  m_patchLeft;      //!< Patch on the left.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeft;     //!< Left coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftTop;  //!< Left-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftBot;  //!< Left-bottom coedge.
-  //
-  Handle(asiData_RePatchNode)  m_patchRight;     //!< Patch on the right.
-  Handle(asiData_ReCoedgeNode) m_coedgeRight;    //!< Right coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightTop; //!< Right-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightBot; //!< Right-bottom coedge.
+  asiVisu_EXPORT virtual void
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
+
+private:
+
+  virtual void callback_add_to_renderer      (vtkRenderer* pRenderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* pRenderer);
+  virtual void callback_update               ();
+
+private:
+
+  //! Copying prohibited.
+  asiVisu_ReCoedgePipeline(const asiVisu_ReCoedgePipeline&);
+
+  //! Assignment prohibited.
+  asiVisu_ReCoedgePipeline& operator=(const asiVisu_ReCoedgePipeline&);
 
 };
 

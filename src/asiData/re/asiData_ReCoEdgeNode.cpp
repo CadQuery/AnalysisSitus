@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_ReCoEdgeNode.h>
+#include <asiData_ReCoedgeNode.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -37,7 +37,7 @@
 //-----------------------------------------------------------------------------
 
 //! Default ctor. Registers all involved Parameters.
-asiData_ReCoEdgeNode::asiData_ReCoEdgeNode() : ActData_BaseNode()
+asiData_ReCoedgeNode::asiData_ReCoedgeNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,      PID_Name);
   REGISTER_PARAMETER(Reference, PID_EdgeRef);
@@ -46,14 +46,14 @@ asiData_ReCoEdgeNode::asiData_ReCoEdgeNode() : ActData_BaseNode()
 
 //-----------------------------------------------------------------------------
 
-Handle(ActAPI_INode) asiData_ReCoEdgeNode::Instance()
+Handle(ActAPI_INode) asiData_ReCoedgeNode::Instance()
 {
-  return new asiData_ReCoEdgeNode();
+  return new asiData_ReCoedgeNode();
 }
 
 //-----------------------------------------------------------------------------
 
-void asiData_ReCoEdgeNode::Init(const Handle(asiData_ReEdgeNode)& edge,
+void asiData_ReCoedgeNode::Init(const Handle(asiData_ReEdgeNode)& edge,
                                 const bool                        samesense)
 {
   // Initialize Parameters.
@@ -68,21 +68,21 @@ void asiData_ReCoEdgeNode::Init(const Handle(asiData_ReEdgeNode)& edge,
 
 //-----------------------------------------------------------------------------
 
-TCollection_ExtendedString asiData_ReCoEdgeNode::GetName()
+TCollection_ExtendedString asiData_ReCoedgeNode::GetName()
 {
   return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------
 
-void asiData_ReCoEdgeNode::SetName(const TCollection_ExtendedString& name)
+void asiData_ReCoedgeNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReEdgeNode) asiData_ReCoEdgeNode::GetEdge() const
+Handle(asiData_ReEdgeNode) asiData_ReCoedgeNode::GetEdge() const
 {
   Handle(ActAPI_IDataCursor)
     dc = ActParamTool::AsReference( this->Parameter(PID_EdgeRef) )->GetTarget();
@@ -98,7 +98,7 @@ Handle(asiData_ReEdgeNode) asiData_ReCoEdgeNode::GetEdge() const
 
 //-----------------------------------------------------------------------------
 
-void asiData_ReCoEdgeNode::SetEdge(const Handle(asiData_ReEdgeNode)& edge)
+void asiData_ReCoedgeNode::SetEdge(const Handle(asiData_ReEdgeNode)& edge)
 {
   if ( edge.IsNull() )
     this->DisconnectReference(PID_EdgeRef);
@@ -108,7 +108,7 @@ void asiData_ReCoEdgeNode::SetEdge(const Handle(asiData_ReEdgeNode)& edge)
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetFirstVertex() const
+Handle(asiData_ReVertexNode) asiData_ReCoedgeNode::GetFirstVertex() const
 {
   Handle(asiData_ReEdgeNode)   edge = this->GetEdge();
   Handle(asiData_ReVertexNode) vf   = edge->GetFirstVertex();
@@ -122,7 +122,7 @@ Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetFirstVertex() const
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetLastVertex() const
+Handle(asiData_ReVertexNode) asiData_ReCoedgeNode::GetLastVertex() const
 {
   Handle(asiData_ReEdgeNode)   edge = this->GetEdge();
   Handle(asiData_ReVertexNode) vf   = edge->GetFirstVertex();
@@ -136,14 +136,14 @@ Handle(asiData_ReVertexNode) asiData_ReCoEdgeNode::GetLastVertex() const
 
 //-----------------------------------------------------------------------------
 
-bool asiData_ReCoEdgeNode::IsSameSense() const
+bool asiData_ReCoedgeNode::IsSameSense() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_SameSense) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------
 
-void asiData_ReCoEdgeNode::SetSameSense(const bool isSameSense)
+void asiData_ReCoedgeNode::SetSameSense(const bool isSameSense)
 {
   ActParamTool::AsBool( this->Parameter(PID_SameSense) )->SetValue(isSameSense);
 }

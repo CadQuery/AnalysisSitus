@@ -54,7 +54,7 @@
 //-----------------------------------------------------------------------------
 
 #define ARRNAME_MESH_ITEM_TYPE     "arrname_tess_item_type"
-#define ARRNAME_MESH_NODE_IDS      "arrname_asiData_TessNode_ids"
+#define ARRNAME_MESH_NODE_IDS      "arrname_tess_node_ids"
 #define ARRNAME_MESH_ELEM_IDS      "arrname_tess_elem_ids"
 #define ARRNAME_MESH_EN_SCALARS    "arrname_tess_en_scalars"
 #define ARRNAME_MESH_E_SCALARS     "arrname_tess_e_scalars"

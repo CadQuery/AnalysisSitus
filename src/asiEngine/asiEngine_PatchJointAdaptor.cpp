@@ -74,7 +74,46 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
     m_progress.SendLogMessage( LogInfo(Normal) << "Right patch: %1." << m_patchRight->GetName() );
 
   if ( m_patchRight.IsNull() || m_patchRight.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Naked edge: there is no left or/and right patch." );
     return false; // Naked edge.
+  }
+
+  if ( m_coedgeLeft.IsNull() || m_coedgeRight.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Incomplete topology: there is no left or/and right coedge." );
+    return false; // Incomplete topology.
+  }
+
+  // Get next and previous coedges.
+  m_coedgeLeftTop  = reApi.GetNext     (m_coedgeLeft);
+  m_coedgeLeftBot  = reApi.GetPrevious (m_coedgeLeft);
+  m_coedgeRightTop = reApi.GetPrevious (m_coedgeRight);
+  m_coedgeRightBot = reApi.GetNext     (m_coedgeRight);
+  //
+  if ( m_coedgeLeftTop.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Incomplete topology: there is no left-top coedge." );
+    return false; // Incomplete topology.
+  }
+  //
+  if ( m_coedgeLeftBot.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Incomplete topology: there is no left-bottom coedge." );
+    return false; // Incomplete topology.
+  }
+  //
+  if ( m_coedgeRightTop.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Incomplete topology: there is no right-top coedge." );
+    return false; // Incomplete topology.
+  }
+  //
+  if ( m_coedgeRightBot.IsNull() )
+  {
+    m_progress.SendLogMessage( LogWarn(Normal) << "Incomplete topology: there is no right-bottom coedge." );
+    return false; // Incomplete topology.
+  }
 
   return true;
 }

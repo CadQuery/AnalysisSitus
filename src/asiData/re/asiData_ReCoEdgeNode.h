@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_ReCoEdgeNode_h
-#define asiData_ReCoEdgeNode_h
+#ifndef asiData_ReCoedgeNode_h
+#define asiData_ReCoedgeNode_h
 
 // asiData includes
 #include <asiData_ReEdgeNode.h>
@@ -40,15 +40,15 @@
 //! Data Node representing an occurrence of a topological edge in a patch.
 //! Technically, this is nothing but a pointer to the edge plus orientation
 //! flag. CoEdges allow for reusing geometry of edges in adjacent patches.
-class asiData_ReCoEdgeNode : public ActData_BaseNode
+class asiData_ReCoedgeNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_ReCoEdgeNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_ReCoedgeNode, ActData_BaseNode)
 
   // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_ReCoEdgeNode, Instance)
+  DEFINE_NODE_FACTORY(asiData_ReCoedgeNode, Instance)
 
 public:
 
@@ -129,7 +129,7 @@ protected:
 
   //! Allocation is allowed only via Instance() method.
   asiData_EXPORT
-    asiData_ReCoEdgeNode();
+    asiData_ReCoedgeNode();
 
 };
 

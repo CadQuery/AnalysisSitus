@@ -104,7 +104,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
 
   // Get current topological situation.
   Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
-  Handle(asiData_ReCoEdgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReCoedgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
   Handle(asiData_ReVertexNode) lastVertexNode = topoNode->GetLastVertex();
   Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
 
@@ -350,7 +350,7 @@ bool
   // Get Topology Node and the currently composed entities.
   Handle(asiData_ReTopoNode)   topoNode        = m_model->GetReTopoNode();
   Handle(asiData_RePatchNode)  patchNode       = topoNode->GetCurrentPatch();
-  Handle(asiData_ReCoEdgeNode) coedgeNode      = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReCoedgeNode) coedgeNode      = topoNode->GetCurrentCoEdge();
   Handle(asiData_ReEdgeNode)   lastEdgeNode    = coedgeNode.IsNull() ? NULL : coedgeNode->GetEdge();
   Handle(asiData_ReVertexNode) firstVertexNode = topoNode->GetFirstVertex();
   //
@@ -420,7 +420,7 @@ bool
     // Add coedge with inverse orientation.
     const size_t edgeIdx = this->chooseLeftTurnEdge(lastEdgeNode, target, isCurrentSameSense, edges);
     //
-    Handle(asiData_ReCoEdgeNode)
+    Handle(asiData_ReCoedgeNode)
       nextCoEdge = reApi.Create_CoEdge(patchNode, edges[edgeIdx], false);
 
     // Get next target vertex.
@@ -622,13 +622,13 @@ size_t
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReCoEdgeNode)
+Handle(asiData_ReCoedgeNode)
   asiUI_PickContourCallback::getPrevCoEdge(const Handle(asiData_ReEdgeNode)& currentEdge)
 {
   Handle(asiData_ReTopoNode)   topoNode   = m_model->GetReTopoNode();
   Handle(asiData_RePatchNode)  patchNode  = topoNode->GetCurrentPatch();
 
-  Handle(asiData_ReCoEdgeNode) prevCoedgeNode;
+  Handle(asiData_ReCoedgeNode) prevCoedgeNode;
   int iter = 0;
   //
   for ( Handle(ActAPI_IChildIterator) cit = patchNode->GetChildIterator();
@@ -636,8 +636,8 @@ Handle(asiData_ReCoEdgeNode)
   {
     Handle(ActAPI_INode) childNode = cit->Value();
     //
-    const Handle(asiData_ReCoEdgeNode)&
-      childCoedgeNode = Handle(asiData_ReCoEdgeNode)::DownCast(childNode);
+    const Handle(asiData_ReCoedgeNode)&
+      childCoedgeNode = Handle(asiData_ReCoedgeNode)::DownCast(childNode);
 
     if ( iter && ( childCoedgeNode->GetEdge()->GetId() == currentEdge->GetId() ) )
     {
@@ -655,7 +655,7 @@ Handle(asiData_ReCoEdgeNode)
 //-----------------------------------------------------------------------------
 
 gp_Vec
-  asiUI_PickContourCallback::getCoEdgeTrailingDir(const Handle(asiData_ReCoEdgeNode)& coedge)
+  asiUI_PickContourCallback::getCoEdgeTrailingDir(const Handle(asiData_ReCoedgeNode)& coedge)
 {
   Handle(asiData_ReEdgeNode) edge = coedge->GetEdge();
 
@@ -759,14 +759,14 @@ bool asiUI_PickContourCallback::projectLine(const gp_XYZ&        p1,
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReCoEdgeNode)
+Handle(asiData_ReCoedgeNode)
   asiUI_PickContourCallback::buildNewEdge(const Handle(asiData_ReVertexNode)& target,
                                           const bool                          doProjectLine)
 {
   // Get Topology Node and the currently composed entities.
   Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
   Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
-  Handle(asiData_ReCoEdgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
+  Handle(asiData_ReCoedgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
   Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
 
   // Business logic of reconstruction.
@@ -788,7 +788,7 @@ Handle(asiData_ReCoEdgeNode)
   nextEdgeNode->SetFirstVertex(target);
 
   // Create coedge.
-  Handle(asiData_ReCoEdgeNode)
+  Handle(asiData_ReCoedgeNode)
     nextCoedgeNode = reApi.Create_CoEdge(patchNode, nextEdgeNode, true);
   //
   topoNode->SetCurrentCoEdge(nextCoedgeNode);
@@ -841,7 +841,7 @@ Handle(asiData_ReCoEdgeNode)
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReCoEdgeNode)
+Handle(asiData_ReCoedgeNode)
   asiUI_PickContourCallback::buildNewEdge(const Handle(asiData_ReVertexNode)& target)
 {
   return this->buildNewEdge(target, false);
@@ -849,7 +849,7 @@ Handle(asiData_ReCoEdgeNode)
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReCoEdgeNode)
+Handle(asiData_ReCoedgeNode)
   asiUI_PickContourCallback::buildNewCoEdge(const Handle(asiData_ReEdgeNode)& edge,
                                             const bool                        samesense)
 {
@@ -858,7 +858,7 @@ Handle(asiData_ReCoEdgeNode)
 
   //// Get Topology Node and the currently composed entities.
   //Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
-  //Handle(asiData_ReCoEdgeNode) currCoedgeNode = topoNode->GetCurrentCoEdge();
+  //Handle(asiData_ReCoedgeNode) currCoedgeNode = topoNode->GetCurrentCoEdge();
 
   //Handle(asiData_ReVertexNode)
   //  nextVertex = samesense ? edge->GetLastVertex()
@@ -868,7 +868,7 @@ Handle(asiData_ReCoEdgeNode)
   //topoNode->SetLastVertex(nextVertex);
 
   //// Create next coedge.
-  //Handle(asiData_ReCoEdgeNode)
+  //Handle(asiData_ReCoedgeNode)
   //  coedgeNode = reApi.Create_CoEdge(patchNode, edgeNode, true);
   ////
   //topoNode->SetCurrentCoEdge(coedgeNode);

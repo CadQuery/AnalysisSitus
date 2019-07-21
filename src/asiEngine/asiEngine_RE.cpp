@@ -276,14 +276,14 @@ Handle(asiData_ReEdgeNode)
 
 //-----------------------------------------------------------------------------
 
-Handle(asiData_ReCoEdgeNode)
+Handle(asiData_ReCoedgeNode)
   asiEngine_RE::Create_CoEdge(const Handle(asiData_RePatchNode)& patch,
                               const Handle(asiData_ReEdgeNode)&  edge,
                               const bool                         samesense)
 {
   // Add Node to Partition.
-  Handle(asiData_ReCoEdgeNode)
-    coedge_n = Handle(asiData_ReCoEdgeNode)::DownCast( asiData_ReCoEdgeNode::Instance() );
+  Handle(asiData_ReCoedgeNode)
+    coedge_n = Handle(asiData_ReCoedgeNode)::DownCast( asiData_ReCoedgeNode::Instance() );
   //
   m_model->GetReCoEdgePartition()->AddNode(coedge_n);
 
@@ -358,8 +358,8 @@ void asiEngine_RE::CollectBoundaryPoints(const Handle(asiData_RePatchNode)& patc
   // Iterate over the coedges.
   for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
   {
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    Handle(asiData_ReCoedgeNode)
+      coedge = Handle(asiData_ReCoedgeNode)::DownCast( cit->Value() );
     //
     if ( coedge.IsNull() || !coedge->IsWellFormed() )
       continue;
@@ -389,8 +389,8 @@ void asiEngine_RE::CollectVertexPoints(const Handle(asiData_RePatchNode)& patch,
   // Iterate over the coedges.
   for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
   {
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    Handle(asiData_ReCoedgeNode)
+      coedge = Handle(asiData_ReCoedgeNode)::DownCast( cit->Value() );
     //
     if ( coedge.IsNull() || !coedge->IsWellFormed() )
       continue;
@@ -426,8 +426,8 @@ void asiEngine_RE::CollectContourTriangles(const Handle(asiData_RePatchNode)& pa
   // Iterate over the coedges.
   for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
   {
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    Handle(asiData_ReCoedgeNode)
+      coedge = Handle(asiData_ReCoedgeNode)::DownCast( cit->Value() );
     //
     if ( coedge.IsNull() || !coedge->IsWellFormed() )
       continue;
@@ -662,8 +662,8 @@ bool
 
 bool
   asiEngine_RE::GetPatchesByEdge(const Handle(asiData_ReEdgeNode)& edge,
-                                 Handle(asiData_ReCoEdgeNode)&     coedgeLeft,
-                                 Handle(asiData_ReCoEdgeNode)&     coedgeRight,
+                                 Handle(asiData_ReCoedgeNode)&     coedgeLeft,
+                                 Handle(asiData_ReCoedgeNode)&     coedgeRight,
                                  Handle(asiData_RePatchNode)&      patchLeft,
                                  Handle(asiData_RePatchNode)&      patchRight) const
 {
@@ -679,7 +679,7 @@ bool
     Handle(ActData_ReferenceParameter) ref = ActParamTool::AsReference( rit.Value() );
 
     // Get owning Node for the reference.
-    Handle(asiData_ReCoEdgeNode) coedge = Handle(asiData_ReCoEdgeNode)::DownCast( ref->GetNode() );
+    Handle(asiData_ReCoedgeNode) coedge = Handle(asiData_ReCoedgeNode)::DownCast( ref->GetNode() );
     //
     if ( coedge.IsNull() )
       continue;
@@ -701,7 +701,7 @@ bool
 
 //-----------------------------------------------------------------------------
 
-bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)>& coedges,
+bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)>& coedges,
                                   const int                                        minNumKnots,
                                   Handle(Geom_BSplineSurface)&                     surf) const
 {
@@ -718,7 +718,7 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoEdgeNode)
   // flags stored in coedges, so that the 4-sided contour is properly oriented.
   for ( size_t k = 0; k < coedges.size(); ++k )
   {
-    const Handle(asiData_ReCoEdgeNode)& coedge = coedges[k];
+    const Handle(asiData_ReCoedgeNode)& coedge = coedges[k];
     //
     if ( coedge.IsNull() || !coedge->IsWellFormed() )
     {
@@ -896,10 +896,10 @@ void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& pa
   std::vector<Handle(asiData_ReEdgeNode)> edges;
   for ( Handle(ActAPI_IChildIterator) cit = patch->GetChildIterator(); cit->More(); cit->Next() )
   {
-    Handle(asiData_ReCoEdgeNode)
-      coedge = Handle(asiData_ReCoEdgeNode)::DownCast( cit->Value() );
+    Handle(asiData_ReCoedgeNode)
+      coedge = Handle(asiData_ReCoedgeNode)::DownCast( cit->Value() );
 
-    inputs << coedge->Parameter(asiData_ReCoEdgeNode::PID_SameSense);
+    inputs << coedge->Parameter(asiData_ReCoedgeNode::PID_SameSense);
 
     // Get reference to edge.
     edges.push_back( coedge->GetEdge() );
@@ -915,4 +915,72 @@ void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& pa
                               asiEngine_BuildPatchFunc::GUID(),
                               inputs,
                               ActParamStream() << patch->Parameter(asiData_RePatchNode::PID_Geometry) );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoedgeNode)
+  asiEngine_RE::GetNext(const Handle(asiData_ReCoedgeNode)& current) const
+{
+  // Get patch.
+  Handle(asiData_RePatchNode)
+    patch = Handle(asiData_RePatchNode)::DownCast( current->GetParentNode() );
+  //
+  if ( patch.IsNull() || !patch->IsWellFormed() )
+    return NULL;
+
+  // Collect all children into a vector.
+  Handle(ActAPI_HNodeList) children;
+  patch->GetChildren(children);
+
+  // If the current coedge is the last one, the next will be the first one.
+  if ( children->Last()->GetId() == current->GetId() )
+    return Handle(asiData_ReCoedgeNode)::DownCast( children->First() );
+
+  // Find the current Node among the children.
+  for ( ActAPI_HNodeList::Iterator it(*children); it.More(); it.Next() )
+  {
+    if ( it.Value()->GetId() == current->GetId() )
+    {
+      it.Next();
+      return Handle(asiData_ReCoedgeNode)::DownCast( it.Value() );
+    }
+  }
+
+  return NULL;
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoedgeNode)
+  asiEngine_RE::GetPrevious(const Handle(asiData_ReCoedgeNode)& current) const
+{
+  // Get patch.
+  Handle(asiData_RePatchNode)
+    patch = Handle(asiData_RePatchNode)::DownCast( current->GetParentNode() );
+  //
+  if ( patch.IsNull() || !patch->IsWellFormed() )
+    return NULL;
+
+  // Collect all children into a vector.
+  Handle(ActAPI_HNodeList) children;
+  patch->GetChildren(children);
+
+  // If the current coedge is the first one, the previous will be the last one.
+  if ( children->First()->GetId() == current->GetId() )
+    return Handle(asiData_ReCoedgeNode)::DownCast( children->Last() );
+
+  // Find the current Node among the children.
+  Handle(ActAPI_INode) prev;
+  for ( ActAPI_HNodeList::Iterator it(*children); it.More(); it.Next() )
+  {
+    Handle(ActAPI_INode) next = it.Value();
+
+    if ( !prev.IsNull() && ( next->GetId() == current->GetId() ) )
+      return Handle(asiData_ReCoedgeNode)::DownCast(prev);
+
+    prev = next;
+  }
+
+  return NULL;
 }

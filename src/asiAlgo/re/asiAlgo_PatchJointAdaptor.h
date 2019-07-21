@@ -49,6 +49,33 @@ class asiAlgo_PatchJointAdaptor : public ActAPI_IAlgorithm
 {
 public:
 
+  //! Performs geometric analysis of a surface passing through the given curve.
+  //! \param[in]  curve       curve on surface.
+  //! \param[in]  surf        host surface.
+  //! \param[out] isSurfGoesU indicates whether the `curve` represents an
+  //!                         isoparametric line passing along the U curvilinear
+  //!                         direction on the surface. If not, it is assumed
+  //!                         that the curve rather goes in the V direction.
+  //! \param[out] isLeftBound indicates which parametric bound to take for
+  //!                         extracting the equivalent isoparametric line
+  //!                         for the `curve`.
+  //! \param[out] uMin        min U bound.
+  //! \param[out] uMax        max U bound.
+  //! \param[out] vMin        min V bound.
+  //! \param[out] vMax        max V bound.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT static bool
+    AnalyseJoint(const Handle(Geom_Curve)&   curve,
+                 const Handle(Geom_Surface)& surf,
+                 bool&                       isSurfGoesU,
+                 bool&                       isLeftBound,
+                 double&                     uMin,
+                 double&                     uMax,
+                 double&                     vMin,
+                 double&                     vMax);
+
+public:
+
   //! Ctor.
   //! \param[in] curve     curve representing the joint.
   //! \param[in] surfLeft  surface "on the left" if looking traveling along the

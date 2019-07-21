@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 28 June 2019
+// Created on: 21 July 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,57 +28,74 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_PatchJointAdaptor_h
-#define asiEngine_PatchJointAdaptor_h
+#ifndef asiVisu_ReCoedgeDataProvider_h
+#define asiVisu_ReCoedgeDataProvider_h
 
-// asiEngine includes
-#include <asiEngine_Model.h>
+// asiVisu includes
+#include <asiVisu_DataProvider.h>
 
 // asiData includes
-#include <asiData_ReEdgeNode.h>
-#include <asiData_RePatchNode.h>
+#include <asiData_ReCoedgeNode.h>
 
-// asiAlgo includes
-#include <asiAlgo_PatchJointAdaptor.h>
+// OCCT includes
+#include <Geom_Surface.hxx>
 
-//-----------------------------------------------------------------------------
-
-//! Adaptor for working with a joint edge between two reverse engineering
-//! patches.
-class asiEngine_PatchJointAdaptor : public asiAlgo_PatchJointAdaptor
+//! Data provider for RE coedge.
+class asiVisu_ReCoedgeDataProvider : public asiVisu_DataProvider
 {
 public:
 
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_EXPORT
-    asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
-                                ActAPI_ProgressEntry           progress = NULL,
-                                ActAPI_PlotterEntry            plotter  = NULL);
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgeDataProvider, asiVisu_DataProvider)
 
 public:
 
-  //! Initializes adaptor with joint edge.
-  //! \param[in] edgeNode edge representing the joint.
-  asiEngine_EXPORT bool
-    Init(const Handle(asiData_ReEdgeNode)& edgeNode);
+  //! Ctor.
+  //! \param[in] N Edge Node to access the geometric data from.
+  asiVisu_EXPORT
+    asiVisu_ReCoedgeDataProvider(const Handle(asiData_ReCoedgeNode)& N);
+
+public:
+
+  //! Returns associated Node ID.
+  //! \return Node ID.
+  virtual ActAPI_DataObjectId GetNodeID() const
+  {
+    return m_node->GetId();
+  }
+
+public:
+
+  //! Returns parametric curve representing the edge.
+  //! \param[out] f first parameter.
+  //! \param[out] l last parameter.
+  //! \return parametric curve.
+  asiVisu_EXPORT virtual Handle(Geom_Curve)
+    GetCurve(double& f, double& l) const;
+
+  //! Returns "same sense" flag for coedge.
+  //! \return orientation flag.
+  asiVisu_EXPORT virtual bool
+    GetSameSense() const;
+
+  //! Returns host surface.
+  //! \return parametric surface.
+  asiVisu_EXPORT virtual Handle(Geom_Surface)
+    GetSurface() const;
 
 protected:
 
-  Handle(asiEngine_Model)      m_model;          //!< Data Model instance.
-  Handle(asiData_ReEdgeNode)   m_edge;           //!< Joint edge.
-  //
-  Handle(asiData_RePatchNode)  m_patchLeft;      //!< Patch on the left.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeft;     //!< Left coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftTop;  //!< Left-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeLeftBot;  //!< Left-bottom coedge.
-  //
-  Handle(asiData_RePatchNode)  m_patchRight;     //!< Patch on the right.
-  Handle(asiData_ReCoedgeNode) m_coedgeRight;    //!< Right coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightTop; //!< Right-top coedge.
-  Handle(asiData_ReCoedgeNode) m_coedgeRightBot; //!< Right-bottom coedge.
+  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process. If any Parameter listed by this method is changed
+  //! (more precisely, if its MTime record is updated), the translation must
+  //! be repeated.
+  //! \return list of source Parameters.
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+protected:
+
+  Handle(asiData_ReCoedgeNode) m_node; //!< Coedge Node.
 
 };
 

@@ -83,7 +83,7 @@ REGISTER_NODE_TYPE(asiData_TessNormsNode)
 REGISTER_NODE_TYPE(asiData_ReTopoNode)
 REGISTER_NODE_TYPE(asiData_RePatchNode)
 REGISTER_NODE_TYPE(asiData_RePatchesNode)
-REGISTER_NODE_TYPE(asiData_ReCoEdgeNode)
+REGISTER_NODE_TYPE(asiData_ReCoedgeNode)
 REGISTER_NODE_TYPE(asiData_ReEdgeNode)
 REGISTER_NODE_TYPE(asiData_ReEdgesNode)
 REGISTER_NODE_TYPE(asiData_ReVertexNode)
@@ -301,7 +301,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_ReTopoNode>,         Partition_ReTopo);
   REGISTER_PARTITION(asiData_Partition<asiData_RePatchNode>,        Partition_RePatch);
   REGISTER_PARTITION(asiData_Partition<asiData_RePatchesNode>,      Partition_RePatches);
-  REGISTER_PARTITION(asiData_Partition<asiData_ReCoEdgeNode>,       Partition_ReCoEdge);
+  REGISTER_PARTITION(asiData_Partition<asiData_ReCoedgeNode>,       Partition_ReCoEdge);
   REGISTER_PARTITION(asiData_Partition<asiData_ReEdgeNode>,         Partition_ReEdge);
   REGISTER_PARTITION(asiData_Partition<asiData_ReEdgesNode>,        Partition_ReEdges);
   REGISTER_PARTITION(asiData_Partition<asiData_ReVertexNode>,       Partition_ReVertex);

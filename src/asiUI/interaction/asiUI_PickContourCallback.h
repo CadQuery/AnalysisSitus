@@ -91,14 +91,14 @@ protected:
 // Non-transactional methods to operate with low-level data structure:
 protected:
 
-  Handle(asiData_ReCoEdgeNode)
+  Handle(asiData_ReCoedgeNode)
     buildNewEdge(const Handle(asiData_ReVertexNode)& target,
                  const bool                          doProjectLine);
 
-  Handle(asiData_ReCoEdgeNode)
+  Handle(asiData_ReCoedgeNode)
     buildNewEdge(const Handle(asiData_ReVertexNode)& target);
 
-  Handle(asiData_ReCoEdgeNode)
+  Handle(asiData_ReCoedgeNode)
     buildNewCoEdge(const Handle(asiData_ReEdgeNode)& edge,
                    const bool                        samesense);
 
@@ -118,11 +118,11 @@ protected:
                        const bool                               isSameSense,
                        std::vector<Handle(asiData_ReEdgeNode)>& candidates);
 
-  Handle(asiData_ReCoEdgeNode)
+  Handle(asiData_ReCoedgeNode)
     getPrevCoEdge(const Handle(asiData_ReEdgeNode)& currentEdge);
 
   gp_Vec
-    getCoEdgeTrailingDir(const Handle(asiData_ReCoEdgeNode)& coedge);
+    getCoEdgeTrailingDir(const Handle(asiData_ReCoedgeNode)& coedge);
 
   Handle(asiData_ReVertexNode)
     getPickedVertex(void* pCallData);

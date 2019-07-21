@@ -112,7 +112,7 @@ Handle(asiData_RePatchNode) asiData_ReTopoNode::GetCurrentPatch() const
 
 //! Sets reference to the currently composed CoEdge.
 //! \param[in] coedge reference to set.
-void asiData_ReTopoNode::SetCurrentCoEdge(const Handle(asiData_ReCoEdgeNode)& coedge)
+void asiData_ReTopoNode::SetCurrentCoEdge(const Handle(asiData_ReCoedgeNode)& coedge)
 {
   if ( coedge.IsNull() )
     this->DisconnectReference(PID_CurrentCoEdgeRef);
@@ -121,18 +121,18 @@ void asiData_ReTopoNode::SetCurrentCoEdge(const Handle(asiData_ReCoEdgeNode)& co
 }
 
 //! \return referenced CoEdge Node.
-Handle(asiData_ReCoEdgeNode) asiData_ReTopoNode::GetCurrentCoEdge() const
+Handle(asiData_ReCoedgeNode) asiData_ReTopoNode::GetCurrentCoEdge() const
 {
   Handle(ActAPI_IDataCursor)
     dc = ActParamTool::AsReference( this->Parameter(PID_CurrentCoEdgeRef) )->GetTarget();
   //
   if ( dc.IsNull() ||
       !dc->IsWellFormed() ||
-      !dc->IsInstance( STANDARD_TYPE(asiData_ReCoEdgeNode) ) )
+      !dc->IsInstance( STANDARD_TYPE(asiData_ReCoedgeNode) ) )
     //
     return NULL;
 
-  return Handle(asiData_ReCoEdgeNode)::DownCast(dc);
+  return Handle(asiData_ReCoedgeNode)::DownCast(dc);
 }
 
 //! Sets reference to the first created Vertex.

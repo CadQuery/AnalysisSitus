@@ -73,6 +73,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_PartPipelineBase.h
   pipelines/asiVisu_Pipeline.h
   pipelines/asiVisu_PointsPipeline.h
+  pipelines/asiVisu_ReCoedgePipeline.h
   pipelines/asiVisu_RePatchPipeline.h
   pipelines/asiVisu_ShapePipeline.h
   pipelines/asiVisu_SurfaceDeviationPipeline.h
@@ -110,6 +111,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_PartPipelineBase.cpp
   pipelines/asiVisu_Pipeline.cpp
   pipelines/asiVisu_PointsPipeline.cpp
+  pipelines/asiVisu_ReCoedgePipeline.cpp
   pipelines/asiVisu_RePatchPipeline.cpp
   pipelines/asiVisu_ShapePipeline.cpp
   pipelines/asiVisu_SurfaceDeviationPipeline.cpp
@@ -215,6 +217,7 @@ set (providers_H_FILES
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_PointsFromListDataProvider.h
+  providers/asiVisu_ReCoedgeDataProvider.h
   providers/asiVisu_ReEdgeCurveDataProvider.h
   providers/asiVisu_ReEdgePolylineDataProvider.h
   providers/asiVisu_ReEdgeShapeDataProvider.h
@@ -246,6 +249,7 @@ set (providers_CPP_FILES
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
   providers/asiVisu_PointsFromListDataProvider.cpp
+  providers/asiVisu_ReCoedgeDataProvider.cpp
   providers/asiVisu_ReEdgeCurveDataProvider.cpp
   providers/asiVisu_ReEdgePolylineDataProvider.cpp
   providers/asiVisu_ReEdgeShapeDataProvider.cpp
@@ -301,6 +305,7 @@ set (sources_H_FILES
   sources/asiVisu_PCurveSource.h
   sources/asiVisu_PDomainSource.h
   sources/asiVisu_PointsSource.h
+  sources/asiVisu_ReCoedgeSource.h
   sources/asiVisu_ShapeColorSource.h
   sources/asiVisu_ShapeColorSourceAAG.h
   sources/asiVisu_ShapeColorSourceMeta.h
@@ -325,6 +330,7 @@ set (sources_CPP_FILES
   sources/asiVisu_PCurveSource.cpp
   sources/asiVisu_PDomainSource.cpp
   sources/asiVisu_PointsSource.cpp
+  sources/asiVisu_ReCoedgeSource.cpp
   sources/asiVisu_ShapeData.cpp
   sources/asiVisu_ShapeRobustSource.cpp
   sources/asiVisu_ShapeRobustTessellator.cpp

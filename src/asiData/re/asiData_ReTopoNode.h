@@ -32,7 +32,7 @@
 #define asiData_ReTopoNode_h
 
 // asiData includes
-#include <asiData_ReCoEdgeNode.h>
+#include <asiData_ReCoedgeNode.h>
 #include <asiData_RePatchNode.h>
 #include <asiData_ReVertexNode.h>
 
@@ -96,9 +96,9 @@ public:
     GetCurrentPatch() const;
 
   asiData_EXPORT void
-    SetCurrentCoEdge(const Handle(asiData_ReCoEdgeNode)& coedge);
+    SetCurrentCoEdge(const Handle(asiData_ReCoedgeNode)& coedge);
 
-  asiData_EXPORT Handle(asiData_ReCoEdgeNode)
+  asiData_EXPORT Handle(asiData_ReCoedgeNode)
     GetCurrentCoEdge() const;
 
   asiData_EXPORT void

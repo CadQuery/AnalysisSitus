@@ -150,14 +150,15 @@ int asiVisu_ReCoedgeSource::RequestData(vtkInformation*        request,
   // Apply small shift to have a nice visualization margin.
   const double uDelta = (uMax - uMin)*0.1;
   const double vDelta = (vMax - vMin)*0.1;
+  const double delta  = isSurfGoesU ? vDelta : uDelta;
 
   // Get the corresponding isoline.
   Handle(Geom_Curve)
-    iso = ( isSurfGoesU ? m_surf->VIso(isLeftBound ? vMin + vDelta : vMax - vDelta)
-                        : m_surf->UIso(isLeftBound ? uMin + uDelta : uMax - uDelta) );
+    iso = ( isSurfGoesU ? m_surf->VIso(isLeftBound ? vMin + delta : vMax - delta)
+                        : m_surf->UIso(isLeftBound ? uMin + delta : uMax - delta) );
 
   // Fill array of coordinates.
-  if ( !this->FillArrays(iso, iso->FirstParameter(), iso->LastParameter(),
+  if ( !this->FillArrays(iso, iso->FirstParameter() + delta, iso->LastParameter() - delta,
                          m_XCoords, m_YCoords, m_ZCoords) )
   {
     vtkErrorMacro( << "Cannot discretize isoparametric curve" );

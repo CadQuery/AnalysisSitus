@@ -319,7 +319,8 @@ vtkIdType asiVisu_CurveSourceBase::registerLine(const gp_Pnt& pointStart,
   vtkSmartPointer<vtkIdTypeArray>
     PIDsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetPedigreeIds() );
   //
-  PIDsArray->InsertNextValue(m_iPedigreeId);
+  if ( PIDsArray.GetPointer() )
+    PIDsArray->InsertNextValue(m_iPedigreeId);
 
   return cellID;
 }

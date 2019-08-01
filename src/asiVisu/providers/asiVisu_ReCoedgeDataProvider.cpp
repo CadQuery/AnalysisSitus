@@ -75,7 +75,9 @@ Handle(ActAPI_HParameterList)
   asiVisu_ReCoedgeDataProvider::translationSources() const
 {
   ActAPI_ParameterStream out;
-  out << m_node->Parameter(asiData_ReEdgeNode::PID_Curve);
+  out << m_node->Parameter(asiData_ReCoedgeNode::PID_EdgeRef)
+      << m_node->Parameter(asiData_ReCoedgeNode::PID_SameSense)
+      << m_node->GetParentNode()->Parameter(asiData_RePatchNode::PID_Geometry);
 
   return out.List;
 }

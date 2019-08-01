@@ -185,6 +185,11 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   for ( size_t k = 0; k < patchNodes.size(); ++k )
     cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes[k]);
 
+  // Actualize Coedge Nodes.
+  for ( size_t k = 0; k < patchNodes.size(); ++k )
+    for ( Handle(ActAPI_IChildIterator) cit = patchNodes[k]->GetChildIterator(); cit->More(); cit->Next() )
+      cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cit->Value() );
+
   return TCL_OK;
 }
 

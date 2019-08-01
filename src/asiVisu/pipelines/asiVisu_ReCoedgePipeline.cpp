@@ -37,6 +37,7 @@
 
 // VTK includes
 #include <vtkActor.h>
+#include <vtkLookupTable.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 
@@ -45,7 +46,8 @@
 //! Creates new Pipeline initialized by default VTK mapper and actor.
 asiVisu_ReCoedgePipeline::asiVisu_ReCoedgePipeline()
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                    vtkSmartPointer<vtkActor>::New() )
+                    vtkSmartPointer<vtkActor>::New() ),
+  m_bMapperColorsSet(false)
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
   //
@@ -66,6 +68,7 @@ void asiVisu_ReCoedgePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
    * =========================== */
 
   Handle(Geom_Surface) surface = provider->GetSurface();
+  Handle(Geom_Curve)   curve   = provider->GetCurve();
   //
   if ( surface.IsNull() )
   {
@@ -85,7 +88,7 @@ void asiVisu_ReCoedgePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
     vtkSmartPointer<asiVisu_ReCoedgeSource>
       src = vtkSmartPointer<asiVisu_ReCoedgeSource>::New();
     //
-    src->SetCurve     ( provider->GetCurve() );
+    src->SetCurve     ( curve );
     src->SetSurface   ( surface );
     src->SetSameSense ( provider->GetSameSense() );
 
@@ -110,4 +113,11 @@ void asiVisu_ReCoedgePipeline::callback_remove_from_renderer(vtkRenderer*)
 
 //! Callback for Update() routine.
 void asiVisu_ReCoedgePipeline::callback_update()
-{}
+{
+  if ( !m_bMapperColorsSet )
+  {
+    vtkSmartPointer<vtkLookupTable> lookup = asiVisu_Utils::InitDomainLookupTable();
+    asiVisu_Utils::InitMapper(m_mapper, lookup, ARRNAME_ORIENT_SCALARS);
+    m_bMapperColorsSet = true;
+  }
+}

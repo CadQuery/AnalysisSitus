@@ -69,6 +69,10 @@ private:
   //! Assignment prohibited.
   asiVisu_ReCoedgePipeline& operator=(const asiVisu_ReCoedgePipeline&);
 
+private:
+
+  bool m_bMapperColorsSet;
+
 };
 
 #endif

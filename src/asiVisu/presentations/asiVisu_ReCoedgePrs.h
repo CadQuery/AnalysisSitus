@@ -49,7 +49,7 @@ public:
   DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgePrs, asiVisu_DefaultPrs)
 
   // Allows to register this Presentation class
-  DEFINE_PRESENTATION_FACTORY(asiVisu_ReCoedgePrs, Instance)
+  DEFINE_PRESENTATION_FACTORY(asiData_ReCoedgeNode, Instance)
 
 public:
 

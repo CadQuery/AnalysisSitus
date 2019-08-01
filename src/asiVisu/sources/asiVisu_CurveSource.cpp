@@ -31,8 +31,9 @@
 // Own include
 #include <asiVisu_CurveSource.h>
 
-// asiVisu includes
-#include <asiVisu_GeomUtils.h>
+// OCCT includes
+#include <BRep_Tool.hxx>
+#include <Geom_TrimmedCurve.hxx>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -42,37 +43,20 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
-// OCCT includes
-#include <BRep_Tool.hxx>
-#include <GCPnts_QuasiUniformDeflection.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <Geom2dAdaptor_Curve.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <GeomLProp_CLProps.hxx>
-#include <gp_Ax1.hxx>
-
-//-----------------------------------------------------------------------------
-// Construction
 //-----------------------------------------------------------------------------
 
 vtkStandardNewMacro(asiVisu_CurveSource);
 
-//! Default constructor.
-asiVisu_CurveSource::asiVisu_CurveSource()
-  : vtkPolyDataAlgorithm (),
-    m_fOriTipSize        (0.0),
-    m_iPedigreeId        (0)
-{
-  this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
-                                  // which has nothing to do with VTK pipeline
-}
+//-----------------------------------------------------------------------------
 
-//! Destructor.
-asiVisu_CurveSource::~asiVisu_CurveSource()
+asiVisu_CurveSource::asiVisu_CurveSource() : asiVisu_CurveSourceBase()
 {}
 
 //-----------------------------------------------------------------------------
-// Kernel methods
+
+asiVisu_CurveSource::~asiVisu_CurveSource()
+{}
+
 //-----------------------------------------------------------------------------
 
 //! Initialize data source from a topological edge.
@@ -108,6 +92,8 @@ bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
   return this->SetInputCurve(tcrv, f, l, ori);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Initialize data source from a parametric curve.
 //! \param curve [in] curve to discretize.
 //! \param first [in] first parameter.
@@ -119,39 +105,20 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
                                         const double              last,
                                         const asiVisu_Orientation ori)
 {
-  const double f = asiVisu_Utils::TrimInf(first),
-               l = asiVisu_Utils::TrimInf(last);
-
   m_curve3d = curve;
 
   // Discretize curve.
-  GeomAdaptor_Curve gac(m_curve3d, f, l);
+  Handle(HRealArray) xCoords, yCoords, zCoords;
   //
-  std::vector<gp_Pnt> curvePts;
-  asiVisu_GeomUtils::DiscretizeCurve(gac, 100, curvePts);
-
-  const int nPts = int ( curvePts.size() );
-  if ( !nPts )
+  if ( !this->FillArrays(curve, first, last, xCoords, yCoords, zCoords) )
     return false;
-
-  // Allocate arrays.
-  Handle(HRealArray) xCoords = new HRealArray(0, nPts - 1, 0.0),
-                     yCoords = new HRealArray(0, nPts - 1, 0.0),
-                     zCoords = new HRealArray(0, nPts - 1, 0.0);
-
-  for ( int k = 0; k < nPts; ++k )
-  {
-    const gp_Pnt& P = curvePts[k];
-    //
-    xCoords->ChangeValue(k) = P.X();
-    yCoords->ChangeValue(k) = P.Y();
-    zCoords->ChangeValue(k) = P.Z();
-  }
 
   // Pass arrays as inputs.
   this->SetInputArrays(xCoords, yCoords, zCoords, ori);
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initialize data source from a two-dimensional parametric curve.
 //! \param curve [in] curve to discretize.
@@ -162,42 +129,20 @@ bool asiVisu_CurveSource::SetInputCurve(const Handle(Geom_Curve)& curve,
 bool asiVisu_CurveSource::SetInputCurve2d(const Handle(Geom2d_Curve)& curve,
                                           const double                first,
                                           const double                last,
-                                          const asiVisu_Orientation    ori)
+                                          const asiVisu_Orientation   ori)
 {
-  const double f = asiVisu_Utils::TrimInf(first),
-               l = asiVisu_Utils::TrimInf(last);
-
-  // Discretize
-  Geom2dAdaptor_Curve gac(curve, f, l);
-  GCPnts_QuasiUniformDeflection Defl(gac, 0.0001);
-  if ( !Defl.IsDone() )
-  {
-    vtkErrorMacro( << "Cannot discretize curve" );
+  // Discretize curve.
+  Handle(HRealArray) xCoords, yCoords, zCoords;
+  //
+  if ( !this->FillArrays(curve, first, last, xCoords, yCoords, zCoords) )
     return false;
-  }
-  const int nPts = Defl.NbPoints();
-  if ( !nPts )
-    return false;
-
-  // Allocate arrays
-  Handle(HRealArray) xCoords = new HRealArray(0, nPts - 1, 0.0),
-                     yCoords = new HRealArray(0, nPts - 1, 0.0),
-                     zCoords = new HRealArray(0, nPts - 1, 0.0);
-
-  for ( int k = 1; k <= nPts; ++k )
-  {
-    gp_Pnt P = Defl.Value(k);
-    //
-    xCoords->ChangeValue(k - 1) = P.X();
-    yCoords->ChangeValue(k - 1) = P.Y();
-    //
-    // Z coordinate is kept zero as it was initialized
-  }
 
   // Pass arrays as inputs
   this->SetInputArrays(xCoords, yCoords, zCoords, ori);
   return true;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Sets the Data Source input arrays. These arrays represent a curve
 //! explicitly as series of points. Of course, to have these points you need
@@ -229,6 +174,8 @@ void asiVisu_CurveSource::SetInputArrays(const Handle(HRealArray)& xCoords,
   m_ori     = ori;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns input arrays.
 //! \param xCoords [out] x coordinates.
 //! \param yCoords [out] y coordinates.
@@ -244,6 +191,8 @@ void asiVisu_CurveSource::GetInputArrays(Handle(HRealArray)&  xCoords,
   zCoords = m_ZCoords;
   ori     = m_ori;
 }
+
+//-----------------------------------------------------------------------------
 
 //! This method (called by superclass) performs conversion of OCCT
 //! data structures to VTK polygonal representation.
@@ -266,242 +215,37 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
    *  Prepare involved collections
    * ============================== */
 
-  vtkPolyData* aPolyOutput = vtkPolyData::GetData(outputVector);
-  aPolyOutput->Allocate();
+  vtkPolyData* polyOutput = vtkPolyData::GetData(outputVector);
+  polyOutput->Allocate();
 
-  vtkSmartPointer<vtkPoints> aPoints = vtkSmartPointer<vtkPoints>::New();
-  aPolyOutput->SetPoints(aPoints);
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  polyOutput->SetPoints(points);
 
   // Access cell data
-  vtkCellData* aCD = aPolyOutput->GetCellData();
+  vtkCellData* CD = polyOutput->GetCellData();
 
   // Array for orientation types
-  vtkSmartPointer<vtkIntArray> aTypeArr = asiVisu_Utils::InitIntArray(ARRNAME_ORIENT_SCALARS);
-  aCD->AddArray(aTypeArr);
+  vtkSmartPointer<vtkIntArray> typeArr = asiVisu_Utils::InitIntArray(ARRNAME_ORIENT_SCALARS);
+  CD->AddArray(typeArr);
 
   // Pedigree IDs for selection
   vtkSmartPointer<vtkIdTypeArray> PIDsArray = vtkSmartPointer<vtkIdTypeArray>::New();
   PIDsArray->SetNumberOfComponents(1);
-  aCD->SetPedigreeIds(PIDsArray);
+  CD->SetPedigreeIds(PIDsArray);
 
-  /* =====================================================================
-   *  Assuming the input arrays ordered, we build series of line segments
-   *  representing our curve in a tabular form. Each segment is
-   *  defined as the following pair:
-   *
-   *   seg = (x[i], y[i], z[i]), (x[i+1], y[i+1], z[i+1])
-   *
-   *  Take care of degenerated case: single point
-   * ===================================================================== */
+  /* ===================
+   *  Populate polydata
+   * =================== */
 
-  const int nbX = m_XCoords->Length(),
-            nbY = m_YCoords->Length();
-
-  if ( nbX == 0 || nbY == 0 )
+  if ( !this->FillPolydata(polyOutput) )
+  {
+    vtkErrorMacro( << "Cannot populate polygonal data set" );
     return 0;
-
-  if ( nbX == 1 && nbY == 1 )
-  {
-    this->registerVertex(0, aPolyOutput);
-  }
-  else
-  {
-    for ( int i = 0; i < nbX - 1; i++ )
-      this->registerLine(i, aPolyOutput);
   }
 
-  /* =====================
-   *  Add orientation tip
-   * ===================== */
-
-  if ( m_fOriTipSize > RealEpsilon() )
-  {
-    // Derive tangent
-    if ( m_oriT.Magnitude() < RealEpsilon() )
-      m_oriT = gp_XYZ( m_XCoords->Value( m_XCoords->Upper() ),
-                       m_YCoords->Value( m_YCoords->Upper() ),
-                       m_ZCoords->Value( m_ZCoords->Upper() ) )
-             - gp_XYZ( m_XCoords->Value( m_XCoords->Upper() - 1 ),
-                       m_YCoords->Value( m_YCoords->Upper() - 1 ),
-                       m_ZCoords->Value( m_ZCoords->Upper() - 1 ) );
-
-    if ( m_oriT.Magnitude() > RealEpsilon() )
-    {
-      // Normalize tangent
-      m_oriT.Normalize();
-
-      // Derive normal
-      if ( m_oriN.Magnitude() > RealEpsilon() )
-        m_oriN.Normalize();
-      else
-      {
-        bool isNComuted = false;
-        if ( !m_curve3d.IsNull() )
-        {
-          GeomLProp_CLProps lProps( m_curve3d, m_curve3d->LastParameter(), 2, gp::Resolution() );
-
-          if ( Abs( lProps.Curvature() ) > RealEpsilon() )
-          {
-            gp_Dir norm;
-
-            lProps.Normal(norm);
-            m_oriN     = norm;
-            isNComuted = true;
-          }
-        }
-
-        // Last chance.
-        if ( !isNComuted )
-        {
-          double Nx = 0., Ny = 0., Nz = 0.;
-
-          if ( Abs( m_oriT.X() ) > RealEpsilon() )
-            Nx = 1.0 / m_oriT.X();
-
-          if ( Abs( m_oriT.Y() ) > RealEpsilon() )
-            Ny = 1.0 / m_oriT.Y();
-
-          if ( Abs( m_oriT.Z() ) > RealEpsilon() )
-            Nz = 1.0 / m_oriT.Z();
-
-          if ( Nx && Ny )
-            m_oriN = gp_Dir(Nx, -Ny, 0.);
-          else if ( Nx && Nz )
-            m_oriN = gp_Dir(Nx, 0., -Nz);
-          else if ( Ny && Nz )
-            m_oriN = gp_Dir(0., Ny, -Nz);
-          else if ( Nx && !Ny && !Nz )
-            m_oriN = gp::DY();
-          else if ( !Nx && Ny && !Nz )
-            m_oriN = gp::DX();
-          else if ( !Nx && !Ny && Nz )
-            m_oriN = gp::DX();
-          else
-            m_oriN = gp::DZ();
-        }
-      }
-
-      // Build tip
-      if ( m_oriT.Magnitude() > RealEpsilon() &&
-           m_oriN.Magnitude() > RealEpsilon() )
-      {
-        gp_Pnt P1( m_XCoords->Value( m_XCoords->Upper() ),
-                   m_YCoords->Value( m_YCoords->Upper() ),
-                   m_ZCoords->Value( m_ZCoords->Upper() ) );
-
-        const double tip_angle = 3*M_PI/4;
-        gp_Pnt P2( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) + m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
-        gp_Pnt P3( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) - m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );
-
-        this->registerLine(P1, P2, aPolyOutput);
-        this->registerLine(P1, P3, aPolyOutput);
-      }
-    }
-  }
+  /* ===================
+   *  Continue pipeline
+   * =================== */
 
   return Superclass::RequestData(request, inputVector, outputVector);
-}
-
-//! Adds the given point to the passed polygonal data set.
-//! \param point    [in]     point to add.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK point.
-vtkIdType asiVisu_CurveSource::registerGridPoint(const gp_Pnt& point,
-                                                 vtkPolyData*  polyData)
-{
-  // Access necessary arrays
-  vtkPoints* aPoints = polyData->GetPoints();
-
-  // Push the point into VTK data set
-  vtkIdType aPid = aPoints->InsertNextPoint( point.X(),
-                                             point.Y(),
-                                             point.Z() );
-
-  return aPid;
-}
-
-//! Adds the grid point with the given index to the passed polygonal data set.
-//! \param index    [in]     index of (X, Y, Z) coordinate triple.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK point.
-vtkIdType asiVisu_CurveSource::registerGridPoint(const int    index,
-                                                 vtkPolyData* polyData)
-{
-  return this->registerGridPoint( gp_Pnt( m_XCoords->Value(index),
-                                          m_YCoords->Value(index),
-                                          m_ZCoords->Value(index) ),
-                                  polyData );
-
-}
-
-//! Adds a line cell into the polygonal data set.
-//! \param pointStart [in]     first point.
-//! \param pointEnd   [in]     second point.
-//! \param polyData   [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurveSource::registerLine(const gp_Pnt& pointStart,
-                                            const gp_Pnt& pointEnd,
-                                            vtkPolyData*  polyData)
-{
-  std::vector<vtkIdType> aPids;
-  aPids.push_back( this->registerGridPoint(pointStart, polyData) );
-  aPids.push_back( this->registerGridPoint(pointEnd,   polyData) );
-
-  vtkIdType aCellID =
-    polyData->InsertNextCell( VTK_LINE, (int) aPids.size(), &aPids[0] );
-
-  // Set orientation scalar
-  if ( m_ori > VisuOri_Undefined )
-  {
-    vtkIntArray* aTypeArr =
-      vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_ORIENT_SCALARS) );
-    aTypeArr->InsertNextValue(m_ori);
-  }
-
-  // Assign a pedigree ID
-  vtkSmartPointer<vtkIdTypeArray>
-    PIDsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetPedigreeIds() );
-  //
-  PIDsArray->InsertNextValue(m_iPedigreeId);
-
-  return aCellID;
-}
-
-//! Adds a line cell into the polygonal data set.
-//! \param index    [in]     index of (X, Y, Z) coordinate triple.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurveSource::registerLine(const int    index,
-                                            vtkPolyData* polyData)
-{
-  gp_Pnt P1( m_XCoords->Value(index),
-             m_YCoords->Value(index),
-             m_ZCoords->Value(index) );
-  gp_Pnt P2( m_XCoords->Value(index + 1),
-             m_YCoords->Value(index + 1),
-             m_ZCoords->Value(index + 1) );
-
-  return this->registerLine(P1, P2, polyData);
-}
-
-//! Adds a vertex cell into the polygonal data set.
-//! \param index    [in]     index of (X, Y, Z) coordinate triple.
-//! \param polyData [in/out] polygonal data set being populated.
-//! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurveSource::registerVertex(const int    index,
-                                              vtkPolyData* polyData)
-{
-  std::vector<vtkIdType> pids;
-  pids.push_back( this->registerGridPoint(index, polyData) );
-
-  vtkIdType cellID =
-    polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
-
-  // Assign a pedigree ID
-  vtkSmartPointer<vtkIdTypeArray>
-    PIDsArray = vtkIdTypeArray::SafeDownCast( polyData->GetCellData()->GetPedigreeIds() );
-  //
-  PIDsArray->InsertNextValue(m_iPedigreeId);
-
-  return cellID;
 }

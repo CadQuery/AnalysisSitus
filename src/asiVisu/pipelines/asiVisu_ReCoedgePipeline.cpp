@@ -33,7 +33,7 @@
 
 // asiVisu includes
 #include <asiVisu_ReCoedgeDataProvider.h>
-#include <asiVisu_SurfaceSource.h>
+#include <asiVisu_ReCoedgeSource.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -59,14 +59,13 @@ asiVisu_ReCoedgePipeline::asiVisu_ReCoedgePipeline()
 void asiVisu_ReCoedgePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   Handle(asiVisu_ReCoedgeDataProvider)
-    provider = Handle(asiVisu_RePatchDataProvider)::DownCast(DP);
+    provider = Handle(asiVisu_ReCoedgeDataProvider)::DownCast(DP);
 
   /* ===========================
    *  Validate input Parameters
    * =========================== */
 
-  double uMin, uMax, vMin, vMax;
-  Handle(Geom_Surface) surface = provider->GetSurface(uMin, uMax, vMin, vMax);
+  Handle(Geom_Surface) surface = provider->GetSurface();
   //
   if ( surface.IsNull() )
   {
@@ -83,12 +82,12 @@ void asiVisu_ReCoedgePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
   if ( provider->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<asiVisu_SurfaceSource>
-      src = vtkSmartPointer<asiVisu_SurfaceSource>::New();
+    vtkSmartPointer<asiVisu_ReCoedgeSource>
+      src = vtkSmartPointer<asiVisu_ReCoedgeSource>::New();
     //
-    src->SetInputSurface  (surface);
-    src->SetNumberOfSteps (m_iStepsNumber);
-    src->SetTrimValues    (uMin, uMax, vMin, vMax);
+    src->SetCurve     ( provider->GetCurve() );
+    src->SetSurface   ( surface );
+    src->SetSameSense ( provider->GetSameSense() );
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );
@@ -102,13 +101,13 @@ void asiVisu_ReCoedgePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
 //! Callback for AddToRenderer() routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_RePatchPipeline::callback_add_to_renderer(vtkRenderer*)
+void asiVisu_ReCoedgePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //! Callback for RemoveFromRenderer() routine.
-void asiVisu_RePatchPipeline::callback_remove_from_renderer(vtkRenderer*)
+void asiVisu_ReCoedgePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //! Callback for Update() routine.
-void asiVisu_RePatchPipeline::callback_update()
+void asiVisu_ReCoedgePipeline::callback_update()
 {}

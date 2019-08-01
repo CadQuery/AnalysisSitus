@@ -45,7 +45,7 @@ using namespace mobius;
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PatchJointAdaptor::AnalyseJoint(const Handle(Geom_Curve)&   curve,
+bool asiAlgo_PatchJointAdaptor::AnalyzeJoint(const Handle(Geom_Curve)&   curve,
                                              const Handle(Geom_Surface)& surf,
                                              bool&                       isSurfGoesU,
                                              bool&                       isLeftBound,
@@ -368,7 +368,7 @@ bool asiAlgo_PatchJointAdaptor::getIso(const Handle(Geom_BSplineSurface)& surf,
   bool isSurfGoesU, isLeftBound;
   double uMin, uMax, vMin, vMax;
   //
-  if ( !AnalyseJoint(m_curve, surf, isSurfGoesU, isLeftBound, uMin, uMax, vMin, vMax) )
+  if ( !AnalyzeJoint(m_curve, surf, isSurfGoesU, isLeftBound, uMin, uMax, vMin, vMax) )
     return false;
 
   if ( isSurfGoesU )

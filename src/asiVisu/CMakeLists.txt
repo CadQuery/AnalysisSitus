@@ -148,6 +148,7 @@ set (presentations_H_FILES
   presentations/asiVisu_PartPrs.h
   presentations/asiVisu_Prs.h
   presentations/asiVisu_PrsManager.h
+  presentations/asiVisu_ReCoedgePrs.h
   presentations/asiVisu_ReEdgePrs.h
   presentations/asiVisu_RePatchPrs.h
   presentations/asiVisu_ReVertexPrs.h
@@ -180,6 +181,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_PartPrs.cpp
   presentations/asiVisu_Prs.cpp
   presentations/asiVisu_PrsManager.cpp
+  presentations/asiVisu_ReCoedgePrs.cpp
   presentations/asiVisu_ReEdgePrs.cpp
   presentations/asiVisu_RePatchPrs.cpp
   presentations/asiVisu_ReVertexPrs.cpp
@@ -297,6 +299,7 @@ set (sources_H_FILES
   sources/asiVisu_BSurfPolesSource.h
   sources/asiVisu_CurvatureCombsSource.h
   sources/asiVisu_CurveSource.h
+  sources/asiVisu_CurveSourceBase.h
   sources/asiVisu_FuncLevelsSource2d.h
   sources/asiVisu_FuncLevelsSource3d.h
   sources/asiVisu_FuncLevelsSourceBase.h
@@ -325,6 +328,7 @@ set (sources_CPP_FILES
   sources/asiVisu_BSurfPolesSource.cpp
   sources/asiVisu_CurvatureCombsSource.cpp
   sources/asiVisu_CurveSource.cpp
+  sources/asiVisu_CurveSourceBase.cpp
   sources/asiVisu_FuncUnivariateSource.cpp
   sources/asiVisu_MeshSource.cpp
   sources/asiVisu_PCurveSource.cpp

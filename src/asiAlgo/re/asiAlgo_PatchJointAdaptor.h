@@ -65,7 +65,7 @@ public:
   //! \param[out] vMax        max V bound.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT static bool
-    AnalyseJoint(const Handle(Geom_Curve)&   curve,
+    AnalyzeJoint(const Handle(Geom_Curve)&   curve,
                  const Handle(Geom_Surface)& surf,
                  bool&                       isSurfGoesU,
                  bool&                       isLeftBound,

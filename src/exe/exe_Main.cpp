@@ -59,6 +59,7 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_ReCoedgePrs.h>
 #include <asiVisu_ReEdgePrs.h>
 #include <asiVisu_RePatchPrs.h>
 #include <asiVisu_ReVertexPrs.h>
@@ -205,6 +206,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_TessellationNormsPrs)
   REGISTER_PRESENTATION(asiVisu_TolerantRangePrs)
   REGISTER_PRESENTATION(asiVisu_TriangulationPrs)
+  REGISTER_PRESENTATION(asiVisu_ReCoedgePrs)
   REGISTER_PRESENTATION(asiVisu_ReEdgePrs)
   REGISTER_PRESENTATION(asiVisu_RePatchPrs)
   REGISTER_PRESENTATION(asiVisu_ReVertexPrs)

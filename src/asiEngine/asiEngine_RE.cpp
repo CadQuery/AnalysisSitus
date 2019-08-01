@@ -984,3 +984,18 @@ Handle(asiData_ReCoedgeNode)
 
   return NULL;
 }
+
+//-----------------------------------------------------------------------------
+
+Handle(Geom_Surface)
+  asiEngine_RE::GetSurface(const Handle(asiData_ReCoedgeNode)& coedge) const
+{
+  // Get patch.
+  Handle(asiData_RePatchNode)
+    patch = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
+  //
+  if ( patch.IsNull() || !patch->IsWellFormed() )
+    return NULL;
+
+  return patch->GetSurface();
+}

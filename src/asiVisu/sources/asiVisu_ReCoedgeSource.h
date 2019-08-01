@@ -32,44 +32,52 @@
 #define asiVisu_ReCoedgeSource_h
 
 // asiVisu includes
-#include <asiVisu_Utils.h>
-
-// VTK includes
-#include <vtkPolyDataAlgorithm.h>
-#include <vtkSmartPointer.h>
-#include <vtkType.h>
+#include <asiVisu_CurveSourceBase.h>
 
 // OCCT includes
-#include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
 
 //! Visualization source for markers representing coedges.
-class asiVisu_ReCoedgeSource : public vtkPolyDataAlgorithm
+class asiVisu_ReCoedgeSource : public asiVisu_CurveSourceBase
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_ReCoedgeSource, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_ReCoedgeSource, asiVisu_CurveSourceBase);
 
   asiVisu_EXPORT static asiVisu_ReCoedgeSource*
     New();
 
-// Kernel methods:
 public:
 
+  //! Initializes data source with a parametric curve.
+  //! \param[in] curve edge curve.
+  //! \return true in case of success, false -- otherwise.
   asiVisu_EXPORT bool
-    SetCurve(const Handle(Geom_Curve)& curve,
-             const double              first,
-             const double              last);
+    SetCurve(const Handle(Geom_Curve)& curve);
 
+  //! Initializes data source with a parametric surface.
+  //! \param[in] surf host surface.
+  //! \return true in case of success, false -- otherwise.
   asiVisu_EXPORT bool
     SetSurface(const Handle(Geom_Surface)& surface);
 
+  //! Sets orientation flag.
+  //! \param[in] samesense value to set.
+  //! \return true in case of success, false -- otherwise.
   asiVisu_EXPORT bool
     SetSameSense(const bool samesense);
 
 protected:
 
+  //! This method (called by superclass) performs conversion of OCCT
+  //! data structures to VTK polygonal representation.
+  //!
+  //! \param[in]  request      describes "what" algorithm should do. This is
+  //!                          typically just one key such as REQUEST_INFORMATION.
+  //! \param[in]  inputVector  inputs of the algorithm.
+  //! \param[out] outputVector outputs of the algorithm.
+  //! \return execution status.
   asiVisu_EXPORT virtual int
     RequestData(vtkInformation*        request,
                 vtkInformationVector** inputVector,
@@ -77,34 +85,21 @@ protected:
 
 protected:
 
-  asiVisu_EXPORT vtkIdType
-    registerGridPoint(const gp_Pnt& point,
-                      vtkPolyData*  polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerLine(const gp_Pnt&             pointStart,
-                 const gp_Pnt&             pointEnd,
-                 const asiVisu_Orientation type,
-                 vtkPolyData*              polyData);
-
-protected:
-
+  //! Default ctor.
   asiVisu_EXPORT
     asiVisu_ReCoedgeSource();
 
+  //! Dtor.
   asiVisu_EXPORT
     ~asiVisu_ReCoedgeSource();
 
 private:
 
-  asiVisu_ReCoedgeSource(const asiVisu_ReCoedgeSource&);
-  asiVisu_ReCoedgeSource& operator=(const asiVisu_ReCoedgeSource&);
+  asiVisu_ReCoedgeSource(const asiVisu_ReCoedgeSource&) = delete;
+  asiVisu_ReCoedgeSource& operator=(const asiVisu_ReCoedgeSource&) = delete;
 
-private:
+protected:
 
-  Handle(Geom_Curve)   m_curve;      //!< Curve of the edge.
-  double               m_fFirst;     //!< Leading parameter on a curve.
-  double               m_fLast;      //!< Trailing parameter on a curve.
   Handle(Geom_Surface) m_surf;       //!< Host surface.
   bool                 m_bSameSense; //!< Orientation flag.
 

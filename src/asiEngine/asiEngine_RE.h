@@ -229,6 +229,12 @@ public:
   asiEngine_EXPORT Handle(asiData_ReCoedgeNode)
     GetPrevious(const Handle(asiData_ReCoedgeNode)& current) const;
 
+  //! Returns the parametric surface associated with the passed coedge.
+  //! \param[in] coedge coedge in question.
+  //! \return host surface.
+  asiEngine_EXPORT Handle(Geom_Surface)
+    GetSurface(const Handle(asiData_ReCoedgeNode)& coedge) const;
+
 };
 
 #endif

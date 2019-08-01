@@ -46,8 +46,9 @@ asiVisu_ReCoedgeDataProvider::asiVisu_ReCoedgeDataProvider(const Handle(asiData_
 
 //-----------------------------------------------------------------------------
 
-Handle(Geom_Curve) asiVisu_ReCoedgeDataProvider::GetCurve(double& f, double& l) const
+Handle(Geom_Curve) asiVisu_ReCoedgeDataProvider::GetCurve() const
 {
+  double f, l;
   return m_node->GetEdge()->GetCurve(f, l);
 }
 

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 02 December 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,16 +31,8 @@
 #ifndef asiVisu_CurveSource_h
 #define asiVisu_CurveSource_h
 
-// Visualization includes
-#include <asiVisu_Utils.h>
-
-// Active Data (auxiliary) includes
-#include <ActAux_Common.h>
-
-// VTK includes
-#include <vtkPolyDataAlgorithm.h>
-#include <vtkSmartPointer.h>
-#include <vtkType.h>
+// asiVisu includes
+#include <asiVisu_CurveSourceBase.h>
 
 // OCCT includes
 #include <Geom_Curve.hxx>
@@ -51,12 +43,12 @@
 #include <TopoDS_Edge.hxx>
 
 //! Source of polygonal data representing a 3D curve.
-class asiVisu_CurveSource : public vtkPolyDataAlgorithm
+class asiVisu_CurveSource : public asiVisu_CurveSourceBase
 {
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_CurveSource, vtkPolyDataAlgorithm);
+  vtkTypeMacro(asiVisu_CurveSource, asiVisu_CurveSourceBase);
 
   asiVisu_EXPORT static asiVisu_CurveSource*
     New();
@@ -91,20 +83,6 @@ public:
                    Handle(HRealArray)&  zCoords,
                    asiVisu_Orientation& ori) const;
 
-public:
-
-  void          SetTipSize    (const double size)       { m_fOriTipSize = size; }
-  double        GetTipSize    ()                  const { return m_fOriTipSize; }
-
-  void          SetTipTangent (const gp_Vec& vec)       { m_oriT = vec; }
-  const gp_Vec& GetTipTangent ()                  const { return m_oriT; }
-
-  void          SetTipNorm    (const gp_Vec& vec)       { m_oriN = vec; }
-  const gp_Vec& GetTipNorm    ()                  const { return m_oriN; }
-
-  void          SetPedigreeId (const int pid)           { m_iPedigreeId = pid; }
-  int           GetPedigreeId ()                  const { return m_iPedigreeId; }
-
 protected:
 
   asiVisu_EXPORT virtual int
@@ -114,55 +92,18 @@ protected:
 
 protected:
 
-  asiVisu_EXPORT vtkIdType
-    registerGridPoint(const gp_Pnt& point,
-                      vtkPolyData*  polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerGridPoint(const int    index,
-                      vtkPolyData* polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerLine(const gp_Pnt& pointStart,
-                 const gp_Pnt& pointEnd,
-                 vtkPolyData*  polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerLine(const int    index,
-                 vtkPolyData* polyData);
-
-  asiVisu_EXPORT vtkIdType
-    registerVertex(const int    index,
-                   vtkPolyData* polyData);
-
-protected:
-
+  //! Default ctor.
   asiVisu_EXPORT
     asiVisu_CurveSource();
 
+  //! Dtor.
   asiVisu_EXPORT
     ~asiVisu_CurveSource();
 
 private:
 
-  asiVisu_CurveSource(const asiVisu_CurveSource&);
-  asiVisu_CurveSource& operator=(const asiVisu_CurveSource&);
-
-private:
-
-  Handle(Geom_Curve) m_curve3d;     //!< 3D curve (if specified).
-  Handle(HRealArray) m_XCoords;     //!< X coordinates.
-  Handle(HRealArray) m_YCoords;     //!< Y coordinates.
-  Handle(HRealArray) m_ZCoords;     //!< Z coordinates.
-  int                m_iPedigreeId; //!< Pedigree ID.
-
-// Orientation marker:
-private:
-
-  asiVisu_Orientation m_ori;         //!< Curve orientation.
-  double              m_fOriTipSize; //!< Size of orientation tip (calculated externally).
-  gp_Vec              m_oriT;        //!< Orientation vector at the end point.
-  gp_Vec              m_oriN;        //!< Normal to the curve at the end point.
+  asiVisu_CurveSource(const asiVisu_CurveSource&) = delete;
+  asiVisu_CurveSource& operator=(const asiVisu_CurveSource&) = delete;
 
 };
 

@@ -32,6 +32,7 @@
 #include <asiVisu_ReCoedgeSource.h>
 
 // asiAlgo includes
+#include <asiAlgo_PatchJointAdaptor.h>
 #include <asiAlgo_Utils.h>
 
 // OCCT includes
@@ -51,37 +52,21 @@ vtkStandardNewMacro(asiVisu_ReCoedgeSource);
 
 //-----------------------------------------------------------------------------
 
-//! Default constructor.
 asiVisu_ReCoedgeSource::asiVisu_ReCoedgeSource()
-: vtkPolyDataAlgorithm (),
-  m_fFirst             (0.0),
-  m_fLast              (0.0),
-  m_bSameSense         (false)
-{
-  this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
-                                  // which has nothing to do with VTK pipeline
-}
+: asiVisu_CurveSourceBase (),
+  m_bSameSense            (true)
+{}
 
 //-----------------------------------------------------------------------------
 
-//! Destructor.
 asiVisu_ReCoedgeSource::~asiVisu_ReCoedgeSource()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Initialize data source from a parametric curve.
-//! \param[in] curve edge curve.
-//! \param[in] first first parameter.
-//! \param[in] last  last parameter.
-//! \return true in case of success, false -- otherwise.
-bool asiVisu_ReCoedgeSource::SetCurve(const Handle(Geom_Curve)& curve,
-                                      const double              first,
-                                      const double              last)
+bool asiVisu_ReCoedgeSource::SetCurve(const Handle(Geom_Curve)& curve)
 {
-  m_curve  = curve;
-  m_fFirst = asiVisu_Utils::TrimInf(first),
-  m_fLast  = asiVisu_Utils::TrimInf(last);
+  m_curve3d = curve;
 
   // Update modification time for the source.
   this->Modified();
@@ -90,9 +75,6 @@ bool asiVisu_ReCoedgeSource::SetCurve(const Handle(Geom_Curve)& curve,
 
 //-----------------------------------------------------------------------------
 
-//! Initialize data source from a parametric surface.
-//! \param[in] surf host surface.
-//! \return true in case of success, false -- otherwise.
 bool asiVisu_ReCoedgeSource::SetSurface(const Handle(Geom_Surface)& surf)
 {
   m_surf = surf;
@@ -104,12 +86,10 @@ bool asiVisu_ReCoedgeSource::SetSurface(const Handle(Geom_Surface)& surf)
 
 //-----------------------------------------------------------------------------
 
-//! Sets orientation flag.
-//! \param[in] samesense value to set.
-//! \return true in case of success, false -- otherwise.
 bool asiVisu_ReCoedgeSource::SetSameSense(const bool samesense)
 {
   m_bSameSense = samesense;
+  m_ori        = m_bSameSense ? VisuOri_Forward : VisuOri_Reversed;
 
   // Update modification time for the source.
   this->Modified();
@@ -118,18 +98,11 @@ bool asiVisu_ReCoedgeSource::SetSameSense(const bool samesense)
 
 //-----------------------------------------------------------------------------
 
-//! This method (called by superclass) performs conversion of OCCT
-//! data structures to VTK polygonal representation.
-//!
-//! \param[in]  request      describes "what" algorithm should do. This is
-//!                          typically just one key such as REQUEST_INFORMATION.
-//! \param[in]  inputVector  inputs of the algorithm.
-//! \param[out] outputVector outputs of the algorithm.
 int asiVisu_ReCoedgeSource::RequestData(vtkInformation*        request,
                                         vtkInformationVector** inputVector,
                                         vtkInformationVector*  outputVector)
 {
-  if ( m_curve.IsNull() )
+  if ( m_curve3d.IsNull() )
   {
     vtkErrorMacro( << "Invalid domain: NULL curve" );
     return 0;
@@ -162,124 +135,45 @@ int asiVisu_ReCoedgeSource::RequestData(vtkInformation*        request,
    *  Build polygonal data
    * ====================== */
 
-  // Get sample point (midpoint) on the edge curve.
-  const double f = m_curve->FirstParameter();
-  const double l = m_curve->LastParameter();
-  const double m = (f + l)*0.5;
-  gp_Pnt       C = m_curve->Value(m);
-
-  // Projection precision.
-  const double projPrec = 1e-4;
-
-  // Invert point to the left surface.
-  ShapeAnalysis_Surface sas(m_surf);
-  gp_Pnt2d uv = sas.ValueOfUV(C, projPrec);
-
-  // Step for next point along curve.
-  const double d        = (l - f)*0.1;
-  const double tShifted = m + d;
-  gp_Pnt       CShifted = m_curve->Value(tShifted);
-
-  // Invert the shifted point.
-  gp_Pnt2d uvShifted = sas.ValueOfUV(CShifted, projPrec);
-
-  // Add lines.
-  std::vector<gp_Pnt> envelopePoles;
-  for ( size_t k = 0; k < m_points.size(); ++k )
+  // Analyze basic local properties at coedge.
+  bool isSurfGoesU, isLeftBound;
+  double uMin, uMax, vMin, vMax;
+  //
+  if ( !asiAlgo_PatchJointAdaptor::AnalyzeJoint(m_curve3d, m_surf,
+                                                isSurfGoesU, isLeftBound,
+                                                uMin, uMax, vMin, vMax) )
   {
-    envelopePoles.push_back(m_points[k].XYZ() + m_combs[k].XYZ()*m_fCombScale);
-
-    this->registerLine(m_points[k],
-                       envelopePoles[k],
-                       VisuCurvComb_Comb,
-                       polyOutput);
+    vtkErrorMacro( << "Failed to analyze joint" );
+    return false;
   }
 
-  // Add envelope.
-  for ( size_t k = 1; k < m_points.size(); ++k )
+  // Apply small shift to have a nice visualization margin.
+  const double uDelta = (uMax - uMin)*0.1;
+  const double vDelta = (vMax - vMin)*0.1;
+
+  // Get the corresponding isoline.
+  Handle(Geom_Curve)
+    iso = ( isSurfGoesU ? m_surf->VIso(isLeftBound ? vMin + vDelta : vMax - vDelta)
+                        : m_surf->UIso(isLeftBound ? uMin + uDelta : uMax - uDelta) );
+
+  // Fill array of coordinates.
+  if ( !this->FillArrays(iso, iso->FirstParameter(), iso->LastParameter(),
+                         m_XCoords, m_YCoords, m_ZCoords) )
   {
-    if ( m_pointsOk[k-1] && m_pointsOk[k] )
-      this->registerLine(envelopePoles[k-1],
-                         envelopePoles[k],
-                         VisuCurvComb_Envelope,
-                         polyOutput);
+    vtkErrorMacro( << "Cannot discretize isoparametric curve" );
+    return false;
   }
+
+  // Fill polydata.
+  if ( !this->FillPolydata(polyOutput) )
+  {
+    vtkErrorMacro( << "Cannot fill polydata" );
+    return false;
+  }
+
+  /* ====================
+   *  Continue execution
+   * ==================== */
 
   return Superclass::RequestData(request, inputVector, outputVector);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Adds the given point to the passed polygonal data set.
-//! \param[in]     point    point to add.
-//! \param[in,out] polyData polygonal data set being populated.
-//! \return ID of the just added VTK point.
-vtkIdType asiVisu_CurvatureCombsSource::registerGridPoint(const gp_Pnt& point,
-                                                          vtkPolyData*  polyData)
-{
-  // Access necessary arrays
-  vtkPoints* points = polyData->GetPoints();
-
-  // Push the point into VTK data set
-  vtkIdType pid = points->InsertNextPoint( point.X(),
-                                           point.Y(),
-                                           point.Z() );
-
-  return pid;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Adds a line cell into the polygonal data set.
-//! \param[in]     pointStart first point.
-//! \param[in]     pointEnd   second point.
-//! \param[in]     type       type of curvature comb element.
-//! \param[in,out] polyData   polygonal data set being populated.
-//! \return ID of the just added VTK cell.
-vtkIdType asiVisu_CurvatureCombsSource::registerLine(const gp_Pnt&                   pointStart,
-                                                     const gp_Pnt&                   pointEnd,
-                                                     const asiVisu_CurvatureCombElem type,
-                                                     vtkPolyData*                    polyData)
-{
-  std::vector<vtkIdType> pids;
-  pids.push_back( this->registerGridPoint(pointStart, polyData) );
-  pids.push_back( this->registerGridPoint(pointEnd,   polyData) );
-
-  vtkIdType cellID =
-    polyData->InsertNextCell( VTK_LINE, (int) pids.size(), &pids[0] );
-
-  // Set element type.
-  vtkIntArray*
-    typeArr = vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_CURVCOMBS_SCALARS) );
-  //
-  typeArr->InsertNextValue(type);
-
-  return cellID;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Adds a vertex cell into the polygonal data set.
-//! \param[in]     point    point to add as a vertex cell.
-//! \param[in]     type       type of curvature comb element.
-//! \param[in,out] polyData polygonal data set being populated.
-//! \return ID of the just added VTK cell.
-vtkIdType
-  asiVisu_CurvatureCombsSource::registerVertex(const gp_Pnt&                   point,
-                                               const asiVisu_CurvatureCombElem type,
-                                               vtkPolyData*                    polyData)
-{
-  std::vector<vtkIdType> pids;
-  pids.push_back( this->registerGridPoint(point, polyData) );
-
-  vtkIdType
-    cellID = polyData->InsertNextCell( VTK_VERTEX, (int) pids.size(), &pids[0] );
-
-  // Set element type.
-  vtkIntArray*
-    typeArr = vtkIntArray::SafeDownCast( polyData->GetCellData()->GetArray(ARRNAME_CURVCOMBS_SCALARS) );
-  //
-  typeArr->InsertNextValue(type);
-
-  return cellID;
 }

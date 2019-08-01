@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 July 2019
+// Created on: 31 July 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,73 +28,46 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ReCoedgeDataProvider_h
-#define asiVisu_ReCoedgeDataProvider_h
+// Own include
+#include <asiVisu_ReCoedgePrs.h>
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
+#include <asiVisu_ReCoedgeDataProvider.h>
+#include <asiVisu_ReCoedgePipeline.h>
+#include <asiVisu_Utils.h>
 
-// asiData includes
-#include <asiData_ReCoedgeNode.h>
+// VTK includes
+#include <vtkMapper.h>
+#include <vtkProperty.h>
+#include <vtkTextActor.h>
 
-// OCCT includes
-#include <Geom_Surface.hxx>
-
-//! Data provider for RE coedge.
-class asiVisu_ReCoedgeDataProvider : public asiVisu_DataProvider
-{
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgeDataProvider, asiVisu_DataProvider)
-
-public:
-
-  //! Ctor.
-  //! \param[in] N Edge Node to access the geometric data from.
-  asiVisu_EXPORT
-    asiVisu_ReCoedgeDataProvider(const Handle(asiData_ReCoedgeNode)& N);
-
-public:
-
-  //! Returns associated Node ID.
-  //! \return Node ID.
-  virtual ActAPI_DataObjectId GetNodeID() const
-  {
-    return m_node->GetId();
-  }
-
-public:
-
-  //! Returns parametric curve representing the edge.
-  //! \return parametric curve.
-  asiVisu_EXPORT virtual Handle(Geom_Curve)
-    GetCurve() const;
-
-  //! Returns "same sense" flag for coedge.
-  //! \return orientation flag.
-  asiVisu_EXPORT virtual bool
-    GetSameSense() const;
-
-  //! Returns host surface.
-  //! \return parametric surface.
-  asiVisu_EXPORT virtual Handle(Geom_Surface)
-    GetSurface() const;
-
-protected:
-
-  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
-  //! translation process. If any Parameter listed by this method is changed
-  //! (more precisely, if its MTime record is updated), the translation must
-  //! be repeated.
-  //! \return list of source Parameters.
-  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
-    translationSources() const;
-
-protected:
-
-  Handle(asiData_ReCoedgeNode) m_node; //!< Coedge Node.
-
-};
-
+#undef COUT_DEBUG
+#if defined COUT_DEBUG
+  #pragma message("===== warning: COUT_DEBUG is enabled")
 #endif
+
+//-----------------------------------------------------------------------------
+
+asiVisu_ReCoedgePrs::asiVisu_ReCoedgePrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
+{
+  Handle(asiData_ReCoedgeNode)
+    coedge_n = Handle(asiData_ReCoedgeNode)::DownCast(N);
+
+  // Create Data Providere.
+  Handle(asiVisu_ReCoedgeDataProvider)
+    coedge_dp = new asiVisu_ReCoedgeDataProvider(coedge_n);
+
+  // Pipeline.
+  Handle(asiVisu_ReCoedgePipeline) coedge_pl = new asiVisu_ReCoedgePipeline;
+  //
+  this->addPipeline        ( Pipeline_Main, coedge_pl );
+  this->assignDataProvider ( Pipeline_Main, coedge_dp );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiVisu_Prs) asiVisu_ReCoedgePrs::Instance(const Handle(ActAPI_INode)& N)
+{
+  return new asiVisu_ReCoedgePrs(N);
+}

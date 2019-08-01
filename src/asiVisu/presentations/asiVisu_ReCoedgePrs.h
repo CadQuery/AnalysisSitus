@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 21 July 2019
+// Created on: 31 July 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,72 +28,51 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_ReCoedgeDataProvider_h
-#define asiVisu_ReCoedgeDataProvider_h
+#ifndef asiVisu_ReCoedgePrs_h
+#define asiVisu_ReCoedgePrs_h
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
+#include <asiVisu_DefaultPrs.h>
+#include <asiVisu_Utils.h>
 
 // asiData includes
 #include <asiData_ReCoedgeNode.h>
 
-// OCCT includes
-#include <Geom_Surface.hxx>
+//-----------------------------------------------------------------------------
 
-//! Data provider for RE coedge.
-class asiVisu_ReCoedgeDataProvider : public asiVisu_DataProvider
+//! Presentation class for a coedge in the reverse engineering workflow.
+class asiVisu_ReCoedgePrs : public asiVisu_DefaultPrs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgeDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_ReCoedgePrs, asiVisu_DefaultPrs)
+
+  // Allows to register this Presentation class
+  DEFINE_PRESENTATION_FACTORY(asiVisu_ReCoedgePrs, Instance)
 
 public:
 
-  //! Ctor.
-  //! \param[in] N Edge Node to access the geometric data from.
-  asiVisu_EXPORT
-    asiVisu_ReCoedgeDataProvider(const Handle(asiData_ReCoedgeNode)& N);
-
-public:
-
-  //! Returns associated Node ID.
-  //! \return Node ID.
-  virtual ActAPI_DataObjectId GetNodeID() const
+  //! Pipelines.
+  enum PipelineId
   {
-    return m_node->GetId();
-  }
+    Pipeline_Main = 1
+  };
 
 public:
 
-  //! Returns parametric curve representing the edge.
-  //! \return parametric curve.
-  asiVisu_EXPORT virtual Handle(Geom_Curve)
-    GetCurve() const;
+  //! Factory method for Presentation.
+  //! \param[in] N Node to create a Presentation for.
+  //! \return new Presentation instance.
+  asiVisu_EXPORT static Handle(asiVisu_Prs)
+    Instance(const Handle(ActAPI_INode)& N);
 
-  //! Returns "same sense" flag for coedge.
-  //! \return orientation flag.
-  asiVisu_EXPORT virtual bool
-    GetSameSense() const;
+private:
 
-  //! Returns host surface.
-  //! \return parametric surface.
-  asiVisu_EXPORT virtual Handle(Geom_Surface)
-    GetSurface() const;
-
-protected:
-
-  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
-  //! translation process. If any Parameter listed by this method is changed
-  //! (more precisely, if its MTime record is updated), the translation must
-  //! be repeated.
-  //! \return list of source Parameters.
-  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
-    translationSources() const;
-
-protected:
-
-  Handle(asiData_ReCoedgeNode) m_node; //!< Coedge Node.
+  //! \brief Creates a Presentation object for the passed Node.
+  //! Allocation is allowed only via Instance() method.
+  //! \param[in] N Data Node to create a Presentation for.
+  asiVisu_ReCoedgePrs(const Handle(ActAPI_INode)& N);
 
 };
 

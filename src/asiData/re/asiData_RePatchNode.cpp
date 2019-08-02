@@ -49,6 +49,8 @@ asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group,        PID_GeometryGroup);
   REGISTER_PARAMETER(Shape,        PID_Geometry);
   REGISTER_PARAMETER(Int,          PID_MinNumKnots);
+  REGISTER_PARAMETER(Bool,         PID_ApproxNodes);
+  REGISTER_PARAMETER(Real,         PID_ApproxLambda);
   REGISTER_PARAMETER(Group,        PID_GroupPrs);
   REGISTER_PARAMETER(Bool,         PID_HasColor);
   REGISTER_PARAMETER(Int,          PID_Color);
@@ -67,18 +69,22 @@ Handle(ActAPI_INode) asiData_RePatchNode::Instance()
 void asiData_RePatchNode::Init()
 {
   // Set default values.
-  this->SetSurface     (NULL);
-  this->SetMinNumKnots (2);
-  this->SetHasColor    (false);
-  this->SetColor       (2500134); // Sort of dark color.
+  this->SetSurface      (NULL);
+  this->SetMinNumKnots  (2);
+  this->SetApproxNodes  (false);
+  this->SetApproxLambda (1e-3);
+  this->SetHasColor     (false);
+  this->SetColor        (2500134); // Sort of dark color.
 
   // Initialize Parameters.
   this->InitParameter (PID_Name,          "Name");
-  this->InitParameter (PID_GeometryGroup, "Geometry",         "",               ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_MinNumKnots,   "Min. inner knots", "",               ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_GroupPrs,      "Presentation",     "",               ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_HasColor,      "Colorized",        "",               ParameterFlag_IsVisible, true);
-  this->InitParameter (PID_Color,         "Color",            "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_GeometryGroup, "Geometry",            "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_MinNumKnots,   "Min. inner knots",    "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_ApproxNodes,   "Approx. mesh nodes",  "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_ApproxLambda,  "Fairing coefficient", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_GroupPrs,      "Presentation",        "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_HasColor,      "Colorized",           "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_Color,         "Color",               "PrsCustomColor", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +143,32 @@ int asiData_RePatchNode::GetMinNumKnots() const
 void asiData_RePatchNode::SetMinNumKnots(const int numKnots)
 {
   ActParamTool::AsInt( this->Parameter(PID_MinNumKnots) )->SetValue(numKnots);
+}
+
+//! \return Boolean value indicating if mesh approximation mode is enabled.
+bool asiData_RePatchNode::GetApproxNodes() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_ApproxNodes) )->GetValue();
+}
+
+//! Sets Boolean value indicating if mesh approximation mode is enabled.
+//! \param[in] on true/false.
+void asiData_RePatchNode::SetApproxNodes(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_ApproxNodes) )->SetValue(on);
+}
+
+//! \return fairing coefficient for mesh approximation.
+double asiData_RePatchNode::GetApproxLambda() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_ApproxLambda) )->GetValue();
+}
+
+//! Sets fairing coefficient for mesh approximation.
+//! \param[in] lambda value to set.
+void asiData_RePatchNode::SetApproxLambda(const double lambda)
+{
+  ActParamTool::AsReal( this->Parameter(PID_ApproxLambda) )->SetValue(lambda);
 }
 
 //! Sets the Boolean value indicating whether the color Parameter of this

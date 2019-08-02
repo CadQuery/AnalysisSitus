@@ -295,8 +295,6 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
       M->AbortCommand();
       return TCL_ERROR;
     }
-    //
-    interp->GetPlotter().REDRAW_CURVE("last-curve", curve, Color_Default);
 
     // Update Data Model.
     edgeNode->SetCurve(curve);
@@ -1507,6 +1505,55 @@ int RE_GetTriangulationNodes(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Patch Node.
+  Handle(asiData_RePatchNode)
+    patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(argv[2]) );
+  //
+  if ( patchNode.IsNull() || !patchNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Object with name '%1' is not a patch."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Prepare service API.
+  asiEngine_RE api( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+
+  // Get triangles captured by contour.
+  Handle(Poly_Triangulation) regionTris;
+  //
+  if ( !api.ExtractBoundedRegion(patchNode, regionTris) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot extract the region captured by contour of patch '%1'."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Get nodes of the captured region.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  for ( int i = 1; i <= regionTris->NbNodes(); ++i )
+  {
+    const gp_Pnt& P = regionTris->Node(i);
+    pts->AddElement( P.X(), P.Y(), P.Z() );
+  }
+
+  // Set the result.
+  interp->GetPlotter().REDRAW_POINTS(argv[1], pts->GetCoordsArray(), Color_Default);
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -1638,4 +1685,14 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Extracts triangulation nodes as a point cloud.",
     //
     __FILE__, group, RE_GetTriangulationNodes);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-get-inner-points",
+    //
+    "re-get-inner-points resName patchName\n"
+    "\t Extracts the mesh nodes which are bounded by the contour of the given\n"
+    "\t patch specified as <patchName>. The extracted nodes are collected in the\n"
+    "\t point cloud specified as <resName>.",
+    //
+    __FILE__, group, RE_GetInnerPoints);
 }

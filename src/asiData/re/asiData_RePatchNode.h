@@ -64,12 +64,14 @@ public:
     PID_GeometryGroup, //!< Group of geometric props.
     PID_Geometry,      //!< Stored geometry.
     PID_MinNumKnots,   //!< Min number of intermediate knots.
-  //------------------//
-  // Presentation     //
-  //------------------//
-    PID_GroupPrs,     //!< Presentation group.
-    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
-    PID_Color,        //!< Color.
+    PID_ApproxNodes,   //!< Indicates whether to approximate inner mesh nodes.
+    PID_ApproxLambda,  //!< Fairing coefficient for approximation.
+  //-------------------//
+  // Presentation      //
+  //-------------------//
+    PID_GroupPrs,      //!< Presentation group.
+    PID_HasColor,      //!< Indicates whether the Color Parameter is active.
+    PID_Color,         //!< Color.
   //-------------------//
   // Tree Functions    //
   //-------------------//
@@ -111,6 +113,18 @@ public:
 
   asiData_EXPORT void
     SetMinNumKnots(const int numKnots);
+
+  asiData_EXPORT bool
+    GetApproxNodes() const;
+
+  asiData_EXPORT void
+    SetApproxNodes(const bool on);
+
+  asiData_EXPORT double
+    GetApproxLambda() const;
+
+  asiData_EXPORT void
+    SetApproxLambda(const double lambda);
 
   asiData_EXPORT void
     SetHasColor(const bool);

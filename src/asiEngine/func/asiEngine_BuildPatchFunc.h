@@ -34,8 +34,18 @@
 // asiEngine includes
 #include <asiEngine.h>
 
+// asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
+
 // Active Data includes
 #include <ActData_BaseTreeFunction.h>
+
+// OpenCascade includes
+#include <Geom_BSplineSurface.hxx>
+
+// Forward declarations.
+class asiData_RePatchNode;
+class asiEngine_Model;
 
 //! Tree function for automatic (re-)constructing surface patches in
 //! reverse engineering scenarios.
@@ -116,6 +126,28 @@ private:
   //! \return expected output signature.
   virtual ActAPI_ParameterTypeStream
     outputSignature() const;
+
+private:
+
+  //! Extracts mesh nodes for approximation.
+  //! \param[in]  model Data Model instance.
+  //! \param[in]  patch Patch Node being processed.
+  //! \param[out] pts   extracted points to approximate.
+  //! \return true in case of success, false -- otherwise.
+  bool extractMeshNodes(const Handle(asiEngine_Model)&     model,
+                        const Handle(asiData_RePatchNode)& patch,
+                        Handle(asiAlgo_BaseCloud<double>)& pts) const;
+
+  //! Approximates mesh nodes with a B-surface.
+  //! \param[in]  initSurf   initial surface.
+  //! \param[in]  pts        points to approximate.
+  //! \param[in]  lambda     value of the fairing coefficient.
+  //! \param[out] resultSurf approximated surface.
+  //! \return true in case of success, false -- otherwise.
+  bool approxMeshNodes(const Handle(Geom_BSplineSurface)&       initSurf,
+                       const Handle(asiAlgo_BaseCloud<double>)& pts,
+                       const double                             lambda,
+                       Handle(Geom_BSplineSurface)&             resultSurf) const;
 
 private:
 

@@ -179,14 +179,16 @@ bool asiVisu_CurveSourceBase::FillPolydata(vtkPolyData* polyData)
 
   if ( m_fOriTipSize > RealEpsilon() )
   {
+    int pinPointIdx = int( ( m_XCoords->Lower() + m_XCoords->Upper() )*0.5 );
+
     // Derive tangent.
     if ( m_oriT.Magnitude() < RealEpsilon() )
-      m_oriT = gp_XYZ( m_XCoords->Value( m_XCoords->Upper() ),
-                       m_YCoords->Value( m_YCoords->Upper() ),
-                       m_ZCoords->Value( m_ZCoords->Upper() ) )
-             - gp_XYZ( m_XCoords->Value( m_XCoords->Upper() - 1 ),
-                       m_YCoords->Value( m_YCoords->Upper() - 1 ),
-                       m_ZCoords->Value( m_ZCoords->Upper() - 1 ) );
+      m_oriT = gp_XYZ( m_XCoords->Value( pinPointIdx ),
+                       m_YCoords->Value( pinPointIdx ),
+                       m_ZCoords->Value( pinPointIdx ) )
+             - gp_XYZ( m_XCoords->Value( pinPointIdx - 1 ),
+                       m_YCoords->Value( pinPointIdx - 1 ),
+                       m_ZCoords->Value( pinPointIdx - 1 ) );
 
     if ( m_oriT.Magnitude() > RealEpsilon() )
     {
@@ -201,7 +203,12 @@ bool asiVisu_CurveSourceBase::FillPolydata(vtkPolyData* polyData)
         bool isNComuted = false;
         if ( !m_curve3d.IsNull() )
         {
-          GeomLProp_CLProps lProps( m_curve3d, m_curve3d->LastParameter(), 2, gp::Resolution() );
+          const double midParam = ( m_curve3d->FirstParameter() + m_curve3d->LastParameter() )*0.5;
+
+          GeomLProp_CLProps lProps( m_curve3d,
+                                    midParam,
+                                    2,
+                                    gp::Resolution() );
 
           if ( Abs( lProps.Curvature() ) > RealEpsilon() )
           {
@@ -248,9 +255,9 @@ bool asiVisu_CurveSourceBase::FillPolydata(vtkPolyData* polyData)
       if ( m_oriT.Magnitude() > RealEpsilon() &&
            m_oriN.Magnitude() > RealEpsilon() )
       {
-        gp_Pnt P1( m_XCoords->Value( m_XCoords->Upper() ),
-                   m_YCoords->Value( m_YCoords->Upper() ),
-                   m_ZCoords->Value( m_ZCoords->Upper() ) );
+        gp_Pnt P1( m_XCoords->Value( pinPointIdx ),
+                   m_YCoords->Value( pinPointIdx ),
+                   m_ZCoords->Value( pinPointIdx ) );
 
         const double tip_angle = 3*M_PI/4;
         gp_Pnt P2( P1.XYZ() + m_oriT.XYZ()*m_fOriTipSize*Cos(tip_angle) + m_oriN.XYZ()*m_fOriTipSize*Sin(tip_angle) );

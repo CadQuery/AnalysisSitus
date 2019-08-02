@@ -45,6 +45,9 @@
 #include <asiEngine_RE.h>
 #include <asiEngine_Triangulation.h>
 
+// asiVisu includes
+#include <asiVisu_ReEdgePrs.h>
+
 // asiUI includes
 #include <asiUI_IV.h>
 
@@ -303,6 +306,12 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
 
     // Update scene.
     cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+
+    // Adjust visibility of actors.
+    Handle(asiVisu_ReEdgePrs)
+      edgePrs = Handle(asiVisu_ReEdgePrs)::DownCast( cmdRE::cf->ViewerPart->PrsMgr()->GetPresentation(edgeNode) );
+    //
+    edgePrs->SetCurvesOnlyMode(true);
   }
 
   M->CommitCommand();

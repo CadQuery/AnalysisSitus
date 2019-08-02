@@ -120,6 +120,23 @@ asiVisu_ReEdgePrs::asiVisu_ReEdgePrs(const Handle(ActAPI_INode)& N)
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_ReEdgePrs::SetCurvesOnlyMode(const bool on)
+{
+  Handle(asiVisu_HPipelineList) pls = this->GetPipelineList();
+  //
+  for ( asiVisu_HPipelineList::Iterator pit(*pls); pit.More(); pit.Next() )
+  {
+    const Handle(asiVisu_Pipeline)& pl = pit.Value();
+    //
+    if ( pl->IsKind( STANDARD_TYPE(asiVisu_CurvePipeline) ) )
+      pl->Actor()->SetVisibility(on);
+    else
+      pl->Actor()->SetVisibility(!on);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(asiVisu_Prs) asiVisu_ReEdgePrs::Instance(const Handle(ActAPI_INode)& N)
 {
   return new asiVisu_ReEdgePrs(N);

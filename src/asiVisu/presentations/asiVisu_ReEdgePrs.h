@@ -65,6 +65,13 @@ public:
 
 public:
 
+  //! Sets visible/invisible only the actors corresponding to curves.
+  //! \param[in] on true/false.
+  asiVisu_EXPORT void
+    SetCurvesOnlyMode(const bool on);
+
+public:
+
   //! Factory method for Presentation.
   //! \param[in] N Node to create a Presentation for.
   //! \return new Presentation instance.

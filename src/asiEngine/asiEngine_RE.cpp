@@ -892,7 +892,8 @@ void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& pa
   ActParamStream inputs;
   inputs << patch->Parameter(asiData_RePatchNode::PID_MinNumKnots)
          << patch->Parameter(asiData_RePatchNode::PID_ApproxNodes)
-         << patch->Parameter(asiData_RePatchNode::PID_ApproxLambda);
+         << patch->Parameter(asiData_RePatchNode::PID_ApproxLambda)
+         << patch->Parameter(asiData_RePatchNode::PID_EnablePlotter);
 
   // Connect coedges.
   std::vector<Handle(asiData_ReEdgeNode)> edges;

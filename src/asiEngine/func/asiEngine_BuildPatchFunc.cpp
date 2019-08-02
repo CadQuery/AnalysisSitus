@@ -55,6 +55,10 @@
 
 //-----------------------------------------------------------------------------
 
+#define numArgsBeforeCoedges 4
+
+//-----------------------------------------------------------------------------
+
 Handle(asiEngine_BuildPatchFunc) asiEngine_BuildPatchFunc::Instance()
 {
   return new asiEngine_BuildPatchFunc();
@@ -112,6 +116,9 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   const double
     approxLambda = Handle(ActData_RealParameter)::DownCast( inputs->Value(3) )->GetValue();
 
+  // Boolean flag indicating if the visual debugging is enabled.
+  m_bPlotterEnabled = Handle(ActData_BoolParameter)::DownCast( inputs->Value(4) )->GetValue();
+
   m_progress.SendLogMessage( LogInfo(Normal) << "Mesh nodes approximation mode: %1." << approxMesh );
   //
   if ( approxMesh )
@@ -119,15 +126,15 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
 
   // Collect coedges.
   int       currIdx    = 1;
-  const int numCoedges = (inputs->Length() + 3) / 2;
+  const int numCoedges = (inputs->Length() + numArgsBeforeCoedges) / 2;
   //
   for ( ActAPI_HParameterList::Iterator it(*inputs); it.More(); it.Next(), ++currIdx )
   {
     // Skip min number of knots and other non-coedge inputs.
-    if ( currIdx <= 3 )
+    if ( currIdx <= numArgsBeforeCoedges )
       continue;
 
-    if ( currIdx > numCoedges + 3 )
+    if ( currIdx > numCoedges + numArgsBeforeCoedges )
       break;
 
     const Handle(ActAPI_IUserParameter)& uParam = it.Value();
@@ -192,13 +199,14 @@ bool
 {
   // Check the number of arguments.
   const int numArgs = inputs->Length();
-  if ( numArgs % 2 != 1 )
+  //
+  if ( numArgs % 2 != 0 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Number of arguments is even (%1)." << numArgs);
+    m_progress.SendLogMessage(LogErr(Normal) << "Number of arguments is unexpected (%1)." << numArgs);
     return false;
   }
 
-  const int numCoedges = (numArgs - 3) / 2;
+  const int numCoedges = (numArgs - numArgsBeforeCoedges) / 2;
   int       currIdx    = 1;
 
   // Check Parameter types.
@@ -236,7 +244,17 @@ bool
         return false;
       }
     }
-    else if ( currIdx <= numCoedges + 3 )
+    else if ( currIdx == 3 )
+    {
+      // We expect that "Enable plotter" is connected then.
+      if ( !uParam->IsKind( STANDARD_TYPE(ActData_BoolParameter) ) )
+      {
+        m_progress.SendLogMessage( LogErr(Normal) << "Input Parameter %1 is not of the expected type %2."
+                                                  << currIdx << STANDARD_TYPE(ActData_BoolParameter)->Name() );
+        return false;
+      }
+    }
+    else if ( currIdx <= numCoedges + numArgsBeforeCoedges )
     {
       // We expect that "SameSense" flags are connected then.
       if ( !uParam->IsKind( STANDARD_TYPE(ActData_BoolParameter) ) )
@@ -284,7 +302,7 @@ bool asiEngine_BuildPatchFunc::extractMeshNodes(const Handle(asiEngine_Model)&  
                                                 Handle(asiAlgo_BaseCloud<double>)& pts) const
 {
   // Prepare service API.
-  asiEngine_RE api(model, m_progress, m_plotter);
+  asiEngine_RE api(model, m_progress, m_bPlotterEnabled ? m_plotter : NULL);
 
   // Get triangles captured by contour.
   Handle(Poly_Triangulation) regionTris;

@@ -153,6 +153,10 @@ private:
 
   asiEngine_BuildPatchFunc() {} //!< Ctor.
 
+private:
+
+  mutable bool m_bPlotterEnabled; //!< Indicates whether plotter is enabled.
+
 };
 
 #endif

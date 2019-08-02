@@ -72,6 +72,7 @@ public:
     PID_GroupPrs,      //!< Presentation group.
     PID_HasColor,      //!< Indicates whether the Color Parameter is active.
     PID_Color,         //!< Color.
+    PID_EnablePlotter, //!< Indicates whether to enable imperative plotter.
   //-------------------//
   // Tree Functions    //
   //-------------------//
@@ -137,6 +138,12 @@ public:
 
   asiData_EXPORT int
     GetColor() const;
+
+  asiData_EXPORT void
+    SetEnablePlotter(const bool);
+
+  asiData_EXPORT bool
+    HasEnabledPlotter() const;
 
 protected:
 

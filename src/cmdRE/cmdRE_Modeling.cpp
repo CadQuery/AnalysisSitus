@@ -303,13 +303,16 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     curves.push_back(curve);
 
     // Update scene.
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode, false, false, false);
 
     // Adjust visibility of actors.
     Handle(asiVisu_ReEdgePrs)
       edgePrs = Handle(asiVisu_ReEdgePrs)::DownCast( cmdRE::cf->ViewerPart->PrsMgr()->GetPresentation(edgeNode) );
     //
     edgePrs->SetCurvesOnlyMode(true);
+
+    // Repaint.
+    cmdRE::cf->ViewerPart->PrsMgr()->GetQVTKWidget()->repaint();
   }
 
   M->CommitCommand();

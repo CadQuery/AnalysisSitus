@@ -54,6 +54,7 @@ asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group,        PID_GroupPrs);
   REGISTER_PARAMETER(Bool,         PID_HasColor);
   REGISTER_PARAMETER(Int,          PID_Color);
+  REGISTER_PARAMETER(Bool,         PID_EnablePlotter);
   REGISTER_PARAMETER(TreeFunction, PID_FuncBuildSurf);
 }
 
@@ -69,12 +70,13 @@ Handle(ActAPI_INode) asiData_RePatchNode::Instance()
 void asiData_RePatchNode::Init()
 {
   // Set default values.
-  this->SetSurface      (NULL);
-  this->SetMinNumKnots  (2);
-  this->SetApproxNodes  (false);
-  this->SetApproxLambda (1e-3);
-  this->SetHasColor     (false);
-  this->SetColor        (2500134); // Sort of dark color.
+  this->SetSurface       (NULL);
+  this->SetMinNumKnots   (2);
+  this->SetApproxNodes   (false);
+  this->SetApproxLambda  (1e-3);
+  this->SetHasColor      (false);
+  this->SetColor         (2500134); // Sort of dark color.
+  this->SetEnablePlotter (false); // Imperative plotter is disabled by default.
 
   // Initialize Parameters.
   this->InitParameter (PID_Name,          "Name");
@@ -85,6 +87,7 @@ void asiData_RePatchNode::Init()
   this->InitParameter (PID_GroupPrs,      "Presentation",        "",               ParameterFlag_IsVisible, true);
   this->InitParameter (PID_HasColor,      "Colorized",           "",               ParameterFlag_IsVisible, true);
   this->InitParameter (PID_Color,         "Color",               "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_EnablePlotter, "Visual diagnostics",  "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -199,4 +202,18 @@ void asiData_RePatchNode::SetColor(const int color)
 int asiData_RePatchNode::GetColor() const
 {
   return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
+}
+
+//! Enables imperative plotter for visual diagnostics of tree function.
+//! \param[in] on value to set.
+void asiData_RePatchNode::SetEnablePlotter(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_EnablePlotter) )->SetValue(on);
+}
+
+//! \return Boolean flag indicating whether the imperative plotter is
+//!         activated or not.
+bool asiData_RePatchNode::HasEnabledPlotter() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_EnablePlotter) )->GetValue();
 }

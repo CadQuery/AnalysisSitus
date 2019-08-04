@@ -576,7 +576,7 @@ bool
   {
     const Poly_CoherentTriangle* seed = seeds[k];
     //
-    if ( processed.Contains(seed) )
+    if ( !seed || processed.Contains(seed) )
       continue; // Already processed.
 
     const Poly_CoherentTriangle* conn0 = seed->GetConnectedTri(0);

@@ -106,6 +106,7 @@ public:
   asiEngine_EXPORT Handle(asiData_IVCurveNode)
     Create_Curve(const Handle(Geom_Curve)&      curve,
                  const double                   uLimit,
+                 const bool                     drawOriTip,
                  const TCollection_AsciiString& name,
                  const bool                     useAutoNaming);
 
@@ -116,7 +117,8 @@ public:
   asiEngine_EXPORT void
     Update_Curve(const Handle(asiData_IVCurveNode)& node,
                  const Handle(Geom_Curve)&          curve,
-                 const double                       uLimit);
+                 const double                       uLimit,
+                 const bool                         drawOriTip);
 
   asiEngine_EXPORT void
     Clean_Curves();

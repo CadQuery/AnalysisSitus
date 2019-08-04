@@ -39,6 +39,7 @@
 // asiEngine includes
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_PatchJointAdaptor.h>
 #include <asiEngine_RE.h>
 #include <asiEngine_Tessellation.h>
 
@@ -765,7 +766,7 @@ void asiUI_ObjectBrowser::onConvertToTess()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_ObjectBrowser::onOptimizeForG1()
+void asiUI_ObjectBrowser::onDumpJoint()
 {
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
@@ -773,119 +774,18 @@ void asiUI_ObjectBrowser::onOptimizeForG1()
   if ( !selected_n->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
     return;
 
-  Handle(asiData_ReEdgeNode) edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
+  // Get Edge Node.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
 
-  // Prepare RE API.
-  asiEngine_RE reApi(m_model, m_progress);
-
-  /* ======================
-   *  Get neighbor patches
-   * ====================== */
-
-  // Get owner patches.
-  Handle(asiData_ReCoedgeNode) leftCoedge, rightCoedge;
-  Handle(asiData_RePatchNode)  leftPatchNode, rightPatchNode;
+  // Analyze joint.
+  asiEngine_PatchJointAdaptor jointAdaptor(m_model, m_progress, m_plotter);
   //
-  if ( !reApi.GetPatchesByEdge(edgeNode,
-                               leftCoedge, rightCoedge,
-                               leftPatchNode, rightPatchNode) )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot get patches by edge.");
+  if ( !jointAdaptor.Init(edgeNode) )
     return;
-  }
 
-  if ( !leftPatchNode.IsNull() )
-    m_progress.SendLogMessage( LogInfo(Normal) << "Left patch: %1." << leftPatchNode->GetName() );
-
-  if ( !rightPatchNode.IsNull() )
-    m_progress.SendLogMessage( LogInfo(Normal) << "Right patch: %1." << rightPatchNode->GetName() );
-
-  if ( leftPatchNode.IsNull() || rightPatchNode.IsNull() )
-    return; // Naked edge.
-
-  // Get surfaces.
-  Handle(Geom_BSplineSurface)
-    surfLeft = Handle(Geom_BSplineSurface)::DownCast( leftPatchNode->GetSurface() );
-  //
-  Handle(Geom_BSplineSurface)
-    surfRight = Handle(Geom_BSplineSurface)::DownCast( rightPatchNode->GetSurface() );
-
-  // Get joint curve.
-  Handle(Geom_Curve) jointCurve = edgeNode->GetCurve();
-
-  /* ================
-   *  Adapt surfaces
-   * ================ */
-
-  asiAlgo_PatchJointAdaptor jointAdaptor(jointCurve, surfLeft, surfRight, m_progress, m_plotter);
-
-  // Extract isoparametric lines.
-  bool                      opposite;
-  bool                      isoLeftU,   isoRightU;
-  bool                      isoLeftMin, isoRightMin;
-  Handle(Geom_BSplineCurve) isoLeft,    isoRight;
-  //
-  if ( !jointAdaptor.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
-                                 isoRight, isoRightU, isoRightMin,
-                                 opposite) )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot extract isoparametric lines "
-                                                "for the neighbor patches.");
-    return;
-  }
-  //
-  m_progress.SendLogMessage(LogInfo(Normal) << "Isos extracted. Opposite: %1." << opposite);
-
-  // Graphical dump.
-  m_plotter.REDRAW_SURFACE("surfLeft",  surfLeft,  Color_Default);
-  m_plotter.REDRAW_SURFACE("surfRight", surfRight, Color_Default);
-  //
-  m_plotter.REDRAW_CURVE("isoLeft",  isoLeft,  isoLeftU  ? Color_Red : Color_Green);
-  m_plotter.REDRAW_CURVE("isoRight", isoRight, isoRightU ? Color_Red : Color_Green);
-
-  // Check if the joint is compatible.
-  if ( !jointAdaptor.AlignControlPoles(isoLeft, isoLeftU, isoLeftMin,
-                                       isoRight, isoRightU, isoRightMin,
-                                       opposite) )
-  {
-    m_progress.SendLogMessage(LogErr(Normal) << "Cannot align control points.");
-    return;
-  }
-  //
-  m_progress.SendLogMessage(LogInfo(Normal) << "Joint is compatible.");
-
-
-  //// Unify surfaces.
-  //if ( !jointAdaptor.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU) )
-  //{
-  //  m_progress.SendLogMessage(LogErr(Normal) << "Cannot unify surfaces.");
-  //  return;
-  //}
-
-  // Modify Data Model.
-  m_model->OpenCommand();
-  {
-    leftPatchNode  ->SetSurface( jointAdaptor.GetSurfaceLeft() );
-    rightPatchNode ->SetSurface( jointAdaptor.GetSurfaceRight() );
-
-    // Execute dependencies.
-    m_model->FuncExecuteAll();
-  }
-  m_model->CommitCommand();
-
-  // Actualize all patches.
-  for ( size_t k = 0; k < m_viewers.size(); ++k )
-  {
-    // Actualize part.
-    if ( dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]) )
-      m_viewers[k]->PrsMgr()->Actualize( reApi.Get_Patches(), true );
-  }
-
-  // Graphical dump.
-  //m_plotter.REDRAW_SURFACE("surfLeft",  jointAdaptor.GetSurfaceLeft(),  Color_Default);
-  //m_plotter.REDRAW_SURFACE("surfRight", jointAdaptor.GetSurfaceRight(), Color_Default);
-
-  // TODO: NYI
+  // Dump graphically.
+  jointAdaptor.DumpGraphically();
 }
 
 //-----------------------------------------------------------------------------
@@ -998,7 +898,7 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       if ( node->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
       {
         pMenu->addSeparator();
-        pMenu->addAction( "Optimize for G1",  this, SLOT( onOptimizeForG1 () ) );
+        pMenu->addAction( "Dump joint info",  this, SLOT( onDumpJoint () ) );
       }
     }
   }

@@ -51,6 +51,7 @@ asiData_IVCurveNode::asiData_IVCurveNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,       PID_ActiveHandle);
   REGISTER_PARAMETER(RealArray, PID_ReperPoints);
   REGISTER_PARAMETER(Int,       PID_ActiveReper);
+  REGISTER_PARAMETER(Bool,      PID_DrawOriTip);
 }
 
 //-----------------------------------------------------------------------------
@@ -64,13 +65,17 @@ Handle(ActAPI_INode) asiData_IVCurveNode::Instance()
 
 void asiData_IVCurveNode::Init()
 {
-  this->InitParameter   ( PID_Name, "Name" );
-  this->SetCurve        ( NULL, 0.0, 0.0 );
-  this->SetHandles      ( NULL );
-  this->SetActiveHandle ( -1 );
-  this->SetActiveReper  ( -1 );
+  this->SetCurve              ( NULL, 0.0, 0.0 );
+  this->SetHandles            ( NULL );
+  this->SetActiveHandle       ( -1 );
+  this->SetActiveReper        ( -1 );
+  this->SetDrawOrientationTip ( true );
 
   ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(NULL);
+
+  // Initialize properties.
+  this->InitParameter (PID_Name,       "Name",             "", ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_DrawOriTip, "Orientation tip",  "", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -256,4 +261,18 @@ gp_XYZ asiData_IVCurveNode::GetActiveReperPoint() const
   this->GetReperPoints(pts);
 
   return pts[activeReper];
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_IVCurveNode::SetDrawOrientationTip(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_DrawOriTip) )->SetValue(on);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiData_IVCurveNode::GetDrawOrientationTip() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_DrawOriTip) )->GetValue();
 }

@@ -44,9 +44,11 @@ set (CPP_FILES
 
 set (func_H_FILES
   func/asiEngine_BuildPatchFunc.h
+  func/asiEngine_SmoothenCornersFunc.h
 )
 set (func_CPP_FILES
   func/asiEngine_BuildPatchFunc.cpp
+  func/asiEngine_SmoothenCornersFunc.cpp
 )
 
 #------------------------------------------------------------------------------

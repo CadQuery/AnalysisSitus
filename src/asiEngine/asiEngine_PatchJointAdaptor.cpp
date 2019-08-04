@@ -34,6 +34,9 @@
 // asiEngine includes
 #include <asiEngine_RE.h>
 
+// OpenCascade includes
+#include <Geom_TrimmedCurve.hxx>
+
 //-----------------------------------------------------------------------------
 
 asiEngine_PatchJointAdaptor::asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
@@ -116,4 +119,70 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
   }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_PatchJointAdaptor::DumpGraphically()
+{
+  ActAPI_Color revsColor = Color_Blue,
+               forwColor = Color_Red;
+
+  m_plotter.REDRAW_SURFACE ("patch-left",  m_patchLeft->GetSurface(),  Color_Default);
+  m_plotter.REDRAW_SURFACE ("patch-right", m_patchRight->GetSurface(), Color_Default);
+  //
+  m_plotter.REDRAW_CURVE   ("coedge-left",      this->getCoedgeCurveRepr(m_coedgeLeft),     m_coedgeLeft     ->IsSameSense() ? forwColor : revsColor, false );
+  m_plotter.REDRAW_CURVE   ("coedge-left-top",  this->getCoedgeCurveRepr(m_coedgeLeftTop),  m_coedgeLeftTop  ->IsSameSense() ? forwColor : revsColor, false );
+  m_plotter.REDRAW_CURVE   ("coedge-left-bot",  this->getCoedgeCurveRepr(m_coedgeLeftBot),  m_coedgeLeftBot  ->IsSameSense() ? forwColor : revsColor, false );
+  m_plotter.REDRAW_CURVE   ("coedge-right",     this->getCoedgeCurveRepr(m_coedgeRight),    m_coedgeRight    ->IsSameSense() ? forwColor : revsColor, false );
+  m_plotter.REDRAW_CURVE   ("coedge-right-top", this->getCoedgeCurveRepr(m_coedgeRightTop), m_coedgeRightTop ->IsSameSense() ? forwColor : revsColor, false );
+  m_plotter.REDRAW_CURVE   ("coedge-right-bot", this->getCoedgeCurveRepr(m_coedgeRightBot), m_coedgeRightBot ->IsSameSense() ? forwColor : revsColor, false );
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(Geom_Curve)
+  asiEngine_PatchJointAdaptor::getCoedgeCurveRepr(const Handle(asiData_ReCoedgeNode)& coedgeNode) const
+{
+  // Get edge.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = coedgeNode->GetEdge();
+
+  // Get patch.
+  Handle(asiData_RePatchNode)
+    patchNode = Handle(asiData_RePatchNode)::DownCast( coedgeNode->GetParentNode() );
+
+  // Get host surface of the patch.
+  Handle(Geom_Surface) surf = patchNode->GetSurface();
+
+  // Analyze basic local properties at coedge.
+  bool isSurfGoesU, isLeftBound;
+  double uMin, uMax, vMin, vMax;
+  //
+  if ( !this->AnalyzeJoint(edgeNode->GetCurve(), surf,
+                           isSurfGoesU, isLeftBound,
+                           uMin, uMax, vMin, vMax) )
+  {
+    m_progress.SendLogMessage( LogErr(Normal) << "Failed to analyze joint." );
+    return NULL;
+  }
+
+  // Apply small shift to have a nice margin for graphical representation.
+  const double uDelta = (uMax - uMin)*0.1;
+  const double vDelta = (vMax - vMin)*0.1;
+  const double delta  = isSurfGoesU ? vDelta : uDelta;
+
+  // Get the corresponding isoline.
+  Handle(Geom_Curve)
+    iso = ( isSurfGoesU ? surf->VIso(isLeftBound ? vMin + delta : vMax - delta)
+                        : surf->UIso(isLeftBound ? uMin + delta : uMax - delta) );
+
+  // Trim for better visualization.
+  iso = new Geom_TrimmedCurve(iso, iso->FirstParameter() + delta, iso->LastParameter() - delta);
+
+  // Reverse for non-samesense coedges.
+  if ( !coedgeNode->IsSameSense() )
+    iso->Reverse();
+
+  return iso;
 }

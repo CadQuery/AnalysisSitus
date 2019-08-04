@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 09 July 2019
+// Created on: 04 August 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,41 +28,30 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_BuildPatchFunc_HeaderFile
-#define asiEngine_BuildPatchFunc_HeaderFile
+#ifndef asiEngine_SmoothenCornersFunc_HeaderFile
+#define asiEngine_SmoothenCornersFunc_HeaderFile
 
 // asiEngine includes
 #include <asiEngine.h>
 
-// asiAlgo includes
-#include <asiAlgo_BaseCloud.h>
-
 // Active Data includes
 #include <ActData_BaseTreeFunction.h>
 
-// OpenCascade includes
-#include <Geom_BSplineSurface.hxx>
-
-// Forward declarations.
-class asiData_RePatchNode;
-class asiEngine_Model;
-
 //-----------------------------------------------------------------------------
 
-//! Tree function for automatic (re-)constructing surface patches in
-//! reverse engineering scenarios.
-class asiEngine_BuildPatchFunc : public ActData_BaseTreeFunction
+//! Tree function for smooth connecting curves in a curve network.
+class asiEngine_SmoothenCornersFunc : public ActData_BaseTreeFunction
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiEngine_BuildPatchFunc, ActData_BaseTreeFunction)
+  DEFINE_STANDARD_RTTI_INLINE(asiEngine_SmoothenCornersFunc, ActData_BaseTreeFunction)
 
 public:
 
   //! Instantiation routine.
   //! \return Tree Function instance.
-  asiEngine_EXPORT static Handle(asiEngine_BuildPatchFunc)
+  asiEngine_EXPORT static Handle(asiEngine_SmoothenCornersFunc)
     Instance();
 
   //! Static accessor for the GUID associated with the Tree Function.
@@ -115,29 +104,7 @@ private:
 
 private:
 
-  //! Extracts mesh nodes for approximation.
-  //! \param[in]  model Data Model instance.
-  //! \param[in]  patch Patch Node being processed.
-  //! \param[out] pts   extracted points to approximate.
-  //! \return true in case of success, false -- otherwise.
-  bool extractMeshNodes(const Handle(asiEngine_Model)&     model,
-                        const Handle(asiData_RePatchNode)& patch,
-                        Handle(asiAlgo_BaseCloud<double>)& pts) const;
-
-  //! Approximates mesh nodes with a B-surface.
-  //! \param[in]  initSurf   initial surface.
-  //! \param[in]  pts        points to approximate.
-  //! \param[in]  lambda     value of the fairing coefficient.
-  //! \param[out] resultSurf approximated surface.
-  //! \return true in case of success, false -- otherwise.
-  bool approxMeshNodes(const Handle(Geom_BSplineSurface)&       initSurf,
-                       const Handle(asiAlgo_BaseCloud<double>)& pts,
-                       const double                             lambda,
-                       Handle(Geom_BSplineSurface)&             resultSurf) const;
-
-private:
-
-  asiEngine_BuildPatchFunc() {} //!< Ctor.
+  asiEngine_SmoothenCornersFunc() {} //!< Ctor.
 
 private:
 

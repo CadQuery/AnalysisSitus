@@ -90,6 +90,10 @@ public:
   asiVisu_EXPORT virtual int
     GetActiveReper() const;
 
+  //! \return Boolean flag indicating whether to draw orientation tip.
+  asiVisu_EXPORT virtual bool
+    GetDrawOrientationTip() const;
+
   //! Returns ID of the Data Node which is being sourced by the visualization
   //! pipeline. This ID is bound to the pipeline's actor in order to have a
   //! back-reference from Presentation to Data Object.

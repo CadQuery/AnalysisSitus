@@ -117,6 +117,16 @@ int asiVisu_IVCurveDataProvider::GetActiveReper() const
 
 //-----------------------------------------------------------------------------
 
+bool asiVisu_IVCurveDataProvider::GetDrawOrientationTip() const
+{
+  if ( m_node.IsNull() )
+    return false;
+
+  return m_node->GetDrawOrientationTip();
+}
+
+//-----------------------------------------------------------------------------
+
 ActAPI_DataObjectId asiVisu_IVCurveDataProvider::GetNodeID() const
 {
   return m_node->GetId();
@@ -143,7 +153,8 @@ Handle(ActAPI_HParameterList) asiVisu_IVCurveDataProvider::translationSources() 
   out << m_node->Parameter(asiData_IVCurveNode::PID_Geometry)
       << m_node->Parameter(asiData_IVCurveNode::PID_Handles)
       << m_node->Parameter(asiData_IVCurveNode::PID_ActiveHandle)
-      << m_node->Parameter(asiData_IVCurveNode::PID_ReperPoints);
+      << m_node->Parameter(asiData_IVCurveNode::PID_ReperPoints)
+      << m_node->Parameter(asiData_IVCurveNode::PID_DrawOriTip);
 
   return out;
 }

@@ -583,7 +583,7 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
     }
 
     // Set result.
-    interp->GetPlotter().DRAW_CURVE(resCurve, Color_Red, argv[1]);
+    interp->GetPlotter().DRAW_CURVE(resCurve, Color_Red, TCollection_AsciiString(argv[1]));
   }
 
   return TCL_OK;

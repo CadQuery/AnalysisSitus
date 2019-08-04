@@ -80,6 +80,16 @@ public:
   //! \return 0-based ID of the active reper point or -1 if no reper is active.
   virtual int GetActiveReper() const { return -1; }
 
+  //! Returns a Boolean flag indicating whether for the parametric curve we
+  //! want to have a supplementary glyph indicating its natural orientation,
+  //! i.e., the direction of its parameterization.
+  //!
+  //! \return true by default (if not overridden by subclasses).
+  virtual bool GetDrawOrientationTip() const
+  {
+    return true;
+  }
+
 };
 
 #endif

@@ -160,7 +160,7 @@ protected slots:
   void onConvertToTris         ();
   void onConvertToTess         ();
   //
-  void onOptimizeForG1         ();
+  void onDumpJoint             ();
 
 protected:
 

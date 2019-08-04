@@ -81,6 +81,11 @@ public:
     PID_ActiveReper,  //!< Index of the currently active reper point.
 
   //------------------//
+  // Presentation     //
+  //------------------//
+    PID_DrawOriTip,   //!< Whether to draw orientation tip for the curve.
+
+  //------------------//
   // ...              //
   //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
@@ -190,6 +195,16 @@ public:
   //! \return point corresponding to the active reper index.
   asiData_EXPORT gp_XYZ
     GetActiveReperPoint() const;
+
+  //! Sets the property indicating whether to draw the orientation tip
+  //! for the curve which represents the direction of its parameterization.
+  //! \param[in] on true/false.
+  asiData_EXPORT void
+    SetDrawOrientationTip(const bool on);
+
+  //! \return stored value of orientation tip flag.
+  asiData_EXPORT bool
+    GetDrawOrientationTip() const;
 
 // Initialization:
 public:

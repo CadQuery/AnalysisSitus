@@ -86,7 +86,12 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       src->SetInputCurve2d(curve, f, l);
 
       // Set tip size
-      const double tipSize = (curve->Value(l).XY() - curve->Value(f).XY() ).Modulus()*0.1;
+      double tipSize;
+      //
+      if ( dp->GetDrawOrientationTip() )
+        tipSize = (curve->Value(l).XY() - curve->Value(f).XY() ).Modulus()*0.1;
+      else
+        tipSize = 0.;
       //
       src->SetTipSize(tipSize);
     }
@@ -96,7 +101,12 @@ void asiVisu_CurvePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
       src->SetInputCurve(curve, f, l);
 
       // Set tip size
-      const double tipSize = (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1;
+      double tipSize;
+      //
+      if ( dp->GetDrawOrientationTip() )
+        tipSize = (curve->Value(l).XYZ() - curve->Value(f).XYZ() ).Modulus()*0.1;
+      else
+        tipSize = 0.;
       //
       src->SetTipSize(tipSize);
     }

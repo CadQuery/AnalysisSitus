@@ -65,6 +65,68 @@ public:
   asiEngine_EXPORT bool
     Init(const Handle(asiData_ReEdgeNode)& edgeNode);
 
+  //! Dumps the initialized topology near the joint curve to the plotter.
+  asiEngine_EXPORT void
+    DumpGraphically();
+
+public:
+
+  //! \return left patch.
+  const Handle(asiData_RePatchNode)& GetPatchLeft() const
+  {
+    return m_patchLeft;
+  }
+
+  //! \return right patch.
+  const Handle(asiData_RePatchNode)& GetPatchRight() const
+  {
+    return m_patchRight;
+  }
+
+  //! \return left coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeLeft() const
+  {
+    return m_coedgeLeft;
+  }
+
+  //! \return left-top coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeLeftTop() const
+  {
+    return m_coedgeLeftTop;
+  }
+
+  //! \return left-bottom coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeLeftBot() const
+  {
+    return m_coedgeLeftBot;
+  }
+
+  //! \return right coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeRight() const
+  {
+    return m_coedgeRight;
+  }
+
+  //! \return right-top coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeRightTop() const
+  {
+    return m_coedgeRightTop;
+  }
+
+  //! \return right-bottom coedge.
+  const Handle(asiData_ReCoedgeNode)& GetCoedgeRightBot() const
+  {
+    return m_coedgeRightBot;
+  }
+
+protected:
+
+  //! Prepares curve representation for the passed coedge.
+  //! \param[in] coedgeNode coedge to prepare a curve representation for.
+  //! \return curve representation for coedge.
+  asiEngine_EXPORT Handle(Geom_Curve)
+    getCoedgeCurveRepr(const Handle(asiData_ReCoedgeNode)& coedgeNode) const;
+
 protected:
 
   Handle(asiEngine_Model)      m_model;          //!< Data Model instance.

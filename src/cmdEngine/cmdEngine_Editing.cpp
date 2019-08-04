@@ -2371,7 +2371,7 @@ int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
   for ( size_t ii = 0; ii < segments.size(); ++ii )
     interp->GetPlotter().DRAW_CURVE(mobius::cascade::GetOpenCascadeBCurve(segments[ii]),
                                     Color_Default,
-                                    argv[1]);
+                                    TCollection_AsciiString(argv[1]));
 
   return TCL_OK;
 #else

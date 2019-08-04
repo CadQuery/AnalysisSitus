@@ -261,7 +261,17 @@ void asiUI_IV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
                           const ActAPI_Color&            color,
                           const TCollection_AsciiString& name)
 {
-  this->draw_curve(curve, color, name, false, true);
+  this->draw_curve(curve, color, name, true, false, true);
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::DRAW_CURVE(const Handle(Geom_Curve)&      curve,
+                          const ActAPI_Color&            color,
+                          const bool                     drawOri,
+                          const TCollection_AsciiString& name)
+{
+  this->draw_curve(curve, color, name, drawOri, false, true);
 }
 
 //---------------------------------------------------------------------------//
@@ -270,7 +280,17 @@ void asiUI_IV::REDRAW_CURVE(const TCollection_AsciiString& name,
                             const Handle(Geom_Curve)&      curve,
                             const ActAPI_Color&            color)
 {
-  this->draw_curve(curve, color, name, false, false);
+  this->draw_curve(curve, color, name, true, false, false);
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::REDRAW_CURVE(const TCollection_AsciiString& name,
+                            const Handle(Geom_Curve)&      curve,
+                            const ActAPI_Color&            color,
+                            const bool                     drawOri)
+{
+  this->draw_curve(curve, color, name, drawOri, false, false);
 }
 
 //---------------------------------------------------------------------------//
@@ -1042,6 +1062,7 @@ void asiUI_IV::draw_points(const Handle(HRealArray)&      coords,
 void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
                           const ActAPI_Color&            color,
                           const TCollection_AsciiString& name,
+                          const bool                     drawOri,
                           const bool                     is2dViewer,
                           const bool                     newPrimitive)
 {
@@ -1063,14 +1084,14 @@ void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
     curve_n = asiEngine_IV(m_model).Find_Curve(name);
     //
     if ( !curve_n.IsNull() )
-      asiEngine_IV(m_model).Update_Curve(curve_n, curve, 1000);
+      asiEngine_IV(m_model).Update_Curve(curve_n, curve, 1000, drawOri);
     else
       doCreate = true;
   }
 
   if ( doCreate )
   {
-    curve_n = asiEngine_IV(m_model).Create_Curve(curve, 1000, name, newPrimitive);
+    curve_n = asiEngine_IV(m_model).Create_Curve(curve, 1000, drawOri, name, newPrimitive);
 
     // Update the last created object
     m_lastObj = curve_n;
@@ -1270,14 +1291,14 @@ void asiUI_IV::draw_link(const gp_XYZ&                  p1,
     curve_n = asiEngine_IV(m_model).Find_Curve(name);
     //
     if ( !curve_n.IsNull() )
-      asiEngine_IV(m_model).Update_Curve( curve_n, C, Precision::Infinite() );
+      asiEngine_IV(m_model).Update_Curve( curve_n, C, Precision::Infinite(), false );
     else
       doCreate = true;
   }
 
   if ( doCreate )
   {
-    curve_n = asiEngine_IV(m_model).Create_Curve(C, Precision::Infinite(), name, newPrimitive);
+    curve_n = asiEngine_IV(m_model).Create_Curve(C, Precision::Infinite(), false, name, newPrimitive);
 
     // Update the last created object
     m_lastObj = curve_n;
@@ -1325,7 +1346,7 @@ void asiUI_IV::draw_polyline(const std::vector<gp_XYZ>&     poles,
 {
   Handle(Geom_BSplineCurve) curve = asiAlgo_Utils::PolylineAsSpline(poles);
 
-  this->draw_curve(curve, color, name, is2dViewer, newPrimitive);
+  this->draw_curve(curve, color, name, false, is2dViewer, newPrimitive);
 }
 
 //---------------------------------------------------------------------------//
@@ -1337,7 +1358,7 @@ void asiUI_IV::draw_polyline(const std::vector<gp_XYZ>&     poles,
 {
   Handle(Geom_BSplineCurve) curve = asiAlgo_Utils::PolylineAsSpline(poles);
 
-  this->draw_curve(curve, color, name, false, newPrimitive);
+  this->draw_curve(curve, color, name, false, false, newPrimitive);
 }
 
 //---------------------------------------------------------------------------//

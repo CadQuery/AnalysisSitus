@@ -443,12 +443,14 @@ Handle(asiData_IVCurveNode)
 //! Creates Curve Node.
 //! \param curve         [in] parametric curve to store.
 //! \param uLimit        [in] absolute value to bound infinite parametric domain.
+//! \param drawOriTip    [in] indicates whether to draw orientation tip.
 //! \param name          [in] name to set (auto-generated if empty).
 //! \param useAutoNaming [in] indicates whether to auto-name entities.
 //! \return newly created Node.
 Handle(asiData_IVCurveNode)
   asiEngine_IV::Create_Curve(const Handle(Geom_Curve)&      curve,
                              const double                   uLimit,
+                             const bool                     drawOriTip,
                              const TCollection_AsciiString& name,
                              const bool                     useAutoNaming)
 {
@@ -458,7 +460,7 @@ Handle(asiData_IVCurveNode)
   Handle(asiData_IVCurveNode)
     item_n = this->Create_Curve(name, useAutoNaming);
 
-  this->Update_Curve(item_n, curve, uLimit);
+  this->Update_Curve(item_n, curve, uLimit, drawOriTip);
 
   // Return the just created Node
   return item_n;
@@ -498,12 +500,14 @@ Handle(asiData_IVCurveNode)
 //-----------------------------------------------------------------------------
 
 //! Updates Curve Node with the passed curve data.
-//! \param node   [in] Curve Node to update.
-//! \param curve  [in] parametric curve to store.
-//! \param uLimit [in] absolute value to bound infinite parametric domain.
+//! \param node       [in] Curve Node to update.
+//! \param curve      [in] parametric curve to store.
+//! \param uLimit     [in] absolute value to bound infinite parametric domain.
+//! \param drawOriTip [in] indicates whether to draw orientation tip.
 void asiEngine_IV::Update_Curve(const Handle(asiData_IVCurveNode)& node,
                                 const Handle(Geom_Curve)&          curve,
-                                const double                       uLimit)
+                                const double                       uLimit,
+                                const bool                         drawOriTip)
 {
   // Handle infinite domains
   double             f      = curve->FirstParameter();
@@ -531,6 +535,7 @@ void asiEngine_IV::Update_Curve(const Handle(asiData_IVCurveNode)& node,
   node->Init();
   node->SetUserFlags(NodeFlag_IsPresentedInPartView);
   node->SetCurve(geometry, f, l);
+  node->SetDrawOrientationTip(drawOriTip);
 }
 
 //-----------------------------------------------------------------------------

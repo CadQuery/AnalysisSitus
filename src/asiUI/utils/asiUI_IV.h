@@ -169,9 +169,21 @@ public:
                const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
+    DRAW_CURVE(const Handle(Geom_Curve)&,
+               const ActAPI_Color&,
+               const bool,
+               const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
     REDRAW_CURVE(const TCollection_AsciiString&,
                  const Handle(Geom_Curve)&,
                  const ActAPI_Color&);
+
+  asiUI_EXPORT virtual void
+    REDRAW_CURVE(const TCollection_AsciiString&,
+                 const Handle(Geom_Curve)&,
+                 const ActAPI_Color&,
+                 const bool);
 
   asiUI_EXPORT virtual void
     DRAW_CURVE2D(const Handle(Geom2d_Curve)&,
@@ -562,6 +574,7 @@ protected:
     draw_curve(const Handle(Geom_Curve)&      curve,
                const ActAPI_Color&            color,
                const TCollection_AsciiString& name,
+               const bool                     drawOri,
                const bool                     is2dViewer,
                const bool                     newPrimitive);
 

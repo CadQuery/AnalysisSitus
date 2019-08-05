@@ -152,7 +152,7 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
    *  Build patch
    * ============= */
 
-  asiEngine_RE reApi(M, m_progress/*, m_plotter*/);
+  asiEngine_RE reApi(M, m_progress, m_bPlotterEnabled ? m_plotter : NULL);
 
   // Fill Coons.
   Handle(Geom_BSplineSurface) bsurf;

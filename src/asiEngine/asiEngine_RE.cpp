@@ -832,47 +832,47 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
 
   // Get min number of intermediate knots in each direction.
   const int numInterKnotsRequired = minNumKnots;
-  const int numInterKnotsU        = mobSurf->GetNumOfInteriorKnots_U();
-  const int numInterKnotsV        = mobSurf->GetNumOfInteriorKnots_V();
+  int       numInterKnotsU        = mobSurf->GetNumOfInteriorKnots_U();
+  int       numInterKnotsV        = mobSurf->GetNumOfInteriorKnots_V();
 
   // Add additional knots in U direction.
-  if ( !numInterKnotsU )
+  while ( numInterKnotsRequired - numInterKnotsU > 0 )
   {
-    const double firstKnot = mobSurf->GetMinParameter_U();
-    const double lastKnot  = mobSurf->GetMaxParameter_U();
-    const double delta     = (lastKnot - firstKnot) / (numInterKnotsRequired + 1);
+    // Find max span.
+    const int    span_U    = mobSurf->FindMaxSpan_U();
+    const double firstKnot = mobSurf->GetKnot_U(span_U);
+    const double lastKnot  = mobSurf->GetKnot_U(span_U + 1);
+    const double newKnot   = (lastKnot + firstKnot)*0.5;
 
-    // Insert knots.
-    for ( int i = 1; i <= numInterKnotsRequired; ++i )
+    // Insert knot.
+    if ( !mobSurf->InsertKnot_U(newKnot, 1) )
     {
-      const double u = firstKnot + i*delta;
-      if ( !mobSurf->InsertKnot_U(u, 1) )
-      {
-        m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in U direction."
-                                                 << u);
-        return false;
-      }
+      m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in U direction."
+                                               << newKnot);
+      return false;
     }
+
+    numInterKnotsU++;
   }
 
   // Add additional knots in V direction.
-  if ( !numInterKnotsV )
+  while ( numInterKnotsRequired - numInterKnotsV > 0 )
   {
-    const double firstKnot = mobSurf->GetMinParameter_V();
-    const double lastKnot  = mobSurf->GetMaxParameter_V();
-    const double delta     = (lastKnot - firstKnot) / (numInterKnotsRequired + 1);
+    // Find max span.
+    const int    span_V    = mobSurf->FindMaxSpan_V();
+    const double firstKnot = mobSurf->GetKnot_V(span_V);
+    const double lastKnot  = mobSurf->GetKnot_V(span_V + 1);
+    const double newKnot   = (lastKnot + firstKnot)*0.5;
 
-    // Insert knots.
-    for ( int i = 1; i <= numInterKnotsRequired; ++i )
+    // Insert knot.
+    if ( !mobSurf->InsertKnot_V(newKnot, 1) )
     {
-      const double v = firstKnot + i*delta;
-      if ( !mobSurf->InsertKnot_V(v, 1) )
-      {
-        m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in V direction."
-                                                 << v);
-        return false;
-      }
+      m_progress.SendLogMessage(LogErr(Normal) << "Knot insertion failed for knot %1 in V direction."
+                                               << newKnot);
+      return false;
     }
+
+    numInterKnotsV++;
   }
 
   // Set surface and return.

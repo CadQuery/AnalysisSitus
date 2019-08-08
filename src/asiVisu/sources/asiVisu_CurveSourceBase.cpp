@@ -179,7 +179,7 @@ bool asiVisu_CurveSourceBase::FillPolydata(vtkPolyData* polyData)
 
   if ( m_fOriTipSize > RealEpsilon() )
   {
-    int pinPointIdx = int( ( m_XCoords->Lower() + m_XCoords->Upper() )*0.5 );
+    int pinPointIdx = std::ceil( ( m_XCoords->Lower() + m_XCoords->Upper() )*0.5 );
 
     // Derive tangent.
     if ( m_oriT.Magnitude() < RealEpsilon() )

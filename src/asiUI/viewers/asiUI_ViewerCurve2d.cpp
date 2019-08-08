@@ -55,10 +55,15 @@
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 
 //! Creates a new instance of viewer.
-//! \param[in] prs_mgr externally defined Presentation Manager.
-//! \param[in] parent  parent widget.
+//! \param[in] prs_mgr  externally defined Presentation Manager.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
+//! \param[in] parent   parent widget.
 asiUI_ViewerCurve2d::asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
-                                         QWidget*                             parent) : asiUI_Viewer(parent)
+                                         ActAPI_ProgressEntry                 progress,
+                                         ActAPI_PlotterEntry                  plotter,
+                                         QWidget*                             parent)
+: asiUI_Viewer(progress, plotter, parent)
 {
   // Initialize presentation manager along with QVTK widget
   prs_mgr   = vtkSmartPointer<asiVisu_PrsManager>::New();

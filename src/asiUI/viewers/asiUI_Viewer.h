@@ -51,9 +51,23 @@ class asiUI_EXPORT asiUI_Viewer : public QWidget
 
 public:
 
-  asiUI_Viewer(QWidget* parent = NULL);
+  asiUI_Viewer(ActAPI_ProgressEntry progress,
+               ActAPI_PlotterEntry  plotter,
+               QWidget*             parent = NULL);
 
   virtual ~asiUI_Viewer();
+
+public:
+
+  //! Sets diagnotics tools for the viewer.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  void SetDiagnosticTools(ActAPI_ProgressEntry progress,
+                          ActAPI_PlotterEntry  plotter)
+  {
+    m_progress = progress;
+    m_plotter  = plotter;
+  }
 
 public:
 
@@ -70,6 +84,11 @@ public:
 protected:
 
   vtkSmartPointer<asiVisu_PrsManager> m_prs_mgr; //!< Presentation Manager.
+
+  /* Diagnostics */
+
+  ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

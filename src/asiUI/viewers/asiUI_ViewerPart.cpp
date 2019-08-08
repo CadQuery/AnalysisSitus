@@ -113,11 +113,15 @@ void GetPickedSubshapeIds(const Handle(asiVisu_PickerResult)& pick_res,
 //! Creates a new instance of viewer.
 //! \param[in] model             Data Model instance.
 //! \param[in] enableInteraction enables/disables interaction mechanisms.
+//! \param[in] progress          progress notifier.
+//! \param[in] plotter           imperative plotter.
 //! \param[in] parent            parent widget.
 asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
                                    const bool                     enableInteraction,
+                                   ActAPI_ProgressEntry           progress,
+                                   ActAPI_PlotterEntry            plotter,
                                    QWidget*                       parent)
-: asiUI_Viewer(parent), m_model(model)
+: asiUI_Viewer(progress, plotter, parent), m_model(model)
 {
   // Initialize presentation manager along with QVTK widget
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
@@ -464,7 +468,13 @@ void asiUI_ViewerPart::onSubShapesPicked()
 void asiUI_ViewerPart::onFindFace()
 {
   // Run dialog
-  asiUI_DialogFindFace* wFindFace = new asiUI_DialogFindFace(m_model, this->PrsMgr(), this);
+  asiUI_DialogFindFace*
+    wFindFace = new asiUI_DialogFindFace(m_model,
+                                         this->PrsMgr(),
+                                         this,
+                                         m_progress,
+                                         m_plotter);
+  //
   wFindFace->show();
 }
 

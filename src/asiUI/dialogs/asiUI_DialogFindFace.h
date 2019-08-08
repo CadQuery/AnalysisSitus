@@ -43,11 +43,13 @@
 
 // Qt includes
 #pragma warning(push, 0)
-#include <QCheckBox>
+#include <QComboBox>
 #include <QDialog>
 #include <QPushButton>
 #include <QVBoxLayout>
 #pragma warning(pop)
+
+//-----------------------------------------------------------------------------
 
 //! Dialog for finding face of interest.
 class asiUI_DialogFindFace : public QDialog
@@ -56,16 +58,40 @@ class asiUI_DialogFindFace : public QDialog
 
 public:
 
+  //! Identification types.
+  enum FaceIdType
+  {
+    FaceIdType_Serial = 0, //!< Exploration index (1-based).
+    FaceIdType_Transient,  //!< Raw pointer.
+    FaceIdType_Persistent  //!< Through naming service.
+  };
+
+public:
+
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] prsMgr   presentation manager.
+  //! \param[in] pViewer  connected viewer.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  //! \param[in] parent   parent widget.
   asiUI_DialogFindFace(const Handle(asiEngine_Model)&             model,
                        const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                        asiUI_ViewerPart*                          pViewer,
+                       ActAPI_ProgressEntry                       progress,
+                       ActAPI_PlotterEntry                        plotter,
                        QWidget*                                   parent = NULL);
 
+  //! Dtor.
   virtual ~asiUI_DialogFindFace();
 
 public slots:
 
-  void onUseAddress();
+  //! Reaction on changing "ID type" combobox.
+  //! \param[in] typeIdx new 0-based type index.
+  void onChangeIdType(const int typeIdx);
+
+  //! Reaction on clicking "Find" button.
   void onFind();
 
 protected:
@@ -74,25 +100,28 @@ protected:
   struct t_widgets
   {
   //---------------------------------------------------------------------------
-    QPushButton*    pFind;       //!< Find face of interest.
+    QPushButton*    pFind;        //!< Find face of interest.
   //---------------------------------------------------------------------------
-    QCheckBox*      pUseAddress; //!< Indicates whether to use address.
-    asiUI_LineEdit* pIndex;      //!< Face index.
-    asiUI_LineEdit* pAddress;    //!< Face address.
+    QComboBox*      pFaceIdSel;   //!< Selector for face ID (serial, transient, persistent).
+    asiUI_LineEdit* pIdSerial;    //!< Face index.
+    asiUI_LineEdit* pIdTransient; //!< Face address.
+    asiUI_LineEdit* pIdName;      //!< Face name.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pFind       (NULL),
-                  pUseAddress (NULL),
-                  pIndex      (NULL),
-                  pAddress    (NULL)
+    t_widgets() : pFind        (NULL),
+                  pFaceIdSel   (NULL),
+                  pIdSerial    (NULL),
+                  pIdTransient (NULL),
+                  pIdName      (NULL)
     {}
 
     void Release()
     {
-      delete pFind;       pFind       = NULL;
-      delete pUseAddress; pUseAddress = NULL;
-      delete pIndex;      pIndex      = NULL;
-      delete pAddress;    pAddress    = NULL;
+      delete pFind;        pFind        = NULL;
+      delete pFaceIdSel;   pFaceIdSel   = NULL;
+      delete pIdSerial;    pIdSerial    = NULL;
+      delete pIdTransient; pIdTransient = NULL;
+      delete pIdName;      pIdName      = NULL;
     }
   };
 
@@ -101,6 +130,11 @@ protected:
   asiUI_ViewerPart*                   m_pViewer;     //!< External reference to viewer.
   Handle(asiEngine_Model)             m_model;       //!< Data Model instance.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;      //!< Presentation Manager.
+
+  /* Diagnostics */
+
+  ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
 };
 

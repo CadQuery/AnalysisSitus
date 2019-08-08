@@ -50,7 +50,9 @@ class asiUI_ViewerFuncUnivariate : public asiUI_Viewer
 public:
 
   asiUI_EXPORT
-    asiUI_ViewerFuncUnivariate(QWidget* parent = NULL);
+    asiUI_ViewerFuncUnivariate(ActAPI_ProgressEntry progress,
+                               ActAPI_PlotterEntry  plotter,
+                               QWidget*             parent = NULL);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerFuncUnivariate();

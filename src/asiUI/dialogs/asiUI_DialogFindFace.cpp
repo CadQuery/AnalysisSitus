@@ -56,38 +56,42 @@
 #define CONTROL_BTN_WIDTH 150
 
 //-----------------------------------------------------------------------------
-// Construction & destruction
-//-----------------------------------------------------------------------------
 
-//! Constructor.
-//! \param model   [in] Data Model instance.
-//! \param prsMgr  [in] presentation manager.
-//! \param pViewer [in] connected viewer.
-//! \param parent  [in] parent widget.
 asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&             model,
                                            const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                                            asiUI_ViewerPart*                          pViewer,
+                                           ActAPI_ProgressEntry                       progress,
+                                           ActAPI_PlotterEntry                        plotter,
                                            QWidget*                                   parent)
 //
-: QDialog   (parent),
-  m_model   (model),
-  m_prsMgr  (prsMgr),
-  m_pViewer (pViewer)
+: QDialog    (parent),
+  m_model    (model),
+  m_prsMgr   (prsMgr),
+  m_pViewer  (pViewer),
+  m_progress (progress),
+  m_plotter  (plotter)
 {
-  // Main layout
+  // Main layout.
   m_pMainLayout = new QVBoxLayout();
 
-  // Group box for parameters
+  // Group box for parameters.
   QGroupBox* pGroup = new QGroupBox("Face to find");
 
-  // Editors
-  m_widgets.pUseAddress = new QCheckBox();
-  m_widgets.pIndex      = new asiUI_LineEdit();
-  m_widgets.pAddress    = new asiUI_LineEdit();
+  // Editors.
+  m_widgets.pFaceIdSel = new QComboBox();
+  //
+  m_widgets.pFaceIdSel->addItem("Serial index",   FaceIdType_Serial);
+  m_widgets.pFaceIdSel->addItem("Memory address", FaceIdType_Transient);
+  m_widgets.pFaceIdSel->addItem("Name",           FaceIdType_Persistent);
+  //
+  m_widgets.pIdSerial    = new asiUI_LineEdit();
+  m_widgets.pIdTransient = new asiUI_LineEdit();
+  m_widgets.pIdName      = new asiUI_LineEdit();
 
-  // Sizing
-  m_widgets.pIndex  ->setMinimumWidth(CONTROL_EDIT_WIDTH);
-  m_widgets.pAddress->setMinimumWidth(CONTROL_EDIT_WIDTH);
+  // Sizing.
+  m_widgets.pIdSerial    ->setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pIdTransient ->setMinimumWidth(CONTROL_EDIT_WIDTH);
+  m_widgets.pIdName      ->setMinimumWidth(CONTROL_EDIT_WIDTH);
 
   //---------------------------------------------------------------------------
   // Buttons
@@ -95,28 +99,30 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
 
   m_widgets.pFind = new QPushButton("Find");
 
-  // Sizing
+  // Sizing.
   m_widgets.pFind->setMaximumWidth(CONTROL_BTN_WIDTH);
 
-  // Reaction
-  connect( m_widgets.pUseAddress, SIGNAL( clicked() ), this, SLOT( onUseAddress () ) );
-  connect( m_widgets.pFind,       SIGNAL( clicked() ), this, SLOT( onFind       () ) );
+  // Reaction.
+  connect( m_widgets.pFaceIdSel, SIGNAL( currentIndexChanged (const int) ), this, SLOT( onChangeIdType (const int) ) );
+  connect( m_widgets.pFind,      SIGNAL( clicked             ()          ), this, SLOT( onFind         ()          ) );
 
   //---------------------------------------------------------------------------
-  // Line editors
+  // Layout
   //---------------------------------------------------------------------------
 
-  // Create layout
+  // Create layout.
   QGridLayout* pGrid = new QGridLayout(pGroup);
   pGrid->setSpacing(5);
   //
-  pGrid->addWidget(new QLabel("Use face address:"),     0, 0);
+  pGrid->addWidget(new QLabel("Face ID type:"),         0, 0);
   pGrid->addWidget(new QLabel("Face index (1-based):"), 1, 0);
   pGrid->addWidget(new QLabel("Face address:"),         2, 0);
+  pGrid->addWidget(new QLabel("Face name:"),            3, 0);
   //
-  pGrid->addWidget(m_widgets.pUseAddress, 0, 1);
-  pGrid->addWidget(m_widgets.pIndex,      1, 1);
-  pGrid->addWidget(m_widgets.pAddress,    2, 1);
+  pGrid->addWidget(m_widgets.pFaceIdSel,   0, 1);
+  pGrid->addWidget(m_widgets.pIdSerial,    1, 1);
+  pGrid->addWidget(m_widgets.pIdTransient, 2, 1);
+  pGrid->addWidget(m_widgets.pIdName,      3, 1);
   //
   pGrid->setColumnStretch(0, 0);
   pGrid->setColumnStretch(1, 1);
@@ -126,7 +132,7 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
   // Main layout
   //---------------------------------------------------------------------------
 
-  // Configure main layout
+  // Configure main layout.
   m_pMainLayout->addWidget(pGroup);
   m_pMainLayout->addWidget(m_widgets.pFind);
   m_pMainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -134,16 +140,17 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
 
   this->setLayout(m_pMainLayout);
   this->setWindowModality(Qt::WindowModal);
-  this->setWindowTitle("Find face by index");
+  this->setWindowTitle("Find face");
 
-  // Adjust initial state
-  this->onUseAddress();
+  // Adjust initial state.
+  this->onChangeIdType(0);
 
-  // Set initial focus to reduce excessive clicks
-  m_widgets.pIndex->setFocus();
+  // Set initial focus to reduce excessive clicks.
+  m_widgets.pFaceIdSel->setFocus();
 }
 
-//! Destructor.
+//-----------------------------------------------------------------------------
+
 asiUI_DialogFindFace::~asiUI_DialogFindFace()
 {
   delete m_pMainLayout;
@@ -151,19 +158,18 @@ asiUI_DialogFindFace::~asiUI_DialogFindFace()
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on clicking "Use address" checkbox.
-void asiUI_DialogFindFace::onUseAddress()
+void asiUI_DialogFindFace::onChangeIdType(const int idx)
 {
-  m_widgets.pIndex->setEnabled( !m_widgets.pUseAddress->isChecked() );
-  m_widgets.pAddress->setEnabled( m_widgets.pUseAddress->isChecked() );
+  m_widgets.pIdSerial    ->setEnabled ( idx == FaceIdType_Serial );
+  m_widgets.pIdTransient ->setEnabled ( idx == FaceIdType_Transient );
+  m_widgets.pIdName      ->setEnabled ( idx == FaceIdType_Persistent );
 }
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on clicking "Find" button.
 void asiUI_DialogFindFace::onFind()
 {
-  const bool useAddress = m_widgets.pUseAddress->isChecked();
+  const int typeIdx = m_widgets.pFaceIdSel->currentIndex();
   //
   Handle(asiData_PartNode) part_n;
   TopoDS_Shape             part;
@@ -175,9 +181,29 @@ void asiUI_DialogFindFace::onFind()
   //
   TopTools_IndexedMapOfShape found;
 
-  if ( useAddress )
+  /* Serial identification */
+
+  if ( typeIdx == FaceIdType_Serial )
   {
-    TCollection_AsciiString face_addr = QStr2AsciiStr( m_widgets.pAddress->text() );
+    const int face_id = m_widgets.pIdSerial->text().toInt();
+
+    if ( face_id > 0 && face_id <= faces.Extent() )
+    {
+      const TopoDS_Shape& face = faces.FindKey(face_id);
+      found.Add(face);
+    }
+    else
+    {
+      m_progress.SendLogMessage( LogErr(Normal) << "Input index %1 is out of range [1, %2]."
+                                                << face_id << faces.Extent() );
+    }
+  }
+
+  /* Transient identification */
+
+  else if ( typeIdx == FaceIdType_Transient )
+  {
+    TCollection_AsciiString face_addr = QStr2AsciiStr( m_widgets.pIdTransient->text() );
     face_addr.LowerCase();
 
     for ( int f = 1; f <= faces.Extent(); ++f )
@@ -192,34 +218,49 @@ void asiUI_DialogFindFace::onFind()
       }
     }
   }
-  else
-  {
-    // Read user inputs
-    const int face_id = m_widgets.pIndex->text().toInt();
 
-    if ( face_id > 0 && face_id <= faces.Extent() )
+  /* Persistent identification */
+
+  else if ( typeIdx == FaceIdType_Persistent )
+  {
+    TCollection_AsciiString face_name = QStr2AsciiStr( m_widgets.pIdName->text() );
+    face_name.LowerCase();
+
+    // Get naming service to access the face by its name.
+    Handle(asiAlgo_Naming) naming = part_n->GetNaming();
+    //
+    if ( naming.IsNull() )
     {
-      const TopoDS_Shape& face = faces.FindKey(face_id);
-      found.Add(face);
+      m_progress.SendLogMessage(LogErr(Normal) << "Naming service is not available. Use 'init-naming' command.");
     }
     else
     {
-      std::cout << "Error: input index is out of range" << std::endl;
+      TopoDS_Shape shape = naming->GetShape(face_name);
+      //
+      if ( shape.ShapeType() != TopAbs_FACE )
+      {
+        m_progress.SendLogMessage( LogErr(Normal) << "Shape '%1' is not a face, it is of %2 type."
+                                                  << face_name << asiAlgo_Utils::ShapeTypeStr(shape).c_str() );
+      }
+      else
+      {
+        found.Add(shape);
+      }
     }
   }
 
   if ( !found.IsEmpty() )
   {
-    // Highlight
+    // Highlight.
     asiEngine_Part(m_model, m_prsMgr).HighlightSubShapes(found);
     //
-    m_pViewer->onSubShapesPicked(); // TODO: change with event
+    m_pViewer->onSubShapesPicked(); // TODO: change with event.
   }
   else
   {
-    std::cout << "No face found" << std::endl;
+    m_progress.SendLogMessage(LogErr(Normal) << "No face found.");
   }
 
-  // Close
+  // Close.
   this->close();
 }

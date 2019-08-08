@@ -72,11 +72,15 @@
 //-----------------------------------------------------------------------------
 
 //! Creates a new instance of viewer.
-//! \param[in] model  Data Model instance.
-//! \param[in] parent parent widget.
+//! \param[in] model    Data Model instance.
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
+//! \param[in] parent   parent widget.
 asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
+                                       ActAPI_ProgressEntry           progress,
+                                       ActAPI_PlotterEntry            plotter,
                                        QWidget*                       parent)
-: asiUI_Viewer(parent), m_model(model)
+: asiUI_Viewer(progress, plotter, parent), m_model(model)
 {
   // Initialize presentation manager along with QVTK widget
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();

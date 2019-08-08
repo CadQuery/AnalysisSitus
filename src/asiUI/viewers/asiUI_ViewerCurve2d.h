@@ -51,6 +51,8 @@ public:
 
   asiUI_EXPORT
     asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& prs_mgr,
+                        ActAPI_ProgressEntry                 progress,
+                        ActAPI_PlotterEntry                  plotter,
                         QWidget*                             parent = NULL);
 
   asiUI_EXPORT virtual

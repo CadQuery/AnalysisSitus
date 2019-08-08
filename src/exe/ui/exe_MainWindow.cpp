@@ -156,7 +156,7 @@ void exe_MainWindow::createDockWindows()
     pDockDomain = new QDockWidget("Domain", this);
     pDockDomain->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, pDockDomain);
+    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, NULL, NULL, pDockDomain);
     pDockDomain->setWidget(Widgets.wViewerDomain);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDockDomain);
@@ -172,7 +172,7 @@ void exe_MainWindow::createDockWindows()
     pDockHost = new QDockWidget("Host", this);
     pDockHost->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, pDockHost);
+    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, NULL, NULL, pDockHost);
     pDockHost->setWidget(Widgets.wViewerSurface);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDockHost);
@@ -217,7 +217,8 @@ void exe_MainWindow::createDockWindows()
   cf->Model->FuncPlotterOn();
 
   // Set diagnostic tools once we've got plotter.
-  cf->Prs.Part->SetDiagnosticTools(cf->Progress, cf->Plotter);
+  cf->Prs.Part   ->SetDiagnosticTools(cf->Progress, cf->Plotter);
+  cf->ViewerPart ->SetDiagnosticTools(cf->Progress, cf->Plotter);
 
   // Analysis controls.
   QDockWidget* pDockAnalysis;

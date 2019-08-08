@@ -31,12 +31,22 @@
 // Own include
 #include <asiUI_Viewer.h>
 
+//-----------------------------------------------------------------------------
+
 //! Creates a new instance of viewer.
-//! \param[in] parent parent widget.
-asiUI_Viewer::asiUI_Viewer(QWidget* parent) : QWidget(parent)
+//! \param[in] progress progress notifier.
+//! \param[in] plotter  imperative plotter.
+//! \param[in] parent   parent widget.
+asiUI_Viewer::asiUI_Viewer(ActAPI_ProgressEntry progress,
+                           ActAPI_PlotterEntry  plotter,
+                           QWidget*             parent)
+: QWidget    (parent),
+  m_progress (progress),
+  m_plotter  (plotter)
 {}
+
+//-----------------------------------------------------------------------------
 
 //! Destructor.
 asiUI_Viewer::~asiUI_Viewer()
-{
-}
+{}

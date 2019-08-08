@@ -47,7 +47,9 @@ public:
 
   asiUI_EXPORT
     asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
-                     QWidget*                       parent = NULL);
+                     ActAPI_ProgressEntry           progress = NULL,
+                     ActAPI_PlotterEntry            plotter  = NULL,
+                     QWidget*                       parent   = NULL);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerHost();

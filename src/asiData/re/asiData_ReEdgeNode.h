@@ -66,6 +66,9 @@ public:
     PID_PolylineInds,   //!< Indices of the triangles corresponding to polyline poles.
     PID_Curve,          //!< Curve representation of the edge.
   //--------------------//
+    PID_ApproxToler,    //!< Approximation tolerance.
+    PID_FuncApprox,     //!< Approximation function.
+  //--------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -207,6 +210,15 @@ public:
   //! \param[in] idx 0-based index to set.
   asiData_EXPORT void
     SetLastVertexIndex(const int idx);
+
+  //! Sets approximation tolerance for the edge's curve.
+  //! \param[in] toler value to set.
+  asiData_EXPORT void
+    SetApproxToler(const double toler);
+
+  //! \return approximation tolerance for the edge's curve.
+  asiData_EXPORT double
+    GetApproxToler() const;
 
 protected:
 

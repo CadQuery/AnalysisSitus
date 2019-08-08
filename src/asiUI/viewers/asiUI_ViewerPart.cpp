@@ -484,7 +484,9 @@ void asiUI_ViewerPart::onFindFace()
 void asiUI_ViewerPart::onFindEdge()
 {
   // Run dialog
-  asiUI_DialogFindEdge* wFindEdge = new asiUI_DialogFindEdge(m_model, this->PrsMgr(), this);
+  static asiUI_DialogFindEdge*
+    wFindEdge = new asiUI_DialogFindEdge(m_model, this->PrsMgr(), this);
+  //
   wFindEdge->show();
 }
 

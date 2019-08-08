@@ -32,6 +32,7 @@
 #include <asiEngine_RE.h>
 
 // asiEngine includes
+#include <asiEngine_BuildEdgeFunc.h>
 #include <asiEngine_BuildPatchFunc.h>
 
 // asiAlgo includes
@@ -878,6 +879,32 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   // Set surface and return.
   surf = cascade::GetOpenCascadeBSurface(mobSurf);
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::ReconnectBuildEdgeFunc(const Handle(asiData_ReEdgeNode)& edge) const
+{
+  if ( edge.IsNull() || !edge->IsWellFormed() ) // Contract check.
+    return;
+
+  /* Collect input arguments. */
+
+  ActParamStream inputs;
+  inputs << edge->Parameter(asiData_ReEdgeNode::PID_Polyline)
+         << edge->Parameter(asiData_ReEdgeNode::PID_ApproxToler);
+
+  /* Collect output arguments. */
+
+  ActParamStream outputs;
+  outputs << edge->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  /* Connect Tree Function. */
+
+  edge->ConnectTreeFunction( asiData_ReEdgeNode::PID_FuncApprox,
+                             asiEngine_BuildEdgeFunc::GUID(),
+                             inputs,
+                             outputs );
 }
 
 //-----------------------------------------------------------------------------

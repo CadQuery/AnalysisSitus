@@ -210,6 +210,11 @@ public:
                    const int                                        minNumKnots,
                    Handle(Geom_BSplineSurface)&                     surf) const;
 
+  //! Reconnects Tree Function aimed at reconstruction of a single edge.
+  //! \param[in] edge target Edge Node.
+  asiEngine_EXPORT void
+    ReconnectBuildEdgeFunc(const Handle(asiData_ReEdgeNode)& edge) const;
+
   //! Reconnects Tree Function aimed at reconstruction of a single patch.
   //! \param[in] patch target Patch Node.
   asiEngine_EXPORT void

@@ -787,6 +787,9 @@ Handle(asiData_ReCoedgeNode)
   //
   nextEdgeNode->SetFirstVertex(target);
 
+  // Connect Tree Function.
+  reApi.ReconnectBuildEdgeFunc(nextEdgeNode);
+
   // Create coedge.
   Handle(asiData_ReCoedgeNode)
     nextCoedgeNode = reApi.Create_CoEdge(patchNode, nextEdgeNode, true);

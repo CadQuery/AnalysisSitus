@@ -46,14 +46,16 @@
 //! Default ctor. Registers all involved Parameters.
 asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
 {
-  REGISTER_PARAMETER(Name,      PID_Name);
-  REGISTER_PARAMETER(Reference, PID_VertexFirstRef);
-  REGISTER_PARAMETER(Reference, PID_VertexLastRef);
-  REGISTER_PARAMETER(Int,       PID_VertexFirstIdx);
-  REGISTER_PARAMETER(Int,       PID_VertexLastIdx);
-  REGISTER_PARAMETER(RealArray, PID_Polyline);
-  REGISTER_PARAMETER(IntArray,  PID_PolylineInds);
-  REGISTER_PARAMETER(Shape,     PID_Curve);
+  REGISTER_PARAMETER(Name,         PID_Name);
+  REGISTER_PARAMETER(Reference,    PID_VertexFirstRef);
+  REGISTER_PARAMETER(Reference,    PID_VertexLastRef);
+  REGISTER_PARAMETER(Int,          PID_VertexFirstIdx);
+  REGISTER_PARAMETER(Int,          PID_VertexLastIdx);
+  REGISTER_PARAMETER(RealArray,    PID_Polyline);
+  REGISTER_PARAMETER(IntArray,     PID_PolylineInds);
+  REGISTER_PARAMETER(Shape,        PID_Curve);
+  REGISTER_PARAMETER(Real,         PID_ApproxToler);
+  REGISTER_PARAMETER(TreeFunction, PID_FuncApprox);
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +71,9 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
                               const Handle(asiData_ReVertexNode)& vlast)
 {
   // Initialize Parameters.
-  this->InitParameter(PID_Name,           "Name");
+  this->InitParameter(PID_Name,        "Name",              ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ApproxToler, "Approx. tolerance", ParameterFlag_IsVisible, true);
+  //
   this->InitParameter(PID_VertexFirstRef, "First vertex");
   this->InitParameter(PID_VertexLastRef,  "Last vertex");
   this->InitParameter(PID_VertexFirstIdx, "First vertex index");
@@ -90,6 +94,8 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   ActParamTool::AsShape     ( this->Parameter(PID_Curve) )          ->SetShape( TopoDS_Shape() );
   ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue(-1);
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue(-1);
+  //
+  this->SetApproxToler(0.1);
 }
 
 //-----------------------------------------------------------------------------
@@ -349,4 +355,18 @@ void asiData_ReEdgeNode::SetFirstVertexIndex(const int idx)
 void asiData_ReEdgeNode::SetLastVertexIndex(const int idx)
 {
   ActParamTool::AsInt( this->Parameter(PID_VertexLastIdx) )->SetValue(idx);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetApproxToler(const double toler)
+{
+  ActParamTool::AsReal( this->Parameter(PID_ApproxToler) )->SetValue(toler);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_ReEdgeNode::GetApproxToler() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_ApproxToler) )->GetValue();
 }

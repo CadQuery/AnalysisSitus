@@ -467,8 +467,8 @@ void asiUI_ViewerPart::onSubShapesPicked()
 //! Callback for face find request.
 void asiUI_ViewerPart::onFindFace()
 {
-  // Run dialog
-  asiUI_DialogFindFace*
+  // Run dialog (make it a static object to preserve the contents)
+  static asiUI_DialogFindFace*
     wFindFace = new asiUI_DialogFindFace(m_model,
                                          this->PrsMgr(),
                                          this,

@@ -92,8 +92,8 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) )       ->SetArray( NULL );
   ActParamTool::AsIntArray  ( this->Parameter(PID_PolylineInds) )   ->SetArray( NULL );
   ActParamTool::AsShape     ( this->Parameter(PID_Curve) )          ->SetShape( TopoDS_Shape() );
-  ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue(-1);
-  ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue(-1);
+  ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue( -1 );
+  ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue( -1 );
   //
   this->SetApproxToler(1.);
 }

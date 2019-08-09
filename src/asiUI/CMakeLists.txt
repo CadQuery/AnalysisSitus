@@ -224,6 +224,8 @@ set (graphs_H_FILES
   graphs/asiUI_TopoGraphAdaptor.h
 )
 set (graphs_H_UI_FILES
+  graphs/asiUI_DependencyGraph.h
+  graphs/asiUI_DependencyGraphItem.h
   graphs/asiUI_HistoryGraph.h
   graphs/asiUI_HistoryGraphItem.h
   graphs/asiUI_PartGraph.h
@@ -231,6 +233,8 @@ set (graphs_H_UI_FILES
 )
 set (graphs_CPP_FILES 
   graphs/asiUI_AAGAdaptor.cpp
+  graphs/asiUI_DependencyGraph.cpp
+  graphs/asiUI_DependencyGraphItem.cpp
   graphs/asiUI_HistoryGraph.cpp
   graphs/asiUI_HistoryGraphAdaptor.cpp
   graphs/asiUI_HistoryGraphItem.cpp

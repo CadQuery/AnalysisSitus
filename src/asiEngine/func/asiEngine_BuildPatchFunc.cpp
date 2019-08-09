@@ -84,6 +84,9 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
                                       const Handle(ActAPI_HParameterList)& outputs,
                                       const Handle(Standard_Transient)&    userData) const
 {
+  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
+                                               << this->GetName() );
+
   /* ============================
    *  Interpret input Parameters
    * ============================ */

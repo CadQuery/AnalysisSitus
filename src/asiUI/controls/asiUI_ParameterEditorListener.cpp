@@ -116,8 +116,21 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   // the update type in callbacks).
   m_obUpdateType = OB_UpdateType_Undefined;
 
-  // Actualize Node.
-  m_cf->ActualizeNode( m_cf->ObjectBrowser->GetSelectedNode() );
+  // Actualize affected Nodes.
+  Handle(ActAPI_HNodeIdMap) affectedNodes = m_cf->Model->GetModifiedNodes();
+  //
+  for ( ActAPI_HNodeIdMap::Iterator nit(*affectedNodes); nit.More(); nit.Next() )
+  {
+    const ActAPI_DataObjectId& nodeId = nit.Value();
+    Handle(ActAPI_INode)       node   = m_cf->Model->FindNode(nodeId);
+
+    m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Actualizing Node %1 (%2)."
+                                                   << nodeId
+                                                   << node->DynamicType()->Name() );
+
+    // Actualize presentation.
+    m_cf->ActualizeNode(node);
+  }
 }
 
 //-----------------------------------------------------------------------------

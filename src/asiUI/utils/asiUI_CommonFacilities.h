@@ -121,6 +121,14 @@ public:
       domainPM->Actualize(N);
   }
 
+  //! Actualizes the passed Node in the Presentation Manager where this Node
+  //! is presented.
+  //! \param[in] id ID of the Data Node to actualize.
+  void ActualizeNode(const ActAPI_DataObjectId& id)
+  {
+    this->ActualizeNode( this->Model->FindNode(id) );
+  }
+
 public:
 
   //! Cleans up all the passed viewers. Null pointers are allowed in case if

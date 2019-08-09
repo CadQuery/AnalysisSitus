@@ -64,6 +64,9 @@ int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& 
                                            const Handle(ActAPI_HParameterList)& outputs,
                                            const Handle(Standard_Transient)&    userData) const
 {
+  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
+                                               << this->GetName() );
+
   // TODO: NYI
 
   return 0; // Success.

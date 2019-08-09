@@ -64,6 +64,9 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
                                      const Handle(ActAPI_HParameterList)& outputs,
                                      const Handle(Standard_Transient)&    userData) const
 {
+  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
+                                               << this->GetName() );
+
   // Get Edge Node.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );

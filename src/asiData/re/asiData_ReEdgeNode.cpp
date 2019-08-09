@@ -95,7 +95,7 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue(-1);
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue(-1);
   //
-  this->SetApproxToler(0.1);
+  this->SetApproxToler(1.);
 }
 
 //-----------------------------------------------------------------------------

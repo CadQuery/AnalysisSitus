@@ -71,8 +71,8 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
                               const Handle(asiData_ReVertexNode)& vlast)
 {
   // Initialize Parameters.
-  this->InitParameter(PID_Name,        "Name",              ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_ApproxToler, "Approx. tolerance", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,        "Name",              "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ApproxToler, "Approx. tolerance", "", ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_VertexFirstRef, "First vertex");
   this->InitParameter(PID_VertexLastRef,  "Last vertex");

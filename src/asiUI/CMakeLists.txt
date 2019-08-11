@@ -421,6 +421,7 @@ set (VTK_LIB_FILES
   vtkRenderingAnnotation-8.0
   vtkRenderingContext2D-8.0
   vtkRenderingCore-8.0
+  vtkViewsCore-8.0
   vtkViewsContext2D-8.0
   vtkViewsInfovis-8.0
 )

@@ -1,16 +1,38 @@
 //-----------------------------------------------------------------------------
-// Created on: 22 June 2017
-// Created by: Sergey SLYADNEV
+// Created on: 11 August 2019
 //-----------------------------------------------------------------------------
-// Web: http://dev.opencascade.org/
+// Copyright (c) 2019-present, Sergey Slyadnev
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//    * Neither the name of the copyright holder(s) nor the
+//      names of all contributors may be used to endorse or promote products
+//      derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <ottoExe_Graph.h>
+#include <asiUI_DependencyGraph.h>
 
-// ottoExe includes
-#include <ottoExe_CommonFacilities.h>
-#include <ottoExe_GraphItem.h>
+// asiUI includes
+#include <asiUI_DependencyGraphItem.h>
 
 // asiVisu includes
 #include <asiVisu_Utils.h>
@@ -44,14 +66,13 @@
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
-#pragma warning(pop)
-
-///
+//
 #include <vtkGraphLayoutView.h>
 #include <vtkGraphToPolyData.h>
 #include <vtkGlyphSource2D.h>
 #include <vtkGlyph3D.h>
 #include <vtkPolyDataMapper.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -63,7 +84,7 @@
 
 //! Constructor.
 //! \param[in] model Data Model instance.
-ottoExe_Graph::ottoExe_Graph(const Handle(asiEngine_Model)& model)
+asiUI_DependencyGraph::asiUI_DependencyGraph(const Handle(asiEngine_Model)& model)
 : m_model      (model),
   m_textWidget (NULL)
 {}
@@ -71,152 +92,76 @@ ottoExe_Graph::ottoExe_Graph(const Handle(asiEngine_Model)& model)
 //-----------------------------------------------------------------------------
 
 //! Destructor.
-ottoExe_Graph::~ottoExe_Graph()
+asiUI_DependencyGraph::~asiUI_DependencyGraph()
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Renders graph.
-void ottoExe_Graph::Render()
+void asiUI_DependencyGraph::Render()
 {
   vtkSmartPointer<vtkGraph> graph = this->convertToGraph();
 
-  /* ===================================
-   *  Prepare structures for attributes
-   * =================================== */
-
-  //// Layout strategy
-  //vtkNew<vtkSimple2DLayoutStrategy> simple2DStrategy;
-  //simple2DStrategy->SetIterationsPerLayout(10);
-
-  //// Layout
-  //vtkSmartPointer<vtkGraphLayout> graphLayout = vtkSmartPointer<vtkGraphLayout>::New();
-  //graphLayout->SetInputData(graph);
-  //graphLayout->SetLayoutStrategy( simple2DStrategy.GetPointer() );
-  //graphLayout->Update();
-
-  //// Graph item
-  //vtkSmartPointer<ottoExe_GraphItem>
-  //  graphItem = vtkSmartPointer<ottoExe_GraphItem>::New();
-  ////
-  //graphItem->SetGraph( graphLayout->GetOutput() );
-
-  //connect( graphItem, SIGNAL( vertexPicked(const vtkIdType) ),
-  //         this,      SLOT( onVertexPicked(const vtkIdType) ) );
-
-  //// Context transform
-  //vtkSmartPointer<vtkContextTransform> trans = vtkSmartPointer<vtkContextTransform>::New();
-  //trans->SetInteractive(true);
-  //trans->AddItem(graphItem);
-
-  //// Context actor
-  //vtkSmartPointer<vtkContextActor> actor = vtkSmartPointer<vtkContextActor>::New();
-  //actor->GetScene()->AddItem(trans);
-
-  ///* ===============================================
-  // *  Prepare and initialize interaction facilities
-  // * =============================================== */
-
-  //// Renderer
-  //vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-  //renderer->SetGradientBackground(true);
-  //renderer->SetBackground(0.0, 0.0, 0.0);
-  //renderer->SetBackground(0.1, 0.1, 0.1);
-
-  //// Render window
-  //vtkNew<vtkRenderWindow> renderWindow;
-  //renderWindow->AddRenderer(renderer);
-  //renderer->AddActor(actor);
-
-  //// Context interactor style
-  //vtkNew<vtkContextInteractorStyle> interactorStyle;
-  //interactorStyle->SetScene( actor->GetScene() );
-
-  //// Interactor
-  //vtkNew<QVTKInteractor> interactor;
-  //interactor->SetInteractorStyle( interactorStyle.GetPointer() );
-  //interactor->SetRenderWindow( renderWindow.GetPointer() );
-
-  //// Create Qt window. NOTICE that interactor should be already given to
-  //// the render window at this stage
-  //m_pWidget = new asiUI_VtkWindow();
-  //m_pWidget->SetRenderWindow( renderWindow.GetPointer() );
-
-  //connect( m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
-
-  /* ========================
-   *  Add legend and summary
-   * ======================== */
-
-  //// Legend
-  //m_textWidget = vtkTextWidget::New();
-  //vtkTextRepresentation* textRep = vtkTextRepresentation::SafeDownCast( m_textWidget->GetRepresentation() );
-  //textRep->GetPositionCoordinate()->SetValue(0.2, 0.01);
-  //textRep->GetPosition2Coordinate()->SetValue(0.5, 0.06);
-  //m_textWidget->SelectableOff();
-  ////
-  //vtkSmartPointer<vtkTextActor> textActor = vtkSmartPointer<vtkTextActor>::New();
-  //textRep->SetTextActor(textActor);
-  ////
-  //m_textWidget->GetTextActor()->SetInput(LEGEND_TITLE);
-  //m_textWidget->SetInteractor( m_pWidget->GetInteractor() );
-  //m_textWidget->SetDefaultRenderer( renderer );
-  //m_textWidget->SetCurrentRenderer( renderer );
-
-
-  ///
-
   // Do layout manually before handing graph to the view.
   // This allows us to know the positions of edge arrows.
-  vtkSmartPointer<vtkGraphLayoutView> graphLayoutView = 
-    vtkSmartPointer<vtkGraphLayoutView>::New();
+  vtkSmartPointer<vtkGraphLayoutView>
+    graphLayoutView = vtkSmartPointer<vtkGraphLayoutView>::New();
 
-  vtkSmartPointer<vtkGraphLayout> layout = 
-    vtkSmartPointer<vtkGraphLayout>::New();
-  vtkSmartPointer<vtkSimple2DLayoutStrategy> strategy = 
-    vtkSmartPointer<vtkSimple2DLayoutStrategy>::New();
+  vtkSmartPointer<vtkGraphLayout>
+    layout = vtkSmartPointer<vtkGraphLayout>::New();
+
+  vtkSmartPointer<vtkSimple2DLayoutStrategy>
+    strategy = vtkSmartPointer<vtkSimple2DLayoutStrategy>::New();
+
   layout->SetInputData(graph);
   layout->SetLayoutStrategy(strategy);
 
   // Tell the view to use the vertex layout we provide
   graphLayoutView->SetLayoutStrategyToPassThrough();
+
   // The arrows will be positioned on a straight line between two
   // vertices so tell the view not to draw arcs for parallel edges
   graphLayoutView->SetEdgeLayoutStrategyToPassThrough();
- 
+
   // Add the graph to the view. This will render vertices and edges,
   // but not edge arrows.
   graphLayoutView->AddRepresentationFromInputConnection(layout->GetOutputPort());
 
   // Manually create an actor containing the glyphed arrows.
-  vtkSmartPointer<vtkGraphToPolyData> graphToPoly = 
-    vtkSmartPointer<vtkGraphToPolyData>::New();
+  vtkSmartPointer<vtkGraphToPolyData>
+    graphToPoly = vtkSmartPointer<vtkGraphToPolyData>::New();
+  //
   graphToPoly->SetInputConnection(layout->GetOutputPort());
   graphToPoly->EdgeGlyphOutputOn();
- 
+
   // Set the position (0: edge start, 1: edge end) where
   // the edge arrows should go.
   graphToPoly->SetEdgeGlyphPosition(0.98);
- 
+
   // Make a simple edge arrow for glyphing.
-  vtkSmartPointer<vtkGlyphSource2D> arrowSource = 
-    vtkSmartPointer<vtkGlyphSource2D>::New();
+  vtkSmartPointer<vtkGlyphSource2D>
+    arrowSource = vtkSmartPointer<vtkGlyphSource2D>::New();
+  //
   arrowSource->SetGlyphTypeToEdgeArrow();
   arrowSource->SetScale(0.05);
   arrowSource->Update();
- 
+
   // Use Glyph3D to repeat the glyph on all edges.
-  vtkSmartPointer<vtkGlyph3D> arrowGlyph = 
-    vtkSmartPointer<vtkGlyph3D>::New();
+  vtkSmartPointer<vtkGlyph3D>
+    arrowGlyph = vtkSmartPointer<vtkGlyph3D>::New();
+  //
   arrowGlyph->SetInputConnection(0, graphToPoly->GetOutputPort(1));
   arrowGlyph->SetInputConnection(1, arrowSource->GetOutputPort());
- 
+
   // Add the edge arrow actor to the view.
-  vtkSmartPointer<vtkPolyDataMapper> arrowMapper = 
-    vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkPolyDataMapper>
+    arrowMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  //
   arrowMapper->SetInputConnection(arrowGlyph->GetOutputPort());
-  vtkSmartPointer<vtkActor> arrowActor = 
-    vtkSmartPointer<vtkActor>::New();
+
+  vtkSmartPointer<vtkActor>
+    arrowActor = vtkSmartPointer<vtkActor>::New();
+  //
   arrowActor->SetMapper(arrowMapper);
   graphLayoutView->GetRenderer()->AddActor(arrowActor);
 
@@ -226,25 +171,12 @@ void ottoExe_Graph::Render()
   graphLayoutView->ResetCamera();
   graphLayoutView->Render();
   graphLayoutView->GetInteractor()->Start();
-
-
-  //renderWindow->SetLineSmoothing(true);
-  //renderWindow->SetWindowName("Dependency graph");
-  ////
-  //graphItem->StartLayoutAnimation( m_pWidget->GetInteractor() );
-  ////
-  //m_pWidget->GetInteractor()->Initialize();
-  //m_pWidget->resize(400, 400);
-  //m_pWidget->show();
-
-  //// Set callback on rendering
-  //m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &ottoExe_Graph::RenderEventCallback);
 }
 
 //-----------------------------------------------------------------------------
 
 //! Callback to adjust text widgets.
-void ottoExe_Graph::RenderEventCallback()
+void asiUI_DependencyGraph::RenderEventCallback()
 {
   if ( !m_textWidget->GetEnabled() )
     m_textWidget->On();
@@ -252,7 +184,7 @@ void ottoExe_Graph::RenderEventCallback()
 
 //-----------------------------------------------------------------------------
 
-vtkSmartPointer<vtkGraph> ottoExe_Graph::convertToGraph()
+vtkSmartPointer<vtkGraph> asiUI_DependencyGraph::convertToGraph()
 {
   vtkSmartPointer<vtkMutableDirectedGraph>
     result = vtkSmartPointer<vtkMutableDirectedGraph>::New();
@@ -322,7 +254,7 @@ vtkSmartPointer<vtkGraph> ottoExe_Graph::convertToGraph()
 //-----------------------------------------------------------------------------
 
 //! Reaction on closing the viewer.
-void ottoExe_Graph::onViewerClosed()
+void asiUI_DependencyGraph::onViewerClosed()
 {
   // NOTE: the important point is to remove widget after all items which
   //       may listen to it
@@ -334,7 +266,7 @@ void ottoExe_Graph::onViewerClosed()
 
 //-----------------------------------------------------------------------------
 
-void ottoExe_Graph::onVertexPicked(const vtkIdType vid)
+void asiUI_DependencyGraph::onVertexPicked(const vtkIdType vid)
 {
   // NYI
 }

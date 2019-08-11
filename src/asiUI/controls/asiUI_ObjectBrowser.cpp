@@ -33,6 +33,7 @@
 
 // asiUI includes
 #include <asiUI_Common.h>
+#include <asiUI_DependencyGraph.h>
 #include <asiUI_DialogPipelines.h>
 #include <asiUI_ViewerPart.h>
 
@@ -413,6 +414,16 @@ void asiUI_ObjectBrowser::onManagePipelines()
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot manage pipelines for a non-presented Node.");
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onShowExecutionGraph()
+{
+  asiUI_DependencyGraph*
+    pGraph = new asiUI_DependencyGraph(m_model);
+  //
+  pGraph->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -842,12 +853,18 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
     pMenu->addAction( "Copy name",        this, SLOT( onCopyName        () ) );
   }
   //
+  if ( node->IsKind( STANDARD_TYPE(asiData_RootNode) ) )
+  {
+    pMenu->addSeparator();
+    pMenu->addAction( "Show execution graph", this, SLOT( onShowExecutionGraph () ) );
+  }
+  //
   if ( isPresented )
   {
     pMenu->addSeparator();
-    pMenu->addAction( "Show",                this, SLOT( onShow            () ) );
-    pMenu->addAction( "Show only",           this, SLOT( onShowOnly        () ) );
-    pMenu->addAction( "Hide",                this, SLOT( onHide            () ) );
+    pMenu->addAction( "Show",      this, SLOT( onShow     () ) );
+    pMenu->addAction( "Show only", this, SLOT( onShowOnly () ) );
+    pMenu->addAction( "Hide",      this, SLOT( onHide     () ) );
 
     if ( numSelected == 1 )
     {

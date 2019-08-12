@@ -45,33 +45,14 @@
 
 // VTK includes
 #pragma warning(push, 0)
-#include <vtkActor.h>
-#include <vtkActor2D.h>
-#include <vtkCamera.h>
-#include <vtkContextActor.h>
-#include <vtkContextInteractorStyle.h>
-#include <vtkContextScene.h>
-#include <vtkContextTransform.h>
+#include <vtkGlyph3D.h>
+#include <vtkGlyphSource2D.h>
 #include <vtkGraphLayout.h>
-#include <vtkMutableDirectedGraph.h>
-#include <vtkNew.h>
-#include <vtkRenderer.h>
-#include <vtkRendererCollection.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSimple2DLayoutStrategy.h>
-#include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
-#include <vtkTextActor.h>
-#include <vtkTextProperty.h>
-#include <vtkTextRepresentation.h>
-#include <vtkTextWidget.h>
-//
 #include <vtkGraphLayoutView.h>
 #include <vtkGraphToPolyData.h>
-#include <vtkGlyphSource2D.h>
-#include <vtkGlyph3D.h>
+#include <vtkMutableDirectedGraph.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkSimple2DLayoutStrategy.h>
 #pragma warning(pop)
 
 //-----------------------------------------------------------------------------
@@ -266,7 +247,7 @@ void asiUI_DependencyGraph::onViewerClosed()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_DependencyGraph::onVertexPicked(const vtkIdType vid)
+void asiUI_DependencyGraph::onVertexPicked(const vtkIdType)
 {
   // NYI
 }

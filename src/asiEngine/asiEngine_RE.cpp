@@ -916,40 +916,20 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
   if ( edge.IsNull() || !edge->IsWellFormed() ) // Contract check.
     return;
 
-  // Initialize utility to extract local topology of an edge.
-  asiEngine_PatchJointAdaptor jointAdt(m_model, m_progress, m_plotter);
-  //
-  if ( !jointAdt.Init(edge) )
-    return;
-
-  // Get coedges.
-  const Handle(asiData_ReCoedgeNode)& coedgeLeftBot  = jointAdt.GetCoedgeLeftBot();
-  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
-  const Handle(asiData_ReCoedgeNode)& coedgeLeftTop  = jointAdt.GetCoedgeLeftTop();
-  const Handle(asiData_ReCoedgeNode)& coedgeRightTop = jointAdt.GetCoedgeRightTop();
-
-  // Get referenced edges.
-  Handle(asiData_ReEdgeNode) edgeLeftBot  = coedgeLeftBot  ->GetEdge();
-  Handle(asiData_ReEdgeNode) edgeRightBot = coedgeRightBot ->GetEdge();
-  Handle(asiData_ReEdgeNode) edgeLeftTop  = coedgeLeftTop  ->GetEdge();
-  Handle(asiData_ReEdgeNode) edgeRightTop = coedgeRightTop ->GetEdge();
-
   /* Collect input arguments. */
 
+  // The connection is mostly fictive to avoid loops in dependency graph but
+  // enough to maintain the right order of executions.
   ActParamStream inputs;
-  inputs << edge         ->Parameter(asiData_ReEdgeNode::PID_SmoothTransition)
-         << edgeLeftBot  ->Parameter(asiData_ReEdgeNode::PID_Curve)
-         << edgeRightBot ->Parameter(asiData_ReEdgeNode::PID_Curve)
-         << edgeLeftTop  ->Parameter(asiData_ReEdgeNode::PID_Curve)
-         << edgeRightTop ->Parameter(asiData_ReEdgeNode::PID_Curve);
+  inputs << edge->Parameter(asiData_ReEdgeNode::PID_SmoothTransition)
+         << edge->Parameter(asiData_ReEdgeNode::PID_Curve);
 
   /* Collect output arguments. */
 
+  // The connection is mostly fictive to avoid loops in dependency graph but
+  // enough to maintain the right order of executions.
   ActParamStream outputs;
-  outputs << edgeLeftBot  ->Parameter(asiData_ReEdgeNode::PID_Curve)
-          << edgeRightBot ->Parameter(asiData_ReEdgeNode::PID_Curve)
-          << edgeLeftTop  ->Parameter(asiData_ReEdgeNode::PID_Curve)
-          << edgeRightTop ->Parameter(asiData_ReEdgeNode::PID_Curve);
+  outputs << edge->Parameter(asiData_ReEdgeNode::PID_Curve);
 
   /* Connect Tree Function. */
 

@@ -66,6 +66,12 @@ public:
 
 public:
 
+  virtual bool
+    MustExecuteIntact(const Handle(ActAPI_HParameterList)& inputs,
+                      const Handle(Standard_Transient)&    userData) const;
+
+public:
+
   //! Returns true if this Tree Function is HEAVY, false -- otherwise.
   //! \return always false.
   virtual bool IsHeavy() const

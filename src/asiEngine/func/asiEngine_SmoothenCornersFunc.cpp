@@ -61,6 +61,51 @@ const char* asiEngine_SmoothenCornersFunc::GetGUID() const
 
 //-----------------------------------------------------------------------------
 
+bool asiEngine_SmoothenCornersFunc::MustExecuteIntact(const Handle(ActAPI_HParameterList)& inputs,
+                                                      const Handle(Standard_Transient)&    userData) const
+{
+  // Get Data Model.
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
+
+  // Get edge in question.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->First()->GetNode() );
+
+  // Initialize utility to extract local topology of an edge.
+  asiEngine_PatchJointAdaptor jointAdt(M, m_progress, m_plotter);
+  //
+  if ( !jointAdt.Init(edgeNode) )
+    return false;
+
+  // Get coedges.
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftBot  = jointAdt.GetCoedgeLeftBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftTop  = jointAdt.GetCoedgeLeftTop();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightTop = jointAdt.GetCoedgeRightTop();
+
+  // Get referenced edges.
+  Handle(asiData_ReEdgeNode) edgeLeftBot  = coedgeLeftBot  ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeRightBot = coedgeRightBot ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeLeftTop  = coedgeLeftTop  ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeRightTop = coedgeRightTop ->GetEdge();
+
+  if ( ActData_LogBook::IsModifiedCursor( edgeLeftBot->Parameter(asiData_ReEdgeNode::PID_Curve) ) )
+    return true;
+
+  if ( ActData_LogBook::IsModifiedCursor( edgeRightBot->Parameter(asiData_ReEdgeNode::PID_Curve) ) )
+    return true;
+
+  if ( ActData_LogBook::IsModifiedCursor( edgeLeftTop->Parameter(asiData_ReEdgeNode::PID_Curve) ) )
+    return true;
+
+  if ( ActData_LogBook::IsModifiedCursor( edgeRightTop->Parameter(asiData_ReEdgeNode::PID_Curve) ) )
+    return true;
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& inputs,
                                            const Handle(ActAPI_HParameterList)& outputs,
                                            const Handle(Standard_Transient)&    userData) const
@@ -96,9 +141,6 @@ ActAPI_ParameterTypeStream
   asiEngine_SmoothenCornersFunc::inputSignature() const
 {
   return ActAPI_ParameterTypeStream() << Parameter_Bool
-                                      << Parameter_Shape
-                                      << Parameter_Shape
-                                      << Parameter_Shape
                                       << Parameter_Shape;
 }
 
@@ -107,8 +149,5 @@ ActAPI_ParameterTypeStream
 ActAPI_ParameterTypeStream
   asiEngine_SmoothenCornersFunc::outputSignature() const
 {
-  return ActAPI_ParameterTypeStream() << Parameter_Shape
-                                      << Parameter_Shape
-                                      << Parameter_Shape
-                                      << Parameter_Shape;
+  return ActAPI_ParameterTypeStream() << Parameter_Shape;
 }

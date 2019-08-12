@@ -37,6 +37,13 @@
 // OpenCascade includes
 #include <Geom_TrimmedCurve.hxx>
 
+// Mobius includes
+#include <mobius/cascade.h>
+#include <mobius/core_Precision.h>
+#include <mobius/geom_BSplineCurve.h>
+
+using namespace mobius;
+
 //-----------------------------------------------------------------------------
 
 asiEngine_PatchJointAdaptor::asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
@@ -123,6 +130,51 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
 
 //-----------------------------------------------------------------------------
 
+bool asiEngine_PatchJointAdaptor::AlignEdges()
+{
+  /* Align top edges. */
+
+  Handle(Geom_BSplineCurve)
+    ltCurve = Handle(Geom_BSplineCurve)::DownCast( m_coedgeLeftTop->GetEdge()->GetCurve() );
+
+  Handle(Geom_BSplineCurve)
+    rtCurve = Handle(Geom_BSplineCurve)::DownCast( m_coedgeRightTop->GetEdge()->GetCurve() );
+
+  if ( !this->alignControlPoles( ltCurve, m_coedgeLeftTop->IsSameSense(),
+                                 rtCurve, m_coedgeRightTop->IsSameSense() ) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to align top curves.");
+    return false;
+  }
+
+  // Set curves back to the edges.
+  m_coedgeLeftTop->GetEdge()->SetCurve(ltCurve);
+  m_coedgeRightTop->GetEdge()->SetCurve(rtCurve);
+
+  /* Align bottom edges. */
+
+  Handle(Geom_BSplineCurve)
+    lbCurve = Handle(Geom_BSplineCurve)::DownCast( m_coedgeLeftBot->GetEdge()->GetCurve() );
+
+  Handle(Geom_BSplineCurve)
+    rbCurve = Handle(Geom_BSplineCurve)::DownCast( m_coedgeRightBot->GetEdge()->GetCurve() );
+
+  if ( !this->alignControlPoles( lbCurve, !m_coedgeLeftBot->IsSameSense(),
+                                 rbCurve, !m_coedgeRightBot->IsSameSense() ) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to align bottom curves.");
+    return false;
+  }
+
+  // Set curves back to the edges.
+  m_coedgeLeftBot->GetEdge()->SetCurve(lbCurve);
+  m_coedgeRightBot->GetEdge()->SetCurve(rbCurve);
+
+  return true; // Success.
+}
+
+//-----------------------------------------------------------------------------
+
 void asiEngine_PatchJointAdaptor::DumpGraphically()
 {
   ActAPI_Color revsColor = Color_Blue,
@@ -137,6 +189,59 @@ void asiEngine_PatchJointAdaptor::DumpGraphically()
   m_plotter.REDRAW_CURVE   ("coedge-right",     this->getCoedgeCurveRepr(m_coedgeRight),    m_coedgeRight    ->IsSameSense() ? forwColor : revsColor, false );
   m_plotter.REDRAW_CURVE   ("coedge-right-top", this->getCoedgeCurveRepr(m_coedgeRightTop), m_coedgeRightTop ->IsSameSense() ? forwColor : revsColor, false );
   m_plotter.REDRAW_CURVE   ("coedge-right-bot", this->getCoedgeCurveRepr(m_coedgeRightBot), m_coedgeRightBot ->IsSameSense() ? forwColor : revsColor, false );
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_PatchJointAdaptor::alignControlPoles(Handle(Geom_BSplineCurve)& curveLeft,
+                                                 const bool                 sameSenseLeft,
+                                                 Handle(Geom_BSplineCurve)& curveRight,
+                                                 const bool                 sameSenseRight)
+{
+  // Convert curves to Mobius structures.
+  t_ptr<t_bcurve> mbCurveLeft  = cascade::GetMobiusBCurve(curveLeft);
+  t_ptr<t_bcurve> mbCurveRight = cascade::GetMobiusBCurve(curveRight);
+
+  const int numPolesLeft  = mbCurveLeft->GetNumOfPoles();
+  const int numPolesRight = mbCurveRight->GetNumOfPoles();
+
+  // Get poles to change.
+  t_xyz* pPoleLeft       = &mbCurveLeft  ->ChangePole ( sameSenseLeft  ? 1                 : numPolesLeft - 2 );
+  t_xyz* pPoleRight      = &mbCurveRight ->ChangePole ( sameSenseRight ? numPolesRight - 2 : 1 );
+  t_xyz  poleCornerLeft  = mbCurveLeft   ->GetPole    ( sameSenseLeft  ? 0                 : numPolesLeft - 1);
+  t_xyz  poleCornerRight = mbCurveRight  ->GetPole    ( sameSenseRight ? numPolesRight - 1 : 0);
+  t_xyz  poleCorner      = (poleCornerLeft + poleCornerRight)*0.5;
+
+  // Check if the curves are already aligned.
+  t_xyz vLeft2Corner  = (*pPoleLeft - poleCorner).Normalized();
+  t_xyz vCorner2Right = (poleCorner - *pPoleRight).Normalized();
+  //
+  const double dot = vLeft2Corner.Dot(vCorner2Right);
+  //
+  m_progress.SendLogMessage(LogInfo(Normal) << "dot = %1" << dot);
+
+  m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(*pPoleLeft),  Color_Red,   "pleft");
+  m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(*pPoleRight), Color_Green, "pright");
+  m_plotter.DRAW_POINT(cascade::GetOpenCascadePnt(poleCorner),  Color_Blue,  "pcorner");
+
+  t_xyz vLeft2Right = (*pPoleRight - *pPoleLeft).Normalized();
+
+  const double dr = (*pPoleRight - poleCorner).Modulus();
+  const double dl = (*pPoleLeft  - poleCorner).Modulus();
+
+  t_xyz newPoleRight = poleCorner + vLeft2Right*dr;
+  t_xyz newPoleLeft  = poleCorner - vLeft2Right*dl;
+
+  // Update control points.
+  pPoleRight->SetXYZ(newPoleRight);
+  pPoleLeft->SetXYZ(newPoleLeft);
+
+  // Override curves.
+  curveLeft  = cascade::GetOpenCascadeBCurve(mbCurveLeft);
+  curveRight = cascade::GetOpenCascadeBCurve(mbCurveRight);
+
+  return true; // Success.
 }
 
 //-----------------------------------------------------------------------------

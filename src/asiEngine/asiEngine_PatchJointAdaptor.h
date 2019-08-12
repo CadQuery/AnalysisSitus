@@ -65,6 +65,9 @@ public:
   asiEngine_EXPORT bool
     Init(const Handle(asiData_ReEdgeNode)& edgeNode);
 
+  asiEngine_EXPORT bool
+    AlignEdges();
+
   //! Dumps the initialized topology near the joint curve to the plotter.
   asiEngine_EXPORT void
     DumpGraphically();
@@ -120,6 +123,12 @@ public:
   }
 
 protected:
+
+  asiEngine_EXPORT bool
+    alignControlPoles(Handle(Geom_BSplineCurve)& curveLeft,
+                      const bool                 sameSenseLeft,
+                      Handle(Geom_BSplineCurve)& curveRight,
+                      const bool                 sameSenseRight);
 
   //! Prepares curve representation for the passed coedge.
   //! \param[in] coedgeNode coedge to prepare a curve representation for.

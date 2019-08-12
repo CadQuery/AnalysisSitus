@@ -85,15 +85,6 @@ private:
             const Handle(ActAPI_HParameterList)& outputs,
             const Handle(Standard_Transient)&    userData) const;
 
-  //! This method verifies that the passed list of input Parameters satisfies
-  //! the expected (variable) signature of the Tree Function.
-  //! \param[in] inputs input Parameters.
-  //! \return false if the input arguments are of an unexpected format.
-  virtual bool
-    validateInput(const Handle(ActAPI_HParameterList)& inputs) const;
-
-  //! This method returns empty list because this Tree Function has a variable
-  //! input signature.
   //! \return expected input signature.
   virtual ActAPI_ParameterTypeStream
     inputSignature() const;

@@ -56,19 +56,23 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //--------------------//
-    PID_Name,           //!< Name of the Node.
-    PID_VertexFirstRef, //!< Reference to the first vertex of the edge.
-    PID_VertexLastRef,  //!< Reference to the last vertex of the edge.
-    PID_VertexFirstIdx, //!< Index of the pole in the polyline which corresponds to the first vertex.
-    PID_VertexLastIdx,  //!< Index of the pole in the polyline which corresponds to the last vertex.
-    PID_Polyline,       //!< Polyline representation of the edge.
-    PID_PolylineInds,   //!< Indices of the triangles corresponding to polyline poles.
-    PID_Curve,          //!< Curve representation of the edge.
-  //--------------------//
-    PID_ApproxToler,    //!< Approximation tolerance.
-    PID_FuncApprox,     //!< Approximation function.
-  //--------------------//
+  //-------------------------//
+    PID_Name,                //!< Name of the Node.
+    PID_VertexFirstRef,      //!< Reference to the first vertex of the edge.
+    PID_VertexLastRef,       //!< Reference to the last vertex of the edge.
+    PID_VertexFirstIdx,      //!< Index of the pole in the polyline which corresponds to the first vertex.
+    PID_VertexLastIdx,       //!< Index of the pole in the polyline which corresponds to the last vertex.
+    PID_Polyline,            //!< Polyline representation of the edge.
+    PID_PolylineInds,        //!< Indices of the triangles corresponding to polyline poles.
+    PID_Curve,               //!< Curve representation of the edge.
+  //-------------------------//
+    PID_GroupGeometry,       //!< Group for geometric properties.
+  //-------------------------//
+    PID_ApproxToler,         //!< Approximation tolerance.
+    PID_SmoothTransition,    //!< Whether the edge realizes smooth transition.
+    PID_FuncApprox,          //!< Approximation function.
+    PID_FuncSmoothenCorners, //!< Tree function to adapt curve network for smooth transition.
+  //-------------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -219,6 +223,15 @@ public:
   //! \return approximation tolerance for the edge's curve.
   asiData_EXPORT double
     GetApproxToler() const;
+
+  //! Sets smooth transition mode on/off.
+  //! \param[in] on Boolean value to set.
+  asiData_EXPORT void
+    SetSmoothTransition(const bool on);
+
+  //! \return true if smooth transition is enabled, false -- otherwise.
+  asiData_EXPORT bool
+    IsSmoothTransition() const;
 
 protected:
 

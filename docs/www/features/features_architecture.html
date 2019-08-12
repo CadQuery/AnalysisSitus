@@ -62,9 +62,9 @@ Data Access Objects (DAO) reside. These DAOs bring an object-oriented abstractio
 The Data Access Objects are also called Data Cursors (or Data Interfaces) as they
 do not store any data in their member fields and only point to the corresponding
 persistent entity (OCAF label) which can be used to read and write actual data.
-Finally, at the top level of Data Model, we have Services which drive the business
-logic of the application. It is the role of Service layer to update the contents of the
-Data Model according to the user inputs.
+Finally, at the top level of Data Model, we have Services (mentioned as API in the figure above)
+which drive the <i>business logic</i> of the application. It is the role of Service layer to
+update the contents of the Data Model according to the user inputs.
 </p>
 
 <div align="center"><img src="../imgs/situ_arch_01.png"/></div>
@@ -100,6 +100,12 @@ a Node may have different relations to other Nodes, including:
 </ul>
 </p>
 
+<p>
+The functional dependencies are optional in the whole framework. All operations in Analysis Situs, except
+the <a href="./features_re-overview.html">reverse engineering</a> workflow, assume no automatic dependency
+execution.
+</p>
+
 <h1>Visualization</h1>
 
 <h2>Visualization basics</h2>
@@ -120,7 +126,7 @@ VTK visualization library <a href="../references.html#schroeder-2006">[Schroeder
 A Pipeline starts with a Data Source which is aware of geometric
 primitives such as curves, surfaces, meshes, etc. At the same time, a Data Source is not aware
 of OCAF. The independency from OCAF at a Data Source level allows us reusing the predefined set of Pipelines
-in situations when no persistent storage is used or when the storage is variable (e.g., you may
+and/or Data Sources in situations when no persistent storage is used or when the storage is variable (e.g., you may
 store a parametric curve in different Node types while the visualization Pipeline is just the same).
 </p>
 
@@ -145,6 +151,14 @@ types, and the relations between the data objects are encapsulated within the im
 Providers. The correspondence between Pipelines and their Data Providers is managed by Presentation classes.
 The Presentation classes construct Pipelines, Data Providers and associate them with each other.
 </p>
+
+<div class="note">
+The complete independence of a Pipeline from a data storage increases the potential reusability of visualization
+implemented in Analysis Situs. I.e., you can pick up the interesting pipeline from the <span class="code-inline">asiVisu</span>
+library and adopt it in your code without a need to plug any bit of OCAF. At the same time, we encourage you to
+have a look at Active Data framework which comes with a convenience abstraction layer for multidisciplinary engineering
+applications.
+</div>
 
 <p>
 All Parameters of all Nodes store their last modification time. This information is used to perform lazy visualization updates.
@@ -204,6 +218,34 @@ It is the responsibility of a listener to organize computations, detach and moni
 all necessary data and make the outputs available to the user. Most listeners can be overridden so that for a single view
 (widget) it is possible to have various behaviour depending on how the listener is implemented.
 </p>
+
+<p>
+The so-called <i>common facilities</i> object is a singleton representing the UI desktop of the application.
+It stores the pointers to the main UI controls (object browser, viewers, logger, console, etc.), and
+is generally accessible from within any UI component. While in principle such common access can jeopardize
+the consistency of the application state, we think that having such a singleton class is much better than
+passing only the essential UI controls to particular components of the program. Indeed, a true object-oriented
+encapsulation becomes impossible once you start encapsulating pointers to your shared resources, such as
+an Object Browser, etc. Think of this for a moment: the pointer is passed to a component class externally,
+so unless you make a deep copy (which is nonsense), you are not the only owner of the referenced object.
+Indeed, syntactical isolation (putting the member fields in a private section) of components does not
+prevent them from changing the global state of the software which is, in fact, a common problem in
+object-oriented architectures. Therefore, we decided not to make the illusion of isolation but instead
+to give all controls full access to the desktop elements. In our opinion, such an approach does not make
+the architecture any worse, but it makes the communication at least more transparent: anything can access
+anything (at a certain architectural level). A natural alternative could be to communicate all components
+via messages (like Qt signals and slots), and this approach found a limited use in Analysis Situs (an example
+is the relationship between the widgets and their listeners). We think that using the signals & slots
+mechanism <i>alone</i> (i.e., without direct pointers) is a bad property of an over-architectured software
+system which is hard to understand and maintain.
+</p>
+
+<div class="note">
+"Many times I have seen 'Pure' Object Oriented design producing a code that is a collection of many
+three-line functions that call each other. Every button click in the application travels through ten
+or more small functions. You can no longer follow the execution flow by reading the code."
+[Asaf Shelly. 2015. Flaws of Object Oriented Modeling]
+</div>
 
 </body>
 </html>

@@ -33,6 +33,7 @@
 
 // asiEngine includes
 #include <asiEngine_Part.h>
+#include <asiEngine_RE.h>
 
 //-----------------------------------------------------------------------------
 
@@ -115,4 +116,41 @@ void asiUI_ParameterEditorListenerDefault::beforeParameterChanged(const Handle(A
   }
 
   proceedDefault = true; // Let the base class do its usual job.
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ParameterEditorListenerDefault::afterParameterChanged(const Handle(ActAPI_INode)& N,
+                                                                 const int                   pid)
+{
+  /* ================================
+   *  Customization for Re-Edge Node
+   * ================================ */
+
+  if ( N->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+  {
+    Handle(asiData_ReEdgeNode) edge_n = Handle(asiData_ReEdgeNode)::DownCast(N);
+
+    // Assignment of smooth transition property is customized.
+    if ( pid == asiData_ReEdgeNode::PID_SmoothTransition )
+    {
+      // Customization for smooth transition property consists in dynamically
+      // changing the execution graph. I.e., if smooth transition is enabled,
+      // the corresponding tree function is added to the graph. If smooth
+      // transition is disabled, this function is disconnected.
+      // ...
+
+      // Read Parameter after change.
+      const bool
+        isSmoothingOn = ActParamTool::AsBool( edge_n->Parameter(pid) )->GetValue();
+
+      // Connect/disconnect tree function.
+      if ( isSmoothingOn )
+        asiEngine_RE(m_cf->Model,
+                     m_cf->Progress,
+                     m_cf->Plotter).ReconnectSmoothenCornersFunc(edge_n);
+      else
+        edge_n->DisconnectTreeFunction(asiData_ReEdgeNode::PID_FuncSmoothenCorners);
+    }
+  }
 }

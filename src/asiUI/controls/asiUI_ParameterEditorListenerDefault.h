@@ -38,7 +38,9 @@
 
 //-----------------------------------------------------------------------------
 
-//! Default customization of Parameter Editor's listener.
+//! Default customization of Parameter Editor's listener. The purpose of
+//! this listener is to enrich the direct value assignment logic with custom
+//! reactions by invocation of the corresponding API from the service layer.
 class asiUI_EXPORT asiUI_ParameterEditorListenerDefault : public asiUI_ParameterEditorListener
 {
   Q_OBJECT
@@ -57,6 +59,11 @@ protected:
                            const int                   pid,
                            const QVariant&             value,
                            bool&                       proceedDefault);
+
+  //! \copydoc asiUI_ParameterEditorListener::afterParameterChanged()
+  virtual void
+    afterParameterChanged(const Handle(ActAPI_INode)& N,
+                          const int                   pid);
 
 };
 

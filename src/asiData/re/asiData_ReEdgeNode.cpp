@@ -54,8 +54,11 @@ asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(RealArray,    PID_Polyline);
   REGISTER_PARAMETER(IntArray,     PID_PolylineInds);
   REGISTER_PARAMETER(Shape,        PID_Curve);
+  REGISTER_PARAMETER(Group,        PID_GroupGeometry);
   REGISTER_PARAMETER(Real,         PID_ApproxToler);
+  REGISTER_PARAMETER(Bool,         PID_SmoothTransition);
   REGISTER_PARAMETER(TreeFunction, PID_FuncApprox);
+  REGISTER_PARAMETER(TreeFunction, PID_FuncSmoothenCorners);
 }
 
 //-----------------------------------------------------------------------------
@@ -71,8 +74,10 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
                               const Handle(asiData_ReVertexNode)& vlast)
 {
   // Initialize Parameters.
-  this->InitParameter(PID_Name,        "Name",              "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_ApproxToler, "Approx. tolerance", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,             "Name",              "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupGeometry,    "Geometry",          "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ApproxToler,      "Approx. tolerance", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_SmoothTransition, "Smooth (G1)",       "", ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_VertexFirstRef, "First vertex");
   this->InitParameter(PID_VertexLastRef,  "Last vertex");
@@ -96,6 +101,7 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue( -1 );
   //
   this->SetApproxToler(1.);
+  this->SetSmoothTransition(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -369,4 +375,18 @@ void asiData_ReEdgeNode::SetApproxToler(const double toler)
 double asiData_ReEdgeNode::GetApproxToler() const
 {
   return ActParamTool::AsReal( this->Parameter(PID_ApproxToler) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetSmoothTransition(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_SmoothTransition) )->SetValue(on);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiData_ReEdgeNode::IsSmoothTransition() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_SmoothTransition) )->GetValue();
 }

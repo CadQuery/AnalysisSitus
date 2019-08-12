@@ -32,6 +32,7 @@
 #include <asiEngine_SmoothenCornersFunc.h>
 
 // asiEngine includes
+#include <asiEngine_PatchJointAdaptor.h>
 #include <asiEngine_RE.h>
 
 // Active Data includes
@@ -64,22 +65,29 @@ int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& 
                                            const Handle(ActAPI_HParameterList)& outputs,
                                            const Handle(Standard_Transient)&    userData) const
 {
+  asiEngine_NotUsed(outputs); // All the job is done by service API.
+
   m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
                                                << this->GetName() );
 
-  // TODO: NYI
+  // Get Data Model.
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
+
+  // Get edge in question.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->First()->GetNode() );
+
+  // Initialize utility to extract local topology of an edge.
+  asiEngine_PatchJointAdaptor jointAdt(M, m_progress, m_plotter);
+  //
+  if ( !jointAdt.Init(edgeNode) )
+    return 1;
+
+  // Align curves.
+  if ( !jointAdt.AlignEdges() )
+    return 1; // Failure.
 
   return 0; // Success.
-}
-
-//-----------------------------------------------------------------------------
-
-bool
-  asiEngine_SmoothenCornersFunc::validateInput(const Handle(ActAPI_HParameterList)& inputs) const
-{
-  // TODO: NYI
-
-  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -87,7 +95,11 @@ bool
 ActAPI_ParameterTypeStream
   asiEngine_SmoothenCornersFunc::inputSignature() const
 {
-  return ActAPI_ParameterTypeStream();
+  return ActAPI_ParameterTypeStream() << Parameter_Bool
+                                      << Parameter_Shape
+                                      << Parameter_Shape
+                                      << Parameter_Shape
+                                      << Parameter_Shape;
 }
 
 //-----------------------------------------------------------------------------
@@ -95,7 +107,8 @@ ActAPI_ParameterTypeStream
 ActAPI_ParameterTypeStream
   asiEngine_SmoothenCornersFunc::outputSignature() const
 {
-  // TODO: NYI
-
-  return ActAPI_ParameterTypeStream();
+  return ActAPI_ParameterTypeStream() << Parameter_Shape
+                                      << Parameter_Shape
+                                      << Parameter_Shape
+                                      << Parameter_Shape;
 }

@@ -215,6 +215,12 @@ public:
   asiEngine_EXPORT void
     ReconnectBuildEdgeFunc(const Handle(asiData_ReEdgeNode)& edge) const;
 
+  //! Reconnects Tree Function aimed at smoothing the patches' corners to
+  //! allow for G1 transition over the passed edge.
+  //! \param[in] edge target Edge Node.
+  asiEngine_EXPORT void
+    ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)& edge) const;
+
   //! Reconnects Tree Function aimed at reconstruction of a single patch.
   //! \param[in] patch target Patch Node.
   asiEngine_EXPORT void

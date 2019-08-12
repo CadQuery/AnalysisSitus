@@ -34,6 +34,8 @@
 // asiEngine includes
 #include <asiEngine_BuildEdgeFunc.h>
 #include <asiEngine_BuildPatchFunc.h>
+#include <asiEngine_PatchJointAdaptor.h>
+#include <asiEngine_SmoothenCornersFunc.h>
 
 // asiAlgo includes
 #include <asiAlgo_ProjectPointOnMesh.h>
@@ -903,6 +905,56 @@ void asiEngine_RE::ReconnectBuildEdgeFunc(const Handle(asiData_ReEdgeNode)& edge
 
   edge->ConnectTreeFunction( asiData_ReEdgeNode::PID_FuncApprox,
                              asiEngine_BuildEdgeFunc::GUID(),
+                             inputs,
+                             outputs );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)& edge) const
+{
+  if ( edge.IsNull() || !edge->IsWellFormed() ) // Contract check.
+    return;
+
+  // Initialize utility to extract local topology of an edge.
+  asiEngine_PatchJointAdaptor jointAdt(m_model, m_progress, m_plotter);
+  //
+  if ( !jointAdt.Init(edge) )
+    return;
+
+  // Get coedges.
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftBot  = jointAdt.GetCoedgeLeftBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftTop  = jointAdt.GetCoedgeLeftTop();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightTop = jointAdt.GetCoedgeRightTop();
+
+  // Get referenced edges.
+  Handle(asiData_ReEdgeNode) edgeLeftBot  = coedgeLeftBot  ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeRightBot = coedgeRightBot ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeLeftTop  = coedgeLeftTop  ->GetEdge();
+  Handle(asiData_ReEdgeNode) edgeRightTop = coedgeRightTop ->GetEdge();
+
+  /* Collect input arguments. */
+
+  ActParamStream inputs;
+  inputs << edge         ->Parameter(asiData_ReEdgeNode::PID_SmoothTransition)
+         << edgeLeftBot  ->Parameter(asiData_ReEdgeNode::PID_Curve)
+         << edgeRightBot ->Parameter(asiData_ReEdgeNode::PID_Curve)
+         << edgeLeftTop  ->Parameter(asiData_ReEdgeNode::PID_Curve)
+         << edgeRightTop ->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  /* Collect output arguments. */
+
+  ActParamStream outputs;
+  outputs << edgeLeftBot  ->Parameter(asiData_ReEdgeNode::PID_Curve)
+          << edgeRightBot ->Parameter(asiData_ReEdgeNode::PID_Curve)
+          << edgeLeftTop  ->Parameter(asiData_ReEdgeNode::PID_Curve)
+          << edgeRightTop ->Parameter(asiData_ReEdgeNode::PID_Curve);
+
+  /* Connect Tree Function. */
+
+  edge->ConnectTreeFunction( asiData_ReEdgeNode::PID_FuncSmoothenCorners,
+                             asiEngine_SmoothenCornersFunc::GUID(),
                              inputs,
                              outputs );
 }

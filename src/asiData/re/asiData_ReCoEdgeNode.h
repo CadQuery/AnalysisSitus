@@ -125,6 +125,10 @@ public:
   asiData_EXPORT void
     SetSameSense(const bool isSameSense);
 
+  //! \return opposite coedge (if any).
+  asiData_EXPORT Handle(asiData_ReCoedgeNode)
+    GetOpposite() const;
+
 protected:
 
   //! Allocation is allowed only via Instance() method.

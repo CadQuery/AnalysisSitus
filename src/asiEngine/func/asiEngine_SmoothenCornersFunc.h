@@ -95,6 +95,12 @@ private:
   virtual ActAPI_ParameterTypeStream
     inputSignature() const;
 
+  //! Custom validation of outputs.
+  //! \param[in] outputs output arguments to validate.
+  //! \return true if outputs are consistent, false -- otherwise.
+  virtual bool
+    validateOutput(const Handle(ActAPI_HParameterList)& outputs) const;
+
   //! \return expected output signature.
   virtual ActAPI_ParameterTypeStream
     outputSignature() const;

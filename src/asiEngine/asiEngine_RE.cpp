@@ -298,10 +298,11 @@ Handle(asiData_ReCoedgeNode)
   patch->AddChildNode(coedge_n);
 
   // Generate unique name.
-  TCollection_ExtendedString
-    edgeName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(coedge_n, patch), "CoEdge");
+  TCollection_ExtendedString coedgeName("Coedge -> ");
   //
-  coedge_n->SetName(edgeName);
+  coedgeName += edge->GetName();
+  //
+  coedge_n->SetName(coedgeName);
 
   // Return the just created Node.
   return coedge_n;
@@ -916,6 +917,12 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
   if ( edge.IsNull() || !edge->IsWellFormed() ) // Contract check.
     return;
 
+  // Initialize utility to extract local topology of an edge.
+  asiEngine_PatchJointAdaptor jointAdt(m_model);
+  //
+  if ( !jointAdt.Init(edge) )
+    return;
+
   /* Collect input arguments. */
 
   // The connection is mostly fictive to avoid loops in dependency graph but
@@ -926,10 +933,34 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
 
   /* Collect output arguments. */
 
-  // The connection is mostly fictive to avoid loops in dependency graph but
-  // enough to maintain the right order of executions.
+  // Get coedges.
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftBot  = jointAdt.GetCoedgeLeftBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
+  const Handle(asiData_ReCoedgeNode)& coedgeLeftTop  = jointAdt.GetCoedgeLeftTop();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightTop = jointAdt.GetCoedgeRightTop();
+  //
+  Handle(asiData_ReCoedgeNode) coedgeLeftBotOpp  = coedgeLeftBot  ->GetOpposite();
+  Handle(asiData_ReCoedgeNode) coedgeRightBotOpp = coedgeRightBot ->GetOpposite();
+  Handle(asiData_ReCoedgeNode) coedgeLeftTopOpp  = coedgeLeftTop  ->GetOpposite();
+  Handle(asiData_ReCoedgeNode) coedgeRightTopOpp = coedgeRightTop ->GetOpposite();
+
+  // The number of outputs is variable as not all edges have the equal number
+  // of coedges (e.g., naked edges have one coedge, while shared edges have
+  // two coedges).
   ActParamStream outputs;
   outputs << edge->Parameter(asiData_ReEdgeNode::PID_Curve);
+  //
+  if ( !coedgeLeftBotOpp.IsNull() )
+    outputs << coedgeLeftBotOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);
+  //
+  if ( !coedgeRightBotOpp.IsNull() )
+    outputs << coedgeRightBotOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);
+  //
+  if ( !coedgeLeftTopOpp.IsNull() )
+    outputs << coedgeLeftTopOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);
+  //
+  if ( !coedgeRightTopOpp.IsNull() )
+    outputs << coedgeRightTopOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);
 
   /* Connect Tree Function. */
 

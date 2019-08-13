@@ -147,3 +147,24 @@ void asiData_ReCoedgeNode::SetSameSense(const bool isSameSense)
 {
   ActParamTool::AsBool( this->Parameter(PID_SameSense) )->SetValue(isSameSense);
 }
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoedgeNode) asiData_ReCoedgeNode::GetOpposite() const
+{
+  Handle(asiData_ReEdgeNode) edgeNode = this->GetEdge();
+
+  // Loop over the back references.
+  Handle(ActAPI_HParameterList) backRefs = edgeNode->GetReferrers();
+  //
+  for ( ActAPI_HParameterList::Iterator it(*backRefs); it.More(); it.Next() )
+  {
+    const Handle(ActAPI_IUserParameter)& refParam = it.Value();
+    Handle(asiData_ReCoedgeNode)         refNode  = Handle(asiData_ReCoedgeNode)::DownCast( refParam->GetNode() );
+
+    if ( !refNode.IsNull() && refNode->GetId() != this->GetId() )
+      return refNode;
+  }
+
+  return NULL;
+}

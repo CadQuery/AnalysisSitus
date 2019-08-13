@@ -317,6 +317,9 @@ void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                             const ActAPI_Color&            color,
                             const TCollection_AsciiString& name)
 {
+  if ( surface.IsNull() )
+    return;
+
   double uMin, uMax, vMin, vMax;
   surface->Bounds(uMin, uMax, vMin, vMax);
   //
@@ -335,6 +338,9 @@ void asiUI_IV::DRAW_SURFACE(const Handle(Geom_Surface)&    surface,
                             const double                   opacity,
                             const TCollection_AsciiString& name)
 {
+  if ( surface.IsNull() )
+    return;
+
   double uMin, uMax, vMin, vMax;
   surface->Bounds(uMin, uMax, vMin, vMax);
   //
@@ -379,6 +385,9 @@ void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const Handle(Geom_Surface)&    surface,
                               const ActAPI_Color&            color)
 {
+  if ( surface.IsNull() )
+    return;
+
   double uMin, uMax, vMin, vMax;
   surface->Bounds(uMin, uMax, vMin, vMax);
   //
@@ -397,6 +406,9 @@ void asiUI_IV::REDRAW_SURFACE(const TCollection_AsciiString& name,
                               const ActAPI_Color&            color,
                               const double                   opacity)
 {
+  if ( surface.IsNull() )
+    return;
+
   double uMin, uMax, vMin, vMax;
   surface->Bounds(uMin, uMax, vMin, vMax);
   //
@@ -1066,6 +1078,9 @@ void asiUI_IV::draw_curve(const Handle(Geom_Curve)&      curve,
                           const bool                     is2dViewer,
                           const bool                     newPrimitive)
 {
+  if ( curve.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
@@ -1112,6 +1127,9 @@ void asiUI_IV::draw_curve2d(const Handle(Geom2d_Curve)&    curve,
                             const TCollection_AsciiString& name,
                             const bool                     newPrimitive)
 {
+  if ( curve.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
@@ -1166,6 +1184,9 @@ void asiUI_IV::draw_surface(const Handle(Geom_Surface)&    surface,
                             const TCollection_AsciiString& name,
                             const bool                     newPrimitive)
 {
+  if ( surface.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
@@ -1219,6 +1240,9 @@ void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
                           const TCollection_AsciiString& name,
                           const bool                     newPrimitive)
 {
+  if ( shape.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
@@ -1449,6 +1473,9 @@ void asiUI_IV::draw_triangulation(const Handle(Poly_Triangulation)& tris,
                                   const TCollection_AsciiString&    name,
                                   const bool                        newPrimitive)
 {
+  if ( tris.IsNull() )
+    return;
+
   // Open transaction
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )

@@ -267,10 +267,7 @@ Handle(Geom_Curve)
   if ( !this->AnalyzeJoint(edgeNode->GetCurve(), surf,
                            isSurfGoesU, isLeftBound,
                            uMin, uMax, vMin, vMax) )
-  {
-    m_progress.SendLogMessage( LogErr(Normal) << "Failed to analyze joint." );
     return NULL;
-  }
 
   // Apply small shift to have a nice margin for graphical representation.
   const double uDelta = (uMax - uMin)*0.1;

@@ -54,6 +54,9 @@ bool asiAlgo_PatchJointAdaptor::AnalyzeJoint(const Handle(Geom_Curve)&   curve,
                                              double&                     vMin,
                                              double&                     vMax)
 {
+  if ( curve.IsNull() )
+    return false;
+
   // Get sample point (midpoint) on the joint curve.
   const double f = curve->FirstParameter();
   const double l = curve->LastParameter();

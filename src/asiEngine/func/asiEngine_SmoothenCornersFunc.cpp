@@ -64,6 +64,9 @@ const char* asiEngine_SmoothenCornersFunc::GetGUID() const
 bool asiEngine_SmoothenCornersFunc::MustExecuteIntact(const Handle(ActAPI_HParameterList)& inputs,
                                                       const Handle(Standard_Transient)&    userData) const
 {
+  if ( inputs.IsNull() )
+    return false;
+
   // Get Data Model.
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
 
@@ -123,7 +126,7 @@ int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& 
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->First()->GetNode() );
 
   // Initialize utility to extract local topology of an edge.
-  asiEngine_PatchJointAdaptor jointAdt(M, m_progress, m_plotter);
+  asiEngine_PatchJointAdaptor jointAdt(M, m_progress/*, m_plotter*/);
   //
   if ( !jointAdt.Init(edgeNode) )
     return 1;
@@ -146,8 +149,15 @@ ActAPI_ParameterTypeStream
 
 //-----------------------------------------------------------------------------
 
+bool asiEngine_SmoothenCornersFunc::validateOutput(const Handle(ActAPI_HParameterList)& outputs) const
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 ActAPI_ParameterTypeStream
   asiEngine_SmoothenCornersFunc::outputSignature() const
 {
-  return ActAPI_ParameterTypeStream() << Parameter_Shape;
+  return ActAPI_ParameterTypeStream(); // Unused.
 }

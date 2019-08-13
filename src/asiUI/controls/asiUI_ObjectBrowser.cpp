@@ -789,6 +789,19 @@ void asiUI_ObjectBrowser::onDumpJoint()
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
 
+  // Get coedges.
+  Handle(ActAPI_HParameterList) backRefs = edgeNode->GetReferrers();
+  //
+  for ( ActAPI_HParameterList::Iterator it(*backRefs); it.More(); it.Next() )
+  {
+    const Handle(ActAPI_IUserParameter)& refParam = it.Value();
+    Handle(asiData_ReCoedgeNode)         refNode  = Handle(asiData_ReCoedgeNode)::DownCast( refParam->GetNode() );
+
+    if ( !refNode.IsNull() )
+      m_progress.SendLogMessage( LogInfo(Normal) << "Referring coedge of edge %1: %2 (%3)."
+                                                 << edgeNode->GetId() << refNode->GetId() << refNode->GetName() );
+  }
+
   // Analyze joint.
   asiEngine_PatchJointAdaptor jointAdaptor(m_model, m_progress, m_plotter);
   //

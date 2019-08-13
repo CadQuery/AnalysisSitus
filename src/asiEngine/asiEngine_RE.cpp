@@ -36,6 +36,7 @@
 #include <asiEngine_BuildPatchFunc.h>
 #include <asiEngine_PatchJointAdaptor.h>
 #include <asiEngine_SmoothenCornersFunc.h>
+#include <asiEngine_SmoothenPatchesFunc.h>
 
 // asiAlgo includes
 #include <asiAlgo_ProjectPointOnMesh.h>
@@ -1008,6 +1009,42 @@ void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& pa
                               asiEngine_BuildPatchFunc::GUID(),
                               inputs,
                               ActParamStream() << patch->Parameter(asiData_RePatchNode::PID_Geometry) );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiEngine_RE::ReconnectSmoothenPatchesFunc(const Handle(asiData_ReEdgeNode)& edge) const
+{
+  if ( edge.IsNull() || !edge->IsWellFormed() ) // Contract check.
+    return;
+
+  // Initialize utility to extract local topology of an edge.
+  asiEngine_PatchJointAdaptor jointAdt(m_model);
+  //
+  if ( !jointAdt.Init(edge) )
+    return;
+
+  /* Collect input arguments. */
+
+  Handle(asiData_ReCoedgeNode) coedgeLeft, coedgeRight;
+  Handle(asiData_RePatchNode)  patchLeft,  patchRight;
+  //
+  if ( !this->GetPatchesByEdge(edge, coedgeLeft, coedgeRight, patchLeft, patchRight) )
+    return;
+
+  // The connection is mostly fictive to avoid loops in dependency graph but
+  // enough to maintain the right order of executions.
+  ActParamStream inputs;
+  inputs << edge       ->Parameter(asiData_ReEdgeNode::PID_Curve)
+         << patchLeft  ->Parameter(asiData_RePatchNode::PID_Geometry)
+         << patchRight ->Parameter(asiData_RePatchNode::PID_Geometry);
+
+  /* Connect Tree Function. */
+
+  edge->ConnectTreeFunction( asiData_ReEdgeNode::PID_FuncSmoothenPatches,
+                             asiEngine_SmoothenPatchesFunc::GUID(),
+                             inputs,
+                             ActParamStream() );
 }
 
 //-----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 04 August 2019
+// Created on: 13 August 2019
 //-----------------------------------------------------------------------------
 // Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_SmoothenCornersFunc_HeaderFile
-#define asiEngine_SmoothenCornersFunc_HeaderFile
+#ifndef asiEngine_SmoothenPatchesFunc_HeaderFile
+#define asiEngine_SmoothenPatchesFunc_HeaderFile
 
 // asiEngine includes
 #include <asiEngine.h>
@@ -39,19 +39,19 @@
 
 //-----------------------------------------------------------------------------
 
-//! Tree function for smoothly connecting curves in a curve network.
-class asiEngine_SmoothenCornersFunc : public ActData_BaseTreeFunction
+//! Tree function for smoothly connecting patches.
+class asiEngine_SmoothenPatchesFunc : public ActData_BaseTreeFunction
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiEngine_SmoothenCornersFunc, ActData_BaseTreeFunction)
+  DEFINE_STANDARD_RTTI_INLINE(asiEngine_SmoothenPatchesFunc, ActData_BaseTreeFunction)
 
 public:
 
   //! Instantiation routine.
   //! \return Tree Function instance.
-  asiEngine_EXPORT static Handle(asiEngine_SmoothenCornersFunc)
+  asiEngine_EXPORT static Handle(asiEngine_SmoothenPatchesFunc)
     Instance();
 
   //! Static accessor for the GUID associated with the Tree Function.
@@ -63,21 +63,6 @@ public:
   //! \return GUID.
   asiEngine_EXPORT virtual const char*
     GetGUID() const;
-
-public:
-
-  //! This method is used for indirect parameterization of the smoothing tree
-  //! function to make it listen to any changes in the edges neighboring
-  //! to the joint one. If this tree function was directly connected to
-  //! such neighboring edges, then placing the same tree function on any
-  //! of the neighbors themselves would lead to a dependency loop which
-  //! is forbidden for execution in Active Data.
-  //! \param[in] inputs   input arguments.
-  //! \param[in] userData user data.
-  //! \return true if the tree function claims it should be executed.
-  virtual bool
-    MustExecuteIntact(const Handle(ActAPI_HParameterList)& inputs,
-                      const Handle(Standard_Transient)&    userData) const;
 
 public:
 
@@ -104,19 +89,13 @@ private:
   virtual ActAPI_ParameterTypeStream
     inputSignature() const;
 
-  //! Custom validation of outputs.
-  //! \param[in] outputs output arguments to validate.
-  //! \return true if outputs are consistent, false -- otherwise.
-  virtual bool
-    validateOutput(const Handle(ActAPI_HParameterList)& outputs) const;
-
   //! \return expected output signature.
   virtual ActAPI_ParameterTypeStream
     outputSignature() const;
 
 private:
 
-  asiEngine_SmoothenCornersFunc() {} //!< Ctor.
+  asiEngine_SmoothenPatchesFunc() {} //!< Ctor.
 
 private:
 

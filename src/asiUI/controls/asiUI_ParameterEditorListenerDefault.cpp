@@ -144,13 +144,19 @@ void asiUI_ParameterEditorListenerDefault::afterParameterChanged(const Handle(Ac
       const bool
         isSmoothingOn = ActParamTool::AsBool( edge_n->Parameter(pid) )->GetValue();
 
-      // Connect/disconnect tree function.
+      // Connect/disconnect tree functions.
       if ( isSmoothingOn )
-        asiEngine_RE(m_cf->Model,
-                     m_cf->Progress,
-                     m_cf->Plotter).ReconnectSmoothenCornersFunc(edge_n);
+      {
+        asiEngine_RE reApi(m_cf->Model, m_cf->Progress, m_cf->Plotter);
+
+        reApi.ReconnectSmoothenCornersFunc(edge_n);
+        reApi.ReconnectSmoothenPatchesFunc(edge_n);
+      }
       else
+      {
         edge_n->DisconnectTreeFunction(asiData_ReEdgeNode::PID_FuncSmoothenCorners);
+        edge_n->DisconnectTreeFunction(asiData_ReEdgeNode::PID_FuncSmoothenPatches);
+      }
     }
   }
 }

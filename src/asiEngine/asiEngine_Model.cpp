@@ -35,6 +35,7 @@
 #include <asiEngine_BuildEdgeFunc.h>
 #include <asiEngine_BuildPatchFunc.h>
 #include <asiEngine_SmoothenCornersFunc.h>
+#include <asiEngine_SmoothenPatchesFunc.h>
 #include <asiEngine_Curve.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
@@ -340,6 +341,7 @@ void asiEngine_Model::initFunctionDrivers()
   REGISTER_TREE_FUNCTION(asiEngine_BuildEdgeFunc);
   REGISTER_TREE_FUNCTION(asiEngine_BuildPatchFunc);
   REGISTER_TREE_FUNCTION(asiEngine_SmoothenCornersFunc);
+  REGISTER_TREE_FUNCTION(asiEngine_SmoothenPatchesFunc);
 
   /* ===================================
    *  Bind User Data for Tree Functions
@@ -351,6 +353,7 @@ void asiEngine_Model::initFunctionDrivers()
   funcCtx->BindUserData(asiEngine_BuildEdgeFunc::GUID(),       this);
   funcCtx->BindUserData(asiEngine_BuildPatchFunc::GUID(),      this);
   funcCtx->BindUserData(asiEngine_SmoothenCornersFunc::GUID(), this);
+  funcCtx->BindUserData(asiEngine_SmoothenPatchesFunc::GUID(), this);
 }
 
 //-----------------------------------------------------------------------------

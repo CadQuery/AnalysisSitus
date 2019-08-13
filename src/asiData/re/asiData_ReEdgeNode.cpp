@@ -59,6 +59,7 @@ asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Bool,         PID_SmoothTransition);
   REGISTER_PARAMETER(TreeFunction, PID_FuncApprox);
   REGISTER_PARAMETER(TreeFunction, PID_FuncSmoothenCorners);
+  REGISTER_PARAMETER(TreeFunction, PID_FuncSmoothenPatches);
 }
 
 //-----------------------------------------------------------------------------

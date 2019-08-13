@@ -72,6 +72,7 @@ public:
     PID_SmoothTransition,    //!< Whether the edge realizes smooth transition.
     PID_FuncApprox,          //!< Approximation function.
     PID_FuncSmoothenCorners, //!< Tree function to adapt curve network for smooth transition.
+    PID_FuncSmoothenPatches, //!< Tree function to adapt adjacent surfaces for smooth transition.
   //-------------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };

@@ -226,6 +226,12 @@ public:
   asiEngine_EXPORT void
     ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& patch) const;
 
+  //! Reconnects Tree Function adapting the neighbor surfaces for smooth (G1)
+  //! transition by adjusting their control points.
+  //! \param[in] edge edge where this tree function resides.
+  asiEngine_EXPORT void
+    ReconnectSmoothenPatchesFunc(const Handle(asiData_ReEdgeNode)& edge) const;
+
   //! Returns the coedge which is the next to the passed one in its
   //! owning patch.
   //! \param[in] current current coedge.

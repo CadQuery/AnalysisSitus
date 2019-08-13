@@ -103,7 +103,12 @@ int asiEngine_SmoothenPatchesFunc::execute(const Handle(ActAPI_HParameterList)& 
   m_plotter.REDRAW_CURVE("isoRight", isoRight, Color_White);
 
   // Make surfaces compatible.
-  if ( !jointAdt.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU) )
+  if ( !jointAdt.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU, areOpposite) )
+    return 1; // Failure.
+  //
+  if ( !jointAdt.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
+                             isoRight, isoRightU, isoRightMin,
+                             areOpposite) )
     return 1; // Failure.
 
   // Align control poles.

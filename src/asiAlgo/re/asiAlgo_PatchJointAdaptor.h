@@ -138,16 +138,19 @@ public:
                 bool&                      areOpposite) const;
 
   //! Makes the surfaces compatible along their joint curve by knot insertion.
-  //! \param[in] isoLeft   isoparametric curve of the left surface.
-  //! \param[in] isoLeftU  indicates if the left isoline is U-iso.
-  //! \param[in] isoRight  isoparametric curve of the right surface.
-  //! \param[in] isoRightU indicates if the right isoline is U-iso.
+  //! \param[in] isoLeft     isoparametric curve of the left surface.
+  //! \param[in] isoLeftU    indicates if the left isoline is U-iso.
+  //! \param[in] isoRight    isoparametric curve of the right surface.
+  //! \param[in] isoRightU   indicates if the right isoline is U-iso.
+  //! \param[in] areOpposite indicates whether the passed isos have opposite
+  //!                        directions.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     UnifySurfaces(const Handle(Geom_BSplineCurve)& isoLeft,
                   const bool                       isoLeftU,
                   const Handle(Geom_BSplineCurve)& isoRight,
-                  const bool                       isoRightU);
+                  const bool                       isoRightU,
+                  const bool                       areOpposite);
 
   //! Checks if the coincident border between the surface patches is
   //! well prepared for smoothing. This method checks that the corner poles

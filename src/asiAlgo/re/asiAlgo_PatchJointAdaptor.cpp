@@ -186,7 +186,8 @@ bool asiAlgo_PatchJointAdaptor::ExtractIsos(Handle(Geom_BSplineCurve)& isoLeft,
 bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& isoLeft,
                                               const bool                       isoLeftU,
                                               const Handle(Geom_BSplineCurve)& isoRight,
-                                              const bool                       isoRightU)
+                                              const bool                       isoRightU,
+                                              const bool                       areOpposite)
 {
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);

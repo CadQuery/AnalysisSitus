@@ -197,10 +197,20 @@ bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& i
   t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
   t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
 
+  m_plotter.DRAW_SURFACE(m_surfLeft,  Color_White, "surfLeft");
+  m_plotter.DRAW_SURFACE(m_surfRight, Color_White, "surfRight");
+
+  std::vector<double> leftKnots  = mbIsoLeft  ->GetKnots();
+  std::vector<double> rightKnots = mbIsoRight ->GetKnots();
+
+  if ( areOpposite )
+    for ( size_t k = 0; k < rightKnots.size(); ++k )
+      rightKnots[k] = 1 - rightKnots[k];
+
   // Collect knots.
   std::vector< std::vector<double> > U_all;
-  U_all.push_back( mbIsoLeft  ->GetKnots() );
-  U_all.push_back( mbIsoRight ->GetKnots() );
+  U_all.push_back( leftKnots );
+  U_all.push_back( rightKnots );
 
   // Compute complementary knots.
   bspl_UnifyKnots Unify;
@@ -227,6 +237,9 @@ bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& i
   // Update surfaces.
   m_surfLeft  = cascade::GetOpenCascadeBSurface(mbSurfLeft);
   m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
+
+  m_plotter.DRAW_SURFACE(m_surfLeft,  Color_White, "surfLeftAfter");
+  m_plotter.DRAW_SURFACE(m_surfRight, Color_White, "surfRightAfter");
 
   return true; // Success.
 }
@@ -389,4 +402,16 @@ bool asiAlgo_PatchJointAdaptor::getIso(const Handle(Geom_BSplineSurface)& surf,
   isoMin = isLeftBound;
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PatchJointAdaptor::getExtraKnotsLeft() const
+{
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PatchJointAdaptor::getExtraKnotsRight() const
+{
 }

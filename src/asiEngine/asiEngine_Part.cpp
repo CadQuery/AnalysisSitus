@@ -439,6 +439,16 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
   //
   shapeParam->SetShape(model);
 
+  // If BVH exists, we clean it up.
+  if ( !part_n->GetBVH().IsNull() )
+  {
+    // Store in OCAF
+    Handle(asiData_BVHParameter)
+      bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
+    //
+    bvhParam->SetBVH(NULL);
+  }
+
   // Build AAG automatically (if not auto-build is not disabled).
   if ( part_n->IsAutoAAG() )
     aagParam->SetAAG( new asiAlgo_AAG(model) );

@@ -220,6 +220,12 @@ protected:
            bool&                              isoU,
            bool&                              isoMin) const;
 
+  asiAlgo_EXPORT void
+    getExtraKnotsLeft() const;
+
+  asiAlgo_EXPORT void
+    getExtraKnotsRight() const;
+
 protected:
 
   Handle(Geom_Curve)          m_curve;     //!< Joint curve.

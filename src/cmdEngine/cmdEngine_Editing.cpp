@@ -94,6 +94,8 @@
   #include <mobius/cascade_BSplineSurface.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
+
+  using namespace mobius;
 #endif
 
 //-----------------------------------------------------------------------------
@@ -1243,15 +1245,15 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   const double lambda = Atof(argv[3]);
 
   // Convert to Mobius curve.
-  mobius::cascade_BSplineCurve toMobius(occtBCurve);
+  cascade_BSplineCurve toMobius(occtBCurve);
   toMobius.DirectConvert();
-  const mobius::t_ptr<mobius::t_bcurve>& mobCurve = toMobius.GetMobiusCurve();
+  const t_ptr<t_bcurve>& mobCurve = toMobius.GetMobiusCurve();
 
   TIMER_NEW
   TIMER_GO
 
   // Perform fairing from Mobius.
-  mobius::geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+  geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
   //
   if ( !fairing.Perform() )
   {
@@ -1263,10 +1265,10 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-curve fairing")
 
   // Get the faired curve.
-  const mobius::t_ptr<mobius::t_bcurve>& mobResult = fairing.GetResult();
+  const t_ptr<t_bcurve>& mobResult = fairing.GetResult();
 
   // Convert to OpenCascade curve.
-  mobius::cascade_BSplineCurve toOpenCascade(mobResult);
+  cascade_BSplineCurve toOpenCascade(mobResult);
   toOpenCascade.DirectConvert();
   result = toOpenCascade.GetOpenCascadeCurve();
 
@@ -1321,10 +1323,10 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   const double lambda = Atof(argv[3]);
 
   // Convert to Mobius surface.
-  mobius::cascade_BSplineSurface converter(occtBSurface);
+  cascade_BSplineSurface converter(occtBSurface);
   converter.DirectConvert();
   //
-  const mobius::t_ptr<mobius::t_bsurf>& mobSurf = converter.GetMobiusSurface();
+  const t_ptr<t_bsurf>& mobSurf = converter.GetMobiusSurface();
 
   // Print bending energy.
   const double initEnergy = mobSurf->ComputeBendingEnergy();
@@ -1336,7 +1338,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   // Perform fairing.
-  mobius::geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
+  geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
   //
   const int nPolesU = int( mobSurf->GetPoles().size() );
   const int nPolesV = int( mobSurf->GetPoles()[0].size() );
@@ -1363,7 +1365,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Mobius B-surface fairing")
 
   // Get the faired surface.
-  const mobius::t_ptr<mobius::t_bsurf>& mobResult = fairing.GetResult();
+  const t_ptr<t_bsurf>& mobResult = fairing.GetResult();
 
   // Print bending energy.
   const double resEnergy = mobResult->ComputeBendingEnergy();
@@ -1372,7 +1374,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
                                                           << resEnergy );
 
   // Convert to OpenCascade surface.
-  mobius::cascade_BSplineSurface toOpenCascade(mobResult);
+  cascade_BSplineSurface toOpenCascade(mobResult);
   toOpenCascade.DirectConvert();
   result = toOpenCascade.GetOpenCascadeSurface();
 
@@ -1962,10 +1964,10 @@ int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial curve.
-  mobius::t_ptr<mobius::t_bcurve>
-    mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
+  t_ptr<t_bcurve>
+    mobBCurve = cascade::GetMobiusBCurve(occtBCurve);
   //
-  mobius::t_ptr<mobius::t_bcurve> mobResult = mobBCurve->Copy();
+  t_ptr<t_bcurve> mobResult = mobBCurve->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot(u, times) )
@@ -1977,7 +1979,7 @@ int ENGINE_InsertKnotCurve(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_CURVE(argv[1],
-                                    mobius::cascade::GetOpenCascadeBCurve(mobResult),
+                                    cascade::GetOpenCascadeBCurve(mobResult),
                                     Color_Default);
 
   return TCL_OK;
@@ -2029,10 +2031,10 @@ int ENGINE_InsertKnotSurfU(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial surface.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobBSurface = cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
+  t_ptr<t_bsurf> mobResult = mobBSurface->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot_U(u, times) )
@@ -2044,7 +2046,7 @@ int ENGINE_InsertKnotSurfU(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
-                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      cascade::GetOpenCascadeBSurface(mobResult),
                                       Color_Default);
 
   return TCL_OK;
@@ -2093,10 +2095,10 @@ int ENGINE_InsertKnotsSurfU(const Handle(asiTcl_Interp)& interp,
   const double num = atoi(argv[3]);
 
   // Make a copy of the initial surface.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobBSurface = cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
+  t_ptr<t_bsurf> mobResult = mobBSurface->Copy();
 
   const double firstKnot = mobResult->GetKnots_U()[0];
   const double lastKnot  = mobResult->GetKnots_U()[mobResult->GetNumOfKnots_U() - 1];
@@ -2116,7 +2118,7 @@ int ENGINE_InsertKnotsSurfU(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
-                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      cascade::GetOpenCascadeBSurface(mobResult),
                                       Color_Default);
 
   return TCL_OK;
@@ -2168,10 +2170,10 @@ int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
   const int times = ( (argc == 5) ? atoi(argv[4]) : 1 );
 
   // Make a copy of the initial surface.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobBSurface = cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
+  t_ptr<t_bsurf> mobResult = mobBSurface->Copy();
 
   // Insert knot.
   if ( !mobResult->InsertKnot_V(v, times) )
@@ -2183,7 +2185,7 @@ int ENGINE_InsertKnotSurfV(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
-                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      cascade::GetOpenCascadeBSurface(mobResult),
                                       Color_Default);
 
   return TCL_OK;
@@ -2232,10 +2234,10 @@ int ENGINE_InsertKnotsSurfV(const Handle(asiTcl_Interp)& interp,
   const double num = atoi(argv[3]);
 
   // Make a copy of the initial surface.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobBSurface = cascade::GetMobiusBSurface(occtBSurface);
   //
-  mobius::t_ptr<mobius::t_bsurf> mobResult = mobBSurface->Copy();
+  t_ptr<t_bsurf> mobResult = mobBSurface->Copy();
 
   const double firstKnot = mobResult->GetKnots_U()[0];
   const double lastKnot  = mobResult->GetKnots_U()[mobResult->GetNumOfKnots_U() - 1];
@@ -2255,7 +2257,7 @@ int ENGINE_InsertKnotsSurfV(const Handle(asiTcl_Interp)& interp,
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
-                                      mobius::cascade::GetOpenCascadeBSurface(mobResult),
+                                      cascade::GetOpenCascadeBSurface(mobResult),
                                       Color_Default);
 
   return TCL_OK;
@@ -2301,14 +2303,14 @@ int ENGINE_ExchangeUV(const Handle(asiTcl_Interp)& interp,
   }
 
   // Exchange UV.
-  mobius::t_ptr<mobius::t_bsurf>
-    mobBSurface = mobius::cascade::GetMobiusBSurface(occtBSurface);
+  t_ptr<t_bsurf>
+    mobBSurface = cascade::GetMobiusBSurface(occtBSurface);
   //
   mobBSurface->ExchangeUV();
 
   // Draw result.
   interp->GetPlotter().REDRAW_SURFACE(argv[1],
-                                      mobius::cascade::GetOpenCascadeBSurface(mobBSurface),
+                                      cascade::GetOpenCascadeBSurface(mobBSurface),
                                       Color_Default);
 
   return TCL_OK;
@@ -2355,11 +2357,11 @@ int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius curve.
-  mobius::t_ptr<mobius::t_bcurve>
-    mobBCurve = mobius::cascade::GetMobiusBCurve(occtBCurve);
+  t_ptr<t_bcurve>
+    mobBCurve = cascade::GetMobiusBCurve(occtBCurve);
 
   // Split.
-  std::vector< mobius::t_ptr<mobius::t_bcurve> > segments;
+  std::vector< t_ptr<t_bcurve> > segments;
   //
   if ( !mobBCurve->SplitToBezier(segments) )
   {
@@ -2369,7 +2371,7 @@ int ENGINE_SplitCurveBezier(const Handle(asiTcl_Interp)& interp,
 
   // Draw results.
   for ( size_t ii = 0; ii < segments.size(); ++ii )
-    interp->GetPlotter().DRAW_CURVE(mobius::cascade::GetOpenCascadeBCurve(segments[ii]),
+    interp->GetPlotter().DRAW_CURVE(cascade::GetOpenCascadeBCurve(segments[ii]),
                                     Color_Default,
                                     TCollection_AsciiString(argv[1]));
 
@@ -2588,13 +2590,13 @@ int ENGINE_ConvertPlaneToBSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   // Convert to Mobius plane.
-  mobius::t_ptr<mobius::t_plane> plane = mobius::cascade::GetMobiusPlane(surf);
+  t_ptr<t_plane> plane = cascade::GetMobiusPlane(surf);
 
   // Apply limits.
   plane->SetLimits(uMin, uMax, vMin, vMax);
 
   // Convert to B-surface.
-  mobius::t_ptr<mobius::t_bsurf>
+  t_ptr<t_bsurf>
     bsurf = plane->ToBSurface( atoi(argv[3]), atoi(argv[4]) );
   //
   if ( bsurf.IsNull() )
@@ -2604,7 +2606,83 @@ int ENGINE_ConvertPlaneToBSurf(const Handle(asiTcl_Interp)& interp,
   }
 
   // Set as result.
-  interp->GetPlotter().REDRAW_SURFACE(argv[1], mobius::cascade::GetOpenCascadeBSurface(bsurf), Color_Default);
+  interp->GetPlotter().REDRAW_SURFACE(argv[1], cascade::GetOpenCascadeBSurface(bsurf), Color_Default);
+
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_RotateQn(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const double Vx     = atof(argv[1]);
+  const double Vy     = atof(argv[2]);
+  const double Vz     = atof(argv[3]);
+  const double angDeg = atof(argv[4]);
+
+  // Create a quaternion representing the rotation.
+  core_Quaternion Q;
+  Q.SetRotation(t_xyz(Vx, Vy, Vz), angDeg*M_PI/180.);
+  //
+  interp->GetPlotter().REDRAW_VECTOR_AT("qn_axis", gp::Origin(), gp_Vec(Vx, Vy, Vz), Color_Yellow);
+
+  // Get matrix representation.
+  double qnMx[3][3] = { {0., 0., 0.},
+                        {0., 0., 0.},
+                        {0., 0., 0.} };
+  Q.Matrix3x3(qnMx);
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Passed quaternion q = (q0, qx, qy, qz) = (%1, %2, %3, %4)."
+                                                        << Q.Q0()
+                                                        << Q.Qx()
+                                                        << Q.Qy()
+                                                        << Q.Qz() );
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Prepare transformation matrix.
+  gp_Trsf T;
+  T.SetValues(qnMx[0][0], qnMx[0][1], qnMx[0][2], 0.,
+              qnMx[1][0], qnMx[1][1], qnMx[1][2], 0.,
+              qnMx[2][0], qnMx[2][1], qnMx[2][2], 0.);
+
+  // Perform transformation.
+  TopoDS_Shape transformedShape = BRepBuilderAPI_Transform(shape, T, true);
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(transformedShape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
 
   return TCL_OK;
 #else
@@ -2960,4 +3038,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t are specified via <uDeg> and <vDeg> arguments.",
     //
     __FILE__, group, ENGINE_ConvertPlaneToBSurf);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("rotate-qn",
+    //
+    "rotate-qn Vx Vy Vz angleDeg\n"
+    "\t Rotates CAD part applying the passed quaternion defined by the given"
+    "\t axis of rotation (Vx, Vy, Vz) and the angle in degrees.",
+    //
+    __FILE__, group, ENGINE_RotateQn);
 }

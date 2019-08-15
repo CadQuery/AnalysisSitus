@@ -2646,7 +2646,7 @@ int ENGINE_RotateQn(const Handle(asiTcl_Interp)& interp,
   double qnMx[3][3] = { {0., 0., 0.},
                         {0., 0., 0.},
                         {0., 0., 0.} };
-  Q.Matrix3x3(qnMx);
+  Q.AsMatrix3x3(qnMx);
 
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Passed quaternion q = (q0, qx, qy, qz) = (%1, %2, %3, %4)."
                                                         << Q.Q0()

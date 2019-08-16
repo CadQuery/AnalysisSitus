@@ -357,7 +357,7 @@ bool asiAlgo_BaseCloud<TCoordType>::ComputeInertiaAxes(gp_Ax3& axes) const
   // Check if the system is right-handed
   const double ang = axisX.Direction().AngleWithRef(axisY.Direction(), axisZ.Direction());
   if (ang < 0)
-    axisX.Reverse();
+    axisZ.Reverse();
 
   axes = gp_Ax3( meanVertex, axisZ.Direction(), axisX.Direction() );
 

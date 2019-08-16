@@ -189,54 +189,8 @@ bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& i
                                               const bool                       isoRightU,
                                               const bool                       areOpposite)
 {
-  // Convert curves to Mobius structures.
-  t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
-  t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
-
-  // Convert surfaces to Mobius structures.
-  t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
-  t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
-
-  m_plotter.DRAW_SURFACE(m_surfLeft,  Color_White, "surfLeft");
-  m_plotter.DRAW_SURFACE(m_surfRight, Color_White, "surfRight");
-
-  std::vector<double> leftKnots  = mbIsoLeft  ->GetKnots();
-  std::vector<double> rightKnots = mbIsoRight ->GetKnots();
-
-  if ( areOpposite )
-    for ( size_t k = 0; k < rightKnots.size(); ++k )
-      rightKnots[k] = 1 - rightKnots[k];
-
-  // Collect knots.
-  std::vector< std::vector<double> > U_all;
-  U_all.push_back( leftKnots );
-  U_all.push_back( rightKnots );
-
-  // Compute complementary knots.
-  bspl_UnifyKnots Unify;
-  std::vector< std::vector<double> > X = Unify(U_all);
-
-  // Insert knots to the left surface.
-  for ( size_t k = 0; k < X[0].size(); ++k )
-  {
-    if ( isoLeftU )
-      mbSurfLeft->InsertKnot_V(X[0][k]);
-    else
-      mbSurfLeft->InsertKnot_U(X[0][k]);
-  }
-
-  // Insert knots to the right surface.
-  for ( size_t k = 0; k < X[1].size(); ++k )
-  {
-    if ( isoRightU )
-      mbSurfRight->InsertKnot_V(X[1][k]);
-    else
-      mbSurfRight->InsertKnot_U(X[1][k]);
-  }
-
-  // Update surfaces.
-  m_surfLeft  = cascade::GetOpenCascadeBSurface(mbSurfLeft);
-  m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
+  this->insertKnotsLeft  (isoLeft, isoRight, isoLeftU, areOpposite);
+  this->insertKnotsRight (isoLeft, isoRight, isoRightU, areOpposite);
 
   m_plotter.DRAW_SURFACE(m_surfLeft,  Color_White, "surfLeftAfter");
   m_plotter.DRAW_SURFACE(m_surfRight, Color_White, "surfRightAfter");
@@ -406,12 +360,88 @@ bool asiAlgo_PatchJointAdaptor::getIso(const Handle(Geom_BSplineSurface)& surf,
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_PatchJointAdaptor::getExtraKnotsLeft() const
+void asiAlgo_PatchJointAdaptor::insertKnotsLeft(const Handle(Geom_BSplineCurve)& isoLeft,
+                                                const Handle(Geom_BSplineCurve)& isoRight,
+                                                const bool                       isoLeftU,
+                                                const bool                       areOpposite)
 {
+  // Convert curves to Mobius structures.
+  t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
+  t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
+
+  // Convert surfaces to Mobius structures.
+  t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
+  t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
+
+  std::vector<double> leftKnots  = mbIsoLeft  ->GetKnots();
+  std::vector<double> rightKnots = mbIsoRight ->GetKnots();
+
+  if ( areOpposite )
+    for ( size_t k = 0; k < rightKnots.size(); ++k )
+      rightKnots[k] = 1 - rightKnots[k];
+
+  // Collect knots.
+  std::vector< std::vector<double> > U_all;
+  U_all.push_back( leftKnots );
+  U_all.push_back( rightKnots );
+
+  // Compute complementary knots.
+  bspl_UnifyKnots Unify;
+  std::vector< std::vector<double> > X = Unify(U_all);
+
+  // Insert knots to the left surface.
+  for ( size_t k = 0; k < X[0].size(); ++k )
+  {
+    if ( isoLeftU )
+      mbSurfLeft->InsertKnot_V(X[0][k]);
+    else
+      mbSurfLeft->InsertKnot_U(X[0][k]);
+  }
+
+  // Update left surface.
+  m_surfLeft = cascade::GetOpenCascadeBSurface(mbSurfLeft);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_PatchJointAdaptor::getExtraKnotsRight() const
+void asiAlgo_PatchJointAdaptor::insertKnotsRight(const Handle(Geom_BSplineCurve)& isoLeft,
+                                                 const Handle(Geom_BSplineCurve)& isoRight,
+                                                 const bool                       isoRightU,
+                                                 const bool                       areOpposite)
 {
+  // Convert curves to Mobius structures.
+  t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
+  t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
+
+  // Convert surfaces to Mobius structures.
+  t_ptr<t_bsurf> mbSurfLeft  = cascade::GetMobiusBSurface(m_surfLeft);
+  t_ptr<t_bsurf> mbSurfRight = cascade::GetMobiusBSurface(m_surfRight);
+
+  std::vector<double> leftKnots  = mbIsoLeft  ->GetKnots();
+  std::vector<double> rightKnots = mbIsoRight ->GetKnots();
+
+  if ( areOpposite )
+    for ( size_t k = 0; k < leftKnots.size(); ++k )
+      leftKnots[k] = 1 - leftKnots[k];
+
+  // Collect knots.
+  std::vector< std::vector<double> > U_all;
+  U_all.push_back( leftKnots );
+  U_all.push_back( rightKnots );
+
+  // Compute complementary knots.
+  bspl_UnifyKnots Unify;
+  std::vector< std::vector<double> > X = Unify(U_all);
+
+  // Insert knots to the right surface.
+  for ( size_t k = 0; k < X[1].size(); ++k )
+  {
+    if ( isoRightU )
+      mbSurfRight->InsertKnot_V(X[1][k]);
+    else
+      mbSurfRight->InsertKnot_U(X[1][k]);
+  }
+
+  // Update right surface.
+  m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
 }

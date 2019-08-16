@@ -65,6 +65,7 @@
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepGProp.hxx>
 #include <BRepOffsetAPI_MakePipeShell.hxx>
 #include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
@@ -79,6 +80,8 @@
 #include <GeomAPI_ExtremaCurveCurve.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Pln.hxx>
+#include <GProp_GProps.hxx>
+#include <GProp_PrincipalProps.hxx>
 #include <IntTools_FClass2d.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TopExp.hxx>
@@ -1683,12 +1686,6 @@ int MISC_TestTranformAxes(const Handle(asiTcl_Interp)& interp,
   //
   TopoDS_Shape partShape = M->GetPartNode()->GetShape();
 
-  // Get facets.
-  asiAlgo_MeshMerge conglomerate(partShape, asiAlgo_MeshMerge::Mode_PolyCoherentTriangulation);
-  //
-  Handle(Poly_Triangulation)
-    partTris = conglomerate.GetResultPoly()->GetTriangulation();
-
   /* =================
    *  Get point cloud
    * ================= */
@@ -1716,14 +1713,16 @@ int MISC_TestTranformAxes(const Handle(asiTcl_Interp)& interp,
    *  Compute axes of the part shape
    * ================================ */
 
-  asiAlgo_MeshOBB meshOBB( partTris, interp->GetProgress() );
-  //
-  if ( !meshOBB.Perform() )
-    return TCL_ERROR;
+  GProp_GProps gProps;
+  BRepGProp::VolumeProperties(partShape, gProps, 1.e-4);
+
+  gp_Vec partPrincipalX = gProps.PrincipalProperties().ThirdAxisOfInertia();
+  gp_Vec partPrincipalY = gProps.PrincipalProperties().SecondAxisOfInertia();
+  gp_Vec partPrincipalZ = gProps.PrincipalProperties().FirstAxisOfInertia();
 
   // First Ax3.
   //gp_Ax3 A( gp_Pnt(-1., -2., -3.), gp_Dir(1., 1., 1.), gp_Dir(1., -1., -1.) );
-  gp_Ax3 A = meshOBB.GetResult().Placement;
+  gp_Ax3 A(gProps.CentreOfMass(), partPrincipalZ, partPrincipalX);
   //
   interp->GetPlotter().DRAW_POINT     (A.Location(),                                            Color_Yellow, "A");
   interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.XDirection().XYZ() )*scaleCoeff, Color_Red,    "A_DX");
@@ -1757,7 +1756,7 @@ int MISC_TestTranformAxes(const Handle(asiTcl_Interp)& interp,
   T2.SetTransformation(A);
   T2.Invert();
 
-  // Final trnasformation from B to A.
+  // Final transformation from B to A.
   gp_Trsf T = T2*T1;
 
   // Transformed B.

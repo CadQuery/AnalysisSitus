@@ -221,10 +221,16 @@ protected:
            bool&                              isoMin) const;
 
   asiAlgo_EXPORT void
-    getExtraKnotsLeft() const;
+    insertKnotsLeft(const Handle(Geom_BSplineCurve)& isoLeft,
+                    const Handle(Geom_BSplineCurve)& isoRight,
+                    const bool                       isoLeftU,
+                    const bool                       areOpposite);
 
   asiAlgo_EXPORT void
-    getExtraKnotsRight() const;
+    insertKnotsRight(const Handle(Geom_BSplineCurve)& isoLeft,
+                     const Handle(Geom_BSplineCurve)& isoRight,
+                     const bool                       isoRightU,
+                     const bool                       areOpposite);
 
 protected:
 

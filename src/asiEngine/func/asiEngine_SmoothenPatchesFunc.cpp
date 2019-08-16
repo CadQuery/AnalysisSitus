@@ -88,7 +88,7 @@ int asiEngine_SmoothenPatchesFunc::execute(const Handle(ActAPI_HParameterList)& 
 
   // Prepare joint adaptor.
   asiAlgo_PatchJointAdaptor jointAdt(edgeCurve, leftPatchSurf, rightPatchSurf,
-                                     m_progress, m_plotter);
+                                     m_progress/*, m_plotter*/);
 
   // Extract isos by performing pure geometric analysis.
   Handle(Geom_BSplineCurve) isoLeft, isoRight;
@@ -99,8 +99,8 @@ int asiEngine_SmoothenPatchesFunc::execute(const Handle(ActAPI_HParameterList)& 
                              areOpposite) )
     return 1; // Failure.
 
-  m_plotter.REDRAW_CURVE("isoLeft",  isoLeft,  Color_White);
-  m_plotter.REDRAW_CURVE("isoRight", isoRight, Color_White);
+  //m_plotter.REDRAW_CURVE("isoLeft",  isoLeft,  Color_White);
+  //m_plotter.REDRAW_CURVE("isoRight", isoRight, Color_White);
 
   // Make surfaces compatible.
   if ( !jointAdt.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU, areOpposite) )

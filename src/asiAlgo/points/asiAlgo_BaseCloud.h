@@ -108,6 +108,9 @@ public:
   asiAlgo_EXPORT void
     Clear();
 
+  asiAlgo_EXPORT bool
+    ComputeInertiaAxes(gp_Ax3& axes) const;
+
 public:
 
   //! Reads base cloud recorded in the input file with common XYZ format. That

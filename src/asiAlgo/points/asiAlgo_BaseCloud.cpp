@@ -34,9 +34,28 @@
 // asiAlgo includes
 #include <asiAlgo_PointCloudUtils.h>
 
+// OpenCascade includes
+#include <gp_Ax1.hxx>
+#include <gp_Ax3.hxx>
+#include <gp_Vec.hxx>
+
+// Eigen includes
+#include <Eigen/Dense>
+
 // Instantiate for allowed types
 template class asiAlgo_BaseCloud<double>;
 template class asiAlgo_BaseCloud<float>;
+
+//-----------------------------------------------------------------------------
+
+namespace
+{
+  bool compare(const std::pair<double, int>& p1,
+               const std::pair<double, int>& p2)
+  {
+    return p1.first > p2.first;
+  }
+};
 
 //-----------------------------------------------------------------------------
 
@@ -241,6 +260,108 @@ void asiAlgo_BaseCloud<TCoordType>::Merge(const Handle(asiAlgo_BaseCloud<TCoordT
 
     this->AddElement(x, y, z);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
+bool asiAlgo_BaseCloud<TCoordType>::ComputeInertiaAxes(gp_Ax3& axes) const
+{
+  TCoordType xCenter = 0.0;
+  TCoordType yCenter = 0.0;
+  TCoordType zCenter = 0.0;
+  TCoordType x, y, z;
+  gp_XYZ meanVertex;
+
+  for ( int i = 0; i < this->GetNumberOfElements(); ++i )
+  {
+    this->GetElement(i, x, y, z);
+    xCenter += x;
+    yCenter += y;
+    zCenter += z;
+  }
+
+  meanVertex.SetX(xCenter);
+  meanVertex.SetY(yCenter);
+  meanVertex.SetZ(zCenter);
+  meanVertex /= this->GetNumberOfElements();
+
+  Eigen::Matrix3d C;
+  for (int j = 0; j < 3; ++j)
+  {
+    for (int k = 0; k < 3; ++k)
+      C(j, k) = 0.0; // TODO: is that necessary?
+  }
+
+  for (int i = 0; i < this->GetNumberOfElements(); ++i)
+  {
+    this->GetElement(i, x, y, z);
+    gp_XYZ p = gp_XYZ(x, y, z);
+    gp_XYZ p_dash = p - meanVertex;
+
+    for (int j = 0; j < 3; ++j)
+    {
+      for (int k = 0; k < 3; ++k)
+        C(j, k) += p_dash.Coord(j + 1) * p_dash.Coord(k + 1);
+    }
+  }
+
+  for (int j = 0; j < 3; ++j)
+  {
+    for (int k = 0; k < 3; ++k)
+      C(j, k) /= (this->GetNumberOfElements());
+  }
+
+  Eigen::EigenSolver<Eigen::Matrix3d> EigenSolver(C);
+
+  Eigen::Vector3d v[3] { EigenSolver.eigenvectors().col(0).real(),
+                         EigenSolver.eigenvectors().col(1).real(),
+                         EigenSolver.eigenvectors().col(2).real() };
+
+  // Make result stable. Eigen may return vector multiplied by -1.0 for 
+  // almost equivalent matrices with deviations (1e-14).
+  for (int i = 0; i < 3; ++i)
+  {
+    Eigen::Vector3d& vec = v[i];
+
+    int maxId = -1;
+    double maxValue = -1.0;
+    for (int j = 0; j < 3; ++j)
+    {
+      const double value = Abs(vec(j));
+      if (value > maxValue)
+      {
+        maxId = j;
+        maxValue = value;
+      }
+    }
+    if (vec[maxId] < 0.0)
+      vec *= -1.0;
+  }
+
+  gp_Vec V[3] = { gp_Vec(v[0].x(), v[0].y(), v[0].z()),
+                  gp_Vec(v[1].x(), v[1].y(), v[1].z()),
+                  gp_Vec(v[2].x(), v[2].y(), v[2].z()) };
+
+  std::vector< std::pair<double, int> >
+    lambda{ std::pair<double, int>(EigenSolver.eigenvalues()(0).real(), 0),
+            std::pair<double, int>(EigenSolver.eigenvalues()(1).real(), 1),
+            std::pair<double, int>(EigenSolver.eigenvalues()(2).real(), 2) };
+  //
+  std::sort(lambda.begin(), lambda.end(), compare);
+  //
+  gp_Ax1 axisX(meanVertex, V[lambda[0].second]);
+  gp_Ax1 axisY(meanVertex, V[lambda[1].second]);
+  gp_Ax1 axisZ(meanVertex, V[lambda[2].second]);
+
+  // Check if the system is right-handed
+  const double ang = axisX.Direction().AngleWithRef(axisY.Direction(), axisZ.Direction());
+  if (ang < 0)
+    axisX.Reverse();
+
+  axes = gp_Ax3( meanVertex, axisZ.Direction(), axisX.Direction() );
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------

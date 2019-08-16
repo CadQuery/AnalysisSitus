@@ -34,6 +34,8 @@
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_Cloudify.h>
+#include <asiAlgo_MeshMerge.h>
+#include <asiAlgo_MeshOBB.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_ProjectPointOnMesh.h>
 #include <asiAlgo_Timer.h>
@@ -1657,11 +1659,138 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DX(), Color_Red,   "DX");
-  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DY(), Color_Green, "DY");
-  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp::DZ(), Color_Blue,  "DZ");
+  // TODO: put your test code here.
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestTranformAxes(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ==============
+   *  Get CAD part
+   * ============== */
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
   //
-  interp->GetPlotter().DRAW_VECTOR_AT(gp::Origin(), gp_Dir(1., 1., 1.), Color_Yellow, "V");
+  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
+
+  // Get facets.
+  asiAlgo_MeshMerge conglomerate(partShape, asiAlgo_MeshMerge::Mode_PolyCoherentTriangulation);
+  //
+  Handle(Poly_Triangulation)
+    partTris = conglomerate.GetResultPoly()->GetTriangulation();
+
+  /* =================
+   *  Get point cloud
+   * ================= */
+
+  // Get points.
+  Handle(asiData_IVPointSetNode)
+    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( interp->GetModel()->FindNodeByName(argv[1]) );
+  //
+  if ( pointsNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Points Node with name %1." << argv[2]);
+    return TCL_OK;
+  }
+  //
+  Handle(asiAlgo_BaseCloud<double>) ptsCloud = pointsNode->GetPoints();
+
+  // Get bounding box of the point cloud to scale axes.
+  double xMin, xMax, yMin, yMax, zMin, zMax;
+  ptsCloud->ComputeBoundingBox(xMin, xMax, yMin, yMax, zMin, zMax);
+  //
+  const double ptsDiag    = gp_Pnt(xMin, yMin, zMin).Distance( gp_Pnt(xMax, yMax, zMax) );
+  const double scaleCoeff = ptsDiag*0.1;
+
+  /* ================================
+   *  Compute axes of the part shape
+   * ================================ */
+
+  asiAlgo_MeshOBB meshOBB( partTris, interp->GetProgress() );
+  //
+  if ( !meshOBB.Perform() )
+    return TCL_ERROR;
+
+  // First Ax3.
+  //gp_Ax3 A( gp_Pnt(-1., -2., -3.), gp_Dir(1., 1., 1.), gp_Dir(1., -1., -1.) );
+  gp_Ax3 A = meshOBB.GetResult().Placement;
+  //
+  interp->GetPlotter().DRAW_POINT     (A.Location(),                                            Color_Yellow, "A");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.XDirection().XYZ() )*scaleCoeff, Color_Red,    "A_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.YDirection().XYZ() )*scaleCoeff, Color_Green,  "A_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.Direction() .XYZ() )*scaleCoeff, Color_Blue,   "A_DZ");
+
+  /* =================================
+   *  Compute axes of the point cloud
+   * ================================= */
+
+  // Second Ax3.
+  //gp_Ax3 B( gp_Pnt(4., 2., 3.), gp_Dir(1., -1., 0.25), gp_Dir(-1., 1., 0.5) );
+  gp_Ax3 B;
+  ptsCloud->ComputeInertiaAxes(B);
+  //
+  interp->GetPlotter().DRAW_POINT     (B.Location(),                                            Color_Yellow, "B");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.XDirection().XYZ() )*scaleCoeff, Color_Red,    "B_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.YDirection().XYZ() )*scaleCoeff, Color_Green,  "B_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.Direction() .XYZ() )*scaleCoeff, Color_Blue,   "B_DZ");
+
+  /* ===========
+   *  Move axes
+   * =========== */
+
+  // B goes to global origin.
+  gp_Trsf T1;
+  T1.SetTransformation(B);
+
+  // Global origin goes to A.
+  gp_Trsf T2;
+  T2.SetTransformation(A);
+  T2.Invert();
+
+  // Final trnasformation from B to A.
+  gp_Trsf T = T2*T1;
+
+  // Transformed B.
+  gp_Ax3 TB = B.Transformed(T);
+  //
+  interp->GetPlotter().DRAW_POINT     (TB.Location(),                                             Color_White, "TB");
+  interp->GetPlotter().DRAW_VECTOR_AT (TB.Location(), gp_Vec( TB.XDirection().XYZ() )*scaleCoeff, Color_White, "TB_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (TB.Location(), gp_Vec( TB.YDirection().XYZ() )*scaleCoeff, Color_White, "TB_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (TB.Location(), gp_Vec( TB.Direction() .XYZ() )*scaleCoeff, Color_White, "TB_DZ");
+
+  /* ==================
+   *  Move point cloud
+   * ================== */
+
+  Handle(asiAlgo_BaseCloud<double>) movedPtsCloud = new asiAlgo_BaseCloud<double>;
+  ptsCloud->CopyTo(*movedPtsCloud);
+  //
+  for ( int k = 0; k < movedPtsCloud->GetNumberOfElements(); ++k )
+  {
+    gp_Pnt P( movedPtsCloud->GetElement(k) );
+    P.Transform(T);
+    movedPtsCloud->SetElement( k, P.X(), P.Y(), P.Z() );
+  }
+
+  interp->GetPlotter().REDRAW_POINTS("res", movedPtsCloud->GetCoordsArray(), Color_Default);
+
+  gp_Ax3 BAfter;
+  movedPtsCloud->ComputeInertiaAxes(BAfter);
+  //
+  interp->GetPlotter().DRAW_POINT     (BAfter.Location(),                                                 Color_Yellow, "BAfter");
+  interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.XDirection().XYZ() )*scaleCoeff, Color_Red,    "BAfter_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.YDirection().XYZ() )*scaleCoeff, Color_Green,  "BAfter_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.Direction() .XYZ() )*scaleCoeff, Color_Blue,   "BAfter_DZ");
 
   return TCL_OK;
 }
@@ -3365,6 +3494,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for anything.",
     //
     __FILE__, group, MISC_Test);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-transform-axes",
+    //
+    "test-transform-axes \n"
+    "\t Transforms axes B to place them coincidently with axes A.",
+    //
+    __FILE__, group, MISC_TestTranformAxes);
 
 #if defined USE_MOBIUS
   //-------------------------------------------------------------------------//

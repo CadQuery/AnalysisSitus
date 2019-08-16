@@ -253,7 +253,6 @@ void asiAlgo_MeshOBB::calculateByCovariance(gp_Ax1& xAxis,
   }
   mu /= nNodes;
 
-  this->GetPlotter().ERASE_ALL();
   this->GetPlotter().DRAW_TRIANGULATION(m_input, Color_Magenta, 0.5);
   this->GetPlotter().DRAW_POINT(mu, Color_Red);
 
@@ -327,11 +326,7 @@ void asiAlgo_MeshOBB::calculateByCovariance(gp_Ax1& xAxis,
   // Check if the system is right-handed.
   const double ang = ax_X.Direction().AngleWithRef( ax_Y.Direction(), ax_Z.Direction() );
   if ( ang < 0 )
-  {
-    gp_Ax1 tmp = ax_X;
-    ax_X = ax_Y;
-    ax_Y = tmp;
-  }
+    ax_X.Reverse();
 
   // Store results.
   meanVertex = mu;

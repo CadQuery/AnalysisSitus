@@ -949,7 +949,6 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
   // of coedges (e.g., naked edges have one coedge, while shared edges have
   // two coedges).
   ActParamStream outputs;
-  outputs << edge->Parameter(asiData_ReEdgeNode::PID_Curve);
   //
   if ( !coedgeLeftBotOpp.IsNull() )
     outputs << coedgeLeftBotOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);
@@ -1008,7 +1007,7 @@ void asiEngine_RE::ReconnectBuildPatchFunc(const Handle(asiData_RePatchNode)& pa
   patch->ConnectTreeFunction( asiData_RePatchNode::PID_FuncBuildSurf,
                               asiEngine_BuildPatchFunc::GUID(),
                               inputs,
-                              ActParamStream() << patch->Parameter(asiData_RePatchNode::PID_Geometry) );
+                              ActParamStream() << patch->Parameter(asiData_RePatchNode::PID_Surface) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1036,8 +1035,8 @@ void asiEngine_RE::ReconnectSmoothenPatchesFunc(const Handle(asiData_ReEdgeNode)
   // enough to maintain the right order of executions.
   ActParamStream inputs;
   inputs << edge       ->Parameter(asiData_ReEdgeNode::PID_Curve)
-         << patchLeft  ->Parameter(asiData_RePatchNode::PID_Geometry)
-         << patchRight ->Parameter(asiData_RePatchNode::PID_Geometry);
+         << patchLeft  ->Parameter(asiData_RePatchNode::PID_Surface)
+         << patchRight ->Parameter(asiData_RePatchNode::PID_Surface);
 
   /* Connect Tree Function. */
 

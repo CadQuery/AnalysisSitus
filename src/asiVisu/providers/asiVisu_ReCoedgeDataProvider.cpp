@@ -77,7 +77,7 @@ Handle(ActAPI_HParameterList)
   ActAPI_ParameterStream out;
   out << m_node->Parameter(asiData_ReCoedgeNode::PID_EdgeRef)
       << m_node->Parameter(asiData_ReCoedgeNode::PID_SameSense)
-      << m_node->GetParentNode()->Parameter(asiData_RePatchNode::PID_Geometry);
+      << m_node->GetParentNode()->Parameter(asiData_RePatchNode::PID_Surface);
 
   return out.List;
 }

@@ -47,7 +47,7 @@ asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,         PID_Name);
   REGISTER_PARAMETER(Group,        PID_GeometryGroup);
-  REGISTER_PARAMETER(Shape,        PID_Geometry);
+  REGISTER_PARAMETER(Shape,        PID_Surface);
   REGISTER_PARAMETER(Int,          PID_MinNumKnots);
   REGISTER_PARAMETER(Bool,         PID_ApproxNodes);
   REGISTER_PARAMETER(Real,         PID_ApproxLambda);
@@ -111,7 +111,7 @@ void asiData_RePatchNode::SetName(const TCollection_ExtendedString& name)
 //! \return stored geometry.
 Handle(Geom_Surface) asiData_RePatchNode::GetSurface() const
 {
-  TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+  TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Surface) )->GetShape();
   //
   if ( sh.IsNull() || sh.ShapeType() != TopAbs_FACE )
     return NULL;
@@ -132,7 +132,7 @@ void asiData_RePatchNode::SetSurface(const Handle(Geom_Surface)& surface)
     F = BRepBuilderAPI_MakeFace( surface, Precision::Confusion() );
 
   // Store surface.
-  ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(F);
+  ActParamTool::AsShape( this->Parameter(PID_Surface) )->SetShape(F);
 }
 
 //! \return stored min number of intermediate knots.

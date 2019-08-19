@@ -117,7 +117,7 @@ Handle(ActAPI_HParameterList) asiVisu_RePatchDataProvider::translationSources() 
     return out;
 
   // Add sensitive Parameters.
-  out << patch_n->Parameter(asiData_RePatchNode::PID_Geometry)
+  out << patch_n->Parameter(asiData_RePatchNode::PID_Surface)
       << patch_n->Parameter(asiData_RePatchNode::PID_MinNumKnots);
 
   return out;

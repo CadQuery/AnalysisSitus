@@ -84,9 +84,6 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
                                       const Handle(ActAPI_HParameterList)& outputs,
                                       const Handle(Standard_Transient)&    userData) const
 {
-  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
-                                               << this->GetName() );
-
   /* ============================
    *  Interpret input Parameters
    * ============================ */
@@ -106,6 +103,10 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   // Get Patch Node.
   Handle(asiData_RePatchNode)
     patchNode = Handle(asiData_RePatchNode)::DownCast( outputs->First()->GetNode() );
+
+  m_progress.SendLogMessage( LogNotice(Normal) << "Executing tree function '%1%2'..."
+                                               << this->GetName()
+                                               << patchNode->RootLabel().Tag() );
 
   // Get min number of knots.
   const int

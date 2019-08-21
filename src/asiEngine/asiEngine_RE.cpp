@@ -935,9 +935,11 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
   /* Collect output arguments. */
 
   // Get coedges.
+  const Handle(asiData_ReCoedgeNode)& coedgeLeft     = jointAdt.GetCoedgeLeft();
   const Handle(asiData_ReCoedgeNode)& coedgeLeftBot  = jointAdt.GetCoedgeLeftBot();
-  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
   const Handle(asiData_ReCoedgeNode)& coedgeLeftTop  = jointAdt.GetCoedgeLeftTop();
+  const Handle(asiData_ReCoedgeNode)& coedgeRight    = jointAdt.GetCoedgeRight();
+  const Handle(asiData_ReCoedgeNode)& coedgeRightBot = jointAdt.GetCoedgeRightBot();
   const Handle(asiData_ReCoedgeNode)& coedgeRightTop = jointAdt.GetCoedgeRightTop();
   //
   Handle(asiData_ReCoedgeNode) coedgeLeftBotOpp  = coedgeLeftBot  ->GetOpposite();
@@ -949,6 +951,12 @@ void asiEngine_RE::ReconnectSmoothenCornersFunc(const Handle(asiData_ReEdgeNode)
   // of coedges (e.g., naked edges have one coedge, while shared edges have
   // two coedges).
   ActParamStream outputs;
+  //
+  if ( !coedgeLeft.IsNull() )
+    outputs << coedgeLeft->Parameter(asiData_ReCoedgeNode::PID_SameSense);
+  //
+  if ( !coedgeRight.IsNull() )
+    outputs << coedgeRight->Parameter(asiData_ReCoedgeNode::PID_SameSense);
   //
   if ( !coedgeLeftBotOpp.IsNull() )
     outputs << coedgeLeftBotOpp->Parameter(asiData_ReCoedgeNode::PID_SameSense);

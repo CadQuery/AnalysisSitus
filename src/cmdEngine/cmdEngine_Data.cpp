@@ -36,6 +36,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_AttrFaceColor.h>
+#include <asiAlgo_FileDumper.h>
 #include <asiAlgo_Utils.h>
 
 // asiUI includes
@@ -46,6 +47,9 @@
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
+
+// Active Data includes
+#include <ActData_GraphToDot.h>
 
 //-----------------------------------------------------------------------------
 
@@ -749,6 +753,34 @@ int ENGINE_GetParamShape(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DumpExecutionGraphDot(const Handle(asiTcl_Interp)& interp,
+                                 int                          argc,
+                                 const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TCollection_AsciiString graphRepr = ActData_GraphToDot::Convert(cmdEngine::model);
+
+  // Dump to file.
+  asiAlgo_FileDumper FILE;
+  //
+  if ( !FILE.Open(argv[1]) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot save to file %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+  //
+  FILE.Dump(graphRepr);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -869,4 +901,12 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t Returns shape from the Parameter <paramId> of the Data Node <nodeId>.",
     //
     __FILE__, group, ENGINE_GetParamShape);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-execution-graph-dot",
+    //
+    "dump-execution-graph-dot filename\n"
+    "\t Dumps execution graph of the project to DOT file (Graphviz).",
+    //
+    __FILE__, group, ENGINE_DumpExecutionGraphDot);
 }

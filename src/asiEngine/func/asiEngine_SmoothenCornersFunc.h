@@ -88,6 +88,12 @@ public:
     return false;
   }
 
+  //! \return human-friendly function name.
+  virtual const char* GetName() const
+  {
+    return "C";
+  }
+
 private:
 
   //! Executes Tree Function on the given input and output arguments.

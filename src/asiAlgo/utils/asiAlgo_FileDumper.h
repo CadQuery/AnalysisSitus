@@ -34,6 +34,9 @@
 // asiAlgo includes
 #include <asiAlgo.h>
 
+// OpenCascade includes
+#include <TCollection_AsciiString.hxx>
+
 // STD includes
 #include <fstream>
 
@@ -58,6 +61,9 @@ public:
 
   asiAlgo_EXPORT bool
     Open(const std::string& filename);
+
+  asiAlgo_EXPORT void
+    Dump(const TCollection_AsciiString& msg);
 
   asiAlgo_EXPORT void
     Dump(const std::string& msg);

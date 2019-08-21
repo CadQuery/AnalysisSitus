@@ -98,6 +98,16 @@ bool asiAlgo_FileDumper::Open(const std::string& filename)
 
 //! Dumps the passed message to the target file.
 //! \param msg [in] message to dump.
+void asiAlgo_FileDumper::Dump(const TCollection_AsciiString& msg)
+{
+  if ( !m_FILE.is_open() )
+    return;
+
+  m_FILE << msg.ToCString() << QRDUMP_NL << QRDUMP_NL;
+}
+
+//! Dumps the passed message to the target file.
+//! \param msg [in] message to dump.
 void asiAlgo_FileDumper::Dump(const std::string& msg)
 {
   if ( !m_FILE.is_open() )

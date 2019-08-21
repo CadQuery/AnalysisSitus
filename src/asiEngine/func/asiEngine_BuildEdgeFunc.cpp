@@ -64,12 +64,16 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
                                      const Handle(ActAPI_HParameterList)& outputs,
                                      const Handle(Standard_Transient)&    userData) const
 {
-  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
-                                               << this->GetName() );
+  asiEngine_NotUsed(outputs);
+  asiEngine_NotUsed(userData);
 
   // Get Edge Node.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );
+
+  m_progress.SendLogMessage( LogNotice(Normal) << "Executing tree function '%1%2'..."
+                                               << this->GetName()
+                                               << edgeNode->RootLabel().Tag() );
 
   // Approximate with parametric curve.
   std::vector<gp_XYZ> pts;

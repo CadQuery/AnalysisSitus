@@ -65,12 +65,19 @@ int asiEngine_SmoothenPatchesFunc::execute(const Handle(ActAPI_HParameterList)& 
                                            const Handle(ActAPI_HParameterList)& outputs,
                                            const Handle(Standard_Transient)&    userData) const
 {
+  asiEngine_NotUsed(outputs);
+  asiEngine_NotUsed(userData);
+
   // Get transition edge.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );
   //
   Handle(Geom_BSplineCurve)
     edgeCurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
+
+  m_progress.SendLogMessage( LogNotice(Normal) << "Executing tree function '%1%2'..."
+                                               << this->GetName()
+                                               << edgeNode->RootLabel().Tag() );
 
   // Get left patch.
   Handle(asiData_RePatchNode)

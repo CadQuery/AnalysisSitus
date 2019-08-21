@@ -115,15 +115,16 @@ int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& 
 {
   asiEngine_NotUsed(outputs); // All the job is done by service API.
 
-  m_progress.SendLogMessage( LogNotice(Normal) << "Tree function '%1'."
-                                               << this->GetName() );
-
   // Get Data Model.
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
 
   // Get edge in question.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->First()->GetNode() );
+
+  m_progress.SendLogMessage( LogNotice(Normal) << "Executing tree function '%1%2'..."
+                                               << this->GetName()
+                                               << edgeNode->RootLabel().Tag() );
 
   // Initialize utility to extract local topology of an edge.
   asiEngine_PatchJointAdaptor jointAdt(M, m_progress/*, m_plotter*/);
@@ -151,6 +152,7 @@ ActAPI_ParameterTypeStream
 
 bool asiEngine_SmoothenCornersFunc::validateOutput(const Handle(ActAPI_HParameterList)& outputs) const
 {
+  asiEngine_NotUsed(outputs);
   return true;
 }
 

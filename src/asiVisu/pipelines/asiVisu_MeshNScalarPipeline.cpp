@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 13 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,9 @@
 // Visualization includes
 #include <asiVisu_MeshNScalarFilter.h>
 #include <asiVisu_MeshResultUtils.h>
-#include <asiVisu_MeshSource.h>
 #include <asiVisu_MeshUtils.h>
 #include <asiVisu_NodeInfo.h>
+#include <asiVisu_TriangulationSource.h>
 
 // Active Data includes
 #include <ActData_MeshParameter.h>
@@ -59,7 +59,7 @@
 //! Creates new Pipeline instance.
 asiVisu_MeshNScalarPipeline::asiVisu_MeshNScalarPipeline()
   : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                   vtkSmartPointer<vtkActor>::New() )
+                      vtkSmartPointer<vtkActor>::New() )
 {
   /* ========================
    *  Prepare custom filters
@@ -100,8 +100,10 @@ void asiVisu_MeshNScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& t
 
   if ( aMeshPrv->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer<asiVisu_MeshSource> aMeshSource = vtkSmartPointer<asiVisu_MeshSource>::New();
-    aMeshSource->SetInputMesh( aMeshPrv->GetMeshDS() );
+    vtkSmartPointer<asiVisu_TriangulationSource>
+      aMeshSource = vtkSmartPointer<asiVisu_TriangulationSource>::New();
+    //
+    aMeshSource->SetInputTriangulation( aMeshPrv->GetTriangulation() );
 
     asiVisu_MeshNScalarFilter*
       aScFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
@@ -123,24 +125,24 @@ void asiVisu_MeshNScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& t
 
 //! Callback for AddToRenderer base routine. Good place to adjust visualization
 //! properties of the pipeline's actor.
-void asiVisu_MeshNScalarPipeline::addToRendererCallback(vtkRenderer*)
+void asiVisu_MeshNScalarPipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToGouraud();
 }
 
 //! Callback for RemoveFromRenderer base routine.
-void asiVisu_MeshNScalarPipeline::removeFromRendererCallback(vtkRenderer*)
+void asiVisu_MeshNScalarPipeline::callback_remove_from_renderer(vtkRenderer*)
 {
 }
 
 //! Callback for Update routine.
-void asiVisu_MeshNScalarPipeline::updateCallback()
+void asiVisu_MeshNScalarPipeline::callback_update()
 {
   asiVisu_MeshNScalarFilter*
     aScFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
   aScFilter->Update();
   double aMinScalar = aScFilter->GetMinScalar(),
-                aMaxScalar = aScFilter->GetMaxScalar();
+         aMaxScalar = aScFilter->GetMaxScalar();
 
   if ( Abs(aMinScalar) == VTK_FLOAT_MAX && Abs(aMaxScalar) == VTK_FLOAT_MAX )
     aMinScalar = aMaxScalar = 0.0;
@@ -152,6 +154,6 @@ void asiVisu_MeshNScalarPipeline::updateCallback()
     doScalarInterpolation = true;
 
   asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_MESH_N_SCALARS,
-                                                aMinScalar, aMaxScalar,
-                                                doScalarInterpolation);
+                                                 aMinScalar, aMaxScalar,
+                                                 doScalarInterpolation);
 }

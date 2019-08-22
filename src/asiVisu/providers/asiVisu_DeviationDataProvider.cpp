@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 22 August 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,67 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+// Own include
+#include <asiVisu_DeviationDataProvider.h>
 
-// asiVisu includes
-#include <asiVisu_Pipeline.h>
-#include <asiVisu_MeshNScalarDataProvider.h>
+// Active Data includes
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+asiVisu_DeviationDataProvider::asiVisu_DeviationDataProvider(const Handle(asiData_DeviationNode)& N)
+: asiVisu_MeshNScalarDataProvider()
 {
-public:
+  m_node  = N;
+  m_param = ActParamTool::AsTriangulation( N->Parameter(asiData_DeviationNode::PID_Mesh) );
+}
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+//-----------------------------------------------------------------------------
 
-public:
+Handle(HIntArray) asiVisu_DeviationDataProvider::GetNodeIDs() const
+{
+  return ActParamTool::AsIntArray( m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldIds) )->GetArray();
+}
 
-  asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
+//-----------------------------------------------------------------------------
 
-public:
-
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
-
-private:
-
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
-
-private:
-
-  //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&);
-
-protected:
-
-  //! Internally used filters.
-  enum FilterId
-  {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
-  };
-
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
-protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
-
-};
-
-#endif
+Handle(HRealArray) asiVisu_DeviationDataProvider::GetNodeScalars() const
+{
+  return ActParamTool::AsRealArray( m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldValues) )->GetArray();
+}

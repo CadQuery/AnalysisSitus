@@ -36,6 +36,12 @@
 
 //-----------------------------------------------------------------------------
 
+asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider()
+: asiVisu_DataProvider ()
+{}
+
+//-----------------------------------------------------------------------------
+
 asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& P)
 : asiVisu_DataProvider ( ),
   m_node               ( P->GetNode() ),

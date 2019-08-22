@@ -43,6 +43,7 @@
 #include <asiVisu_Utils.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckDeviations.h>
 #include <asiAlgo_Utils.h>
 
 // Active Data includes
@@ -210,6 +211,56 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 
   // Return the just created Node
   return geom_n;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_Part::CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode)
+{
+  Handle(asiData_DeviationNode) devNode;
+  return this->CheckDeviation(pcNode, devNode);
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiEngine_Part::CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode,
+                                 Handle(asiData_DeviationNode)&        devNode)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = m_model->GetPartNode();
+
+  // Check deviations.
+  asiAlgo_CheckDeviations checkDeviations( partNode->GetShape(),
+                                           pcNode->GetPoints(),
+                                           m_progress,
+                                           m_plotter );
+  //
+  if ( !checkDeviations.Perform() )
+    return false;
+
+  // Create Deviation Node.
+  Handle(ActAPI_INode) devNodeBase = asiData_DeviationNode::Instance();
+  m_model->GetDeviationPartition()->AddNode(devNodeBase);
+
+  // Initialize.
+  devNode = Handle(asiData_DeviationNode)::DownCast(devNodeBase);
+  //
+  devNode->Init();
+  devNode->SetName("Deviation");
+
+  // Store deviations.
+  devNode->SetMeshWithScalars( checkDeviations.GetResult() );
+
+  // Add Deviation Node as a child of the Part Node.
+  partNode->AddChildNode(devNode);
+
+  // Actualize presentation.
+  if ( m_prsMgr )
+    m_prsMgr->Actualize(devNode);
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------

@@ -115,6 +115,11 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
   typeArr->SetNumberOfComponents(1);
   polyOutput->GetCellData()->AddArray(typeArr);
 
+  // Array for mesh node IDs
+  vtkSmartPointer<vtkIntArray> nodeIDsArr = asiVisu_Utils::InitIntArray(ARRNAME_MESH_NODE_IDS);
+  nodeIDsArr->SetNumberOfComponents(1);
+  polyOutput->GetPointData()->AddArray(nodeIDsArr);
+
   // Add array for mesh element IDs
   vtkSmartPointer<vtkIdTypeArray> faceIDsArr = vtkSmartPointer<vtkIdTypeArray>::New();
   faceIDsArr->SetName(ARRNAME_MESH_ELEM_IDS);
@@ -285,6 +290,12 @@ vtkIdType
     // Push the point into VTK data set
     resPid = points->InsertNextPoint( node.X(), node.Y(), node.Z() );
     m_regPoints.Bind(nodeID, resPid);
+
+    // Access array of IDs
+    vtkIntArray*
+      nodeIDsArr = vtkIntArray::SafeDownCast( polyData->GetPointData()->GetArray(ARRNAME_MESH_NODE_IDS) );
+    //
+    nodeIDsArr->InsertNextValue(nodeID);
   }
   else
     resPid = m_regPoints.Find(nodeID);

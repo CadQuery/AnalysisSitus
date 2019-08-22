@@ -130,6 +130,7 @@ set (presentations_H_FILES
   presentations/asiVisu_ContourPrs.h
   presentations/asiVisu_CurvatureCombsPrs.h
   presentations/asiVisu_DefaultPrs.h
+  presentations/asiVisu_DeviationPrs.h
   presentations/asiVisu_GeomBoundaryEdgesPrs.h
   presentations/asiVisu_GeomCurvePrs.h
   presentations/asiVisu_GeomEdgePrs.h
@@ -163,6 +164,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_ContourPrs.cpp
   presentations/asiVisu_CurvatureCombsPrs.cpp
   presentations/asiVisu_DefaultPrs.cpp
+  presentations/asiVisu_DeviationPrs.cpp
   presentations/asiVisu_GeomBoundaryEdgesPrs.cpp
   presentations/asiVisu_GeomCurvePrs.cpp
   presentations/asiVisu_GeomEdgePrs.cpp
@@ -203,6 +205,7 @@ set (providers_H_FILES
   providers/asiVisu_CurvatureCombsDataProvider.h
   providers/asiVisu_CurveDataProvider.h
   providers/asiVisu_DataProvider.h
+  providers/asiVisu_DeviationDataProvider.h
   providers/asiVisu_EdgeDataProvider.h
   providers/asiVisu_FaceContourDataProvider.h
   providers/asiVisu_FaceDataProvider.h
@@ -216,6 +219,7 @@ set (providers_H_FILES
   providers/asiVisu_IVSurfaceDataProvider.h
   providers/asiVisu_LawDataProvider.h
   providers/asiVisu_MeshDataProvider.h
+  providers/asiVisu_MeshNScalarDataProvider.h
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_PointsFromListDataProvider.h
@@ -237,6 +241,7 @@ set (providers_CPP_FILES
   providers/asiVisu_ContourPointsDataProvider.cpp
   providers/asiVisu_ContourPolesDataProvider.cpp
   providers/asiVisu_DataProvider.cpp
+  providers/asiVisu_DeviationDataProvider.cpp
   providers/asiVisu_EdgeDataProvider.cpp
   providers/asiVisu_FaceContourDataProvider.cpp
   providers/asiVisu_FaceDataProvider.cpp

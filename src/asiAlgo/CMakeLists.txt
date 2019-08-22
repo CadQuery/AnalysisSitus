@@ -262,9 +262,11 @@ set (interop_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (mesh_H_FILES
+  mesh/asiAlgo_Mesh.h
   mesh/asiAlgo_MeshCheckInter.h
   mesh/asiAlgo_MeshComputeNorms.h
   mesh/asiAlgo_MeshConvert.h
+  mesh/asiAlgo_MeshField.h
   mesh/asiAlgo_MeshGen.h
   mesh/asiAlgo_MeshInfo.h
   mesh/asiAlgo_MeshInterPlane.h
@@ -349,12 +351,14 @@ set (points_CPP_FILES
 
 set (re_H_FILES
   re/asiAlgo_BuildCoonsSurf.h
+  re/asiAlgo_CheckDeviations.h
   re/asiAlgo_InterpolateSurfMesh.h
   re/asiAlgo_PatchJointAdaptor.h
   re/asiAlgo_PlateOnEdges.h
 )
 set (re_CPP_FILES
   re/asiAlgo_BuildCoonsSurf.cpp
+  re/asiAlgo_CheckDeviations.cpp
   re/asiAlgo_InterpolateSurfMesh.cpp
   re/asiAlgo_PatchJointAdaptor.cpp
   re/asiAlgo_PlateOnEdges.cpp

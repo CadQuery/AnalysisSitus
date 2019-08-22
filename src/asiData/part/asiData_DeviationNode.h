@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 22 August 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,66 +28,78 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+#ifndef asiData_DeviationNode_h
+#define asiData_DeviationNode_h
 
-// asiVisu includes
-#include <asiVisu_Pipeline.h>
-#include <asiVisu_MeshNScalarDataProvider.h>
+// asiData includes
+#include <asiData.h>
+
+// asiAlgo includes
+#include <asiAlgo_Mesh.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+//! This object holds the results of deviation check.
+class asiData_DeviationNode : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_DeviationNode, ActData_BaseNode)
+
+  // Automatic registration of Node type in global factory
+  DEFINE_NODE_FACTORY(asiData_DeviationNode, Instance)
 
 public:
 
-  asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
-
-public:
-
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
-
-private:
-
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
-
-private:
-
-  //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&);
-
-protected:
-
-  //! Internally used filters.
-  enum FilterId
+  //! IDs for the underlying Parameters.
+  enum ParamId
   {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
+  //-------------------------//
+    PID_Name,                //!< Name of the Node.
+    PID_Mesh,                //!< Mesh where distances were computed.
+    PID_DistanceFieldIds,    //!< Node ids to store distance field.
+    PID_DistanceFieldValues, //!< Scalar values associated with node ids.
+  //-------------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
+public:
+
+  asiData_EXPORT static Handle(ActAPI_INode)
+    Instance();
+
+// Generic naming support:
+public:
+
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
+
+public:
+
+  //! Stores mesh with associated distance field scalars.
+  //! \param[in] mesh mesh and fields to store.
+  asiData_EXPORT void
+    SetMeshWithScalars(const asiAlgo_Mesh& mesh);
 
 protected:
 
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
+  //! Allocation is allowed only via Instance() method.
+  asiData_EXPORT
+    asiData_DeviationNode();
 
 };
 

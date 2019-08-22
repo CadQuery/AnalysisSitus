@@ -41,15 +41,15 @@
 
 // asiVisu includes
 #include <asiVisu_CalculusLawPrs.h>
-#include <asiVisu_CurvatureCombsPrs.h>
-#include <asiVisu_GeomBoundaryEdgesPrs.h>
 #include <asiVisu_ContourPrs.h>
+#include <asiVisu_CurvatureCombsPrs.h>
+#include <asiVisu_DeviationPrs.h>
+#include <asiVisu_GeomBoundaryEdgesPrs.h>
 #include <asiVisu_GeomCurvePrs.h>
 #include <asiVisu_GeomEdgePrs.h>
 #include <asiVisu_GeomFaceContourPrs.h>
 #include <asiVisu_GeomFaceNormsPrs.h>
 #include <asiVisu_GeomFacePrs.h>
-#include <asiVisu_PartPrs.h>
 #include <asiVisu_GeomSurfPrs.h>
 #include <asiVisu_IVCurve2dPrs.h>
 #include <asiVisu_IVCurvePrs.h>
@@ -59,6 +59,7 @@
 #include <asiVisu_IVTessItemPrs.h>
 #include <asiVisu_IVTextItemPrs.h>
 #include <asiVisu_IVTopoItemPrs.h>
+#include <asiVisu_PartPrs.h>
 #include <asiVisu_ReCoedgePrs.h>
 #include <asiVisu_ReEdgePrs.h>
 #include <asiVisu_RePatchPrs.h>
@@ -192,6 +193,7 @@ int main(int argc, char** argv)
   //---------------------------------------------------------------------------
 
   REGISTER_PRESENTATION(asiVisu_PartPrs)
+  REGISTER_PRESENTATION(asiVisu_DeviationPrs)
   REGISTER_PRESENTATION(asiVisu_GeomBoundaryEdgesPrs)
   REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
   REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)

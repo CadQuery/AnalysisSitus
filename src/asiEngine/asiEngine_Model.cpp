@@ -78,6 +78,7 @@ REGISTER_NODE_TYPE(asiData_TolerantShapesNode)
 REGISTER_NODE_TYPE(asiData_TolerantRangeNode)
 REGISTER_NODE_TYPE(asiData_MetadataNode)
 REGISTER_NODE_TYPE(asiData_ElemMetadataNode)
+REGISTER_NODE_TYPE(asiData_DeviationNode)
 //
 REGISTER_NODE_TYPE(asiData_TriangulationNode)
 REGISTER_NODE_TYPE(asiData_TessNode)
@@ -296,6 +297,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_VertexNode>,         Partition_Vertex);
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantShapesNode>, Partition_TolerantShapes);
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
+  REGISTER_PARTITION(asiData_Partition<asiData_DeviationNode>,      Partition_Deviation);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,           Partition_Tessellation);

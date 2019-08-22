@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 22 August 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,66 +28,41 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+#ifndef asiVisu_DeviationDataProvider_h
+#define asiVisu_DeviationDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_Pipeline.h>
 #include <asiVisu_MeshNScalarDataProvider.h>
 
-//-----------------------------------------------------------------------------
-// Pipeline
+// asiData includes
+#include <asiData_DeviationNode.h>
+
 //-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+//! Data provider for deviation fields.
+class asiVisu_DeviationDataProvider : public asiVisu_MeshNScalarDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_DeviationDataProvider, asiVisu_MeshNScalarDataProvider)
 
 public:
 
+  //! Ctor accepting Triangulation Parameter.
+  //! \param[in] P parameter holding triangulation to visualize.
   asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
+    asiVisu_DeviationDataProvider(const Handle(asiData_DeviationNode)& P);
 
 public:
 
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
+  //! \return ids of the mesh nodes having associated scalars.
+  virtual Handle(HIntArray)
+    GetNodeIDs() const;
 
-private:
-
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
-
-private:
-
-  //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&);
-
-protected:
-
-  //! Internally used filters.
-  enum FilterId
-  {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
-  };
-
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
-protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
+  //! \return array of scalars.
+  virtual Handle(HRealArray)
+    GetNodeScalars() const;
 
 };
 

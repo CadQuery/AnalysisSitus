@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 22 August 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,66 +28,44 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+#ifndef asiAlgo_MeshField_h
+#define asiAlgo_MeshField_h
 
-// asiVisu includes
-#include <asiVisu_Pipeline.h>
-#include <asiVisu_MeshNScalarDataProvider.h>
+// asiAlgo includes
+#include <asiAlgo.h>
+
+// OCCT includes
+#include <NCollection_DataMap.hxx>
 
 //-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+//! Base class for a field (scalar, vector) associated with mesh.
+class asiAlgo_MeshField : public Standard_Transient
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_MeshField, Standard_Transient)
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! Scalar field associated mesh nodes.
+class asiAlgo_MeshNScalarField : public asiAlgo_MeshField
+{
+public:
+
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_MeshNScalarField, asiAlgo_MeshField)
 
 public:
 
-  asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
+  typedef NCollection_DataMap<int, double> t_data; //!< Node id versus scalar.
 
 public:
 
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
-
-private:
-
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
-
-private:
-
-  //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&);
-
-protected:
-
-  //! Internally used filters.
-  enum FilterId
-  {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
-  };
-
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
-protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
+  t_data data; //!< Scalar values.
 
 };
 

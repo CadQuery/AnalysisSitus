@@ -28,6 +28,7 @@ set (part_H_FILES
   part/asiData_BVHParameter.h
   part/asiData_CurvatureCombsNode.h
   part/asiData_CurveNode.h
+  part/asiData_DeviationNode.h
   part/asiData_EdgeNode.h
   part/asiData_ElemMetadataNode.h
   part/asiData_FaceContourNode.h
@@ -51,6 +52,7 @@ set (part_CPP_FILES
   part/asiData_BVHParameter.cpp
   part/asiData_CurvatureCombsNode.cpp
   part/asiData_CurveNode.cpp
+  part/asiData_DeviationNode.cpp
   part/asiData_EdgeNode.cpp
   part/asiData_ElemMetadataNode.cpp
   part/asiData_FaceContourNode.cpp

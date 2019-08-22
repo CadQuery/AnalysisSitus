@@ -58,7 +58,7 @@ public:
   //! Structure representing a single facet.
   struct t_facet
   {
-    t_facet() : FaceIndex(-1) {}
+    t_facet()               : FaceIndex(-1) {}
     t_facet(const int fidx) : FaceIndex(fidx) {}
 
     BVH_Vec4d P0, P1, P2; //!< Triangle nodes.

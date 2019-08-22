@@ -32,6 +32,7 @@
 #include <cmdRE.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckDeviations.h>
 #include <asiAlgo_Cloudify.h>
 #include <asiAlgo_MeshInterPlane.h>
 #include <asiAlgo_PlaneOnPoints.h>
@@ -1020,9 +1021,9 @@ int RE_CheckSurfDeviation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int RE_CheckPointsDeviation(const Handle(asiTcl_Interp)& interp,
-                            int                          argc,
-                            const char**                 argv)
+int RE_CheckDeviation(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
 {
   if ( argc != 2 )
   {
@@ -1041,10 +1042,8 @@ int RE_CheckPointsDeviation(const Handle(asiTcl_Interp)& interp,
   //
   Handle(asiData_IVPointSetNode)
     pointsNode = Handle(asiData_IVPointSetNode)::DownCast(node);
-  //
-  Handle(asiAlgo_BaseCloud<double>) pts = pointsNode->GetPoints();
 
-  // Get BVH for the working part.
+  // Get working part.
   Handle(asiData_PartNode) partNode = cmdRE::model->GetPartNode();
   //
   if ( partNode.IsNull() || !partNode->IsWellFormed() )
@@ -1052,58 +1051,24 @@ int RE_CheckPointsDeviation(const Handle(asiTcl_Interp)& interp,
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
     return TCL_ERROR;
   }
+
+  // Check deviations.
+  asiEngine_Part partApi( cmdRE::model,
+                          cmdRE::cf->ViewerPart->PrsMgr(),
+                          interp->GetProgress(),
+                          interp->GetPlotter() );
   //
-  Handle(asiAlgo_BVHFacets) bvh = partNode->GetBVH();
-  //
-  if ( bvh.IsNull() )
+  cmdRE::model->OpenCommand();
   {
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Build BVH for part.");
-
-    cmdRE::model->OpenCommand();
+    if ( !partApi.CheckDeviation(pointsNode) )
     {
-      bvh = asiEngine_Part(cmdRE::model).BuildBVH();
-    }
-    cmdRE::model->CommitCommand();
-  }
+      cmdRE::model->AbortCommand();
 
-  // Projection tool.
-  asiAlgo_ProjectPointOnMesh projectTool(bvh);
-
-  // Loop over the point cloud to check the distances.
-  double minScalar = DBL_MAX, maxScalar = -DBL_MAX;
-  int minScalarIdx = -1, maxScalarIdx = -1;
-  //
-  for ( int k = 0; k < pts->GetNumberOfElements(); ++k )
-  {
-    gp_Pnt       P     = pts->GetElement(k);
-    gp_Pnt       Pproj = projectTool.Perform(P);
-    const double dist  = P.Distance(Pproj);
-    //
-    if ( dist < minScalar )
-    {
-      minScalar    = dist;
-      minScalarIdx = k;
-    }
-    //
-    if ( dist > maxScalar )
-    {
-      maxScalar    = dist;
-      maxScalarIdx = k;
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to check deviations.");
+      return TCL_ERROR;
     }
   }
-
-  if ( minScalarIdx == -1 || maxScalarIdx == -1 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find min/max-distance points.");
-    return TCL_ERROR;
-  }
-
-  // Render the results.
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Min distance: %1." << minScalar);
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Max distance: %1." << maxScalar);
-  //
-  interp->GetPlotter().REDRAW_POINT("minScalarPt", pts->GetElement(minScalarIdx), Color_Green);
-  interp->GetPlotter().REDRAW_POINT("maxScalarPt", pts->GetElement(maxScalarIdx), Color_Red);
+  cmdRE::model->CommitCommand();
 
   return TCL_OK;
 }
@@ -1733,12 +1698,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, RE_CheckSurfDeviation);
 
   //-------------------------------------------------------------------------//
-  interp->AddCommand("re-check-points-deviation",
+  interp->AddCommand("re-check-deviation",
     //
-    "re-check-points-deviation pointsName\n"
-    "\t Checks deviation between the given point cloud and the reference CAD model.",
+    "re-check-deviation pointsName\n"
+    "\t Checks deviation between the given point cloud and the active CAD part.",
     //
-    __FILE__, group, RE_CheckPointsDeviation);
+    __FILE__, group, RE_CheckDeviation);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",

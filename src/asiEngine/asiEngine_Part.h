@@ -72,6 +72,13 @@ public:
   asiEngine_EXPORT Handle(asiData_PartNode)
     CreatePart();
 
+  asiEngine_EXPORT bool
+    CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode);
+
+  asiEngine_EXPORT bool
+    CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode,
+                   Handle(asiData_DeviationNode)&        devNode);
+
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     CreateMetadata();
 

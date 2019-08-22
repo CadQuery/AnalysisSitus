@@ -50,6 +50,10 @@ public:
 
 public:
 
+  //! Default ctor.
+  asiVisu_EXPORT
+    asiVisu_TriangulationDataProvider();
+
   //! Ctor accepting Triangulation Parameter.
   //! \param[in] P parameter holding triangulation to visualize.
   asiVisu_EXPORT

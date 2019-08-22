@@ -37,6 +37,7 @@
 // asiData includes
 #include <asiData_BoundaryEdgesNode.h>
 #include <asiData_CurvatureCombsNode.h>
+#include <asiData_DeviationNode.h>
 #include <asiData_IVCurve2dNode.h>
 #include <asiData_IVCurveNode.h>
 #include <asiData_IVCurves2dNode.h>
@@ -262,6 +263,13 @@ public:
   Handle(asiData_Partition<asiData_TolerantRangeNode>) GetTolerantRangePartition() const
   {
     return Handle(asiData_Partition<asiData_TolerantRangeNode>)::DownCast( this->Partition(Partition_TolerantRange) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Deviation Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_DeviationNode>) GetDeviationPartition() const
+  {
+    return Handle(asiData_Partition<asiData_DeviationNode>)::DownCast( this->Partition(Partition_Deviation) );
   }
 
 //-----------------------------------------------------------------------------
@@ -523,6 +531,7 @@ protected:
     Partition_Vertex,
     Partition_TolerantShapes,
     Partition_TolerantRange,
+    Partition_Deviation,
   //---------------------------------------------------------------------------
     Partition_Triangulation,
     Partition_Tessellation,

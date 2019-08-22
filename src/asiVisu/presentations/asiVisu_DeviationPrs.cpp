@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 22 August 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,67 +28,42 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+// Own include
+#include <asiVisu_DeviationPrs.h>
 
 // asiVisu includes
-#include <asiVisu_Pipeline.h>
-#include <asiVisu_MeshNScalarDataProvider.h>
+#include <asiVisu_DeviationDataProvider.h>
+#include <asiVisu_MeshNScalarPipeline.h>
+#include <asiVisu_Utils.h>
+
+// VTK includes
+#include <vtkMapper.h>
+#include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+//! Creates a Presentation object for the passed Node.
+//! \param[in] N Node to create a Presentation for.
+asiVisu_DeviationPrs::asiVisu_DeviationPrs(const Handle(ActAPI_INode)& N)
+: asiVisu_DefaultPrs(N)
 {
-public:
+  Handle(asiData_DeviationNode)
+    devNode = Handle(asiData_DeviationNode)::DownCast(N);
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+  // Create Data Provider.
+  Handle(asiVisu_DeviationDataProvider) DP = new asiVisu_DeviationDataProvider(devNode);
 
-public:
+  // Create Pipeline.
+  this->addPipeline        ( Pipeline_Main, new asiVisu_MeshNScalarPipeline );
+  this->assignDataProvider ( Pipeline_Main, DP );
+}
 
-  asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
+//-----------------------------------------------------------------------------
 
-public:
-
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
-
-private:
-
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
-
-private:
-
-  //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&);
-
-  //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&);
-
-protected:
-
-  //! Internally used filters.
-  enum FilterId
-  {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
-  };
-
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
-protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
-
-};
-
-#endif
+//! Factory method for Presentation.
+//! \param[in] N Node to create a Presentation for.
+//! \return new Presentation instance.
+Handle(asiVisu_Prs) asiVisu_DeviationPrs::Instance(const Handle(ActAPI_INode)& N)
+{
+  return new asiVisu_DeviationPrs(N);
+}

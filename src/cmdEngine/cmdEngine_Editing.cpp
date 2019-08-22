@@ -3043,7 +3043,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("rotate-qn",
     //
     "rotate-qn Vx Vy Vz angleDeg\n"
-    "\t Rotates CAD part applying the passed quaternion defined by the given"
+    "\t Rotates CAD part applying the passed quaternion defined by the given\n"
     "\t axis of rotation (Vx, Vy, Vz) and the angle in degrees.",
     //
     __FILE__, group, ENGINE_RotateQn);

@@ -45,7 +45,7 @@ class asiVisu_MeshEVectorDataProvider : public asiVisu_MeshDataProvider
 {
 public:
 
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshEVectorDataProvider,asiVisu_MeshDataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshEVectorDataProvider, asiVisu_MeshDataProvider)
 
 public:
 

@@ -81,19 +81,20 @@ bool asiAlgo_CheckDeviations::Perform()
   {
     gp_Pnt P      = m_points->GetElement(k);
     gp_Pnt P_proj = pointToMesh.Perform(P);
+    gp_Vec V      = P.XYZ() - P_proj.XYZ();
 
     // Get distance.
-    const double d = P.Distance(P_proj);
+    const double ud = V.Magnitude();
     //
-    if ( d < minScalar )
+    if ( ud < minScalar )
     {
-      minScalar    = d;
+      minScalar    = ud;
       minScalarIdx = k;
     }
     //
-    if ( d > maxScalar )
+    if ( ud > maxScalar )
     {
-      maxScalar    = d;
+      maxScalar    = ud;
       maxScalarIdx = k;
     }
 
@@ -106,6 +107,14 @@ bool asiAlgo_CheckDeviations::Perform()
     //
     const asiAlgo_BVHFacets::t_facet& facet = m_bvh->GetFacet(facetInd);
 
+    // Check normal to derive signed distance.
+    double sd;
+    //
+    if ( facet.N.Dot(V) < 0 )
+      sd = -ud;
+    else
+      sd = ud;
+
     // Convert facet index to triangle index.
     const int triangleId = facet.FaceIndex;
 
@@ -116,9 +125,9 @@ bool asiAlgo_CheckDeviations::Perform()
     triangle.Get(n1, n2, n3);
 
     // Store scalars in the field.
-    field->data.Bind(n1, d);
-    field->data.Bind(n2, d);
-    field->data.Bind(n3, d);
+    field->data.Bind(n1, sd);
+    field->data.Bind(n2, sd);
+    field->data.Bind(n3, sd);
 
     // Progress notifier.
     m_progress.StepProgress(1);

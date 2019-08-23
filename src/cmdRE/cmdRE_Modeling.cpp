@@ -1052,6 +1052,8 @@ int RE_CheckDeviation(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  Handle(asiData_DeviationNode) devNode;
+
   // Check deviations.
   asiEngine_Part partApi( cmdRE::model,
                           cmdRE::cf->ViewerPart->PrsMgr(),
@@ -1060,7 +1062,7 @@ int RE_CheckDeviation(const Handle(asiTcl_Interp)& interp,
   //
   cmdRE::model->OpenCommand();
   {
-    if ( !partApi.CheckDeviation(pointsNode) )
+    if ( !partApi.CheckDeviation(pointsNode, devNode) )
     {
       cmdRE::model->AbortCommand();
 
@@ -1069,6 +1071,14 @@ int RE_CheckDeviation(const Handle(asiTcl_Interp)& interp,
     }
   }
   cmdRE::model->CommitCommand();
+
+  // Actualize presentation.
+  if ( cmdRE::cf->ViewerPart )
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(devNode);
+
+  // Update Object Browser.
+  if ( cmdRE::cf->ObjectBrowser )
+    cmdRE::cf->ObjectBrowser->Populate();
 
   return TCL_OK;
 }

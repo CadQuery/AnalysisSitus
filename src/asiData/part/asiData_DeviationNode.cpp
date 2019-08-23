@@ -43,6 +43,7 @@ asiData_DeviationNode::asiData_DeviationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Triangulation, PID_Mesh);
   REGISTER_PARAMETER(IntArray,      PID_DistanceFieldIds);
   REGISTER_PARAMETER(RealArray,     PID_DistanceFieldValues);
+  REGISTER_PARAMETER(Real,          PID_Tolerance);
 }
 
 //! Returns new DETACHED instance of Surface Node ensuring its correct
@@ -56,11 +57,14 @@ Handle(ActAPI_INode) asiData_DeviationNode::Instance()
 //! Performs initial actions required to make Surface Node WELL-FORMED.
 void asiData_DeviationNode::Init()
 {
-  // Initialize name Parameter.
-  this->InitParameter(PID_Name, "Name");
+  // Initialize Parameters.
+  this->InitParameter(PID_Name,      "Name",      "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Tolerance, "Allowance", "", ParameterFlag_IsVisible, true);
 
   // Set default values.
   this->SetMeshWithScalars( asiAlgo_Mesh() );
+  //
+  ActParamTool::AsReal( this->Parameter(PID_Tolerance) )->SetValue(0.1);
 }
 
 //-----------------------------------------------------------------------------

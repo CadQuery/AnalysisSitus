@@ -52,6 +52,9 @@ public:
   virtual Handle(HRealArray)
     GetNodeScalars() const = 0;
 
+  virtual double
+    GetTolerance() const = 0;
+
 };
 
 #endif

@@ -56,3 +56,23 @@ Handle(HRealArray) asiVisu_DeviationDataProvider::GetNodeScalars() const
 {
   return ActParamTool::AsRealArray( m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldValues) )->GetArray();
 }
+
+//-----------------------------------------------------------------------------
+
+double asiVisu_DeviationDataProvider::GetTolerance() const
+{
+  return ActParamTool::AsReal( m_node->Parameter(asiData_DeviationNode::PID_Tolerance) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(ActAPI_HParameterList) asiVisu_DeviationDataProvider::translationSources() const
+{
+  ActAPI_ParameterStream out;
+  out << m_node->Parameter(asiData_DeviationNode::PID_Mesh)
+      << m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldIds)
+      << m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldValues)
+      << m_node->Parameter(asiData_DeviationNode::PID_Tolerance);
+
+  return out.List;
+}

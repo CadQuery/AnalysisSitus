@@ -34,6 +34,7 @@
 // asiVisu includes
 #include <asiVisu_DeviationDataProvider.h>
 #include <asiVisu_MeshNScalarPipeline.h>
+#include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_Utils.h>
 
 // VTK includes
@@ -56,6 +57,12 @@ asiVisu_DeviationPrs::asiVisu_DeviationPrs(const Handle(ActAPI_INode)& N)
   // Create Pipeline.
   this->addPipeline        ( Pipeline_Main, new asiVisu_MeshNScalarPipeline );
   this->assignDataProvider ( Pipeline_Main, DP );
+
+  // Initialize scalar bar.
+  m_scalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
+  asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget);
+
+  this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -66,4 +73,47 @@ asiVisu_DeviationPrs::asiVisu_DeviationPrs(const Handle(ActAPI_INode)& N)
 Handle(asiVisu_Prs) asiVisu_DeviationPrs::Instance(const Handle(ActAPI_INode)& N)
 {
   return new asiVisu_DeviationPrs(N);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for updating of Presentation pipelines invoked after the
+//! kernel update routine completes.
+void asiVisu_DeviationPrs::afterUpdatePipelines() const
+{
+  m_scalarBarWidget->On();
+
+  // Pipeline for shaded surface
+  Handle(asiVisu_MeshNScalarPipeline)
+    pl = Handle(asiVisu_MeshNScalarPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  // Initialize scalar bar Actor
+  m_scalarBarWidget->GetScalarBarActor()->SetLookupTable( pl->Mapper()->GetLookupTable() );
+  m_scalarBarWidget->GetScalarBarActor()->SetTitle("Deviation field");
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for rendering.
+//! \param theRenderer [in] renderer.
+void asiVisu_DeviationPrs::renderPipelines(vtkRenderer* renderer) const
+{
+  // Scalar bar
+  if ( !m_scalarBarWidget->GetCurrentRenderer() )
+  {
+    m_scalarBarWidget->SetInteractor( renderer->GetRenderWindow()->GetInteractor() );
+    m_scalarBarWidget->SetDefaultRenderer(renderer);
+    m_scalarBarWidget->SetCurrentRenderer(renderer);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for de-rendering.
+//! \param theRenderer [in] renderer.
+void asiVisu_DeviationPrs::deRenderPipelines(vtkRenderer* renderer) const
+{
+  asiVisu_NotUsed(renderer);
+
+  m_scalarBarWidget->Off();
 }

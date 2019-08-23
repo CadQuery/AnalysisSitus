@@ -64,6 +64,7 @@ public:
     PID_Mesh,                //!< Mesh where distances were computed.
     PID_DistanceFieldIds,    //!< Node ids to store distance field.
     PID_DistanceFieldValues, //!< Scalar values associated with node ids.
+    PID_Tolerance,           //!< Safety range.
   //-------------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };

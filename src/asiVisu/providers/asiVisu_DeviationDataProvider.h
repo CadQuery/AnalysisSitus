@@ -57,12 +57,24 @@ public:
 public:
 
   //! \return ids of the mesh nodes having associated scalars.
-  virtual Handle(HIntArray)
+  asiVisu_EXPORT virtual Handle(HIntArray)
     GetNodeIDs() const;
 
   //! \return array of scalars.
-  virtual Handle(HRealArray)
+  asiVisu_EXPORT virtual Handle(HRealArray)
     GetNodeScalars() const;
+
+  //! \return tolerance (safety range).
+  asiVisu_EXPORT virtual double
+    GetTolerance() const;
+
+protected:
+
+  //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process.
+  //! \return source Parameters.
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
 
 };
 

@@ -31,7 +31,7 @@
 // Own include
 #include <asiVisu_MeshNScalarPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_MeshNScalarFilter.h>
 #include <asiVisu_MeshResultUtils.h>
 #include <asiVisu_MeshUtils.h>
@@ -53,107 +53,173 @@
 #include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
-// Pipeline
+
+void getColorCorrespondingToValue(double val,
+                                  double min,
+                                  double max,
+                                  double toler,
+                                  double& r,
+                                  double& g,
+                                  double& b)
+
+{
+  static const int numColorNodes = 3;
+  double color[numColorNodes][3] =
+  {
+    0.0, 0.0, 1.0, // blue
+    1.0, 1.0, 1.0, // white
+    1.0, 0.0, 0.0  // red
+  };
+
+  if ( val > -toler && val < toler )
+  {
+    // Use middle color for values in the safety range.
+    r = color[1][0];
+    g = color[1][1];
+    b = color[1][2];
+  }
+  else if ( val < -toler )
+  {
+    double currFraction = (val - min) / (-toler - min);
+
+    r = color[0][0] * (1.0 - currFraction) + color[1][0] * currFraction;
+    g = color[0][1] * (1.0 - currFraction) + color[1][1] * currFraction;
+    b = color[0][2] * (1.0 - currFraction) + color[1][2] * currFraction;
+  }
+  else if ( val > toler )
+  {
+    double currFraction = (val - toler) / (max - toler);
+
+    r = color[1][0] * (1.0 - currFraction) + color[2][0] * currFraction;
+    g = color[1][1] * (1.0 - currFraction) + color[2][1] * currFraction;
+    b = color[1][2] * (1.0 - currFraction) + color[2][2] * currFraction;
+  }
+}
+
 //-----------------------------------------------------------------------------
 
-//! Creates new Pipeline instance.
 asiVisu_MeshNScalarPipeline::asiVisu_MeshNScalarPipeline()
-  : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                      vtkSmartPointer<vtkActor>::New() )
+//
+: asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
+                    vtkSmartPointer<vtkActor>::New() ),
+  m_fToler(0.)
 {
-  /* ========================
-   *  Prepare custom filters
-   * ======================== */
+  /* Prepare custom filters */
 
-  // Allocate filter populating scalar arrays
+  // Allocate filter populating scalar arrays.
   vtkSmartPointer<asiVisu_MeshNScalarFilter>
-    aScFilter = vtkSmartPointer<asiVisu_MeshNScalarFilter>::New();
+    scFilter = vtkSmartPointer<asiVisu_MeshNScalarFilter>::New();
 
-  // Allocate Normals Calculation filter
+  // Allocate Normals Calculation filter.
   vtkSmartPointer<vtkPolyDataNormals>
-    aNormalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
+    normalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
 
-  /* =========================
-   *  Register custom filters
-   * ========================= */
+  /* Register custom filters */
 
-  m_filterMap.Bind(Filter_NScalar, aScFilter);
-  m_filterMap.Bind(Filter_Normals, aNormalsFilter);
+  m_filterMap.Bind(Filter_NScalar, scFilter);
+  m_filterMap.Bind(Filter_Normals, normalsFilter);
 
-  // Append custom filters to the pipeline
+  // Append custom filters to the pipeline.
   this->append( m_filterMap.Find(Filter_NScalar) );
   this->append( m_filterMap.Find(Filter_Normals) );
 }
 
-//! Sets input data for the pipeline accepting Active Data entities.
-//! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
-//! DATA.
-//! \param theDataProvider [in] Data Provider.
-void asiVisu_MeshNScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& theDataProvider)
+//-----------------------------------------------------------------------------
+
+void asiVisu_MeshNScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& dp)
 {
   Handle(asiVisu_MeshNScalarDataProvider)
-    aMeshPrv = Handle(asiVisu_MeshNScalarDataProvider)::DownCast(theDataProvider);
+    meshDp = Handle(asiVisu_MeshNScalarDataProvider)::DownCast(dp);
 
-  /* ============================
-   *  Prepare polygonal data set
-   * ============================ */
-
-  if ( aMeshPrv->MustExecute( this->GetMTime() ) )
+  // Lazy update.
+  if ( meshDp->MustExecute( this->GetMTime() ) )
   {
+    // Prepare source.
     vtkSmartPointer<asiVisu_TriangulationSource>
-      aMeshSource = vtkSmartPointer<asiVisu_TriangulationSource>::New();
+      trisSource = vtkSmartPointer<asiVisu_TriangulationSource>::New();
     //
-    aMeshSource->SetInputTriangulation( aMeshPrv->GetTriangulation() );
+    trisSource->CollectEdgesModeOff();
+    trisSource->CollectVerticesModeOff();
+    trisSource->SetInputTriangulation( meshDp->GetTriangulation() );
 
+    // Initialize safety range.
+    m_fToler = meshDp->GetTolerance();
+
+    // Initialize scalars filter.
     asiVisu_MeshNScalarFilter*
-      aScFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
+      scFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
+    //
+    scFilter->SetScalarArrays( meshDp->GetNodeIDs(),
+                               meshDp->GetNodeScalars() );
 
-    aScFilter->SetScalarArrays( aMeshPrv->GetNodeIDs(),
-                                aMeshPrv->GetNodeScalars() );
-
-    // Complete pipeline
-    this->SetInputConnection( aMeshSource->GetOutputPort() );
+    // Complete pipeline.
+    this->SetInputConnection( trisSource->GetOutputPort() );
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
-    // entity to data object
-    asiVisu_NodeInfo::Store( aMeshPrv->GetNodeID(), this->Actor() );
+    // entity to data object.
+    asiVisu_NodeInfo::Store( meshDp->GetNodeID(), this->Actor() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
 
-//! Callback for AddToRenderer base routine. Good place to adjust visualization
-//! properties of the pipeline's actor.
+//-----------------------------------------------------------------------------
+
+void asiVisu_MeshNScalarPipeline::initLookupTable()
+{
+  // Get scalar filter to access the scalar range.
+  asiVisu_MeshNScalarFilter*
+    scFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
+  //
+  scFilter->Update();
+
+  // Get scalar range.
+  const double minScalar = scFilter->GetMinScalar();
+  const double maxScalar = scFilter->GetMaxScalar();
+  const double range     = maxScalar - minScalar;
+
+  // Extra variables.
+  const int numColors = 256;
+
+  // Build and initialize lookup table.
+  m_lookupTable = vtkSmartPointer<vtkLookupTable>::New();
+  //
+  m_lookupTable->SetTableRange(minScalar, maxScalar);
+  m_lookupTable->SetScaleToLinear();
+  m_lookupTable->SetNumberOfTableValues(numColors + 1);
+
+  // Populate table.
+  double r, g, b;
+  for ( int i = 0; i < numColors + 1; i++ )
+  {
+    const double val = minScalar + ( (double) i / numColors ) * range;
+    getColorCorrespondingToValue(val, minScalar, maxScalar, m_fToler, r, g, b);
+    m_lookupTable->SetTableValue(i, r, g, b);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_MeshNScalarPipeline::callback_add_to_renderer(vtkRenderer*)
 {
   this->Actor()->GetProperty()->SetInterpolationToGouraud();
 }
 
-//! Callback for RemoveFromRenderer base routine.
-void asiVisu_MeshNScalarPipeline::callback_remove_from_renderer(vtkRenderer*)
-{
-}
+//-----------------------------------------------------------------------------
 
-//! Callback for Update routine.
+void asiVisu_MeshNScalarPipeline::callback_remove_from_renderer(vtkRenderer*)
+{}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_MeshNScalarPipeline::callback_update()
 {
-  asiVisu_MeshNScalarFilter*
-    aScFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
-  aScFilter->Update();
-  double aMinScalar = aScFilter->GetMinScalar(),
-         aMaxScalar = aScFilter->GetMaxScalar();
+  // Initialize lookup table.
+  this->initLookupTable();
 
-  if ( Abs(aMinScalar) == VTK_FLOAT_MAX && Abs(aMaxScalar) == VTK_FLOAT_MAX )
-    aMinScalar = aMaxScalar = 0.0;
-
-  bool doScalarInterpolation;
-  if ( Abs(aMaxScalar - aMinScalar) < Precision::Confusion() )
-    doScalarInterpolation = false;
-  else
-    doScalarInterpolation = true;
-
-  asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, ARRNAME_MESH_N_SCALARS,
-                                                 aMinScalar, aMaxScalar,
-                                                 doScalarInterpolation);
+  // Bind lookup table to mapper.
+  asiVisu_MeshResultUtils::InitPointScalarMapper(m_mapper, m_lookupTable,
+                                                 ARRNAME_MESH_N_SCALARS,
+                                                 true);
 }

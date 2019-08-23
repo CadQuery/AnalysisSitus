@@ -38,6 +38,9 @@
 // asiData includes
 #include <asiData_DeviationNode.h>
 
+// VTK includes
+#include <vtkScalarBarWidget.h>
+
 //-----------------------------------------------------------------------------
 
 //! Presentation class for Deviation Node.
@@ -68,6 +71,17 @@ private:
 
   //! Allocation is allowed only via Instance() method.
   asiVisu_DeviationPrs(const Handle(ActAPI_INode)& N);
+
+// Callbacks:
+private:
+
+  virtual void afterUpdatePipelines () const;
+  virtual void renderPipelines      (vtkRenderer* renderer) const;
+  virtual void deRenderPipelines    (vtkRenderer* renderer) const;
+
+private:
+
+  vtkSmartPointer<vtkScalarBarWidget> m_scalarBarWidget; //!< Scalar bar.
 
 };
 

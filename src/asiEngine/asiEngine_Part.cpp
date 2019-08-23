@@ -256,10 +256,6 @@ bool
   // Add Deviation Node as a child of the Part Node.
   partNode->AddChildNode(devNode);
 
-  // Actualize presentation.
-  if ( m_prsMgr )
-    m_prsMgr->Actualize(devNode);
-
   return true;
 }
 

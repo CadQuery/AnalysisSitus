@@ -35,8 +35,9 @@
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_MeshNScalarDataProvider.h>
 
-//-----------------------------------------------------------------------------
-// Pipeline
+// VTK includes
+#include <vtkLookupTable.h>
+
 //-----------------------------------------------------------------------------
 
 //! Visualization pipeline for meshes with nodal scalars.
@@ -49,19 +50,36 @@ public:
 
 public:
 
+  //! Ctor.
   asiVisu_EXPORT
     asiVisu_MeshNScalarPipeline();
 
 public:
 
+  //! Sets input data for the pipeline accepting Active Data entities.
+  //! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
+  //! DATA.
+  //! \param[in] dp Data Provider.
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dp);
 
+protected:
+
+  //! Initializes lookup table for scalar mapping.
+  asiVisu_EXPORT void
+    initLookupTable();
+
 private:
 
-  virtual void callback_add_to_renderer      (vtkRenderer* renderer);
-  virtual void callback_remove_from_renderer (vtkRenderer* renderer);
-  virtual void callback_update               ();
+  //! Callback for AddToRenderer() base routine. Good place to adjust visualization
+  //! properties of the pipeline's actor.
+  virtual void callback_add_to_renderer(vtkRenderer* renderer);
+
+  //! Callback for RemoveFromRenderer() base routine.
+  virtual void callback_remove_from_renderer(vtkRenderer* renderer);
+
+  //! Callback for Update() routine.
+  virtual void callback_update();
 
 private:
 
@@ -88,6 +106,12 @@ protected:
 
   //! Map of internally used filters.
   FilterMap m_filterMap;
+
+  //! Lookup table.
+  vtkSmartPointer<vtkLookupTable> m_lookupTable;
+
+  //! Safety range.
+  double m_fToler;
 
 };
 

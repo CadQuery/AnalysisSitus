@@ -52,22 +52,27 @@ public:
 public:
 
   //! Ctor.
-  //! \param[in] part     CAD part to check.
   //! \param[in] points   point cloud to compare with.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_CheckDeviations(const TopoDS_Shape&                      part,
-                            const Handle(asiAlgo_BaseCloud<double>)& points,
+    asiAlgo_CheckDeviations(const Handle(asiAlgo_BaseCloud<double>)& points,
                             ActAPI_ProgressEntry                     progress = NULL,
                             ActAPI_PlotterEntry                      plotter  = NULL);
 
 public:
 
-  //! Performs deviation check.
+  //! Performs deviation check on CAD model.
+  //! \param[in] part CAD part to check.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Perform();
+    Perform(const TopoDS_Shape& part);
+
+  //! Performs deviation check on triangulation.
+  //! \param[in] tris triangulation to check.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Perform(const Handle(Poly_Triangulation)& tris);
 
 public:
 
@@ -82,7 +87,14 @@ public:
 
 protected:
 
-  TopoDS_Shape                      m_part;     //!< CAD part.
+  //! Internal method to perform deviation check. Triangulation should
+  //! already be prepared.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    internalPerform();
+
+protected:
+
   Handle(asiAlgo_BaseCloud<double>) m_points;   //!< Point cloud.
   Handle(asiAlgo_BVHFacets)         m_bvh;      //!< BVH for point-to-mesh projection.
   asiAlgo_Mesh                      m_result;   //!< Mesh with field.

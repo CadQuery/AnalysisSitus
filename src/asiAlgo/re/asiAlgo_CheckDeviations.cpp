@@ -38,26 +38,40 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_CheckDeviations::asiAlgo_CheckDeviations(const TopoDS_Shape&                      part,
-                                                 const Handle(asiAlgo_BaseCloud<double>)& points,
+asiAlgo_CheckDeviations::asiAlgo_CheckDeviations(const Handle(asiAlgo_BaseCloud<double>)& points,
                                                  ActAPI_ProgressEntry                     progress,
                                                  ActAPI_PlotterEntry                      plotter)
 : ActAPI_IAlgorithm (progress, plotter),
-  m_part            (part),
   m_points          (points)
 {}
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_CheckDeviations::Perform()
+bool asiAlgo_CheckDeviations::Perform(const TopoDS_Shape& part)
 {
   m_progress.SetMessageKey("Merge facets");
 
   // Merge facets.
-  asiAlgo_MeshMerge meshMerge(m_part);
+  asiAlgo_MeshMerge meshMerge(part);
   //
   m_result.triangulation = meshMerge.GetResultPoly()->GetTriangulation();
 
+  return this->internalPerform();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_CheckDeviations::Perform(const Handle(Poly_Triangulation)& tris)
+{
+  m_result.triangulation = tris;
+
+  return this->internalPerform();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_CheckDeviations::internalPerform()
+{
   m_progress.SetMessageKey("Compute BVH");
 
   // Build BVH.

@@ -78,10 +78,27 @@ public:
   asiEngine_EXPORT Handle(asiData_TriangulationNode)
     CreateTriangulation();
 
-  //! Constructs BVH structure for the facets stored in the triangulation Node.
+  //! Constructs BVH structure for the facets stored in the Triangulation Node.
   //! \return constructed BVH.
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
+
+  //! Checks deviation between the active Triangulation Node and the passed
+  //! point cloud.
+  //! \param[in] pcNode Point Cloud Node.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode);
+
+  //! Checks deviation between the active Triangulation Node and the passed
+  //! point cloud.
+  //! \param[in]  pcNode  Point Cloud Node.
+  //! \param[out] devNode resulting Deviation Node to store the computed
+  //!                     distance field.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode,
+                   Handle(asiData_DeviationNode)&        devNode);
 
   //! Returns highlighted facets.
   //! \param[out] facetIndices indices of highlighted facets.

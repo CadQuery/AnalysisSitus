@@ -1085,6 +1085,70 @@ int RE_CheckDeviation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_CheckTriDeviation(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get points to analyze.
+  Handle(ActAPI_INode) node = cmdRE::model->FindNodeByName(argv[1]);
+  //
+  if ( node.IsNull() || !node->IsKind( STANDARD_TYPE(asiData_IVPointSetNode) ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a point set."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+  //
+  Handle(asiData_IVPointSetNode)
+    pointsNode = Handle(asiData_IVPointSetNode)::DownCast(node);
+
+  // Get working triangulation.
+  Handle(asiData_TriangulationNode) trisNode = cmdRE::model->GetTriangulationNode();
+  //
+  if ( trisNode.IsNull() || !trisNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+
+  Handle(asiData_DeviationNode) devNode;
+
+  // Check deviations.
+  asiEngine_Triangulation triApi( cmdRE::model,
+                                  cmdRE::cf->ViewerPart->PrsMgr(),
+                                  interp->GetProgress(),
+                                  interp->GetPlotter() );
+  //
+  cmdRE::model->OpenCommand();
+  {
+    if ( !triApi.CheckDeviation(pointsNode, devNode) )
+    {
+      cmdRE::model->AbortCommand();
+
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to check deviations.");
+      return TCL_ERROR;
+    }
+  }
+  cmdRE::model->CommitCommand();
+
+  // Actualize presentation.
+  if ( cmdRE::cf->ViewerPart )
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(devNode);
+
+  // Update Object Browser.
+  if ( cmdRE::cf->ObjectBrowser )
+    cmdRE::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int RE_MakeAveragePlane(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
@@ -1714,6 +1778,14 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Checks deviation between the given point cloud and the active CAD part.",
     //
     __FILE__, group, RE_CheckDeviation);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-check-tri-deviation",
+    //
+    "re-check-tri-deviation pointsName\n"
+    "\t Checks deviation between the given point cloud and the active triangulation.",
+    //
+    __FILE__, group, RE_CheckTriDeviation);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",

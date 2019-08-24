@@ -232,12 +232,11 @@ bool
   Handle(asiData_PartNode) partNode = m_model->GetPartNode();
 
   // Check deviations.
-  asiAlgo_CheckDeviations checkDeviations( partNode->GetShape(),
-                                           pcNode->GetPoints(),
+  asiAlgo_CheckDeviations checkDeviations( pcNode->GetPoints(),
                                            m_progress,
                                            m_plotter );
   //
-  if ( !checkDeviations.Perform() )
+  if ( !checkDeviations.Perform( partNode->GetShape() ) )
     return false;
 
   // Create Deviation Node.

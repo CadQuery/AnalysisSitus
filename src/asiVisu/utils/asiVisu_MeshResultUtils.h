@@ -85,7 +85,8 @@ namespace asiVisu_MeshResultUtils
                           const bool doInterpolation = true);
 
   asiVisu_EXPORT void
-    InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget);
+    InitScalarBarWidget(vtkScalarBarWidget* scalarBarWidget,
+                        const int           orientation);
 
   asiVisu_EXPORT vtkSmartPointer<vtkPolyDataAlgorithm>
     GetVectorGlyph();

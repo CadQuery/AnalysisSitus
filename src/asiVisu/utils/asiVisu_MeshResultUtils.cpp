@@ -157,12 +157,13 @@ void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*   theMapper,
 //! Initializes the passed scalar bar widget for scenes containing
 //! analysis results.
 //! \param theScalarBarWidget [in] scalar bar widget to initialize.
-void asiVisu_MeshResultUtils::InitScalarBarWidget(vtkScalarBarWidget* theScalarBarWidget)
+void asiVisu_MeshResultUtils::InitScalarBarWidget(vtkScalarBarWidget* scalarBarWidget,
+                                                  const int           orientation)
 {
-  vtkScalarBarRepresentation* aRep = theScalarBarWidget->GetScalarBarRepresentation();
-  aRep->SetOrientation(1);
-  aRep->GetPositionCoordinate()->SetValue(0.9, 0.2);
-  aRep->GetPosition2Coordinate()->SetValue(0.1, 0.6);
+  vtkScalarBarRepresentation* rep = scalarBarWidget->GetScalarBarRepresentation();
+  rep->SetOrientation(orientation);
+  rep->GetPositionCoordinate()->SetValue(0.9, 0.2);
+  rep->GetPosition2Coordinate()->SetValue(0.1, 0.6);
 }
 
 //! Returns polygonal source for VTK glyph representing vectorial data.

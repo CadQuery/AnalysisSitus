@@ -149,6 +149,8 @@ namespace asiAlgo_Utils
              const int          length);
 
     //! Returns the passed string ensuring that it has a trailing slash.
+    //! \param[in] strIN input string.
+    //! \return modified string.
     asiAlgo_EXPORT std::string
       Slashed(const std::string& strIN);
 

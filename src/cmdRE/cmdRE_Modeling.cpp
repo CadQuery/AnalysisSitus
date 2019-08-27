@@ -586,7 +586,10 @@ int RE_ApproxPoints(const Handle(asiTcl_Interp)& interp,
     }
 
     // Set result.
-    interp->GetPlotter().DRAW_CURVE(resCurve, Color_Red, TCollection_AsciiString(argv[1]));
+    if ( ptsRegions.size() == 1 )
+      interp->GetPlotter().REDRAW_CURVE(TCollection_AsciiString(argv[1]), resCurve, Color_Red);
+    else
+      interp->GetPlotter().DRAW_CURVE(resCurve, Color_Red, TCollection_AsciiString(argv[1]));
   }
 
   return TCL_OK;

@@ -45,6 +45,7 @@
   #include <mobius/cascade_Triangulation.h>
   #include <mobius/geom_CoonsSurfaceLinear.h>
   #include <mobius/geom_SkinSurface.h>
+  #include <mobius/poly_ReadOBJ.h>
   #include <mobius/poly_ReadPLY.h>
   #include <mobius/poly_ReadSTL.h>
 
@@ -1143,6 +1144,92 @@ bool asiAlgo_Utils::ReadPly(const TCollection_AsciiString& filename,
   poly_ReadPLY reader;
 
   // Read PLY.
+  if ( !reader.Perform( filename.ToCString() ) )
+    return false;
+
+  // Get the constructed mesh.
+  const t_ptr<poly_Mesh>& mobMesh = reader.GetResult();
+
+  // ...
+  // Convert to Active Data mesh.
+  // ...
+
+  mesh = new ActData_Mesh;
+
+  // Add mesh nodes.
+  for ( poly_Mesh::VertexIterator vit(mobMesh); vit.More(); vit.Next() )
+  {
+    const poly_VertexHandle vh = vit.Current();
+
+    // Get vertex.
+    poly_Vertex mobVertex;
+    if ( !mobMesh->GetVertex(vh, mobVertex) )
+      continue;
+
+    // Add node to Active Data structure.
+    mesh->AddNode( mobVertex.X(), mobVertex.Y(), mobVertex.Z() );
+  }
+
+  // Add triangles.
+  for ( poly_Mesh::TriangleIterator tit(mobMesh); tit.More(); tit.Next() )
+  {
+    const poly_TriangleHandle th = tit.Current();
+
+    // Get triangle.
+    poly_Triangle mobTriangle;
+    if ( !mobMesh->GetTriangle(th, mobTriangle) )
+      continue;
+
+    // Get node indices.
+    poly_VertexHandle vh[3];
+    mobTriangle.GetVertices(vh[0], vh[1], vh[2]);
+
+    // Add triangle to Active Data structure.
+    mesh->AddFace(vh[0].GetIdx(), vh[1].GetIdx(), vh[2].GetIdx());
+  }
+
+  // Add quads.
+  for ( poly_Mesh::QuadIterator qit(mobMesh); qit.More(); qit.Next() )
+  {
+    const poly_QuadHandle qh = qit.Current();
+
+    // Get quad.
+    poly_Quad mobQuad;
+    if ( !mobMesh->GetQuad(qh, mobQuad) )
+      continue;
+
+    // Get node indices.
+    poly_VertexHandle vh[4];
+    mobQuad.GetVertices(vh[0], vh[1], vh[2], vh[3]);
+
+    // Add quad to Active Data structure.
+    mesh->AddFace(vh[0].GetIdx(), vh[1].GetIdx(), vh[2].GetIdx(), vh[3].GetIdx());
+  }
+
+  return true;
+#else
+  asiAlgo_NotUsed(filename);
+  asiAlgo_NotUsed(mesh);
+
+  progress.SendLogMessage(LogErr(Normal) << "PLY reader is unavailable.");
+
+  return false;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::ReadObj(const TCollection_AsciiString& filename,
+                            Handle(ActData_Mesh)&          mesh,
+                            ActAPI_ProgressEntry           progress)
+{
+#if defined USE_MOBIUS
+  progress.SendLogMessage(LogInfo(Normal) << "Use Mobius OBJ reader.");
+
+  // Prepare reader.
+  poly_ReadOBJ reader;
+
+  // Read OBJ.
   if ( !reader.Perform( filename.ToCString() ) )
     return false;
 

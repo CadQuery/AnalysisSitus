@@ -61,7 +61,7 @@ public:
   //-------------------//
   // Geometry          //
   //-------------------//
-    PID_GeometryGroup, //!< Group of geometric props.
+    PID_GroupGeometry, //!< Group of geometric props.
     PID_Surface,       //!< Stored surface.
     PID_MinNumKnots,   //!< Min number of intermediate knots.
     PID_ApproxNodes,   //!< Indicates whether to approximate inner mesh nodes.

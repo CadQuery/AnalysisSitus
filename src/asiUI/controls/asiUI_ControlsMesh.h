@@ -72,6 +72,7 @@ public slots:
 
   void onLoadFromStl();
   void onLoadFromPly();
+  void onLoadFromObj();
   //
   void onSaveToStl();
   void onSaveFacetsToPly();
@@ -90,11 +91,12 @@ private:
     struct t_load
     {
       //! Ctor.
-      t_load() : pFromStl(NULL), pFromPly(NULL)
+      t_load() : pFromStl(NULL), pFromPly(NULL), pFromObj(NULL)
       {}
 
       QPushButton* pFromStl; //!< Button for STL loading.
       QPushButton* pFromPly; //!< Button for PLY loading.
+      QPushButton* pFromObj; //!< Button for OBJ loading.
     } Load;
 
     struct t_save

@@ -67,6 +67,10 @@
   using namespace mobius;
 #endif
 
+// Active Data includes
+#include <ActData_Mesh_ElementsIterator.h>
+#include <ActData_Mesh_Quadrangle.h>
+
 // OCCT includes
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -1691,6 +1695,107 @@ int RE_GetInnerPoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_Topologize(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get triangulation.
+  Handle(Poly_Triangulation)
+    tris = cmdRE::model->GetTriangulationNode()->GetTriangulation();
+  //
+  if ( tris.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is null.");
+    return TCL_ERROR;
+  }
+
+  // Get tessellation.
+  Handle(ActData_Mesh)
+    mesh = cmdRE::model->GetTessellationNode()->GetMesh();
+  //
+  if ( mesh.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation (object defining the topology) is null.");
+    return TCL_ERROR;
+  }
+
+  // Build BVH for CAD-agnostic mesh.
+  Handle(asiAlgo_BVHFacets) bvh;
+  //
+  asiEngine_RE            reApi   ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  asiEngine_Triangulation trisApi ( cmdRE::model, interp->GetProgress(), interp->GetPlotter() );
+  //
+  cmdRE::model->OpenCommand();
+  {
+    bvh = trisApi.BuildBVH();
+
+    // Tool to project points on mesh.
+    asiAlgo_ProjectPointOnMesh pointToMesh(bvh);
+
+    // Projected points.
+    NCollection_DataMap<int, Handle(asiData_ReVertexNode)> nodePts;
+
+    // Iterate over the quads.
+    for ( ActData_Mesh_ElementsIterator it(mesh, ActData_Mesh_ET_Face); it.More(); it.Next() )
+    {
+      // Get next quad.
+      const Handle(ActData_Mesh_Element)& elem = it.GetValue();
+      //
+      if ( !elem->IsKind( STANDARD_TYPE(ActData_Mesh_Quadrangle) ) )
+        continue;
+
+      const Handle(ActData_Mesh_Quadrangle)&
+        quad = Handle(ActData_Mesh_Quadrangle)::DownCast(elem);
+
+      // Get nodes.
+      int  numNodes = elem->NbNodes();
+      int* nodeIDs  = (int*) quad->GetConnections();
+
+      // Project nodes to triangulation.
+      for ( int k = 0; k < 4; ++k )
+      {
+        const int n = nodeIDs[k];
+
+        if ( !nodePts.IsBound(n) )
+        {
+          const gp_Pnt& node         = mesh->FindNode(n)->Pnt();
+          gp_Pnt        nodeProj     = pointToMesh.Perform(node);
+          int           nodeFacetInd = pointToMesh.GetFacetIds().size() ? pointToMesh.GetFacetIds()[0] : -1;
+          //
+          if ( nodeFacetInd == -1 )
+          {
+            interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to project network node.");
+            return TCL_ERROR;
+          }
+
+          // Create vertex.
+          nodePts.Bind( n, reApi.Create_Vertex( nodeProj.XYZ(),
+                                                bvh->GetFacet(nodeFacetInd).N.XYZ() ) );
+
+          // Render.
+          interp->GetPlotter().DRAW_POINT(nodeProj, Color_Red, "nodeProj");
+        }
+      }
+    }
+  } cmdRE::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdRE::cf->ViewerPart )
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cmdRE::model->GetReTopoNode(), true );
+  //
+  if ( cmdRE::cf->ObjectBrowser )
+    cmdRE::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& data)
 {
@@ -1848,4 +1953,13 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t point cloud specified as <resName>.",
     //
     __FILE__, group, RE_GetInnerPoints);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-topologize",
+    //
+    "re-topologize\n"
+    "\t Attempts to topologize the active triangulation with the quads from\n"
+    "\t the active tessellation.",
+    //
+    __FILE__, group, RE_Topologize);
 }

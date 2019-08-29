@@ -64,6 +64,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   // Buttons.
   m_widgets.Load.pFromStl = new QPushButton("From STL");
   m_widgets.Load.pFromPly = new QPushButton("From PLY");
+  m_widgets.Load.pFromObj = new QPushButton("From OBJ");
   //
   m_widgets.Save.pToStl       = new QPushButton("To STL");
   m_widgets.Save.pFacetsToPly = new QPushButton("B-Rep facets to PLY");
@@ -82,6 +83,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   //
   pLoadLay->addWidget(m_widgets.Load.pFromStl);
   pLoadLay->addWidget(m_widgets.Load.pFromPly);
+  pLoadLay->addWidget(m_widgets.Load.pFromObj);
 
   // Group box for saving mesh.
   QGroupBox*   pSaveGroup = new QGroupBox("Save");
@@ -115,6 +117,7 @@ asiUI_ControlsMesh::asiUI_ControlsMesh(const Handle(asiEngine_Model)& model,
   // Connect signals to slots
   connect( m_widgets.Load.pFromStl,     SIGNAL( clicked() ), SLOT( onLoadFromStl     () ) );
   connect( m_widgets.Load.pFromPly,     SIGNAL( clicked() ), SLOT( onLoadFromPly     () ) );
+  connect( m_widgets.Load.pFromObj,     SIGNAL( clicked() ), SLOT( onLoadFromObj     () ) );
   connect( m_widgets.Save.pToStl,       SIGNAL( clicked() ), SLOT( onSaveToStl       () ) );
   connect( m_widgets.Save.pFacetsToPly, SIGNAL( clicked() ), SLOT( onSaveFacetsToPly () ) );
   connect( m_widgets.Select.pFaces,     SIGNAL( clicked() ), SLOT( onSelectFaces     () ) );
@@ -191,7 +194,46 @@ void asiUI_ControlsMesh::onLoadFromPly()
   m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1." << QStr2AsciiStr(filename) );
 
   //---------------------------------------------------------------------------
-  // Initialize Triangulation Node
+  // Initialize Tessellation Node
+  //---------------------------------------------------------------------------
+
+  // Set mesh.
+  Handle(asiData_TessNode) tess_n = m_model->GetTessellationNode();
+  //
+  m_model->OpenCommand(); // tx start
+  {
+    tess_n->SetMesh(mesh);
+  }
+  m_model->CommitCommand(); // tx commit
+
+  //---------------------------------------------------------------------------
+  // Update UI
+  //---------------------------------------------------------------------------
+
+  m_partViewer->PrsMgr()->Actualize(tess_n.get(), false, true);
+}
+
+//-----------------------------------------------------------------------------
+
+//! On OBJ loading.
+void asiUI_ControlsMesh::onLoadFromObj()
+{
+  // Select filename.
+  QString filename = asiUI_Common::selectOBJFile(asiUI_Common::OpenSaveAction_Open);
+
+  // Load mesh.
+  Handle(ActData_Mesh) mesh;
+  //
+  if ( !asiAlgo_Utils::ReadObj(QStr2AsciiStr(filename), mesh, m_notifier) )
+  {
+    m_notifier.SendLogMessage( LogErr(Normal) << "Cannot read OBJ file." );
+    return;
+  }
+  //
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Loaded mesh from %1." << QStr2AsciiStr(filename) );
+
+  //---------------------------------------------------------------------------
+  // Initialize Tessellation Node
   //---------------------------------------------------------------------------
 
   // Set mesh.

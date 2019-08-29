@@ -46,7 +46,7 @@
 asiData_RePatchNode::asiData_RePatchNode() : ActData_BaseNode()
 {
   REGISTER_PARAMETER(Name,         PID_Name);
-  REGISTER_PARAMETER(Group,        PID_GeometryGroup);
+  REGISTER_PARAMETER(Group,        PID_GroupGeometry);
   REGISTER_PARAMETER(Shape,        PID_Surface);
   REGISTER_PARAMETER(Int,          PID_MinNumKnots);
   REGISTER_PARAMETER(Bool,         PID_ApproxNodes);
@@ -80,7 +80,7 @@ void asiData_RePatchNode::Init()
 
   // Initialize Parameters.
   this->InitParameter (PID_Name,          "Name");
-  this->InitParameter (PID_GeometryGroup, "Geometry",            "",               ParameterFlag_IsVisible, true);
+  this->InitParameter (PID_GroupGeometry, "Geometry",            "",               ParameterFlag_IsVisible, true);
   this->InitParameter (PID_MinNumKnots,   "Min. inner knots",    "",               ParameterFlag_IsVisible, true);
   this->InitParameter (PID_ApproxNodes,   "Approx. mesh nodes",  "",               ParameterFlag_IsVisible, true);
   this->InitParameter (PID_ApproxLambda,  "Fairing coefficient", "",               ParameterFlag_IsVisible, true);

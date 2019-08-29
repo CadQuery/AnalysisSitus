@@ -446,6 +446,16 @@ namespace asiAlgo_Utils
             Handle(ActData_Mesh)&          mesh,
             ActAPI_ProgressEntry           progress);
 
+  //! Reads OBJ tessellation from file.
+  //! \param[in]  filename source filename.
+  //! \param[out] mesh     output tessellation.
+  //! \param[in]  progress progress notifier.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    ReadObj(const TCollection_AsciiString& filename,
+            Handle(ActData_Mesh)&          mesh,
+            ActAPI_ProgressEntry           progress);
+
   //! Writes triangulation to STL file.
   //! \param[in] triangulation triangulation to write.
   //! \param[in] filename      target filename.

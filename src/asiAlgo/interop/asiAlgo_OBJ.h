@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 14 March 2016
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,12 +47,12 @@
 namespace asiAlgo_OBJ
 {
   //! Saves the passed shape to OBJ file extracting its associated triangulation.
-  //! \param theShape    [in] B-Rep to access tessellation.
-  //! \param theFilename [in] target filename.
+  //! \param[in] shape    B-Rep to access tessellation.
+  //! \param[in] filename target filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Write(const TopoDS_Shape&            theShape,
-          const TCollection_AsciiString& theFilename);
+    Write(const TopoDS_Shape&            shape,
+          const TCollection_AsciiString& filename);
 
 };
 

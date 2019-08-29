@@ -126,7 +126,7 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
     Handle(ActAPI_INode)       node   = m_cf->Model->FindNode(nodeId);
 
     affectedNodeNames += " ";
-    affectedNodeNames += (nodeId + node->DynamicType()->Name() );
+    affectedNodeNames += (nodeId + " [" + node->DynamicType()->Name() + "]" );
 
     // Actualize presentation.
     m_cf->ActualizeNode(node);

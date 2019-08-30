@@ -804,9 +804,6 @@ Handle(asiData_ReCoedgeNode)
     // Project line if requested.
     if ( doProjectLine )
     {
-      // Tool for line projection.
-      asiAlgo_MeshProjectLine ProjectLineMesh(m_bvh, m_notifier, m_plotter);
-
       // Get previous vertex.
       Handle(asiData_ReVertexNode) prevVertex = prevEdgeNode->GetFirstVertex();
       //

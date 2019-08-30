@@ -96,6 +96,13 @@ public:
   asiEngine_EXPORT Handle(asiData_RePatchNode)
     Create_Patch();
 
+  //! Creates a Patch Node under the single Patches Node available in the
+  //! project.
+  //! \param[in] name name to set.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_RePatchNode)
+    Create_Patch(const TCollection_ExtendedString& name);
+
   //! Creates an Edge Node under the single Edges Node available in the
   //! project.
   //! \param[in] vfirst handle of the first vertex of the edge.
@@ -103,6 +110,17 @@ public:
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReEdgeNode)
     Create_Edge(const Handle(asiData_ReVertexNode)& vfirst = NULL,
+                const Handle(asiData_ReVertexNode)& vlast  = NULL);
+
+  //! Creates an Edge Node under the single Edges Node available in the
+  //! project.
+  //! \param[in] name   name to set.
+  //! \param[in] vfirst handle of the first vertex of the edge.
+  //! \param[in] vlast  handle of the second vertex of the edge.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReEdgeNode)
+    Create_Edge(const TCollection_ExtendedString&   name,
+                const Handle(asiData_ReVertexNode)& vfirst = NULL,
                 const Handle(asiData_ReVertexNode)& vlast  = NULL);
 
   //! Creates a CoEdge Node under the passed Patch Node.
@@ -115,6 +133,18 @@ public:
                   const Handle(asiData_ReEdgeNode)&  edge,
                   const bool                         samesense);
 
+  //! Creates a CoEdge Node under the passed Patch Node.
+  //! \param[in] name      coedge name.
+  //! \param[in] patch     owning patch.
+  //! \param[in] edge      edge to reference.
+  //! \param[in] samesense orientation flag.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReCoedgeNode)
+    Create_CoEdge(const TCollection_ExtendedString&  name,
+                  const Handle(asiData_RePatchNode)& patch,
+                  const Handle(asiData_ReEdgeNode)&  edge,
+                  const bool                         samesense);
+
   //! Creates a Vertex Node under the single Vertices Node available in the
   //! project.
   //! \param[in] coords vertex coordinates.
@@ -122,6 +152,17 @@ public:
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReVertexNode)
     Create_Vertex(const gp_XYZ& coords, const gp_XYZ& norm);
+
+  //! Creates a Vertex Node under the single Vertices Node available in the
+  //! project.
+  //! \param[in] name   name of the vertex to set.
+  //! \param[in] coords vertex coordinates.
+  //! \param[in] norm   normal vector at vertex position.
+  //! \return newly created Node.
+  asiEngine_EXPORT Handle(asiData_ReVertexNode)
+    Create_Vertex(const TCollection_ExtendedString& name,
+                  const gp_XYZ&                     coords,
+                  const gp_XYZ&                     norm);
 
 public:
 

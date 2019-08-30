@@ -35,6 +35,7 @@
 #include <asiAlgo_CheckDeviations.h>
 #include <asiAlgo_Cloudify.h>
 #include <asiAlgo_MeshInterPlane.h>
+#include <asiAlgo_MeshProjectLine.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_PlateOnEdges.h>
 #include <asiAlgo_ProjectPointOnMesh.h>
@@ -77,6 +78,40 @@
 #include <GCPnts_QuasiUniformAbscissa.hxx>
 #include <GeomAdaptor_Curve.hxx>
 #include <ShapeAnalysis_Surface.hxx>
+
+//-----------------------------------------------------------------------------
+
+//! Unoriented link.
+struct t_undirectedLink
+{
+  int N1; //!< First node.
+  int N2; //!< Second node.
+
+  //! Ctor default.
+  t_undirectedLink() : N1(0), N2(0) {}
+
+  //! Ctor with parameters.
+  t_undirectedLink(const int _N1, const int _N2) : N1(_N1), N2(_N2) {}
+
+  //! \return hash code for the link.
+  static int HashCode(const t_undirectedLink& arc, const int upper)
+  {
+    int key = arc.N1 + arc.N2;
+    key += (key << 10);
+    key ^= (key >> 6);
+    key += (key << 3);
+    key ^= (key >> 11);
+    return (key & 0x7fffffff) % upper;
+  }
+
+  //! \return true if two links are equal.
+  static int IsEqual(const t_undirectedLink& arc1,
+                     const t_undirectedLink& arc2)
+  {
+    return ( (arc1.N1 == arc2.N1) && (arc1.N2 == arc2.N2) ) ||
+           ( (arc1.N2 == arc2.N1) && (arc1.N1 == arc2.N2) );
+  }
+};
 
 //-----------------------------------------------------------------------------
 
@@ -187,6 +222,10 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
   cmdRE::model->OpenCommand();
   {
+    // Reconnect basic Tree Functions.
+    for ( size_t k = 0; k < patchNodes.size(); ++k )
+      reApi.ReconnectBuildPatchFunc(patchNodes[k]);
+
     cmdRE::model->FuncExecuteAll();
   }
   cmdRE::model->CommitCommand();
@@ -195,10 +234,10 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   for ( size_t k = 0; k < patchNodes.size(); ++k )
     cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes[k]);
 
-  // Actualize Coedge Nodes.
-  for ( size_t k = 0; k < patchNodes.size(); ++k )
-    for ( Handle(ActAPI_IChildIterator) cit = patchNodes[k]->GetChildIterator(); cit->More(); cit->Next() )
-      cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cit->Value() );
+  //// Actualize Coedge Nodes.
+  //for ( size_t k = 0; k < patchNodes.size(); ++k )
+  //  for ( Handle(ActAPI_IChildIterator) cit = patchNodes[k]->GetChildIterator(); cit->More(); cit->Next() )
+  //    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cit->Value() );
 
   return TCL_OK;
 }
@@ -229,10 +268,10 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
    *  Collect edges of interest
    * =========================== */
 
-  std::vector<Handle(asiData_ReEdgeNode)> edgeNodes;
+  Handle(ActAPI_HNodeList) edgeNodes = new ActAPI_HNodeList;
 
   bool                    hasToler = false;
-  double                  toler = 1.0;
+  double                  toler    = 1.0;
   TCollection_AsciiString tolerStr;
   //
   if ( interp->GetKeyValue(argc, argv, "toler", tolerStr) )
@@ -246,12 +285,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     /* Collect all edges */
 
     for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
-    {
-      Handle(asiData_ReEdgeNode)
-        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
-      //
-      edgeNodes.push_back(edgeNode);
-    }
+      edgeNodes->Append( eit->Value() );
   }
   else
   {
@@ -269,7 +303,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
         continue;
       }
       //
-      edgeNodes.push_back(edgeNode);
+      edgeNodes->Append(edgeNode);
     }
   }
 
@@ -277,53 +311,89 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
    *  Perform data model modification
    * ================================= */
 
+  // Initialize progress indicator.
+  interp->GetProgress().Init( edgeNodes->Length() );
+  interp->GetProgress().SetMessageKey("Approximate curves");
+
+  // Perform transactional changes.
   M->OpenCommand();
-
-  // Approximate every edge individually.
-  for ( size_t k = 0; k < edgeNodes.size(); ++k )
   {
-    const Handle(asiData_ReEdgeNode)& edgeNode = edgeNodes[k];
-
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: '%1'."
-                                                          << edgeNode->GetName() );
-
-    std::vector<Handle(Geom_BSplineCurve)> curves;
-
-    // Approximate with parametric curve.
-    std::vector<gp_XYZ> pts;
-    edgeNode->GetPolyline(pts);
-    //
-    Handle(Geom_BSplineCurve) curve;
-    if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, toler, curve) )
+    // Connect Tree Functions.
+    for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
     {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
-                                                            << edgeNode->GetName() );
-      //
-      M->AbortCommand();
-      return TCL_ERROR;
+      Handle(asiData_ReEdgeNode)
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+
+      reApi.ReconnectBuildEdgeFunc(edgeNode);
     }
 
-    // Update Data Model.
-    edgeNode->SetCurve(curve);
+    // Approximate every edge individually.
+    for ( ActAPI_HNodeList::Iterator eit(*edgeNodes); eit.More(); eit.Next() )
+    {
+      // Progress indication.
+      interp->GetProgress().StepProgress(1);
+      //
+      if ( interp->GetProgress().IsCancelling() )
+      {
+        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Cancelled);
+        //
+        M->AbortCommand();
+        return TCL_OK;
+      }
 
-    // Add curve to the collection for filling.
-    curves.push_back(curve);
+      const Handle(asiData_ReEdgeNode)&
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit.Value() );
 
-    // Update scene.
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode, false, false, false);
+      // Approximate with parametric curve.
+      std::vector<Handle(Geom_BSplineCurve)> curves;
+      std::vector<gp_XYZ> pts;
+      edgeNode->GetPolyline(pts);
+      //
+      Handle(Geom_BSplineCurve) curve;
+      if ( !asiAlgo_Utils::ApproximatePoints(pts, 3, 3, toler, curve) )
+      {
+        interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
+                                                              << edgeNode->GetName() );
+        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
+        //
+        M->AbortCommand();
+        return TCL_ERROR;
+      }
 
-    // Adjust visibility of actors.
-    Handle(asiVisu_ReEdgePrs)
-      edgePrs = Handle(asiVisu_ReEdgePrs)::DownCast( cmdRE::cf->ViewerPart->PrsMgr()->GetPresentation(edgeNode) );
-    //
-    edgePrs->SetCurvesOnlyMode(true);
+      // Update Data Model.
+      edgeNode->SetCurve(curve);
+
+      // Add curve to the collection for filling.
+      curves.push_back(curve);
+    }
+  } M->CommitCommand();
+
+  // Progress indication.
+  interp->GetProgress().Init();
+  interp->GetProgress().SetMessageKey("Actualize 3D scene");
+
+  // Actualize.
+  if ( cmdRE::cf->ViewerPart )
+  {
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNodes);
+
+    // Set visibility of actors.
+    for ( ActAPI_HNodeList::Iterator eit(*edgeNodes); eit.More(); eit.Next() )
+    {
+      const Handle(ActAPI_INode)& edgeNode = eit.Value();
+
+      // Adjust visibility of actors.
+      Handle(asiVisu_ReEdgePrs)
+        edgePrs = Handle(asiVisu_ReEdgePrs)::DownCast( cmdRE::cf->ViewerPart->PrsMgr()->GetPresentation(edgeNode) );
+      //
+      edgePrs->SetCurvesOnlyMode(true);
+    }
 
     // Repaint.
     cmdRE::cf->ViewerPart->PrsMgr()->GetQVTKWidget()->repaint();
   }
 
-  M->CommitCommand();
-
+  interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
   return TCL_OK;
 }
 
@@ -1737,12 +1807,20 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
     // Tool to project points on mesh.
     asiAlgo_ProjectPointOnMesh pointToMesh(bvh);
 
-    // Projected points.
-    NCollection_DataMap<int, Handle(asiData_ReVertexNode)> nodePts;
+    // Constructed topological primitives.
+    NCollection_DataMap<int, Handle(asiData_ReVertexNode)>                              vertices;
+    NCollection_DataMap<t_undirectedLink, Handle(asiData_ReEdgeNode), t_undirectedLink> edges;
+
+    // Initialize progress indicator.
+    interp->GetProgress().Init( mesh->NbFaces() );
+    interp->GetProgress().SetMessageKey("Process quads");
 
     // Iterate over the quads.
+    int patchIdx = 0, edgeIdx = 0, vertexIdx = 0;
     for ( ActData_Mesh_ElementsIterator it(mesh, ActData_Mesh_ET_Face); it.More(); it.Next() )
     {
+      interp->GetProgress().StepProgress(1);
+
       // Get next quad.
       const Handle(ActData_Mesh_Element)& elem = it.GetValue();
       //
@@ -1752,16 +1830,24 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
       const Handle(ActData_Mesh_Quadrangle)&
         quad = Handle(ActData_Mesh_Quadrangle)::DownCast(elem);
 
-      // Get nodes.
-      int  numNodes = elem->NbNodes();
-      int* nodeIDs  = (int*) quad->GetConnections();
+      ++patchIdx;
+      TCollection_ExtendedString patchName("Patch "); patchName += patchIdx;
 
-      // Project nodes to triangulation.
+      // Create patch.
+      Handle(asiData_RePatchNode) patch = reApi.Create_Patch(patchName);
+
+      // Get nodes.
+      int* nodeIDs = (int*) quad->GetConnections();
+
+      // Create vertices.
+      std::vector<Handle(asiData_ReVertexNode)> quadVertices;
+      std::vector<int>                          quadVerticesIds;
+      //
       for ( int k = 0; k < 4; ++k )
       {
         const int n = nodeIDs[k];
 
-        if ( !nodePts.IsBound(n) )
+        if ( !vertices.IsBound(n) )
         {
           const gp_Pnt& node         = mesh->FindNode(n)->Pnt();
           gp_Pnt        nodeProj     = pointToMesh.Perform(node);
@@ -1769,20 +1855,101 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           //
           if ( nodeFacetInd == -1 )
           {
+            interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
             interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to project network node.");
             return TCL_ERROR;
           }
 
+          ++vertexIdx;
+          TCollection_ExtendedString vertexName("Vertex "); vertexName += vertexIdx;
+
           // Create vertex.
-          nodePts.Bind( n, reApi.Create_Vertex( nodeProj.XYZ(),
-                                                bvh->GetFacet(nodeFacetInd).N.XYZ() ) );
+          Handle(asiData_ReVertexNode)
+            V = reApi.Create_Vertex( vertexName,
+                                     nodeProj.XYZ(),
+                                     bvh->GetFacet(nodeFacetInd).N.XYZ() );
+          //
+          vertices.Bind(n, V);
+
+          // Store vertices of the current quad.
+          quadVertices.push_back(V);
+          quadVerticesIds.push_back(n);
 
           // Render.
-          interp->GetPlotter().DRAW_POINT(nodeProj, Color_Red, "nodeProj");
+          //interp->GetPlotter().DRAW_POINT(nodeProj, Color_Red, "nodeProj");
         }
+        else
+        {
+          quadVertices.push_back( vertices(n) );
+          quadVerticesIds.push_back(n);
+        }
+      }
+
+      // Create edges/coedges.
+      for ( int k = 0; k < 4; ++k )
+      {
+        const int currIdx = k;
+        const int nextIdx = ((k == 3) ? 0 : k + 1);
+
+        const int n1 = quadVerticesIds[currIdx];
+        const int n2 = quadVerticesIds[nextIdx];
+        t_undirectedLink n1n2(n1, n2);
+
+        // Create or take an existing edge.
+        bool sameSense;
+        Handle(asiData_ReEdgeNode) edge;
+        //
+        if ( !edges.IsBound(n1n2) )
+        {
+          ++edgeIdx;
+          TCollection_ExtendedString edgeName("Edge "); edgeName += edgeIdx;
+
+          edge = reApi.Create_Edge(edgeName, quadVertices[currIdx], quadVertices[nextIdx]);
+          edges.Bind(n1n2, edge);
+          sameSense = true;
+
+          // Tool for line projection.
+          asiAlgo_MeshProjectLine projectLineMesh( bvh,
+                                                   interp->GetProgress(),
+                                                   interp->GetPlotter() );
+
+          // Project line between vertices n1 and n2 to mesh.
+          std::vector<gp_XYZ> projPts;
+          std::vector<int>    projInds;
+          //
+          if ( !projectLineMesh.Perform(quadVertices[currIdx]->GetPoint(),
+                                        quadVertices[nextIdx]->GetPoint(),
+                                        projPts, projInds, 0.001) )
+          {
+            interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
+            interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Cannot project line to mesh.");
+            continue;
+          }
+
+          // Store projection.
+          if ( projPts.size() > 2 )
+          {
+            for ( size_t k = 0; k < projPts.size(); ++k )
+              edge->AddPolylinePole(projPts[k], projInds[k]);
+
+            edge->AddPolylinePole(quadVertices[nextIdx]->GetPoint(), -1);
+          }
+        }
+        else
+        {
+          edge      = edges(n1n2);
+          sameSense = false;
+        }
+
+        // Create coedge.
+        reApi.Create_CoEdge(patch, edge, sameSense);
       }
     }
   } cmdRE::model->CommitCommand();
+
+  // Progress indication.
+  interp->GetProgress().Init();
+  interp->GetProgress().SetMessageKey("Actualize scene");
 
   // Update UI.
   if ( cmdRE::cf->ViewerPart )
@@ -1791,6 +1958,7 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
   if ( cmdRE::cf->ObjectBrowser )
     cmdRE::cf->ObjectBrowser->Populate();
 
+  interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
   return TCL_OK;
 }
 

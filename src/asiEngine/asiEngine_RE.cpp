@@ -209,6 +209,14 @@ Handle(asiData_ReVerticesNode) asiEngine_RE::Get_Vertices()
 
 Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 {
+  return this->Create_Patch("");
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_RePatchNode)
+  asiEngine_RE::Create_Patch(const TCollection_ExtendedString& name)
+{
   // Get or create parent Topo Node.
   Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;
   //
@@ -232,7 +240,7 @@ Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 
   // Generate unique name.
   TCollection_ExtendedString
-    patchName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(patch_n, patches_n), "Patch");
+    patchName = name.IsEmpty() ? ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(patch_n, patches_n), "Patch") : name;
   //
   patch_n->SetName(patchName);
 
@@ -244,6 +252,16 @@ Handle(asiData_RePatchNode) asiEngine_RE::Create_Patch()
 
 Handle(asiData_ReEdgeNode)
   asiEngine_RE::Create_Edge(const Handle(asiData_ReVertexNode)& vfirst,
+                            const Handle(asiData_ReVertexNode)& vlast)
+{
+  return this->Create_Edge("", vfirst, vlast);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReEdgeNode)
+  asiEngine_RE::Create_Edge(const TCollection_ExtendedString&   name,
+                            const Handle(asiData_ReVertexNode)& vfirst,
                             const Handle(asiData_ReVertexNode)& vlast)
 {
   // Get or create parent Topo Node.
@@ -270,7 +288,7 @@ Handle(asiData_ReEdgeNode)
 
   // Generate unique name.
   TCollection_ExtendedString
-    edgeName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(edge_n, edges_n), "Edge");
+    edgeName = name.IsEmpty() ? ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(edge_n, edges_n), "Edge") : name;
   //
   edge_n->SetName(edgeName);
 
@@ -282,6 +300,17 @@ Handle(asiData_ReEdgeNode)
 
 Handle(asiData_ReCoedgeNode)
   asiEngine_RE::Create_CoEdge(const Handle(asiData_RePatchNode)& patch,
+                              const Handle(asiData_ReEdgeNode)&  edge,
+                              const bool                         samesense)
+{
+  return this->Create_CoEdge("", patch, edge, samesense);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReCoedgeNode)
+  asiEngine_RE::Create_CoEdge(const TCollection_ExtendedString&  name,
+                              const Handle(asiData_RePatchNode)& patch,
                               const Handle(asiData_ReEdgeNode)&  edge,
                               const bool                         samesense)
 {
@@ -298,10 +327,16 @@ Handle(asiData_ReCoedgeNode)
   // Add as a child to Patch Node.
   patch->AddChildNode(coedge_n);
 
-  // Generate unique name.
-  TCollection_ExtendedString coedgeName("Coedge -> ");
+  // Generate name.
+  TCollection_ExtendedString coedgeName;
   //
-  coedgeName += edge->GetName();
+  if ( name.IsEmpty() )
+  {
+    coedgeName = "Coedge -> ";
+    coedgeName += edge->GetName();
+  }
+  else
+    coedgeName = name;
   //
   coedge_n->SetName(coedgeName);
 
@@ -313,6 +348,16 @@ Handle(asiData_ReCoedgeNode)
 
 Handle(asiData_ReVertexNode)
   asiEngine_RE::Create_Vertex(const gp_XYZ& coords, const gp_XYZ& norm)
+{
+  return this->Create_Vertex("", coords, norm);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiData_ReVertexNode)
+  asiEngine_RE::Create_Vertex(const TCollection_ExtendedString& name,
+                              const gp_XYZ&                     coords,
+                              const gp_XYZ&                     norm)
 {
   // Get or create parent Topo Node.
   Handle(asiData_ReTopoNode) topo_n = m_model->GetReTopoNode();;
@@ -340,7 +385,7 @@ Handle(asiData_ReVertexNode)
 
   // Generate unique name.
   TCollection_ExtendedString
-    vertexName = ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(vertex_n, vertices_n), "Vertex");
+    vertexName = name.IsEmpty() ? ActData_UniqueNodeName::Generate(ActData_SiblingNodes::CreateForChild(vertex_n, vertices_n), "Vertex") : name;
   //
   vertex_n->SetName(vertexName);
 
@@ -781,6 +826,12 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   if ( b1.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot find b1 curve.");
+
+    // Dump for diagnostics.
+    m_plotter.DRAW_CURVE(curves[0], Color_Default, "curve0");
+    m_plotter.DRAW_CURVE(curves[1], Color_Default, "curve1");
+    m_plotter.DRAW_CURVE(curves[2], Color_Default, "curve2");
+    m_plotter.DRAW_CURVE(curves[3], Color_Default, "curve3");
     return false;
   }
 
@@ -805,6 +856,12 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   if ( c1.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot find c1 curve.");
+
+    // Dump for diagnostics.
+    m_plotter.DRAW_CURVE(curves[0], Color_Default, "curve0");
+    m_plotter.DRAW_CURVE(curves[1], Color_Default, "curve1");
+    m_plotter.DRAW_CURVE(curves[2], Color_Default, "curve2");
+    m_plotter.DRAW_CURVE(curves[3], Color_Default, "curve3");
     return false;
   }
 
@@ -822,6 +879,12 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   if ( b0.IsNull() )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Cannot find b0 curve.");
+
+    // Dump for diagnostics.
+    m_plotter.DRAW_CURVE(curves[0], Color_Default, "curve0");
+    m_plotter.DRAW_CURVE(curves[1], Color_Default, "curve1");
+    m_plotter.DRAW_CURVE(curves[2], Color_Default, "curve2");
+    m_plotter.DRAW_CURVE(curves[3], Color_Default, "curve3");
     return false;
   }
 

@@ -1384,7 +1384,7 @@
      inkscape:cx="3659.7035"
      inkscape:cy="3954.0434"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g22526-8"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
@@ -6894,5 +6894,33 @@
    style="font-weight:bold">g</flowSpan>(<flowSpan
    id="flowSpan22421-4"
    style="font-style:italic">t</flowSpan>)</flowPara></flowRoot>    </g>
+    <g
+       id="g22526-8"
+       transform="translate(171.87503,161.45839)">
+      <flowRoot
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot1614-6-2-4-7-8-2-0"
+         xml:space="preserve"
+         transform="matrix(0.93750003,0,0,0.93750003,2699.4259,-4072.9131)"><flowRegion
+           id="flowRegion1616-8-82-37-1-4-5-9"><rect
+             y="1024"
+             x="208"
+             height="122"
+             width="376"
+             id="rect1618-5-52-96-7-9-6-9" /></flowRegion><flowPara
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI'"
+           id="flowPara1620-0-7-9-1-1-9-3">p</flowPara></flowRoot>      <flowRoot
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot1614-6-2-4-7-8-2-0-6"
+         xml:space="preserve"
+         transform="matrix(0.93750003,0,0,0.93750003,2702.0846,-3910.1975)"><flowRegion
+           id="flowRegion1616-8-82-37-1-4-5-9-3"><rect
+             y="1024"
+             x="208"
+             height="122"
+             width="376"
+             id="rect1618-5-52-96-7-9-6-9-5" /></flowRegion><flowPara
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI'"
+           id="flowPara1620-0-7-9-1-1-9-3-8">p</flowPara></flowRoot>    </g>
   </g>
 </svg>

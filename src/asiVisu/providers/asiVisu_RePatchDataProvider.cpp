@@ -95,7 +95,8 @@ Handle(Geom_Surface)
   Handle(Geom_Surface) surf = patch_n->GetSurface();
 
   // Get bounds.
-  surf->Bounds(uMin, uMax, vMin, vMax);
+  if ( !surf.IsNull() )
+    surf->Bounds(uMin, uMax, vMin, vMax);
 
   return surf;
 }

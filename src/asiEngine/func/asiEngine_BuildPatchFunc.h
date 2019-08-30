@@ -143,7 +143,7 @@ private:
 
 private:
 
-  asiEngine_BuildPatchFunc() {} //!< Ctor.
+  asiEngine_BuildPatchFunc() : m_bPlotterEnabled(true) {} //!< Ctor.
 
 private:
 

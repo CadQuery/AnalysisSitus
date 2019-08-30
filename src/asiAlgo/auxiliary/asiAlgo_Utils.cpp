@@ -1771,8 +1771,13 @@ bool asiAlgo_Utils::ApproximatePoints(const std::vector<gp_XYZ>& points,
                                       const double               tol3d,
                                       Handle(Geom_BSplineCurve)& result)
 {
-  // Convert to OCCT collection.
+  // Contract check.
   const int nPts = int( points.size() );
+  //
+  if ( nPts < 2 )
+    return false;
+
+  // Convert to OCCT collection.
   TColgp_Array1OfPnt occPts(1, nPts);
   //
   for ( int k = 0; k < nPts; ++k )

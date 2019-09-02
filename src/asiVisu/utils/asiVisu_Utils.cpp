@@ -39,14 +39,17 @@
 #include <vtkActor.h>
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
+#include <vtkImageImport.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkPlaneSource.h>
+#include <vtkPNGWriter.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
+#include <vtkWindowToImageFilter.h>
 #pragma warning(pop)
 
 // OCCT includes
@@ -246,7 +249,7 @@ bool asiVisu_Utils::AdjustCamera(vtkRenderer*       theRenderer,
       width *= double(pViewPortSize[1]) / double(pViewPortSize[0]);
 
     if ( doScaling )
-      pActiveCamera->SetParallelScale(width / 2.5);
+      pActiveCamera->SetParallelScale(width / 2.);
   }
 
   AdjustCameraClippingRange(theRenderer);
@@ -466,7 +469,8 @@ void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
             (bounds[3] - bounds[2]) * (bounds[3] - bounds[2]) +
             (bounds[5] - bounds[4]) * (bounds[5] - bounds[4]) );
   }
-  else {
+  else
+  {
     aLength = bounds[1] - bounds[0];
     aLength = Max(bounds[3] - bounds[2], aLength);
     aLength = Max(bounds[5] - bounds[4], aLength);
@@ -484,6 +488,45 @@ void asiVisu_Utils::AdjustTrihedron(vtkRenderer*       theRenderer,
 
   // Adjust camera's options
   AdjustCameraClippingRange(theRenderer);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Collects image data from the passed render window.
+//! \param[in] pRenderWindow render window to get image data from.
+//! \return image in memory.
+vtkSmartPointer<vtkImageData>
+  asiVisu_Utils::GetImage(vtkRenderWindow* pRenderWindow)
+{
+  vtkSmartPointer<vtkWindowToImageFilter>
+    windowToImageFilter = vtkSmartPointer<vtkWindowToImageFilter>::New();
+  //
+  windowToImageFilter->SetInput(pRenderWindow);
+  windowToImageFilter->Update();
+
+  vtkSmartPointer<vtkImageData> res = windowToImageFilter->GetOutput();
+  return res;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Writes the passed image data to a PNG file. The image data should have
+//! been obtained with vtkPNGWriter class.
+//! \param[in] data     image data to write.
+//! \param[in] filename target filename.
+void asiVisu_Utils::WritePNG(const vtkSmartPointer<vtkImageData>& data,
+                             const char*                          filename)
+{
+  if ( !data.GetPointer() )
+    return;
+
+  vtkSmartPointer<vtkPNGWriter>
+    writer = vtkSmartPointer<vtkPNGWriter>::New();
+  //
+  writer->SetWriteToMemory(0);
+  writer->SetFileName(filename);
+  writer->SetInputData(data);
+  writer->Write();
 }
 
 //-----------------------------------------------------------------------------

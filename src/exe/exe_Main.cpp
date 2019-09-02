@@ -303,20 +303,16 @@ int main(int argc, char** argv)
 
 #else
 
-#include <vtkAxis.h>
-#include <vtkTextProperty.h>
-#include <vtkVersion.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindowInteractor.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include <vtkChartXY.h>
-#include <vtkTable.h>
-#include <vtkPlot.h>
-#include <vtkFloatArray.h>
-#include <vtkContextView.h>
-#include <vtkContextScene.h>
-#include <vtkPen.h>
+#include <vtkSphereSource.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
+#include <vtkGraphicsFactory.h>
 
 // VTK init
 #include <vtkAutoInit.h>
@@ -329,61 +325,45 @@ VTK_MODULE_INIT(vtkRenderingFreeType)
 
 int main(int, char *[])
 {
-  // Create a table with some points in it
-  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
 
-  vtkSmartPointer<vtkFloatArray> arrX = vtkSmartPointer<vtkFloatArray>::New();
-  arrX->SetName("Parameter");
-  table->AddColumn(arrX);
+  // Create a sphere
+  vtkSmartPointer<vtkSphereSource> sphereSource = 
+    vtkSmartPointer<vtkSphereSource>::New();
+    
+  // Create a mapper and actor
+  vtkSmartPointer<vtkPolyDataMapper> mapper = 
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  mapper->SetInputConnection(sphereSource->GetOutputPort());
+  
+  vtkSmartPointer<vtkActor> actor = 
+    vtkSmartPointer<vtkActor>::New();
+  actor->SetMapper(mapper);
+  
+  // A renderer and render window
+  vtkSmartPointer<vtkRenderer> renderer = 
+    vtkSmartPointer<vtkRenderer>::New();
+  vtkSmartPointer<vtkRenderWindow> renderWindow = 
+    vtkSmartPointer<vtkRenderWindow>::New();
+  renderWindow->SetOffScreenRendering( 1 ); 
+  renderWindow->AddRenderer(renderer);
 
-  vtkSmartPointer<vtkFloatArray> arrC = vtkSmartPointer<vtkFloatArray>::New();
-  arrC->SetName("Curvature");
-  table->AddColumn(arrC);
+  // Add the actors to the scene
+  renderer->AddActor(actor);
+  renderer->SetBackground(1,1,1); // Background color white
 
-  // Fill in the table with some example values
-  int numPoints = 69;
-  float inc = 7.5 / (numPoints-1);
-  table->SetNumberOfRows(numPoints);
-  for (int i = 0; i < numPoints; ++i)
-  {
-    table->SetValue(i, 0, i * inc);
-    table->SetValue(i, 1, cos(i * inc));
-  }
+  renderWindow->Render();
 
-  // Set up the view
-  vtkSmartPointer<vtkContextView> view = vtkSmartPointer<vtkContextView>::New();
-
-  view->GetRenderer()->SetBackground(1.0, 1.0, 1.0);
-
-  // Add multiple line plots, setting the colors etc
-  vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();
-  view->GetScene()->AddItem(chart);
-  vtkPlot* line = chart->AddPlot(vtkChart::LINE);
-  line->SetInputData(table, 0, 1);
-  line->SetColor(225, 0, 0, 255);
-  line->SetWidth(2.0f);
-  //
-  line->GetXAxis()->SetTitle("Parameter");
-  line->GetXAxis()->GetTitleProperties()->BoldOff();
-  line->GetXAxis()->GetTitleProperties()->SetLineOffset(8);
-  line->GetXAxis()->GetLabelProperties()->BoldOff();
-  line->GetXAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
-  line->GetXAxis()->GetLabelProperties()->SetLineOffset(4);
-  //
-  line->GetYAxis()->SetTitle("Curvature");
-  line->GetYAxis()->GetTitleProperties()->BoldOff();
-  line->GetYAxis()->GetTitleProperties()->SetLineOffset(8);
-  line->GetYAxis()->GetLabelProperties()->BoldOff();
-  line->GetYAxis()->GetLabelProperties()->SetColor(0.25, 0.25, 0.25);
-  line->GetYAxis()->GetLabelProperties()->SetLineOffset(4);
-
-  view->GetRenderWindow()->SetMultiSamples(8);
-
-  // Start interactor
-  view->GetInteractor()->Initialize();
-  view->GetInteractor()->Start();
+  vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = 
+    vtkSmartPointer<vtkWindowToImageFilter>::New();
+  windowToImageFilter->SetInput(renderWindow);
+  windowToImageFilter->Update();
+  
+  vtkSmartPointer<vtkPNGWriter> writer = 
+    vtkSmartPointer<vtkPNGWriter>::New();
+  writer->SetFileName("C:/users/ssv/desktop/screenshot.png");
+  writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+  writer->Write();
 
   return EXIT_SUCCESS;
 }
-
 #endif

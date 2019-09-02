@@ -80,6 +80,7 @@ public:
     m_bBrowserOn    (true),
     m_bVisuOn       (true),
     m_bRepaintOn    (true),
+    m_bAsPart       (false),
     m_model         (model),
     m_prsMgr3d      (prsMgr3d),
     m_prsMgr2d      (prsMgr2d),
@@ -93,10 +94,16 @@ public:
 public:
 
   asiUI_EXPORT virtual void
+    FIT3D();
+
+  asiUI_EXPORT virtual void
     ERASE_ALL();
 
   asiUI_EXPORT virtual void
     ERASE(const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
+    DUMP_PNG3D(const char* filename);
 
 // GEOMETRY:
 public:
@@ -493,6 +500,12 @@ public:
   asiUI_EXPORT void
     REPAINT_ON();
 
+  asiUI_EXPORT void
+    DRAW_SHAPE_AS_PART_OFF();
+
+  asiUI_EXPORT void
+    DRAW_SHAPE_AS_PART_ON();
+
 public:
 
   //! Initializes imperative plotter.
@@ -680,6 +693,7 @@ protected:
   bool                                m_bBrowserOn; //!< Flag to enable/disable plotting.
   bool                                m_bVisuOn;    //!< Flag to enable/disable plotting.
   bool                                m_bRepaintOn; //!< Whether to repaint.
+  bool                                m_bAsPart;    //!< Whether to draw shapes as Part Node.
   Handle(asiEngine_Model)             m_model;      //!< Data Model instance.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr3d;   //!< Presentation manager 3D.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr2d;   //!< Presentation manager 2D.

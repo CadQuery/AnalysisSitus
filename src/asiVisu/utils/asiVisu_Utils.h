@@ -51,6 +51,7 @@
 #include <vtkCubeAxesActor.h>
 #include <vtkCubeAxesActor2D.h>
 #include <vtkDoubleArray.h>
+#include <vtkImageData.h>
 #include <vtkIntArray.h>
 #include <vtkInteractorObserver.h>
 #include <vtkRenderer.h>
@@ -206,6 +207,13 @@ public:
     AdjustTrihedron(vtkRenderer*       theRenderer,
                     vtkAxesActor*      theActor,
                     vtkPropCollection* thePropsToSkip);
+
+  asiVisu_EXPORT static vtkSmartPointer<vtkImageData>
+    GetImage(vtkRenderWindow* pRenderWindow);
+
+  asiVisu_EXPORT static void
+    WritePNG(const vtkSmartPointer<vtkImageData>& data,
+             const char*                          filename);
 
 // Other commons:
 public:

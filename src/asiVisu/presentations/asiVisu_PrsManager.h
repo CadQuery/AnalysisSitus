@@ -49,6 +49,7 @@
 #pragma warning(push, 0)
 #include <vtkAxesActor.h>
 #include <vtkCellPicker.h>
+#include <vtkImageData.h>
 #include <vtkObject.h>
 #include <vtkPointPicker.h>
 #include <vtkRenderer.h>
@@ -325,6 +326,12 @@ public:
 
   asiVisu_EXPORT const vtkSmartPointer<vtkCellPicker>&
     GetCellPicker() const;
+
+  asiVisu_EXPORT void
+    DumpPNG(const char* filename) const;
+
+  asiVisu_EXPORT vtkSmartPointer<vtkImageData>
+    DumpPNG() const;
 
 public:
 

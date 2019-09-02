@@ -33,6 +33,7 @@
 
 // asiEngine includes
 #include <asiEngine_IV.h>
+#include <asiEngine_Part.h>
 
 // asiVisu includes
 #include <asiVisu_IVPointSetPrs.h>
@@ -55,6 +56,19 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 #pragma warning(pop)
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::FIT3D()
+{
+  if ( m_prsMgr3d )
+  {
+    asiVisu_Utils::AdjustCamera( m_prsMgr3d->GetRenderer(),
+                                 m_prsMgr3d->PropsByTrihedron() );
+    //
+    m_prsMgr3d->GetQVTKWidget()->repaint();
+  }
+}
 
 //---------------------------------------------------------------------------//
 
@@ -131,6 +145,14 @@ void asiUI_IV::ERASE(const TCollection_AsciiString& name)
   //
   if ( isTx )
     m_model->CommitCommand();
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::DUMP_PNG3D(const char* filename)
+{
+  if ( m_prsMgr3d )
+    m_prsMgr3d->DumpPNG(filename);
 }
 
 //---------------------------------------------------------------------------//
@@ -876,6 +898,21 @@ void asiUI_IV::REPAINT_ON()
   this->prsManager(false)->GetQVTKWidget()->repaint();
   this->prsManager(true)->GetQVTKWidget()->repaint();
 }
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::DRAW_SHAPE_AS_PART_OFF()
+{
+  m_bAsPart = false;
+}
+
+//---------------------------------------------------------------------------//
+
+void asiUI_IV::DRAW_SHAPE_AS_PART_ON()
+{
+  m_bAsPart = true;
+}
+
 //---------------------------------------------------------------------------//
 
 void asiUI_IV::visualize(const bool                  is2d,
@@ -1243,7 +1280,7 @@ void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
   if ( shape.IsNull() )
     return;
 
-  // Open transaction
+  // Open transaction.
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
   {
@@ -1251,35 +1288,44 @@ void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
     isTx = true;
   }
 
-  // Modify data
-  Handle(asiData_IVTopoItemNode) item_n;
-  //
-  bool doCreate = newPrimitive;
-  //
-  if ( !doCreate )
+  Handle(ActAPI_INode) shape_n;
+
+  // Draw either as a part or as a variable from IV.
+  if ( m_bAsPart )
   {
-    item_n = asiEngine_IV(m_model).Find_TopoItem(name);
+    Handle(asiData_PartNode) part_n = asiEngine_Part(m_model).Update(shape);
     //
-    if ( !item_n.IsNull() )
-      asiEngine_IV(m_model).Update_TopoItem(item_n, shape);
-    else
-      doCreate = true;
+    shape_n = part_n;
   }
-
-  if ( doCreate )
+  else
   {
-    item_n = asiEngine_IV(m_model).Create_TopoItem(shape, name, newPrimitive);
+    bool doCreate = newPrimitive;
+    //
+    if ( !doCreate )
+    {
+      shape_n = asiEngine_IV(m_model).Find_TopoItem(name);
+      //
+      if ( !shape_n.IsNull() )
+        asiEngine_IV(m_model).Update_TopoItem(Handle(asiData_IVTopoItemNode)::DownCast(shape_n), shape);
+      else
+        doCreate = true;
+    }
 
-    // Update the last created object
-    m_lastObj = item_n;
+    if ( doCreate )
+    {
+      shape_n = asiEngine_IV(m_model).Create_TopoItem(shape, name, newPrimitive);
+
+      // Update the last created object.
+      m_lastObj = shape_n;
+    }
   }
 
-  // Commit transaction
+  // Commit transaction.
   if ( isTx )
     m_model->CommitCommand();
 
-  // Visualize
-  this->visualize(false, item_n, hasColor, color, opacity, isWireframe);
+  // Visualize.
+  this->visualize(false, shape_n, hasColor, color, opacity, isWireframe);
 }
 
 //---------------------------------------------------------------------------//

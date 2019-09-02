@@ -47,11 +47,13 @@
 #include <vtkIdTypeArray.h>
 #include <vtkInformation.h>
 #include <vtkObjectFactory.h>
+#include <vtkPNGWriter.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
 #include <vtkWidgetRepresentation.h>
+#include <vtkWindowToImageFilter.h>
 
 // OCCT includes
 #include <gp_Lin.hxx>
@@ -1242,6 +1244,24 @@ vtkSmartPointer<vtkPropCollection> asiVisu_PrsManager::PropsByTrihedron() const
 const vtkSmartPointer<vtkCellPicker>& asiVisu_PrsManager::GetCellPicker() const
 {
   return m_cellPicker;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Dumps the raster image to a PNG file.
+//! \param[in] filename target filename.
+void asiVisu_PrsManager::DumpPNG(const char* filename) const
+{
+  asiVisu_Utils::WritePNG(this->DumpPNG(), filename);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Dumps the raster image to a PNG format in memory.
+//! \return dumped image data.
+vtkSmartPointer<vtkImageData> asiVisu_PrsManager::DumpPNG() const
+{
+  return asiVisu_Utils::GetImage(m_renderWindow);
 }
 
 //-----------------------------------------------------------------------------

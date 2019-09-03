@@ -32,10 +32,8 @@
 #include <asiEngine_Part.h>
 
 // asiEngine includes
-#include <asiEngine_TolerantShapes.h>
-
-// asiEngine includes
 #include <asiEngine_Curve.h>
+#include <asiEngine_TolerantShapes.h>
 
 // asiVisu includes
 #include <asiVisu_PartPrs.h>
@@ -44,6 +42,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_CheckDeviations.h>
+#include <asiAlgo_MeshGen.h>
 #include <asiAlgo_Utils.h>
 
 // Active Data includes
@@ -502,8 +501,8 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
   // Reset tessellation parameters if requested.
   if ( doResetTessParams )
   {
-    part_n->SetLinearDeflection( asiAlgo_Utils::AutoSelectLinearDeflection(model) );
-    part_n->SetAngularDeflection( asiAlgo_Utils::AutoSelectAngularDeflection(model) );
+    part_n->SetLinearDeflection( asiAlgo_MeshGen::AutoSelectLinearDeflection(model) );
+    part_n->SetAngularDeflection( asiAlgo_MeshGen::AutoSelectAngularDeflection(model) );
   }
 
   // Actualize naming if it is initialized.

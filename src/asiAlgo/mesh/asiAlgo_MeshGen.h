@@ -45,11 +45,31 @@
 //! Services related to mesh generation.
 namespace asiAlgo_MeshGen
 {
-  asiAlgo_EXPORT
-    bool DoNative(const TopoDS_Shape& shape,
-                  const double        linearDeflection,
-                  const double        angularDeflection_deg,
-                  asiAlgo_MeshInfo&   info);
+  //! Automatically selects a linear deflection for meshing as a ratio of
+  //! a diagonal of a shape's bounding box.
+  //! \param[in] shape shape to select the deflection value for.
+  //! \return autocomputed linear deflection.
+  asiAlgo_EXPORT double
+    AutoSelectLinearDeflection(const TopoDS_Shape& shape);
+
+  //! Automatically selects the angular defection value for the passed shape.
+  //! \param[in] shape shape in question.
+  //! \return selected angular deflection.
+  asiAlgo_EXPORT double
+    AutoSelectAngularDeflection(const TopoDS_Shape& shape);
+
+  //! Generates surface mesh by native OCCT tools.
+  //! \param[in]  shape                 shape to tessellate.
+  //! \param[in]  linearDeflection      linear (chord) deflection.
+  //! \param[in]  angularDeflection_deg angular deflection (in degrees).
+  //! \param[out] info                  output mesh summary.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    DoNative(const TopoDS_Shape& shape,
+             const double        linearDeflection,
+             const double        angularDeflection_deg,
+             asiAlgo_MeshInfo&   info);
+
 };
 
 #endif

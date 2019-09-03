@@ -2267,31 +2267,6 @@ bool asiAlgo_Utils::InvertFace(const TopoDS_Face&    face,
 
 //-----------------------------------------------------------------------------
 
-double asiAlgo_Utils::AutoSelectLinearDeflection(const TopoDS_Shape& model)
-{
-  double xMin, yMix, zMin, xMax, yMax, zMax;
-  if ( !Bounds(model, xMin, yMix, zMin, xMax, yMax, zMax, 0.0001) )
-  {
-    xMin = yMix = zMin = 0.0;
-    xMax = yMax = zMax = 1.0;
-  }
-
-  // Use a fraction of a bounding diagonal
-  const double diag = ( gp_XYZ(xMin, yMix, zMin) - gp_XYZ(xMax, yMax, zMax) ).Modulus();
-  return 0.001*diag;
-}
-
-//-----------------------------------------------------------------------------
-
-double asiAlgo_Utils::AutoSelectAngularDeflection(const TopoDS_Shape& model)
-{
-  asiAlgo_NotUsed(model);
-
-  return 0.5; // In degrees
-}
-
-//-----------------------------------------------------------------------------
-
 Handle(Geom_BSplineCurve) asiAlgo_Utils::PolylineAsSpline(const std::vector<gp_XYZ>& trace)
 {
   // Initialize properties for spline trajectories

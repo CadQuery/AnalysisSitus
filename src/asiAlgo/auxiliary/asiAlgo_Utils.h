@@ -687,12 +687,6 @@ namespace asiAlgo_Utils
     InvertFace(const TopoDS_Face&    face,
                TopTools_ListOfShape& inverted);
 
-  asiAlgo_EXPORT double
-    AutoSelectLinearDeflection(const TopoDS_Shape& model);
-
-  asiAlgo_EXPORT double
-    AutoSelectAngularDeflection(const TopoDS_Shape& model);
-
   //! Constructs B-spline curve of degree 1 from the passed poles.
   //! \param[in] trace poles of the curve to construct.
   //! \return 1-degree spline curve.

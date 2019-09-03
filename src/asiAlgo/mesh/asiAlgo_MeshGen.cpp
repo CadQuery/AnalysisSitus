@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_MeshGen.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // OCCT includes
 #include <BRep_Tool.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -46,21 +49,42 @@
   #pragma message("===== warning: FILE_DEBUG is enabled")
 #endif
 
-//! Generates surface mesh by native OCCT tools.
-//! \param shape                 [in]  shape to tessellate.
-//! \param linearDeflection      [in]  chord deflection.
-//! \param angularDeflection_deg [in]  angular deflection in degrees.
-//! \param info                  [out] mesh summary info.
-//! \return true in case of success, false -- otherwise.
+//-----------------------------------------------------------------------------
+
+double asiAlgo_MeshGen::AutoSelectLinearDeflection(const TopoDS_Shape& shape)
+{
+  double xMin, yMix, zMin, xMax, yMax, zMax;
+  if ( !asiAlgo_Utils::Bounds(shape, xMin, yMix, zMin, xMax, yMax, zMax, 0.0001) )
+  {
+    xMin = yMix = zMin = 0.0;
+    xMax = yMax = zMax = 1.0;
+  }
+
+  // Use a fraction of a bounding diagonal.
+  const double diag = ( gp_XYZ(xMin, yMix, zMin) - gp_XYZ(xMax, yMax, zMax) ).Modulus();
+  return 0.001*diag;
+}
+
+//-----------------------------------------------------------------------------
+
+double asiAlgo_MeshGen::AutoSelectAngularDeflection(const TopoDS_Shape& shape)
+{
+  asiAlgo_NotUsed(shape);
+
+  return 0.5; // In degrees.
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape,
                                const double        linearDeflection,
                                const double        angularDeflection_deg,
                                asiAlgo_MeshInfo&   info)
 {
-  // Clean up polygonal data
+  // Clean up polygonal data.
   BRepTools::Clean(shape);
 
-  // Tessellate
+  // Tessellate.
   try
   {
     OCC_CATCH_SIGNALS
@@ -77,7 +101,7 @@ bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape,
     BRepTools::Write(shape, filename.ToCString());
 #endif
 
-    // Notice that parallel mode is enabled
+    // Notice that parallel mode is enabled.
     IMeshTools_Parameters params;
     params.Deflection               = linearDeflection;
     params.Angle                    = angularDeflection_deg;

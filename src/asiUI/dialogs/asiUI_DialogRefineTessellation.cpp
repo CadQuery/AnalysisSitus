@@ -38,6 +38,7 @@
 #include <asiVisu_ShapeRobustTessellator.h>
 
 // asiAlgo includes
+#include <asiAlgo_MeshGen.h>
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
@@ -169,8 +170,8 @@ void asiUI_DialogRefineTessellation::onReset()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Ask tessellator to return its default settings
-  const double linDefl = asiAlgo_Utils::AutoSelectLinearDeflection(part);
-  const double angDefl = asiAlgo_Utils::AutoSelectAngularDeflection(part);
+  const double linDefl = asiAlgo_MeshGen::AutoSelectLinearDeflection(part);
+  const double angDefl = asiAlgo_MeshGen::AutoSelectAngularDeflection(part);
 
   // Set data to controls
   m_widgets.pLinDefl->setText( QString::number(linDefl) );

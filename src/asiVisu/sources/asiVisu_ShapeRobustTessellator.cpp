@@ -164,7 +164,7 @@ void asiVisu_ShapeRobustTessellator::internalInit(const double                  
 
   // Set linear deflection
   if ( Abs(linearDeflection) < asiAlgo_TooSmallValue )
-    m_fLinDeflection = asiAlgo_Utils::AutoSelectLinearDeflection(m_shape);
+    m_fLinDeflection = asiAlgo_MeshGen::AutoSelectLinearDeflection(m_shape);
   else
     m_fLinDeflection = linearDeflection;
   //
@@ -181,7 +181,7 @@ void asiVisu_ShapeRobustTessellator::internalInit(const double                  
 
   // Set angular deflection
   if ( Abs(angularDeflection_deg) < asiAlgo_TooSmallValue )
-    m_fAngDeflectionDeg = asiAlgo_Utils::AutoSelectAngularDeflection(m_shape);
+    m_fAngDeflectionDeg = asiAlgo_MeshGen::AutoSelectAngularDeflection(m_shape);
   else
     m_fAngDeflectionDeg = angularDeflection_deg;
   //

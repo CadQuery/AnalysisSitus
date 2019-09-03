@@ -81,6 +81,12 @@ public:
     return m_resultPoly;
   }
 
+  //! \return result as Poly_Triangulation.
+  Handle(Poly_Triangulation) GetResultTris() const
+  {
+    return m_resultPoly->GetTriangulation();
+  }
+
   //! \return result.
   const Handle(ActData_Mesh)& GetResultMesh() const
   {
@@ -103,6 +109,13 @@ public:
   const asiAlgo_MeshLinkSet& GetNonManifoldLinks() const
   {
     return m_nonManifoldLinks;
+  }
+
+  //! Converts merging tool to triangulation object.
+  //! \return triangulation.
+  operator Handle(Poly_Triangulation)()
+  {
+    return m_resultPoly->GetTriangulation();
   }
 
 protected:

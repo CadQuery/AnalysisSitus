@@ -360,8 +360,8 @@ bool asiAlgo_RecognizeBlends::Perform(const double radius)
   Handle(asiAlgo_AAGIterationRule::RecognizeEdgeBlends)
     ebfRule = new asiAlgo_AAGIterationRule::RecognizeEdgeBlends(m_aag,
                                                                 radius,
-                                                                m_progress/*,
-                                                                m_plotter*/);
+                                                                m_progress,
+                                                                m_plotter);
 
   // Rule is used in non-blocking mode to allow full traverse of the model
   // by neighbors.

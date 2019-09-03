@@ -78,7 +78,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
                                              bool&                             isCandidateBlend,
                                              double&                           candidateRadius)
 {
-  // Build master AAG
+  // Build master AAG.
   if ( m_aag.IsNull() )
   {
 #if defined COUT_DEBUG
@@ -96,25 +96,25 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 
   ActAPI_PlotterEntry IV( this->GetPlotter() );
 
-  // Initial guess is that this face looks like a blend
+  // Initial guess is that this face looks like a blend.
   isCandidateBlend = false;
 
-  // Get face of interest and its host surface
+  // Get face of interest and its host surface.
   const TopoDS_Face& A = m_aag->GetFace(face_idx);
   BRepAdaptor_Surface AS(A);
 
-  // Get all smoothly connected neighbor faces
+  // Get all smoothly connected neighbor faces.
   const TColStd_PackedMapOfInteger& smoothNeighbors = m_aag->GetNeighbors(face_idx, smooth_edge_ids);
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(smoothNeighbors); nit.More(); nit.Next() )
   {
-    // Get neighbor face and its host surface
+    // Get neighbor face and its host surface.
     const int           neighbor_idx = nit.Key();
     const TopoDS_Face&  B            = m_aag->GetFace(neighbor_idx);
     BRepAdaptor_Surface BS(B);
 
     // Pick up just any common edge between the two faces. This edges is by
-    // construction a smooth edge
+    // construction a smooth edge.
     Handle(asiAlgo_FeatureAttrAdjacency)
       attr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( m_aag->GetArcAttribute( asiAlgo_AAG::t_arc(face_idx, neighbor_idx) ) );
     //
@@ -131,7 +131,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 
     // Get a host curve of the common edge and pick up a midpoint (probe point)
     // to analyze the differential properties of the neighbor faces. We also
-    // need a local tangent direction on the edge
+    // need a local tangent direction on the edge.
     double f, l;
     Handle(Geom_Curve) C = BRep_Tool::Curve(E, f, l);
     //
@@ -157,14 +157,14 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
       return false;
     }
 
-    // Solve point inversion problem for P on A
+    // Solve point inversion problem for P on A.
     gp_Pnt2d UV;
     {
       ShapeAnalysis_Surface SAS( AS.Surface().Surface() );
       UV = SAS.ValueOfUV(P, 1.0e-2);
     }
 
-    // Solve point inversion problem for P on B
+    // Solve point inversion problem for P on B.
     gp_Pnt2d ST;
     {
       ShapeAnalysis_Surface SAS( BS.Surface().Surface() );
@@ -196,6 +196,8 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     const double B_minK = BProps.MinCurvature();
     const double B_maxK = BProps.MaxCurvature();
 
+    // If A is a blend, then a2 is a blend curvature, and a1 is other
+    // curvature.
     double a1, a2, b1, b2;
     gp_Dir a1_dir, a2_dir, b1_dir, b2_dir;
     //
@@ -229,6 +231,14 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
       b2     = B_minK;
     }
 
+    //if ( face_idx == 299 )
+    //{
+    //  m_plotter.DRAW_VECTOR_AT(P, a1_dir, ( Abs(a1) < RealEpsilon() ) ? Color_Blue : Color_Red,   "a1dir");
+    //  m_plotter.DRAW_VECTOR_AT(P, a2_dir, ( Abs(a2) < RealEpsilon() ) ? Color_Blue : Color_Green, "a2dir");
+    //  m_plotter.DRAW_VECTOR_AT(P, b1_dir, ( Abs(b1) < RealEpsilon() ) ? Color_Blue : Color_Red,   "b1dir");
+    //  m_plotter.DRAW_VECTOR_AT(P, b2_dir, ( Abs(b2) < RealEpsilon() ) ? Color_Blue : Color_Green, "b2dir");
+    //}
+
 #if defined COUT_DEBUG
     std::cout << "\t[Face #" << face_idx     << "] a1 = " << a1 << std::endl;
     std::cout << "\t[Face #" << face_idx     << "] a2 = " << a2 << std::endl;
@@ -237,14 +247,16 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     std::cout << "---" << std::endl;
 #endif
 
-    // Self-curvature test
-    if ( a1*a2 >= 0 && Abs(a2) > Abs(a1) )
+    // Self-curvature test: a2 is greater than a1 in magnitude (i.e., blend
+    // curvature dominates).
+    if ( Abs(a2) > Abs(a1) )
     {
-      // Neighbor-curvature test
-      if ( Abs(a2) > Abs(b2) )
+      // Neighbor-curvature test. The coefficient here is used to give a
+      // magnitude how much more curved the blend face is supposed to be.
+      if ( Abs(a2) > 1.5*Abs(b2) )
       {
         // A is more likely to be a blend since blends usually have higher
-        // curvature than the support faces
+        // curvature than the support faces.
         if ( !isCandidateBlend )
         {
           isCandidateBlend = true;
@@ -256,7 +268,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     }
   }
 
-  // Recover IDs
+  // Recover IDs.
   this->getIds(m_result.edges, m_result.ids);
 
   return true;

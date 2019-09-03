@@ -131,7 +131,7 @@ bool asiAlgo_ModConstructEdge::NewCurve(const TopoDS_Edge&  E,
     // Set updated data for the caller
     C   = m_edgeInfo.resolution.icurve->C;
     L   = TopLoc_Location();
-    tol = m_edgeInfo.resolution.icurve->Uncertainty;
+    tol = Max( BRep_Tool::Tolerance(E), m_edgeInfo.resolution.icurve->Uncertainty );
     //
     return true;
   }
@@ -769,17 +769,8 @@ Handle(Geom2d_Curve) asiAlgo_ModConstructEdge::buildPCurve(const TopoDS_Edge& E,
   }
   catch ( ... )
   {
-    std::cout << "Exception on projecting 3D curve" << std::endl;
     this->SetErrorStateOn();
-    //// Let's convert our curve to b-curve.
-    //c3d = GeomConvert::CurveToBSplineCurve(c3d, Convert_QuasiAngular);
-
-    //myProjector->Perform (c3d,f,l,c2d,TolFirst,TolLast);
   }
-
-  /*ShapeFix_Edge sfe;
-  sfe.FixAddPCurve(E, F, false);
-  c2d = BRep_Tool::CurveOnSurface(E, F, f, l);*/
 
   return c2d;
 }

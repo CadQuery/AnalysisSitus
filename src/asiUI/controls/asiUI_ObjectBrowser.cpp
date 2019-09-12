@@ -814,6 +814,74 @@ void asiUI_ObjectBrowser::onDumpJoint()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onUnifyKnots()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+    return;
+
+  // Get Edge Node.
+  Handle(asiData_ReEdgeNode)
+    edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
+
+  // Analyze joint.
+  asiEngine_PatchJointAdaptor jointAdaptor(m_model, m_progress, m_plotter);
+  //
+  if ( !jointAdaptor.Init(edgeNode) )
+    return;
+
+  // Extract isos by performing pure geometric analysis.
+  Handle(Geom_BSplineCurve) isoLeft, isoRight;
+  bool                      isoLeftU, isoRightU, isoLeftMin, isoRightMin, areOpposite;
+  //
+  if ( !jointAdaptor.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
+                                 isoRight, isoRightU, isoRightMin,
+                                 areOpposite) )
+    return; // Failure.
+
+  // Make surfaces compatible.
+  if ( !jointAdaptor.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU, areOpposite) )
+    return;
+
+  const Handle(asiData_RePatchNode)& leftPatchNode  = jointAdaptor.GetPatchLeft();
+  const Handle(asiData_RePatchNode)& rightPatchNode = jointAdaptor.GetPatchRight();
+
+  // Store the updated surfaces.
+  m_model->OpenCommand();
+  {
+    leftPatchNode->SetSurface( jointAdaptor.GetSurfaceLeft() );
+    rightPatchNode->SetSurface( jointAdaptor.GetSurfaceRight() );
+  }
+  m_model->CommitCommand();
+
+  // Actualize presentations.
+  for ( size_t k = 0; k < m_viewers.size(); ++k )
+  {
+    if ( dynamic_cast<asiUI_ViewerPart*>(m_viewers[k]) )
+    {
+      m_viewers[k]->PrsMgr()->Actualize(leftPatchNode);
+      m_viewers[k]->PrsMgr()->Actualize(rightPatchNode);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onFlattenCorner()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_ReVertexNode) ) )
+    return;
+
+  // TODO: NYI
+}
+
+//-----------------------------------------------------------------------------
+
 //! Populates context menu with actions.
 //! \param[in]     activeNodes currently active Nodes.
 //! \param[in,out] pMenu       menu to populate.
@@ -928,7 +996,14 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       if ( node->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
       {
         pMenu->addSeparator();
-        pMenu->addAction( "Dump joint info",  this, SLOT( onDumpJoint () ) );
+        pMenu->addAction( "Dump joint info",  this, SLOT( onDumpJoint  () ) );
+        pMenu->addAction( "Unify knots",      this, SLOT( onUnifyKnots () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_ReVertexNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Flatten corner", this, SLOT( onFlattenCorner () ) );
       }
     }
   }

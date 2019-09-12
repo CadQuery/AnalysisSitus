@@ -31,7 +31,7 @@
 #ifndef asiAlgo_PLY_h
 #define asiAlgo_PLY_h
 
-// A-Situs includes
+// asiAlgo includes
 #include <asiAlgo.h>
 
 // OCCT includes
@@ -39,62 +39,108 @@
 #include <TCollection_AsciiString.hxx>
 
 // Active Data includes
-#include <ActAux_Common.h>
+#include <ActAPI_IAlgorithm.h>
 
 // Mesh includes
 #include <ActData_Mesh.h>
 
 //-----------------------------------------------------------------------------
 
+class asiAlgp_OutPLYFile;
+
 //! Services to work with ply files.
-namespace asiAlgo_PLY
+class asiAlgo_PLY : public ActAPI_IAlgorithm
 {
+public:
+
+  //! Auxiliary data structure to exchange named arrays.
   struct TNamedArray
   {
     TCollection_AsciiString Name; //!< Name of data series.
     Handle(HRealArray)      Data; //!< Data array.
   };
 
+public:
+
+  //! Ctor accepting progress notifier and imperative plotter.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_PLY(ActAPI_ProgressEntry progress = NULL,
+              ActAPI_PlotterEntry  plotter  = NULL) : ActAPI_IAlgorithm(progress, plotter)
+  {}
+
+public:
+
   //! Reads mesh from the given file.
-  //! \param theFilename   [in]  target filename.
-  //! \param theMesh       [out] restored tessellation.
-  //! \param theNodeArrays [out] collection of data arrays associated with nodes.
-  //! \param theElemArrays [out] collection of data arrays associated with faces.
+  //! \param[in]  filename   target filename.
+  //! \param[out] mesh       restored tessellation.
+  //! \param[out] nodeArrays collection of data arrays associated with nodes.
+  //! \param[out] elemArrays collection of data arrays associated with faces.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Read(const TCollection_AsciiString&     theFilename,
-         Handle(ActData_Mesh)&              theMesh,
-         NCollection_Sequence<TNamedArray>& theNodeArrays,
-         NCollection_Sequence<TNamedArray>& theElemArrays);
+    Read(const TCollection_AsciiString&     filename,
+         Handle(ActData_Mesh)&              mesh,
+         NCollection_Sequence<TNamedArray>& nodeArrays,
+         NCollection_Sequence<TNamedArray>& elemArrays);
 
   //! Saves the passed mesh to a ply file.
-  //! \param theMesh     [in] tessellation to store.
-  //! \param theFilename [in] target filename.
+  //! \param[in] mesh     tessellation to store.
+  //! \param[in] filename target filename.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    Write(const Handle(ActData_Mesh)&    theMesh,
-          const TCollection_AsciiString& theFilename);
+    Write(const Handle(ActData_Mesh)&    mesh,
+          const TCollection_AsciiString& filename);
 
-//-----------------------------------------------------------------------------
+  //! Saves the passed triangulation to a ply file.
+  //! \param[in] tris     triangulation to store.
+  //! \param[in] filename target filename.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Write(const Handle(Poly_Triangulation)& tris,
+          const TCollection_AsciiString&    filename);
+
+protected:
+
+  //! Writes header info to the file.
+  //! \param[in]     numNodes number of nodes in a mesh.
+  //! \param[in]     numFaces number of faces in a mesh.
+  //! \param[in,out] FILE     file resource.
+  asiAlgo_EXPORT void
+    writeHeader(const int           numNodes,
+                const int           numFaces,
+                asiAlgp_OutPLYFile& FILE);
 
   //! Saves the nodes only from the passed tessellation into a ply file.
-  //! \param theMesh     [in] mesh to save.
-  //! \param theFilename [in] target filename.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    _writeNodes(const Handle(ActData_Mesh)&    theMesh,
-                const TCollection_AsciiString& theFilename);
+  //! \param[in]     mesh mesh to save.
+  //! \param[in,out] FILE file resource.
+  asiAlgo_EXPORT void
+    writeNodes(const Handle(ActData_Mesh)& mesh,
+               asiAlgp_OutPLYFile&         FILE);
+
+  //! Saves the nodes only from the passed triangulation into a ply file.
+  //! \param[in]     tris triangulation to save.
+  //! \param[in,out] FILE file resource.
+  asiAlgo_EXPORT void
+    writeNodes(const Handle(Poly_Triangulation)& tris,
+               asiAlgp_OutPLYFile&               FILE);
 
   //! Save the elements only from the passed tessellation into a ply file.
-  //! \param theMesh     [in] mesh to save.
-  //! \param theShift    [in] number of nodes already written.
-  //! \param theFilename [in] target filename.
-  //! \return true in case of success, false -- otherwise.
-  asiAlgo_EXPORT bool
-    _writeElements(const Handle(ActData_Mesh)&    theMesh,
-                   const int                      theShift,
-                   const TCollection_AsciiString& theFilename);
+  //! \param[in]     mesh  mesh to save.
+  //! \param[in]     shift number of nodes already written.
+  //! \param[in,out] FILE  file resource.
+  asiAlgo_EXPORT void
+    writeElements(const Handle(ActData_Mesh)& mesh,
+                  const int                   shift,
+                  asiAlgp_OutPLYFile&         FILE);
 
+  //! Save the elements only from the passed triangulation into a ply file.
+  //! \param[in]     tris  triangulation to save.
+  //! \param[in]     shift number of nodes already written.
+  //! \param[in,out] FILE  file resource.
+  asiAlgo_EXPORT void
+    writeElements(const Handle(Poly_Triangulation)& tris,
+                  const int                         shift,
+                  asiAlgp_OutPLYFile&               FILE);
 };
 
 #endif

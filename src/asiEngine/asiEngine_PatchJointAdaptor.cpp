@@ -83,6 +83,11 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
   if ( !m_patchRight.IsNull() )
     m_progress.SendLogMessage( LogInfo(Normal) << "Right patch: %1." << m_patchRight->GetName() );
 
+  // Initialize base class.
+  asiAlgo_PatchJointAdaptor::Init( m_edge->GetCurve(),
+                                   Handle(Geom_BSplineSurface)::DownCast( m_patchLeft->GetSurface() ),
+                                   Handle(Geom_BSplineSurface)::DownCast( m_patchRight->GetSurface() ) );
+
   if ( m_patchRight.IsNull() || m_patchRight.IsNull() )
   {
     m_progress.SendLogMessage( LogWarn(Normal) << "Naked edge: there is no left or/and right patch." );

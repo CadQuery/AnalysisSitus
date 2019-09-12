@@ -8,6 +8,7 @@ ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
 ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
+INSTANT_MESHES_EXE=@INSTANT_MESHES_EXE@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
@@ -20,6 +21,7 @@ ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
 ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
+INSTANT_MESHES_EXE=@INSTANT_MESHES_EXE@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>
@@ -32,6 +34,7 @@ ASI_TEST_DUMPING=@ASI_TEST_DUMPING@
 ASI_TEST_DATA=@ASI_TEST_DATA@
 ASI_TEST_SCRIPTS=@ASI_TEST_SCRIPTS@
 ASI_TEST_DESCR=@ASI_TEST_DESCR@
+INSTANT_MESHES_EXE=@INSTANT_MESHES_EXE@
     </LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>@CMAKE_BINARY_DIR@</LocalDebuggerWorkingDirectory>

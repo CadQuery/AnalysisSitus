@@ -37,6 +37,7 @@
 // asiAlgo includes
 #include <asiAlgo_BuildCoonsSurf.h>
 #include <asiAlgo_ClassifyPointFace.h>
+#include <asiAlgo_PLY.h>
 #include <asiAlgo_Timer.h>
 
 #if defined USE_MOBIUS
@@ -1309,6 +1310,15 @@ bool asiAlgo_Utils::WriteStl(const Handle(Poly_Triangulation)& triangulation,
                              const TCollection_AsciiString&    filename)
 {
   return RWStl::WriteAscii(triangulation, filename);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::WritePly(const Handle(Poly_Triangulation)& triangulation,
+                             const TCollection_AsciiString&    filename,
+                             ActAPI_ProgressEntry              progress)
+{
+  return asiAlgo_PLY(progress).Write(triangulation, filename);
 }
 
 //-----------------------------------------------------------------------------

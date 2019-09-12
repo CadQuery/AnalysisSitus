@@ -296,7 +296,7 @@ void asiUI_ControlsMesh::onSaveFacetsToPly()
   }
 
   // Save mesh to ply file.
-  if ( !asiAlgo_PLY::Write( storedMesh, QStr2AsciiStr(filename) ) )
+  if ( !asiAlgo_PLY(m_notifier).Write( storedMesh, QStr2AsciiStr(filename) ) )
   {
     m_notifier.SendLogMessage(LogErr(Normal) << "Cannot save mesh to PLY file.");
     return;

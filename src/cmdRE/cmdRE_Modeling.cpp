@@ -79,6 +79,13 @@
 #include <GeomAdaptor_Curve.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 
+// Qt includes
+#pragma warning(push, 0)
+#include <QDir>
+#include <QMainWindow>
+#include <QProcess>
+#pragma warning(pop)
+
 //-----------------------------------------------------------------------------
 
 //! Unoriented link.
@@ -160,6 +167,9 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   if ( interp->GetKeyValue(argc, argv, "fair", fairCoeffStr) )
     fairCoeff = fairCoeffStr.RealValue();
 
+  // Get a flag indicating if approximation is required.
+  const bool isApprox = interp->HasKeyword(argc, argv, "approx");
+
   asiEngine_RE reApi( cmdRE::model,
                       interp->GetProgress(),
                       interp->GetPlotter() );
@@ -179,7 +189,29 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
   std::vector<Handle(asiData_RePatchNode)> patchNodes;
 
-  if ( argc == 1 )
+  /* Collect patches by names */
+
+  for ( int k = 1; k < argc; ++k )
+  {
+    // Skip keywords.
+    TCollection_AsciiString arg(argv[k]);
+    if ( arg.IsRealValue() || arg == "-fair" || arg == "-approx" )
+      continue;
+
+    Handle(asiData_RePatchNode)
+      patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(arg) );
+    //
+    if ( patchNode.IsNull() || !patchNode->IsWellFormed() )
+    {
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not a patch."
+                                                            << arg);
+      continue;
+    }
+    //
+    patchNodes.push_back(patchNode);
+  }
+
+  if ( !patchNodes.size() )
   {
     /* Collect all patches */
 
@@ -187,30 +219,6 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
     {
       Handle(asiData_RePatchNode)
         patchNode = Handle(asiData_RePatchNode)::DownCast( eit->Value() );
-      //
-      patchNodes.push_back(patchNode);
-    }
-  }
-  else
-  {
-    /* Collect patches by names */
-
-    for ( int k = 1; k < argc; ++k )
-    {
-      // Skip keywords.
-      TCollection_AsciiString arg(argv[k]);
-      if ( arg.IsRealValue() || arg == "fair" )
-        continue;
-
-      Handle(asiData_RePatchNode)
-        patchNode = Handle(asiData_RePatchNode)::DownCast( cmdRE::model->FindNodeByName(arg) );
-      //
-      if ( patchNode.IsNull() || !patchNode->IsWellFormed() )
-      {
-        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not a patch."
-                                                             << arg);
-        continue;
-      }
       //
       patchNodes.push_back(patchNode);
     }
@@ -224,7 +232,11 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   {
     // Reconnect basic Tree Functions.
     for ( size_t k = 0; k < patchNodes.size(); ++k )
+    {
+      patchNodes[k]->SetApproxNodes(isApprox);
+
       reApi.ReconnectBuildPatchFunc(patchNodes[k]);
+    }
 
     cmdRE::model->FuncExecuteAll();
   }
@@ -271,7 +283,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
   Handle(ActAPI_HNodeList) edgeNodes = new ActAPI_HNodeList;
 
   bool                    hasToler = false;
-  double                  toler    = 1.0;
+  double                  toler    = 5.0;
   TCollection_AsciiString tolerStr;
   //
   if ( interp->GetKeyValue(argc, argv, "toler", tolerStr) )
@@ -280,31 +292,23 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     toler    = tolerStr.RealValue();
   }
 
-  if ( argc == 1 || (argc == 3 && hasToler) )
+  /* Collect edges by names */
+  for ( int k = 1; k < argc; ++k )
+  {
+    Handle(asiData_ReEdgeNode)
+      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( cmdRE::model->FindNodeByName(argv[k]) );
+    //
+    if ( edgeNode.IsNull() || !edgeNode->IsWellFormed() )
+      continue;
+
+    edgeNodes->Append(edgeNode);
+  }
+
+  if ( edgeNodes->IsEmpty() )
   {
     /* Collect all edges */
-
     for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
       edgeNodes->Append( eit->Value() );
-  }
-  else
-  {
-    /* Collect edges by names */
-
-    for ( int k = 1; k < argc; ++k )
-    {
-      Handle(asiData_ReEdgeNode)
-        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( cmdRE::model->FindNodeByName(argv[k]) );
-      //
-      if ( edgeNode.IsNull() || !edgeNode->IsWellFormed() )
-      {
-        interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object with name '%1' is not an edge."
-                                                             << argv[k]);
-        continue;
-      }
-      //
-      edgeNodes->Append(edgeNode);
-    }
   }
 
   /* =================================
@@ -323,6 +327,8 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     {
       Handle(asiData_ReEdgeNode)
         edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+      //
+      edgeNode->SetApproxToler(toler);
 
       reApi.ReconnectBuildEdgeFunc(edgeNode);
     }
@@ -356,8 +362,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
                                                               << edgeNode->GetName() );
         interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
         //
-        M->AbortCommand();
-        return TCL_ERROR;
+        continue;
       }
 
       // Update Data Model.
@@ -1769,10 +1774,16 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
                   int                          argc,
                   const char**                 argv)
 {
-  if ( argc != 1 )
+  if ( argc != 1 && argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  // Number of faces to produce.
+  const int numFaces = ( (argc == 1) ? 10 : atoi( argv[1] ) );
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of faces to produce is %1."
+                                                       << numFaces);
 
   // Get triangulation.
   Handle(Poly_Triangulation)
@@ -1784,15 +1795,66 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Get tessellation.
-  Handle(ActData_Mesh)
-    mesh = cmdRE::model->GetTessellationNode()->GetMesh();
+  // Find Instant Meshes executable.
+  QString qimEnv = qgetenv("INSTANT_MESHES_EXE");
   //
-  if ( mesh.IsNull() )
+  if ( !QDir().exists(qimEnv) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation (object defining the topology) is null.");
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot find executable '%1'."
+                                                         << QStr2AsciiStr(qimEnv) );
     return TCL_ERROR;
   }
+  //
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Instant Meshes executable: '%1'."
+                                                        << QStr2AsciiStr(qimEnv) );
+
+  // Save triangulation to feed Instant Meshes.
+  TCollection_AsciiString imInput  = "C:/users/ssv/desktop/imInput.ply";
+  TCollection_AsciiString imOutput = "C:/users/ssv/desktop/imOutput.obj";
+  //
+  if ( !asiAlgo_Utils::WritePly( tris, imInput, interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot save temporary mesh file.");
+    return TCL_ERROR;
+  }
+
+  // Prepare arguments.
+  QStringList imArgs;
+  //
+  imArgs << "-f" << QString::number(numFaces)
+         << "-o" << imOutput.ToCString()
+         << "-d"
+         << imInput.ToCString();
+
+  // Run conversion process.
+  QProcess pProcess(cmdRE::cf->MainWindow);
+  pProcess.start(qimEnv, imArgs);
+  //
+  if ( !pProcess.waitForStarted() )
+    return TCL_ERROR;
+  //
+  if ( !pProcess.waitForFinished() )
+    return TCL_ERROR;
+
+  // Load OBJ to the Tessellation Node.
+  Handle(ActData_Mesh) mesh;
+  //
+  if ( !asiAlgo_Utils::ReadObj( imOutput, mesh, interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot read OBJ file '%1'." << imOutput );
+    return TCL_ERROR;
+  }
+  //
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Loaded mesh from '%1'." << imOutput );
+
+  // Set mesh.
+  Handle(asiData_TessNode) tess_n = cmdRE::model->GetTessellationNode();
+  //
+  cmdRE::model->OpenCommand(); // tx start
+  {
+    tess_n->SetMesh(mesh);
+  }
+  cmdRE::model->CommitCommand(); // tx commit
 
   // Build BVH for CAD-agnostic mesh.
   Handle(asiAlgo_BVHFacets) bvh;
@@ -1857,7 +1919,7 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           {
             interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
             interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to project network node.");
-            return TCL_ERROR;
+            continue;
           }
 
           ++vertexIdx;
@@ -1953,7 +2015,10 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
 
   // Update UI.
   if ( cmdRE::cf->ViewerPart )
+  {
     cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cmdRE::model->GetReTopoNode(), true );
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( tess_n );
+  }
   //
   if ( cmdRE::cf->ObjectBrowser )
     cmdRE::cf->ObjectBrowser->Populate();
@@ -1974,7 +2039,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",
     //
-    "re-build-patches [patchName1 [patchName2 ...]] [-fair <coeff>]\n"
+    "re-build-patches [patchName1 [patchName2 ...]] [-fair <coeff>] [-approx]\n"
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, RE_BuildPatches);

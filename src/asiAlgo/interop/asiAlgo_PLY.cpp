@@ -45,19 +45,100 @@
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
-                       Handle(ActData_Mesh)&              theMesh,
-                       NCollection_Sequence<TNamedArray>& theNodeArrays,
-                       NCollection_Sequence<TNamedArray>& theElemArrays)
+//! RAII handler for reading PLY files.
+class asiAlgp_InPLYFile
 {
-  std::ifstream FILE( theFilename.ToCString() );
-  if ( !FILE.is_open() )
+public:
+
+  //! Ctor accepting filename. This object opens the file.
+  //! \param[in] filename target filename.
+  asiAlgp_InPLYFile(const TCollection_AsciiString& filename)
+  {
+    m_FILE.open( filename.ToCString() );
+  }
+
+  //! Dtor.
+  ~asiAlgp_InPLYFile()
+  {
+    m_FILE.close();
+  }
+
+public:
+
+  //! \return true if the file is open.
+  bool IsOpen() const
+  {
+    return m_FILE.is_open();
+  }
+
+  //! \return file resource.
+  std::ifstream& FILE()
+  {
+    return m_FILE;
+  }
+
+protected:
+
+  std::ifstream m_FILE; //!< File to read.
+
+};
+
+//-----------------------------------------------------------------------------
+
+//! RAII handler for writing PLY files.
+class asiAlgp_OutPLYFile
+{
+public:
+
+  //! Ctor accepting filename. This object opens the file.
+  //! \param[in] filename target filename.
+  asiAlgp_OutPLYFile(const TCollection_AsciiString& filename)
+  {
+    m_FILE.open(filename.ToCString(), std::ios::out | std::ios::trunc);
+  }
+
+  //! Dtor.
+  ~asiAlgp_OutPLYFile()
+  {
+    m_FILE.close();
+  }
+
+public:
+
+  //! \return true if the file is open.
+  bool IsOpen() const
+  {
+    return m_FILE.is_open();
+  }
+
+  //! \return file resource.
+  std::ofstream& FILE()
+  {
+    return m_FILE;
+  }
+
+protected:
+
+  std::ofstream m_FILE; //!< File to write.
+
+};
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PLY::Read(const TCollection_AsciiString&     filename,
+                       Handle(ActData_Mesh)&              mesh,
+                       NCollection_Sequence<TNamedArray>& nodeArrays,
+                       NCollection_Sequence<TNamedArray>& elemArrays)
+{
+  asiAlgp_InPLYFile FILE(filename);
+  //
+  if ( !FILE.IsOpen() )
     return false;
 
-  // Create container for mesh
+  // Create container for mesh.
   Handle(ActData_Mesh) MeshDS = new ActData_Mesh;
 
-  // Working variables
+  // Working variables.
   int nVertices = 0, nFaces = 0;
   bool isHeaderPassed    = false,
        isHeaderNodes     = false,
@@ -65,13 +146,13 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
        areVerticesPassed = false,
        areFacesPassed    = false;
 
-  // Loop over the file
-  while ( !FILE.eof() )
+  // Loop over the file.
+  while ( !FILE.FILE().eof() )
   {
     char str[1024];
-    FILE.getline(str, 1024);
+    FILE.FILE().getline(str, 1024);
 
-    // Save tokens to vector
+    // Save tokens to vector.
     std::vector<std::string> tokens;
     std::istringstream iss(str);
     std::copy( std::istream_iterator<std::string>(iss),
@@ -81,7 +162,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
     if ( !tokens.size() )
       continue;
 
-    // Skip header
+    // Skip header.
     if ( !isHeaderPassed && (tokens[0] == "end_header") )
     {
       isHeaderPassed = true;
@@ -90,7 +171,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
     else if ( !isHeaderPassed )
     {
       // ...
-      // Process header
+      // Process header.
       // ...
 
       if ( tokens.size() >= 3 )
@@ -113,14 +194,14 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
           TNamedArray narr;
           narr.Name = tokens[2].c_str();
           narr.Data = new HRealArray(0, nVertices - 1, 0.0);
-          theNodeArrays.Append(narr);
+          nodeArrays.Append(narr);
         }
         else if ( isHeaderFaces && tokens[0] == "property" && tokens.size() == 3 )
         {
           TNamedArray narr;
           narr.Name = tokens[2].c_str();
           narr.Data = new HRealArray(0, nFaces - 1, 0.0);
-          theElemArrays.Append(narr);
+          elemArrays.Append(narr);
         }
 
         if ( iTarget )
@@ -133,7 +214,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
     else if ( isHeaderPassed )
     {
       // ...
-      // Process vertices
+      // Process vertices.
       // ...
 
       if ( !areVerticesPassed && tokens.size() >= 3 )
@@ -147,7 +228,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
         for ( int k = 3; k < tokens.size(); ++k )
         {
           const double val = atof( tokens[k].c_str() );
-          theNodeArrays(k - 2).Data->SetValue( id - 1, val );
+          nodeArrays(k - 2).Data->SetValue( id - 1, val );
         }
 
         if ( MeshDS->NbNodes() == nVertices )
@@ -158,7 +239,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
       }
 
       // ...
-      // Process faces
+      // Process faces.
       // ...
 
       if ( areVerticesPassed && !areFacesPassed && tokens.size() > 3 )
@@ -187,93 +268,115 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     theFilename,
         for ( int k = nNodes + 1; k < tokens.size(); ++k )
         {
           const double val = atof( tokens[k].c_str() );
-          theElemArrays(k - nNodes).Data->SetValue( elem_id - 1, val );
+          elemArrays(k - nNodes).Data->SetValue( elem_id - 1, val );
         }
       }
     }
-  } // Until EOF
+  } // Until EOF.
 
-  FILE.close();
-  theMesh = MeshDS;
+  mesh = MeshDS;
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PLY::Write(const Handle(ActData_Mesh)&    theMesh,
-                        const TCollection_AsciiString& theFilename)
+bool asiAlgo_PLY::Write(const Handle(ActData_Mesh)&    mesh,
+                        const TCollection_AsciiString& filename)
 {
-  std::ofstream FILE( theFilename.ToCString() );
-  if ( !FILE.is_open() )
+  asiAlgp_OutPLYFile FILE(filename);
+  //
+  if ( !FILE.IsOpen() )
   {
-    std::cout << "Error: cannot open file for writing" << std::endl;
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot open file for writing.");
     return false;
   }
 
-  // Write header
-  FILE << "ply\n";
-  FILE << "format ascii 1.0\n";
-  FILE << "comment author: Analysis Situs\n";
-  FILE << "element vertex " << theMesh->NbNodes() << "\n";
-  //
-  FILE << "property double x\n";
-  FILE << "property double y\n";
-  FILE << "property double z\n";
-  //
-  FILE << "element face " << theMesh->NbFaces() << "\n";
-  FILE << "property list uchar uint vertex_indices\n";
-  FILE << "end_header\n";
-  FILE.close();
+  this->writeHeader   (mesh->NbNodes(), mesh->NbFaces(), FILE);
+  this->writeNodes    (mesh, FILE);
+  this->writeElements (mesh, 0, FILE);
 
-  bool isOk = _writeNodes(theMesh, theFilename);
-  isOk = isOk && _writeElements(theMesh, 0, theFilename);
-  return isOk;
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_PLY::_writeNodes(const Handle(ActData_Mesh)&    theMesh,
-                              const TCollection_AsciiString& theFilename)
-{
-  std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
-  if ( !FILE.is_open() )
-  {
-    std::cout << "Error: cannot open file for writing" << std::endl;
-    return false;
-  }
-
-  // Write nodes
-  for ( int node_idx = 1; node_idx <= theMesh->NbNodes(); ++node_idx )
-  {
-    const gp_Pnt& P = theMesh->FindNode(node_idx)->Pnt();
-    FILE << P.X() << " " << P.Y() << " " << P.Z();
-
-    FILE << "\n";
-  }
-
-  FILE.close();
   return true;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_PLY::_writeElements(const Handle(ActData_Mesh)&    theMesh,
-                                 const int                      theShift,
-                                 const TCollection_AsciiString& theFilename)
+bool asiAlgo_PLY::Write(const Handle(Poly_Triangulation)& tris,
+                        const TCollection_AsciiString&    filename)
 {
-  std::ofstream FILE(theFilename.ToCString(), std::ofstream::app);
-  if ( !FILE.is_open() )
+  asiAlgp_OutPLYFile FILE(filename);
+  //
+  if ( !FILE.IsOpen() )
   {
-    std::cout << "Error: cannot open file for writing" << std::endl;
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot open file for writing.");
     return false;
   }
 
-  // Loop over the mesh elements
-  for ( ActData_Mesh_ElementsIterator it(theMesh, ActData_Mesh_ET_Face); it.More(); it.Next() )
+  this->writeHeader   (tris->NbNodes(), tris->NbTriangles(), FILE);
+  this->writeNodes    (tris, FILE);
+  this->writeElements (tris, 0, FILE);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PLY::writeHeader(const int           numNodes,
+                              const int           numFaces,
+                              asiAlgp_OutPLYFile& FILE)
+{
+  // Write header.
+  FILE.FILE() << "ply\n";
+  FILE.FILE() << "format ascii 1.0\n";
+  FILE.FILE() << "comment author: Analysis Situs\n";
+  FILE.FILE() << "element vertex " << numNodes << "\n";
+  //
+  FILE.FILE() << "property double x\n";
+  FILE.FILE() << "property double y\n";
+  FILE.FILE() << "property double z\n";
+  //
+  FILE.FILE() << "element face " << numFaces << "\n";
+  FILE.FILE() << "property list uchar uint vertex_indices\n";
+  FILE.FILE() << "end_header\n";
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PLY::writeNodes(const Handle(ActData_Mesh)& mesh,
+                             asiAlgp_OutPLYFile&         FILE)
+{
+  for ( int node_idx = 1; node_idx <= mesh->NbNodes(); ++node_idx )
+  {
+    const gp_Pnt& P = mesh->FindNode(node_idx)->Pnt();
+    FILE.FILE() << P.X() << " " << P.Y() << " " << P.Z();
+    FILE.FILE() << "\n";
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PLY::writeNodes(const Handle(Poly_Triangulation)& tris,
+                             asiAlgp_OutPLYFile&               FILE)
+{
+  for ( int node_idx = 1; node_idx <= tris->NbNodes(); ++node_idx )
+  {
+    const gp_Pnt& P = tris->Nodes()(node_idx);
+    FILE.FILE() << P.X() << " " << P.Y() << " " << P.Z();
+    FILE.FILE() << "\n";
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PLY::writeElements(const Handle(ActData_Mesh)& mesh,
+                                const int                   shift,
+                                asiAlgp_OutPLYFile&         FILE)
+{
+  // Loop over the mesh elements.
+  for ( ActData_Mesh_ElementsIterator it(mesh, ActData_Mesh_ET_Face); it.More(); it.Next() )
   {
     const Handle(ActData_Mesh_Element)& E = it.GetValue();
 
-    // Get node IDs resolving the actual element's type
+    // Get node IDs resolving the actual element's type.
     int node_idx[4] = {0, 0, 0, 0};
     int nNodes      = 0;
     //
@@ -292,17 +395,42 @@ bool asiAlgo_PLY::_writeElements(const Handle(ActData_Mesh)&    theMesh,
     else
       continue;
 
-    // Write elements
-    FILE << nNodes << " ";
+    // Write elements.
+    FILE.FILE() << nNodes << " ";
     for ( int k = 0; k < nNodes; ++k )
     {
-      FILE << node_idx[k] - 1 + theShift;
+      FILE.FILE() << node_idx[k] - 1 + shift;
       if ( k < nNodes - 1 )
-        FILE << " ";
+        FILE.FILE() << " ";
     }
-    FILE << "\n";
+    FILE.FILE() << "\n";
   }
+}
 
-  FILE.close();
-  return true;
+//-----------------------------------------------------------------------------
+
+void asiAlgo_PLY::writeElements(const Handle(Poly_Triangulation)& tris,
+                                const int                         shift,
+                                asiAlgp_OutPLYFile&               FILE)
+{
+  const Poly_Array1OfTriangle& trisArr = tris->Triangles();
+  //
+  for ( int k = 1; k <= trisArr.Length(); ++k )
+  {
+    const Poly_Triangle& tri = trisArr(k);
+
+    // Get node IDs.
+    int node_idx[4] = {0, 0, 0, 0};
+    tri.Get(node_idx[0], node_idx[1], node_idx[2]);
+
+    // Write elements.
+    FILE.FILE() << 3 << " ";
+    for ( int k = 0; k < 3; ++k )
+    {
+      FILE.FILE() << node_idx[k] - 1 + shift;
+      if ( k < 2 )
+        FILE.FILE() << " ";
+    }
+    FILE.FILE() << "\n";
+  }
 }

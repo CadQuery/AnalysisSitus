@@ -464,6 +464,16 @@ namespace asiAlgo_Utils
     WriteStl(const Handle(Poly_Triangulation)& triangulation,
              const TCollection_AsciiString&    filename);
 
+  //! Writes triangulation to PLY file.
+  //! \param[in] triangulation triangulation to write.
+  //! \param[in] filename      target filename.
+  //! \param[in] progress      progress notifier.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    WritePly(const Handle(Poly_Triangulation)& triangulation,
+             const TCollection_AsciiString&    filename,
+             ActAPI_ProgressEntry              progress);
+
   //! Collects summary information for the given shape.
   //! \param shape        [in]  input shape.
   //! \param nbCompsolids [out] number of compsolids.

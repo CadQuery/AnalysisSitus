@@ -29,10 +29,10 @@ message (STATUS "Analysis Situs VERSION_MINOR: ${VERSION_MINOR}")
 message (STATUS "Analysis Situs VERSION_PATCH: ${VERSION_PATCH}")
 
 # Set a directory containing all 3-rd parties
-set (3RDPARTY_DIR "" CACHE PATH "The root directory for all 3-rd parties")
+set (3RDPARTY_DIR "" CACHE PATH "The root directory for all 3-rd parties.")
 
 if (NOT DEFINED ${3RDPARTY_DIR} AND ${3RDPARTY_DIR} STREQUAL "")
-    message (FATAL_ERROR "... root 3rdparty directory was not found")
+  message (FATAL_ERROR "... root 3rdparty directory was not found.")
 endif()
 
 # Qt
@@ -58,10 +58,29 @@ include (${CMAKE_SOURCE_DIR}/cmake/asitus_InnoSetup.cmake)
 
 # Mobius is optional
 set (USE_MOBIUS OFF CACHE BOOL "Mobius is optional 3-rd party. It gives alternative tools for CAGD.")
-
-# Mobius
+#
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_Mobius.cmake)
 
+# Instant Meshes is optional
+set (USE_INSTANT_MESHES OFF CACHE BOOL "Instant Meshes are optionally employed for auto retopologizing of meshes to quads.")
+#
+if (USE_INSTANT_MESHES)
+  set (INSTANT_MESHES_EXE "" CACHE FILEPATH "Full filename of Instant Meshes executable.")
+
+  if (NOT INSTANT_MESHES_EXE)
+    message (FATAL_ERROR "... Please, specify full filename for Instant Meshes executable.")
+  else()
+    if (NOT EXISTS "${INSTANT_MESHES_EXE}")
+      message (FATAL_ERROR "... The specified Instant Meshes executable does not exist.")
+    endif()
+  endif()
+
+  add_definitions (-DUSE_INSTANT_MESHES)
+else()
+  unset (INSTANT_MESHES_EXE CACHE)
+endif()
+
+# Set paths to dynamically linked libs
 set (3RDPARTY_DLL_PATH "${3RDPARTY_tcl_DLL_DIR};\
 ${3RDPARTY_tk_DLL_DIR};\
 ${3RDPARTY_freetype_DLL_DIR};\

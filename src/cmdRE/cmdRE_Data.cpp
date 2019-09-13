@@ -106,6 +106,13 @@ int RE_SetPatchesAsPart(const Handle(asiTcl_Interp)& interp,
       patchNode = Handle(asiData_RePatchNode)::DownCast( pit.Value() );
 
     Handle(Geom_Surface) surf = patchNode->GetSurface();
+    //
+    if ( surf.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage( LogWarn(Normal) << "No surface for patch '%1'."
+                                                            << patchNode->GetName() );
+      continue;
+    }
 
     // Add surface to shell.
     BRep_Builder().Add( shell, BRepBuilderAPI_MakeFace(surf, 1e-7) );

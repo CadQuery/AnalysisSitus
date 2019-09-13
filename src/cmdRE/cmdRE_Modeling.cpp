@@ -244,7 +244,9 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
 
   // Actualize Patch Nodes.
   for ( size_t k = 0; k < patchNodes.size(); ++k )
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes[k]);
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes[k], false, false, false, false);
+  //
+  cmdRE::cf->ViewerPart->Repaint();
 
   //// Actualize Coedge Nodes.
   //for ( size_t k = 0; k < patchNodes.size(); ++k )
@@ -380,7 +382,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
   // Actualize.
   if ( cmdRE::cf->ViewerPart )
   {
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNodes);
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNodes, false, false, false, false);
 
     // Set visibility of actors.
     for ( ActAPI_HNodeList::Iterator eit(*edgeNodes); eit.More(); eit.Next() )
@@ -395,7 +397,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
     }
 
     // Repaint.
-    cmdRE::cf->ViewerPart->PrsMgr()->GetQVTKWidget()->repaint();
+    cmdRE::cf->ViewerPart->Repaint();
   }
 
   interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
@@ -1917,7 +1919,6 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           //
           if ( nodeFacetInd == -1 )
           {
-            interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
             interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to project network node.");
             continue;
           }
@@ -1983,7 +1984,6 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
                                         quadVertices[nextIdx]->GetPoint(),
                                         projPts, projInds, 0.001) )
           {
-            interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
             interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Cannot project line to mesh.");
             continue;
           }

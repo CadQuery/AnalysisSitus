@@ -334,8 +334,9 @@ void asiUI_Logger::logMessage(const QString&                    message,
     hiliColor = QColor(255, 120, 120);
   }
 
-  // Put in standard output.
-  std::cout << QStr2AsciiStr(this->toString(TS) + prefix + msg).ToCString() << std::endl;
+  // Put in all appender streams.
+  for ( int k = 0; k < m_appenders.Length(); ++k )
+    *m_appenders[k] << QStr2AsciiStr(this->toString(TS) + prefix + msg).ToCString() << "\n";
 
   // Put in UI.
   this->putText(this->toString(TS) + prefix + msg, hiliColor);

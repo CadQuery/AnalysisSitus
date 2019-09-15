@@ -360,8 +360,8 @@ void asiAlgo_Utils::Str::ReplaceAll(std::string&       str,
       break; // Not found
 
     // Replace by erasing and inserting
-    str.erase( pos, what.length() );
-    str.insert(pos, with);
+    str.erase  ( pos, what.length() );
+    str.insert ( pos, with );
   }
 }
 

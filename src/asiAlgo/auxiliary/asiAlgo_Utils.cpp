@@ -1066,8 +1066,8 @@ bool asiAlgo_Utils::ReadBRep(const TCollection_AsciiString& filename,
 bool asiAlgo_Utils::WriteBRep(const TopoDS_Shape&            theShape,
                               const TCollection_AsciiString& theFilename)
 {
-  ofstream os;
-  OSD_OpenStream(os, theFilename, ios::out);
+  std::ofstream os;
+  OSD_OpenStream(os, theFilename, std::ios::out);
   //
   if ( !os.is_open() || !os.good() )
     return false;

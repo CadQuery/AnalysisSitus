@@ -104,8 +104,11 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
   std::vector<gp_Pnt> points;
   int nPts = 0;
   //
-  try {
-    Geom2dAdaptor_Curve gac(c2d, f, l);
+  try
+  {
+    const bool revOrder = (f > l ? true : false);
+    //
+    Geom2dAdaptor_Curve gac(c2d, revOrder ? l : f, revOrder ? f : l);
     GCPnts_QuasiUniformDeflection QUDefl(gac, 1e-4);
     //
     if ( !QUDefl.IsDone() )
@@ -134,11 +137,13 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
     {
       nPts = QUDefl.NbPoints();
 
-      for ( int p = 1; p <= nPts; ++p )
-      {
-        gp_Pnt point = QUDefl.Value(p);
-        points.push_back(point);
-      }
+      if ( revOrder )
+        for ( int p = nPts; p >= 1; --p )
+          points.push_back( QUDefl.Value(p) );
+      else
+        for ( int p = 1; p <= nPts; ++p )
+          points.push_back( QUDefl.Value(p) );
+
     }
   }
   catch ( ... )

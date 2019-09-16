@@ -296,7 +296,6 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
   {
     vtkErrorMacro( << "Cannot tessellate B-Rep model with linear deflection " << m_fLinDeflection
                    << " and angular deflection " << m_fAngDeflectionDeg << " [deg]");
-    return;
   }
 
 #if defined COUT_DEBUG

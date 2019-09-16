@@ -189,7 +189,7 @@ void DDS_DicGroup::FillDataMap( const LDOM_Element& theComponentData, const LDOM
     for( int i=1, n=myKeys.Length(); i<=n && !exist; i++ )
       if( myKeys.Value( i )==anID )
       {
-        cout << "Doubled key:" << anID << endl;
+        std::cout << "Doubled key:" << anID << std::endl;
         exist = true;
       }
     if( !exist )

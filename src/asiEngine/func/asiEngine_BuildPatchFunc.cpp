@@ -172,7 +172,14 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   Handle(asiAlgo_BaseCloud<double>) pts;
   //
   if ( approxMesh && !this->extractMeshNodes(M, patchNode, pts) )
-    return 1; // Error.
+  {
+    // Let's return at least Coons...
+    patchNode->SetSurface(bsurf);
+
+    // Error.
+    m_progress.SendLogMessage( LogErr(Normal) << "Cannot approximate, falling back with Coons..." );
+    return 0;
+  }
 
   /* ==================================================
    *  Approximate points with a B-surface if requested
@@ -181,7 +188,14 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   Handle(Geom_BSplineSurface) approxSurf;
   //
   if ( approxMesh && !this->approxMeshNodes(bsurf, pts, approxLambda, approxSurf) )
-    return 1; // Error.
+  {
+    // Let's return at least Coons...
+    patchNode->SetSurface(bsurf);
+
+    // Error.
+    m_progress.SendLogMessage( LogErr(Normal) << "Cannot approximate, falling back with Coons..." );
+    return 0;
+  }
 
   if ( approxMesh )
     bsurf = approxSurf;

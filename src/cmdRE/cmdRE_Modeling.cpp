@@ -362,7 +362,6 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
       {
         interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot approximate edge '%1'."
                                                               << edgeNode->GetName() );
-        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
         //
         continue;
       }
@@ -1776,7 +1775,7 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
                   int                          argc,
                   const char**                 argv)
 {
-  if ( argc != 1 && argc != 2 )
+  if ( argc != 1 && argc != 2 && argc != 3 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1786,6 +1785,9 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
   //
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Number of faces to produce is %1."
                                                        << numFaces);
+
+  // Tolerance for projection.
+  const double projTol = ( (argc == 2) ? 0.001 : atof( argv[2] ) );
 
   // Get triangulation.
   Handle(Poly_Triangulation)
@@ -1857,6 +1859,9 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
     tess_n->SetMesh(mesh);
   }
   cmdRE::model->CommitCommand(); // tx commit
+
+  // All edges.
+  Handle(ActAPI_HNodeList) edgesList = new ActAPI_HNodeList;
 
   // Build BVH for CAD-agnostic mesh.
   Handle(asiAlgo_BVHFacets) bvh;
@@ -1937,9 +1942,6 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           // Store vertices of the current quad.
           quadVertices.push_back(V);
           quadVerticesIds.push_back(n);
-
-          // Render.
-          //interp->GetPlotter().DRAW_POINT(nodeProj, Color_Red, "nodeProj");
         }
         else
         {
@@ -1969,6 +1971,7 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
 
           edge = reApi.Create_Edge(edgeName, quadVertices[currIdx], quadVertices[nextIdx]);
           edges.Bind(n1n2, edge);
+          edgesList->Append(edge);
           sameSense = true;
 
           // Tool for line projection.
@@ -1982,7 +1985,7 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           //
           if ( !projectLineMesh.Perform(quadVertices[currIdx]->GetPoint(),
                                         quadVertices[nextIdx]->GetPoint(),
-                                        projPts, projInds, 0.001) )
+                                        projPts, projInds, projTol) )
           {
             interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Cannot project line to mesh.");
             continue;
@@ -2013,11 +2016,15 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().Init();
   interp->GetProgress().SetMessageKey("Actualize scene");
 
+  // Collect
+
   // Update UI.
   if ( cmdRE::cf->ViewerPart )
   {
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cmdRE::model->GetReTopoNode(), true );
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( tess_n );
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( edgesList, false, false, false, false );
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( tess_n,    false, false, false, false );
+    //
+    cmdRE::cf->ViewerPart->Repaint();
   }
   //
   if ( cmdRE::cf->ObjectBrowser )

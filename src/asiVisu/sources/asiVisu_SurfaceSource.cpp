@@ -325,10 +325,7 @@ vtkIdType asiVisu_SurfaceSource::registerTriangle(const vtkIdType n1,
                                                   const vtkIdType n3,
                                                   vtkPolyData*    polyData)
 {
-  std::vector<vtkIdType> nodes;
-  nodes.push_back(n1);
-  nodes.push_back(n2);
-  nodes.push_back(n3);
+  vtkIdType nodes[3] = {n1, n2, n3};
   //
   vtkIdType cellID = polyData->InsertNextCell(VTK_TRIANGLE, 3, &nodes[0]);
   //

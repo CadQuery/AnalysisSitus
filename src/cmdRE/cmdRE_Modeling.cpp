@@ -187,7 +187,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
    *  Collect patches of interest
    * ============================= */
 
-  std::vector<Handle(asiData_RePatchNode)> patchNodes;
+  Handle(ActAPI_HNodeList) patchNodes = new ActAPI_HNodeList;
 
   /* Collect patches by names */
 
@@ -208,10 +208,10 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       continue;
     }
     //
-    patchNodes.push_back(patchNode);
+    patchNodes->Append(patchNode);
   }
 
-  if ( !patchNodes.size() )
+  if ( !patchNodes->Length() )
   {
     /* Collect all patches */
 
@@ -220,7 +220,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
       Handle(asiData_RePatchNode)
         patchNode = Handle(asiData_RePatchNode)::DownCast( eit->Value() );
       //
-      patchNodes.push_back(patchNode);
+      patchNodes->Append(patchNode);
     }
   }
 
@@ -231,11 +231,14 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE::model->OpenCommand();
   {
     // Reconnect basic Tree Functions.
-    for ( size_t k = 0; k < patchNodes.size(); ++k )
+    for ( ActAPI_HNodeList::Iterator nit(*patchNodes); nit.More(); nit.Next() )
     {
-      patchNodes[k]->SetApproxNodes(isApprox);
+      const Handle(asiData_RePatchNode)&
+        patchNode = Handle(asiData_RePatchNode)::DownCast( nit.Value() );
 
-      reApi.ReconnectBuildPatchFunc(patchNodes[k]);
+      patchNode->SetApproxNodes(isApprox);
+
+      reApi.ReconnectBuildPatchFunc(patchNode);
     }
 
     cmdRE::model->FuncExecuteAll();
@@ -243,15 +246,8 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE::model->CommitCommand();
 
   // Actualize Patch Nodes.
-  for ( size_t k = 0; k < patchNodes.size(); ++k )
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes[k], false, false, false, false);
-  //
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes, false, false, false, false);
   cmdRE::cf->ViewerPart->Repaint();
-
-  //// Actualize Coedge Nodes.
-  //for ( size_t k = 0; k < patchNodes.size(); ++k )
-  //  for ( Handle(ActAPI_IChildIterator) cit = patchNodes[k]->GetChildIterator(); cit->More(); cit->Next() )
-  //    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( cit->Value() );
 
   return TCL_OK;
 }

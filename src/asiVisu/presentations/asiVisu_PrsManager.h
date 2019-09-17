@@ -35,6 +35,7 @@
 #include <asiVisu_InteractorStylePick.h>
 #include <asiVisu_InteractorStylePick2d.h>
 #include <asiVisu_Prs.h>
+#include <asiVisu_Utils.h>
 
 // asiData includes
 #include <asiData_PartNode.h>
@@ -125,12 +126,87 @@ public:
               const bool                  withRepaint   = true,
               const bool                  doAdjustTrih  = true);
 
-  asiVisu_EXPORT virtual void
-    Actualize(const Handle(ActAPI_HNodeList)& nodeList,
-              const bool                      withChildren  = false,
-              const bool                      doFitContents = false,
-              const bool                      withRepaint   = true,
-              const bool                      doAdjustTrih  = true);
+//-----------------------------------------------------------------------------
+
+  //! Re-initializes and updates the Node's Presentation.
+  //! \param[in] nodeMap       map of Data Nodes to actualize Presentation for.
+  //! \param[in] withChildren  indicates whether child Nodes should also be
+  //!                          actualized.
+  //! \param[in] doFitContents indicates whether to fit the viewport contents
+  //!                          after actualization of Presentations.
+  //! \param[in] withRepaint   if true, repaints view window.
+  //! \param[in] doAdjustTrih  indicates whether to adjust trihedron.
+  //! \param[in] autoPrs       indicates whether to automatically create
+  //!                          Presentations for Nodes which are not yet
+  //!                          presented.
+  template <typename HColType>
+  void ActualizeCol(const Handle(HColType)& nodeCol,
+                    const bool              withChildren  = false,
+                    const bool              doFitContents = false,
+                    const bool              withRepaint   = true,
+                    const bool              doAdjustTrih  = true,
+                    const bool              autoPrs       = true)
+  {
+    if ( nodeCol.IsNull() )
+      return;
+
+    // Actualize each Node from the list individually
+    for ( HColType::Iterator nit( *nodeCol.operator->() ); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& node = nit.Value();
+      //
+      if ( node.IsNull() || !node->IsValidData() )
+        return;
+
+      // Initialize Presentation if not yet
+      bool isPrsOk = false;
+      if ( this->IsPresented(node) )
+        isPrsOk = true;
+      else if ( autoPrs )
+        isPrsOk = this->SetPresentation(node);
+
+      if ( isPrsOk )
+      {
+        // Clean up current selection
+        m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
+        m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
+
+        // Finally, update Presentation
+        if ( this->GetPresentation(node)->IsVisible() )
+        {
+          this->InitPresentation(node);
+          this->RenderPresentation(node); // Render before update to adjust trihedron correctly
+          this->UpdatePresentation(node, false, false);
+        }
+        else
+        {
+          this->DeRenderPresentation(node);
+        }
+      }
+
+      // Proceed with children if requested
+      if ( withChildren )
+      {
+        for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
+          this->Actualize(child_it->Value(), true, false, false, false);
+      }
+    }
+
+    // Re-initialize all pickers (otherwise picking gives strange results...)
+    this->InitializePickers<HColType>(nodeCol);
+
+    if ( doAdjustTrih )
+      asiVisu_Utils::AdjustTrihedron( m_renderer, m_trihedron, this->PropsByTrihedron() );
+
+    if ( doFitContents )
+      asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
+
+    // Update view window
+    if ( withRepaint && m_widget )
+      m_widget->repaint();
+  }
+
+//-----------------------------------------------------------------------------
 
   asiVisu_EXPORT virtual void
     ActualizeExclusively(const Handle(ActAPI_HNodeList)& nodeList,
@@ -306,8 +382,44 @@ public:
   asiVisu_EXPORT void
     InitializePickers(const Handle(ActAPI_INode)& node);
 
-  asiVisu_EXPORT void
-    InitializePickers(const Handle(ActAPI_HNodeList)& nodeList);
+//-----------------------------------------------------------------------------
+
+  //! Initializes pickers and lets Data Model participate in such initialization.
+  //! \param[in] nodeCol collection of Data Nodes which may want to perform some
+  //!                    additional initializations (e.g. to construct and
+  //!                    settle down accelerating structures).
+  template <typename HColType>
+  void InitializePickers(const Handle(HColType)& nodeCol)
+  {
+    // Initialize cell picker
+    m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
+    m_cellPicker->SetTolerance(0.005);
+
+    // Initialize point picker
+    m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();
+    m_pointPicker->SetTolerance(0.1);
+
+    // Initialize world picker
+    m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+
+    if ( nodeCol.IsNull() || nodeCol->IsEmpty() )
+      return;
+
+    // Actualize each Node from the list individually
+    for ( HColType::Iterator nit( *nodeCol.operator->() ); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& node = nit.Value();
+      //
+      if ( node.IsNull() || !node->IsValidData() )
+        return;
+
+      // Finally, update Presentation
+      if ( this->GetPresentation(node) )
+        this->InitPicker(node);
+    }
+  }
+
+//-----------------------------------------------------------------------------
 
   asiVisu_EXPORT QVTKWidget*
     GetQVTKWidget() const;

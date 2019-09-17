@@ -117,10 +117,11 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   m_obUpdateType = OB_UpdateType_Undefined;
 
   // Actualize affected Nodes.
-  Handle(ActAPI_HNodeIdMap) affectedNodes = m_cf->Model->GetModifiedNodes();
+  Handle(ActAPI_HNodeMap)   affectedNodes   = new ActAPI_HNodeMap;
+  Handle(ActAPI_HNodeIdMap) affectedNodeIds = m_cf->Model->GetModifiedNodes();
   TCollection_AsciiString   affectedNodeNames;
   //
-  for ( ActAPI_HNodeIdMap::Iterator nit(*affectedNodes); nit.More(); nit.Next() )
+  for ( ActAPI_HNodeIdMap::Iterator nit(*affectedNodeIds); nit.More(); nit.Next() )
   {
     const ActAPI_DataObjectId& nodeId = nit.Value();
     Handle(ActAPI_INode)       node   = m_cf->Model->FindNode(nodeId);
@@ -128,9 +129,12 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
     affectedNodeNames += " ";
     affectedNodeNames += (nodeId + " [" + node->DynamicType()->Name() + "]" );
 
-    // Actualize presentation.
-    m_cf->ActualizeNode(node);
+    // Add to the collection of Nodes for subsequent actualization.
+    affectedNodes->Add(node);
   }
+
+  // Actualize presentations.
+  m_cf->ActualizeNodes(affectedNodes);
 
   m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Actualizing Nodes: %1."
                                                  << affectedNodeNames );

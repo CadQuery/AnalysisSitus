@@ -129,6 +129,29 @@ public:
     this->ActualizeNode( this->Model->FindNode(id) );
   }
 
+  //! Actualizes the passed Nodes in the Presentation Managers where these Node
+  //! are presented.
+  //! \param[in] N Data Node to actualize.
+  void ActualizeNodes(const Handle(ActAPI_HNodeMap)& nodes)
+  {
+    if ( nodes.IsNull() )
+      return;
+
+    // Get all presentation managers.
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+
+    if ( partPM )
+      partPM->ActualizeCol(nodes, false, false, true, true, false);
+
+    if ( hostPM )
+      hostPM->ActualizeCol(nodes, false, false, true, true, false);
+
+    if ( domainPM )
+      domainPM->ActualizeCol(nodes, false, false, true, true, false);
+  }
+
 public:
 
   //! Cleans up all the passed viewers. Null pointers are allowed in case if

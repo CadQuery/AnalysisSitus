@@ -36,7 +36,6 @@
 #include <asiVisu_Prs.h>
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
-#include <asiVisu_Utils.h>
 
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
@@ -169,83 +168,7 @@ void asiVisu_PrsManager::Actualize(const Handle(ActAPI_INode)& node,
   oneNodeList->Append(node);
 
   // Call common method
-  this->Actualize(oneNodeList, withChildren, doFitContents, withRepaint, doAdjustTrih);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Re-initializes and updates the Node's Presentation.
-//! \param[in] nodeList      list of Data Nodes to actualize Presentation for.
-//! \param[in] withChildren  indicates whether child Nodes should also be
-//!                          actualized.
-//! \param[in] doFitContents indicates whether to fit the viewport contents
-//!                          after actualization of Presentations.
-//! \param[in] withRepaint   if true, repaints view window.
-//! \param[in] doAdjustTrih  indicates whether to adjust trihedron.
-void asiVisu_PrsManager::Actualize(const Handle(ActAPI_HNodeList)& nodeList,
-                                   const bool                      withChildren,
-                                   const bool                      doFitContents,
-                                   const bool                      withRepaint,
-                                   const bool                      doAdjustTrih)
-{
-  if ( nodeList.IsNull() )
-    return;
-
-  // Actualize each Node from the list individually
-  for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
-  {
-    const Handle(ActAPI_INode)& node = nit.Value();
-    //
-    if ( node.IsNull() || !node->IsValidData() )
-      return;
-
-    // Initialize Presentation if not yet
-    bool isPrsOk = true;
-    if ( !this->IsPresented(node) )
-    {
-      if ( !this->SetPresentation(node) )
-        isPrsOk = false;
-    }
-
-    if ( isPrsOk )
-    {
-      // Clean up current selection
-      m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
-      m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
-
-      // Finally, update Presentation
-      if ( this->GetPresentation(node)->IsVisible() )
-      {
-        this->InitPresentation(node);
-        this->RenderPresentation(node); // Render before update to adjust trihedron correctly
-        this->UpdatePresentation(node, false, false);
-      }
-      else
-      {
-        this->DeRenderPresentation(node);
-      }
-    }
-
-    // Proceed with children if requested
-    if ( withChildren )
-    {
-      for ( Handle(ActAPI_IChildIterator) child_it = node->GetChildIterator(); child_it->More(); child_it->Next() )
-        this->Actualize(child_it->Value(), true, false, false, false);
-    }
-  }
-
-  // Re-initialize all pickers (otherwise picking gives strange results...)
-  this->InitializePickers(nodeList);
-
-  if ( doAdjustTrih )
-    asiVisu_Utils::AdjustTrihedron( m_renderer, m_trihedron, this->PropsByTrihedron() );
-
-  if ( doFitContents )
-    asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
-
-  // Update view window
-  if ( withRepaint && m_widget )
-    m_widget->repaint();
+  this->ActualizeCol(oneNodeList, withChildren, doFitContents, withRepaint, doAdjustTrih);
 }
 
 //-----------------------------------------------------------------------------
@@ -285,7 +208,7 @@ void asiVisu_PrsManager::ActualizeExclusively(const Handle(ActAPI_HNodeList)& no
     this->DeletePresentation( it.Value() );
 
   // Actualize: it will build all necessary Presentations
-  this->Actualize(nodeList, false, doFitContents, true);
+  this->ActualizeCol(nodeList, false, doFitContents, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1150,42 +1073,6 @@ void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
   oneNodeList->Append(node);
   //
   this->InitializePickers(oneNodeList);
-}
-
-//-----------------------------------------------------------------------------
-
-//! Initializes pickers and lets Data Model participate in such initialization.
-//! \param[in] nodeList list of Data Nodes which may want to perform some
-//!                     additional initializations (e.g. to construct and
-//!                     settle down accelerating structures).
-void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_HNodeList)& nodeList)
-{
-  // Initialize cell picker
-  m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  m_cellPicker->SetTolerance(0.005);
-
-  // Initialize point picker
-  m_pointPicker = vtkSmartPointer<vtkPointPicker>::New();
-  m_pointPicker->SetTolerance(0.1);
-
-  // Initialize world picker
-  m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
-
-  if ( nodeList.IsNull() || nodeList->IsEmpty() )
-    return;
-
-  // Actualize each Node from the list individually
-  for ( ActAPI_NodeList::Iterator nit( *nodeList.operator->() ); nit.More(); nit.Next() )
-  {
-    const Handle(ActAPI_INode)& node = nit.Value();
-    //
-    if ( node.IsNull() || !node->IsValidData() )
-      return;
-
-    // Finally, update Presentation
-    if ( this->GetPresentation(node) )
-      this->InitPicker(node);
-  }
 }
 
 //-----------------------------------------------------------------------------

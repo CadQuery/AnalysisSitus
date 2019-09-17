@@ -246,7 +246,7 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE::model->CommitCommand();
 
   // Actualize Patch Nodes.
-  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(patchNodes, false, false, false, false);
+  cmdRE::cf->ViewerPart->PrsMgr()->ActualizeCol(patchNodes, false, false, false, false);
   cmdRE::cf->ViewerPart->Repaint();
 
   return TCL_OK;
@@ -377,7 +377,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
   // Actualize.
   if ( cmdRE::cf->ViewerPart )
   {
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNodes, false, false, false, false);
+    cmdRE::cf->ViewerPart->PrsMgr()->ActualizeCol(edgeNodes, false, false, false, false);
 
     // Set visibility of actors.
     for ( ActAPI_HNodeList::Iterator eit(*edgeNodes); eit.More(); eit.Next() )
@@ -2017,8 +2017,8 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
   // Update UI.
   if ( cmdRE::cf->ViewerPart )
   {
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( edgesList, false, false, false, false );
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize( tess_n,    false, false, false, false );
+    cmdRE::cf->ViewerPart->PrsMgr()->ActualizeCol ( edgesList, false, false, false, false );
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize    ( tess_n,    false, false, false, false );
     //
     cmdRE::cf->ViewerPart->Repaint();
   }

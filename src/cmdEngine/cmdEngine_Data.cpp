@@ -194,7 +194,7 @@ int ENGINE_Load(const Handle(asiTcl_Interp)& interp,
 
   // Update UI.
   cmdEngine::cf->ObjectBrowser->Populate();
-  cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(nodes);
+  cmdEngine::cf->ViewerPart->PrsMgr()->ActualizeCol(nodes);
 
   return TCL_OK;
 }

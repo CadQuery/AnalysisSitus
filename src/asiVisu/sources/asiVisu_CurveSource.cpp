@@ -73,6 +73,11 @@ bool asiVisu_CurveSource::SetInputEdge(const TopoDS_Edge& edge)
   if ( m_curve3d.IsNull() )
     return false;
 
+  // Check for degeneracy: if the curve trimming parameters are exactly equal,
+  // OCCT throws an exception in its Geom_TrimmedCurve::SetTrim() method
+  if ( f == l )
+    return false;
+
   // Build a trimmed curve in order to put trimming parameters of a curve
   // right into it
   Handle(Geom_TrimmedCurve) tcrv = new Geom_TrimmedCurve(m_curve3d, f, l);
@@ -207,8 +212,8 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
 {
   if ( m_XCoords.IsNull() || m_YCoords.IsNull() || m_ZCoords.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL coordinate arrays" );
-    return 0;
+    vtkWarningMacro( << "Invalid domain: NULL coordinate arrays" );
+    return Superclass::RequestData(request, inputVector, outputVector);
   }
 
   /* ==============================

@@ -96,7 +96,7 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
   //
   if ( c2d.IsNull() )
   {
-    vtkErrorMacro( << "Null p-curve" );
+    vtkWarningMacro( << "Null p-curve" );
     return;
   }
 

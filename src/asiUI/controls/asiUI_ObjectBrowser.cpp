@@ -814,7 +814,7 @@ void asiUI_ObjectBrowser::onDumpJoint()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_ObjectBrowser::onUnifyKnots()
+void asiUI_ObjectBrowser::onUnifyKnotsAndAlign()
 {
   Handle(ActAPI_INode) selected_n;
   if ( !this->selectedNode(selected_n) ) return;
@@ -839,11 +839,26 @@ void asiUI_ObjectBrowser::onUnifyKnots()
   if ( !jointAdaptor.ExtractIsos(isoLeft, isoLeftU, isoLeftMin,
                                  isoRight, isoRightU, isoRightMin,
                                  areOpposite) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to extract isos.");
     return; // Failure.
+  }
 
   // Make surfaces compatible.
   if ( !jointAdaptor.UnifySurfaces(isoLeft, isoLeftU, isoRight, isoRightU, areOpposite) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to unify surfaces.");
     return;
+  }
+
+  // Align poles.
+  if ( !jointAdaptor.AlignControlPoles(isoLeft, isoLeftU, isoLeftMin,
+                                       isoRight, isoRightU, isoRightMin,
+                                       areOpposite) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to align poles of surfaces.");
+    return;
+  }
 
   const Handle(asiData_RePatchNode)& leftPatchNode  = jointAdaptor.GetPatchLeft();
   const Handle(asiData_RePatchNode)& rightPatchNode = jointAdaptor.GetPatchRight();
@@ -996,8 +1011,8 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       if ( node->IsKind( STANDARD_TYPE(asiData_ReEdgeNode) ) )
       {
         pMenu->addSeparator();
-        pMenu->addAction( "Dump joint info",  this, SLOT( onDumpJoint  () ) );
-        pMenu->addAction( "Unify knots",      this, SLOT( onUnifyKnots () ) );
+        pMenu->addAction( "Dump joint info",       this, SLOT( onDumpJoint          () ) );
+        pMenu->addAction( "Unify knots and align", this, SLOT( onUnifyKnotsAndAlign () ) );
       }
 
       if ( node->IsKind( STANDARD_TYPE(asiData_ReVertexNode) ) )

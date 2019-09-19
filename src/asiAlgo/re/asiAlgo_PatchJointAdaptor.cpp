@@ -192,6 +192,12 @@ bool asiAlgo_PatchJointAdaptor::UnifySurfaces(const Handle(Geom_BSplineCurve)& i
   this->insertKnotsLeft  (isoLeft, isoRight, isoLeftU, areOpposite);
   this->insertKnotsRight (isoLeft, isoRight, isoRightU, areOpposite);
 
+  m_plotter.DRAW_CURVE(isoLeft,  (isoLeftU  ? Color_Green : Color_Red), true, "isoLeft");
+  m_plotter.DRAW_CURVE(isoRight, (isoRightU ? Color_Green : Color_Red), true, "isoRight");
+  //
+  m_progress.SendLogMessage( LogInfo(Normal) << "Iso-curves are %1."
+                                             << (areOpposite ? "opposite" : "non-opposite") );
+  //
   m_plotter.DRAW_SURFACE(m_surfLeft,  Color_White, "surfLeftAfter");
   m_plotter.DRAW_SURFACE(m_surfRight, Color_White, "surfRightAfter");
 
@@ -313,9 +319,11 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
 
     const double dr = (*polesRight[k] - polesMid[k]).Modulus();
     const double dl = (*polesLeft[k] - polesMid[k]).Modulus();
+    //
+    const double dd = Max(dr, dl);
 
-    t_xyz newPoleRight = polesMid[k] + vLeft2Right*dr;
-    t_xyz newPoleLeft  = polesMid[k] - vLeft2Right*dl;
+    t_xyz newPoleRight = polesMid[k] + vLeft2Right*dd;
+    t_xyz newPoleLeft  = polesMid[k] - vLeft2Right*dd;
 
     // Update control points.
     polesRight[k]->SetXYZ(newPoleRight);

@@ -293,6 +293,20 @@ public:
   asiEngine_EXPORT Handle(Geom_Surface)
     GetSurface(const Handle(asiData_ReCoedgeNode)& coedge) const;
 
+  //! Checks valence of the passed vertex, i.e., the number of edges which
+  //! meet at this vertex.
+  //! \param[in] vertex vertex to check.
+  //! \return valence.
+  asiEngine_EXPORT int
+    GetValence(const Handle(asiData_ReVertexNode)& vertex) const;
+
+  //! Checks if the passed edge is regular, i.e., its vertices have valence
+  //! not greater than 4.
+  //! \param[in] edge edge to check.
+  //! \return true if the edge is regular, false -- otherwise.
+  asiEngine_EXPORT bool
+    IsRegular(const Handle(asiData_ReEdgeNode)& edge) const;
+
 };
 
 #endif

@@ -1199,3 +1199,45 @@ Handle(Geom_Surface)
 
   return patch->GetSurface();
 }
+
+//-----------------------------------------------------------------------------
+
+int asiEngine_RE::GetValence(const Handle(asiData_ReVertexNode)& vertex) const
+{
+  int valence = 0;
+
+  Handle(ActAPI_HParameterList) referrers = vertex->GetReferrers();
+  //
+  if ( referrers.IsNull() )
+    return 0;
+
+  for ( ActAPI_HParameterList::Iterator rit( *referrers ); rit.More(); rit.Next() )
+  {
+    const Handle(ActAPI_IUserParameter)& refParam = rit.Value();
+
+    // Check if this reference is from an Edge Node.
+    if ( refParam->GetNode()->DynamicType()->IsInstance( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+      ++valence;
+  }
+
+  return valence;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiEngine_RE::IsRegular(const Handle(asiData_ReEdgeNode)& edge) const
+{
+  Handle(asiData_ReVertexNode) vf = edge->GetFirstVertex();
+  Handle(asiData_ReVertexNode) vl = edge->GetLastVertex();
+  //
+  if ( vf.IsNull() || vl.IsNull() )
+    return false;
+
+  const int valencef = this->GetValence(vf);
+  const int valencel = this->GetValence(vl);
+
+  if ( valencef > 4 || valencel > 4 )
+    return false;
+
+  return true;
+}

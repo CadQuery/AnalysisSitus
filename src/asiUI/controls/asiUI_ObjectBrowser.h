@@ -162,7 +162,7 @@ protected slots:
   void onConvertToTess         ();
   //
   void onDumpJoint             ();
-  void onUnifyKnots            ();
+  void onUnifyKnotsAndAlign    ();
   void onFlattenCorner         ();
 
 protected:

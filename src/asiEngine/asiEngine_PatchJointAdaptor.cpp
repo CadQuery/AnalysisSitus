@@ -85,10 +85,10 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
 
   // Initialize base class.
   asiAlgo_PatchJointAdaptor::Init( m_edge->GetCurve(),
-                                   Handle(Geom_BSplineSurface)::DownCast( m_patchLeft->GetSurface() ),
-                                   Handle(Geom_BSplineSurface)::DownCast( m_patchRight->GetSurface() ) );
+                                   m_patchLeft.IsNull()  ? NULL : Handle(Geom_BSplineSurface)::DownCast( m_patchLeft->GetSurface() ),
+                                   m_patchRight.IsNull() ? NULL : Handle(Geom_BSplineSurface)::DownCast( m_patchRight->GetSurface() ) );
 
-  if ( m_patchRight.IsNull() || m_patchRight.IsNull() )
+  if ( m_patchLeft.IsNull() || m_patchRight.IsNull() )
   {
     m_progress.SendLogMessage( LogWarn(Normal) << "Naked edge: there is no left or/and right patch." );
     return false; // Naked edge.
@@ -204,6 +204,9 @@ bool
                                                  Handle(Geom_BSplineCurve)& curveRight,
                                                  const bool                 sameSenseRight)
 {
+  if ( curveLeft.IsNull() || curveRight.IsNull() )
+    return false;
+
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbCurveLeft  = cascade::GetMobiusBCurve(curveLeft);
   t_ptr<t_bcurve> mbCurveRight = cascade::GetMobiusBCurve(curveRight);
@@ -234,9 +237,11 @@ bool
 
   const double dr = (*pPoleRight - poleCorner).Modulus();
   const double dl = (*pPoleLeft  - poleCorner).Modulus();
+  //
+  const double dd = Max(dr, dl);
 
-  t_xyz newPoleRight = poleCorner + vLeft2Right*dr;
-  t_xyz newPoleLeft  = poleCorner - vLeft2Right*dl;
+  t_xyz newPoleRight = poleCorner + vLeft2Right*dd;
+  t_xyz newPoleLeft  = poleCorner - vLeft2Right*dd;
 
   // Update control points.
   pPoleRight->SetXYZ(newPoleRight);

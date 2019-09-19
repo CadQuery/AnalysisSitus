@@ -136,8 +136,8 @@ void asiUI_ParameterEditorListener::onParameterChanged(const int       pid,
   // Actualize presentations.
   m_cf->ActualizeNodes(affectedNodes);
 
-  m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Actualizing Nodes: %1."
-                                                 << affectedNodeNames );
+  //m_cf->Progress.SendLogMessage( LogInfo(Normal) << "Actualizing Nodes: %1."
+  //                                               << affectedNodeNames );
 }
 
 //-----------------------------------------------------------------------------

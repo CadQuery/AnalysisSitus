@@ -153,6 +153,57 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
 
 //-----------------------------------------------------------------------------
 
+int RE_SmoothenRegularEdges(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  asiEngine_RE reApi( cmdRE::model,
+                      interp->GetProgress(),
+                      interp->GetPlotter() );
+
+  Handle(asiData_ReEdgesNode) edges = reApi.Get_Edges();
+
+  /* Iterate over all edges. */
+
+  cmdRE::model->OpenCommand();
+  {
+    for ( Handle(ActAPI_IChildIterator) eit = edges->GetChildIterator(); eit->More(); eit->Next() )
+    {
+      Handle(asiData_ReEdgeNode)
+        edge = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+
+      if ( reApi.IsRegular(edge) )
+      {
+        edge->SetSmoothTransition(true);
+        //
+        reApi.ReconnectSmoothenCornersFunc(edge);
+        reApi.ReconnectSmoothenPatchesFunc(edge);
+      }
+      else
+        interp->GetProgress().SendLogMessage( LogWarn(Normal) << "The edge '%1' is irregular, skipped..."
+                                                              << edge->GetName() );
+    }
+
+    // Execute dependencies.
+    cmdRE::model->FuncExecuteAll();
+  }
+  cmdRE::model->CommitCommand();
+
+  // Actualize Patch Nodes.
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Patches(), true, false, false, false);
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Edges(),   true, false, false, false);
+  cmdRE::cf->ViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
@@ -2038,6 +2089,15 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   cmdRE_NotUsed(data);
   //
   static const char* group = "cmdRE";
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-smoothen-regular-edges",
+    //
+    "re-smoothen-regular-edges\n"
+    "\t Finds all regular edges in the topology and enables smoothing \n"
+    "\t mode for them.",
+    //
+    __FILE__, group, RE_SmoothenRegularEdges);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",

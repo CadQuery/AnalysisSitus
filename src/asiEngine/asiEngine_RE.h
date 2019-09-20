@@ -307,6 +307,17 @@ public:
   asiEngine_EXPORT bool
     IsRegular(const Handle(asiData_ReEdgeNode)& edge) const;
 
+  //! Checks if the passed edge is regular, i.e., its vertices have valence
+  //! not greater than 4.
+  //! \param[in]  edge     edge to check.
+  //! \param[out] valencef valence (>= 0) of the first vertex.
+  //! \param[out] valencel valence (>= 0) of the last vertex.
+  //! \return true if the edge is regular, false -- otherwise.
+  asiEngine_EXPORT bool
+    IsRegular(const Handle(asiData_ReEdgeNode)& edge,
+              int&                              valencef,
+              int&                              valencel) const;
+
 };
 
 #endif

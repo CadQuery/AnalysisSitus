@@ -66,13 +66,30 @@ double asiVisu_DeviationDataProvider::GetTolerance() const
 
 //-----------------------------------------------------------------------------
 
+double asiVisu_DeviationDataProvider::GetMinScalar() const
+{
+  return ActParamTool::AsReal( m_node->Parameter(asiData_DeviationNode::PID_ScalarMin) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+double asiVisu_DeviationDataProvider::GetMaxScalar() const
+{
+  return ActParamTool::AsReal( m_node->Parameter(asiData_DeviationNode::PID_ScalarMax) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(ActAPI_HParameterList) asiVisu_DeviationDataProvider::translationSources() const
 {
   ActAPI_ParameterStream out;
   out << m_node->Parameter(asiData_DeviationNode::PID_Mesh)
       << m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldIds)
       << m_node->Parameter(asiData_DeviationNode::PID_DistanceFieldValues)
-      << m_node->Parameter(asiData_DeviationNode::PID_Tolerance);
+      << m_node->Parameter(asiData_DeviationNode::PID_Tolerance)
+      << m_node->Parameter(asiData_DeviationNode::PID_ScalarMin)
+      << m_node->Parameter(asiData_DeviationNode::PID_ScalarMax)
+      ;
 
   return out.List;
 }

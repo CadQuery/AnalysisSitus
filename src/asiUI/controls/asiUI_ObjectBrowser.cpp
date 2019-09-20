@@ -789,6 +789,19 @@ void asiUI_ObjectBrowser::onDumpJoint()
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast(selected_n);
 
+  // Check if the Node is regular.
+  asiEngine_RE reApi(m_model, m_progress, m_plotter);
+  //
+  int valencef = 0, valencel = 0;
+  //
+  if ( reApi.IsRegular(edgeNode) )
+    m_progress.SendLogMessage(LogNotice(Normal) << "Edge is regular.");
+  else
+    m_progress.SendLogMessage(LogNotice(Normal) << "Edge is irregular.");
+
+  m_progress.SendLogMessage(LogInfo(Normal) << "Valence of the first vertex is %1." << valencef);
+  m_progress.SendLogMessage(LogInfo(Normal) << "Valence of the last vertex is %1." << valencel);
+
   // Get coedges.
   Handle(ActAPI_HParameterList) backRefs = edgeNode->GetReferrers();
   //
@@ -798,7 +811,7 @@ void asiUI_ObjectBrowser::onDumpJoint()
     Handle(asiData_ReCoedgeNode)         refNode  = Handle(asiData_ReCoedgeNode)::DownCast( refParam->GetNode() );
 
     if ( !refNode.IsNull() )
-      m_progress.SendLogMessage( LogInfo(Normal) << "Referring coedge of edge %1: %2 (%3)."
+      m_progress.SendLogMessage( LogInfo(Normal) << "Referring coedge of edge %1 is %2 (%3)."
                                                  << edgeNode->GetId() << refNode->GetId() << refNode->GetName() );
   }
 
@@ -880,19 +893,6 @@ void asiUI_ObjectBrowser::onUnifyKnotsAndAlign()
       m_viewers[k]->PrsMgr()->Actualize(rightPatchNode);
     }
   }
-}
-
-//-----------------------------------------------------------------------------
-
-void asiUI_ObjectBrowser::onFlattenCorner()
-{
-  Handle(ActAPI_INode) selected_n;
-  if ( !this->selectedNode(selected_n) ) return;
-
-  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_ReVertexNode) ) )
-    return;
-
-  // TODO: NYI
 }
 
 //-----------------------------------------------------------------------------
@@ -1013,12 +1013,6 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
         pMenu->addSeparator();
         pMenu->addAction( "Dump joint info",       this, SLOT( onDumpJoint          () ) );
         pMenu->addAction( "Unify knots and align", this, SLOT( onUnifyKnotsAndAlign () ) );
-      }
-
-      if ( node->IsKind( STANDARD_TYPE(asiData_ReVertexNode) ) )
-      {
-        pMenu->addSeparator();
-        pMenu->addAction( "Flatten corner", this, SLOT( onFlattenCorner () ) );
       }
     }
   }

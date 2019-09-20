@@ -113,6 +113,12 @@ protected:
   //! Safety range.
   double m_fToler;
 
+  //! Min scalar.
+  double m_fMinScalar;
+
+  //! Min scalar.
+  double m_fMaxScalar;
+
 };
 
 #endif

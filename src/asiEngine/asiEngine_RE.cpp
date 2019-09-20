@@ -1216,7 +1216,9 @@ int asiEngine_RE::GetValence(const Handle(asiData_ReVertexNode)& vertex) const
     const Handle(ActAPI_IUserParameter)& refParam = rit.Value();
 
     // Check if this reference is from an Edge Node.
-    if ( refParam->GetNode()->DynamicType()->IsInstance( STANDARD_TYPE(asiData_ReEdgeNode) ) )
+    TCollection_AsciiString edgeTypeName = STANDARD_TYPE(asiData_ReEdgeNode)->Name();
+    //
+    if ( edgeTypeName == refParam->GetNode()->DynamicType()->Name() )
       ++valence;
   }
 
@@ -1227,16 +1229,26 @@ int asiEngine_RE::GetValence(const Handle(asiData_ReVertexNode)& vertex) const
 
 bool asiEngine_RE::IsRegular(const Handle(asiData_ReEdgeNode)& edge) const
 {
+  int valencef, valencel;
+  return this->IsRegular(edge, valencef, valencel);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiEngine_RE::IsRegular(const Handle(asiData_ReEdgeNode)& edge,
+                             int&                              valencef,
+                             int&                              valencel) const
+{
   Handle(asiData_ReVertexNode) vf = edge->GetFirstVertex();
   Handle(asiData_ReVertexNode) vl = edge->GetLastVertex();
   //
   if ( vf.IsNull() || vl.IsNull() )
     return false;
 
-  const int valencef = this->GetValence(vf);
-  const int valencel = this->GetValence(vl);
+  valencef = this->GetValence(vf);
+  valencel = this->GetValence(vl);
 
-  if ( valencef > 4 || valencel > 4 )
+  if ( valencef != 4 || valencel != 4 )
     return false;
 
   return true;

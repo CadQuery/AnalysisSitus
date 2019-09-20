@@ -68,6 +68,14 @@ public:
   asiVisu_EXPORT virtual double
     GetTolerance() const;
 
+  //! \return min scalar bound.
+  asiVisu_EXPORT virtual double
+    GetMinScalar() const;
+
+  //! \return max scalar bound.
+  asiVisu_EXPORT virtual double
+    GetMaxScalar() const;
+
 protected:
 
   //! Enumerates Data Parameters playing as sources for DOMAIN -> VTK

@@ -145,6 +145,10 @@ void asiVisu_MeshNScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& d
     // Initialize safety range.
     m_fToler = meshDp->GetTolerance();
 
+    // Initialize scalar range.
+    m_fMinScalar = meshDp->GetMinScalar();
+    m_fMaxScalar = meshDp->GetMaxScalar();
+
     // Initialize scalars filter.
     asiVisu_MeshNScalarFilter*
       scFilter = asiVisu_MeshNScalarFilter::SafeDownCast( m_filterMap.Find(Filter_NScalar) );
@@ -175,8 +179,8 @@ void asiVisu_MeshNScalarPipeline::initLookupTable()
   scFilter->Update();
 
   // Get scalar range.
-  const double minScalar = scFilter->GetMinScalar();
-  const double maxScalar = scFilter->GetMaxScalar();
+  const double minScalar = Precision::IsInfinite(m_fMinScalar) ? scFilter->GetMinScalar() : m_fMinScalar;
+  const double maxScalar = Precision::IsInfinite(m_fMaxScalar) ? scFilter->GetMaxScalar() : m_fMaxScalar;
   const double range     = maxScalar - minScalar;
 
   // Extra variables.

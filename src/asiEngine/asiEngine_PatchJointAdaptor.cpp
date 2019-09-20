@@ -237,11 +237,9 @@ bool
 
   const double dr = (*pPoleRight - poleCorner).Modulus();
   const double dl = (*pPoleLeft  - poleCorner).Modulus();
-  //
-  const double dd = Max(dr, dl);
 
-  t_xyz newPoleRight = poleCorner + vLeft2Right*dd;
-  t_xyz newPoleLeft  = poleCorner - vLeft2Right*dd;
+  t_xyz newPoleRight = poleCorner + vLeft2Right*dr;
+  t_xyz newPoleLeft  = poleCorner - vLeft2Right*dl;
 
   // Update control points.
   pPoleRight->SetXYZ(newPoleRight);

@@ -319,11 +319,9 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
 
     const double dr = (*polesRight[k] - polesMid[k]).Modulus();
     const double dl = (*polesLeft[k] - polesMid[k]).Modulus();
-    //
-    const double dd = Max(dr, dl);
 
-    t_xyz newPoleRight = polesMid[k] + vLeft2Right*dd;
-    t_xyz newPoleLeft  = polesMid[k] - vLeft2Right*dd;
+    t_xyz newPoleRight = polesMid[k] + vLeft2Right*dr;
+    t_xyz newPoleLeft  = polesMid[k] - vLeft2Right*dl;
 
     // Update control points.
     polesRight[k]->SetXYZ(newPoleRight);

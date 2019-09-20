@@ -60,7 +60,7 @@ asiVisu_DeviationPrs::asiVisu_DeviationPrs(const Handle(ActAPI_INode)& N)
 
   // Initialize scalar bar.
   m_scalarBarWidget = vtkSmartPointer<vtkScalarBarWidget>::New();
-  asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget, 0);
+  asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget, 1);
 
   this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(0);
 }

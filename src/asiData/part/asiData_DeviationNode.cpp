@@ -34,6 +34,9 @@
 // asiAlgo includes
 #include <asiAlgo_MeshField.h>
 
+// OpenCascade includes
+#include <Precision.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Default constructor. Registers all involved Parameters.
@@ -44,6 +47,8 @@ asiData_DeviationNode::asiData_DeviationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(IntArray,      PID_DistanceFieldIds);
   REGISTER_PARAMETER(RealArray,     PID_DistanceFieldValues);
   REGISTER_PARAMETER(Real,          PID_Tolerance);
+  REGISTER_PARAMETER(Real,          PID_ScalarMin);
+  REGISTER_PARAMETER(Real,          PID_ScalarMax);
 }
 
 //! Returns new DETACHED instance of Surface Node ensuring its correct
@@ -58,13 +63,17 @@ Handle(ActAPI_INode) asiData_DeviationNode::Instance()
 void asiData_DeviationNode::Init()
 {
   // Initialize Parameters.
-  this->InitParameter(PID_Name,      "Name",      "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_Tolerance, "Allowance", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,      "Name",        "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Tolerance, "Allowance",   "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ScalarMin, "Min. scalar", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ScalarMax, "Max. scalar", "", ParameterFlag_IsVisible, true);
 
   // Set default values.
   this->SetMeshWithScalars( asiAlgo_Mesh() );
   //
-  ActParamTool::AsReal( this->Parameter(PID_Tolerance) )->SetValue(0.1);
+  ActParamTool::AsReal( this->Parameter(PID_Tolerance) )->SetValue(  0.1 );
+  ActParamTool::AsReal( this->Parameter(PID_ScalarMin) )->SetValue( -Precision::Infinite() );
+  ActParamTool::AsReal( this->Parameter(PID_ScalarMax) )->SetValue(  Precision::Infinite() );
 }
 
 //-----------------------------------------------------------------------------

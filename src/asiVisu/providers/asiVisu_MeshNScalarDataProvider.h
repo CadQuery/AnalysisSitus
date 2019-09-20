@@ -55,6 +55,12 @@ public:
   virtual double
     GetTolerance() const = 0;
 
+  virtual double
+    GetMinScalar() const = 0;
+
+  virtual double
+    GetMaxScalar() const = 0;
+
 };
 
 #endif

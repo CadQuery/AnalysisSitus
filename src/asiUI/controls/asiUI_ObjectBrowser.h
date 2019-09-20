@@ -163,7 +163,6 @@ protected slots:
   //
   void onDumpJoint             ();
   void onUnifyKnotsAndAlign    ();
-  void onFlattenCorner         ();
 
 protected:
 

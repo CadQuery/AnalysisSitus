@@ -35,6 +35,7 @@
 #include <vtkCoordinate.h>
 #include <vtkGlyphSource2D.h>
 #include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkScalarBarRepresentation.h>
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
@@ -162,8 +163,20 @@ void asiVisu_MeshResultUtils::InitScalarBarWidget(vtkScalarBarWidget* scalarBarW
 {
   vtkScalarBarRepresentation* rep = scalarBarWidget->GetScalarBarRepresentation();
   rep->SetOrientation(orientation);
-  rep->GetPositionCoordinate()->SetValue(0.9, 0.2);
-  rep->GetPosition2Coordinate()->SetValue(0.1, 0.6);
+  //
+  if ( orientation == 1 )
+  {
+    rep->GetPositionCoordinate()->SetValue(0.9, 0.2);
+    rep->GetPosition2Coordinate()->SetValue(0.1, 0.6);
+  }
+  else
+  {
+   rep->GetPositionCoordinate()->SetValue(0.25, 0.1);
+   rep->GetPosition2Coordinate()->SetValue(0.55, 0.1);
+  }
+
+  // Set title color.
+  //scalarBarWidget->GetScalarBarActor()->GetProperty()->SetColor(0., 0., 0.);
 }
 
 //! Returns polygonal source for VTK glyph representing vectorial data.

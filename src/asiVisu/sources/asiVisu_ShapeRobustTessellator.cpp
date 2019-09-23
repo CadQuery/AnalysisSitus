@@ -670,7 +670,17 @@ void asiVisu_ShapeRobustTessellator::addFace(const TopoDS_Face& face,
 
     // Get parametric bound
     double uMinParam, uMaxParam, vMinParam, vMaxParam;
-    BRepTools::UVBounds(face, uMinParam, uMaxParam, vMinParam, vMaxParam);
+    //
+    try
+    {
+      BRepTools::UVBounds(face, uMinParam, uMaxParam, vMinParam, vMaxParam);
+    }
+    catch ( ... )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Cannot query (U,V) bounds for face %1."
+                                               << faceId);
+      return;
+    }
 
     // Choose min and max
     uMin = Max(uMinSurf, uMinParam);

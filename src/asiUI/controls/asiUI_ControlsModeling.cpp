@@ -237,6 +237,9 @@ void asiUI_ControlsModeling::onDefeatureFaces()
                                            m_notifier ) )
   {
     m_notifier.SendLogMessage(LogErr(Normal) << "Smart face removal failed.");
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(m_notifier, "Smart faces deletion");
     return;
   }
 

@@ -187,7 +187,14 @@ asiAlgo_FeatureAngleType
     if ( isSameParam )
     {
       double cons_f, cons_l;
-      c2d_F = BRep_Tool::CurveOnSurface(commonEdge, F, cons_f, cons_l);
+
+      // Catch as for invalid curves it raises exception.
+      try
+      {
+        c2d_F = BRep_Tool::CurveOnSurface(commonEdge, F, cons_f, cons_l);
+      }
+      catch ( ... ) {}
+
       //
       if ( c2d_F.IsNull() )
         return FeatureAngleType_Undefined; // Face is invalid

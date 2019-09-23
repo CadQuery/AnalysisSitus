@@ -789,9 +789,15 @@ bool asiAlgo_CheckValidity::IsClosedGeometrically(const TopoDS_Wire& wire,
     // instability does not happen as we essentially use geometry which we see
     // in parametric domain of a face (always a finite boundedregion without
     // any weird periodicity anomalies).
-    gp_Pnt2d Pf, Pl;
-    double f, l;
-    Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(E, face, f, l);
+    gp_Pnt2d             Pf, Pl;
+    double               f, l;
+    Handle(Geom2d_Curve) c2d;
+    //
+    try
+    {
+      c2d = BRep_Tool::CurveOnSurface(E, face, f, l);
+    }
+    catch ( ... ) { continue; }
     //
     if ( !c2d.IsNull() )
     {

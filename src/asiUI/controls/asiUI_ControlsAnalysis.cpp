@@ -677,7 +677,7 @@ void asiUI_ControlsAnalysis::onCheckDihAngles()
   m_model->OpenCommand();
   {
     ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Green)    ) ->SetShape(convexEdgesComp);
-    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red)   )    ->SetShape(concaveEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red)      ) ->SetShape(concaveEdgesComp);
     ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) ) ->SetShape(undefinedEdgesComp);
   }
   m_model->CommitCommand();

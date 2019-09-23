@@ -231,14 +231,6 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
       b2     = B_minK;
     }
 
-    //if ( face_idx == 299 )
-    //{
-    //  m_plotter.DRAW_VECTOR_AT(P, a1_dir, ( Abs(a1) < RealEpsilon() ) ? Color_Blue : Color_Red,   "a1dir");
-    //  m_plotter.DRAW_VECTOR_AT(P, a2_dir, ( Abs(a2) < RealEpsilon() ) ? Color_Blue : Color_Green, "a2dir");
-    //  m_plotter.DRAW_VECTOR_AT(P, b1_dir, ( Abs(b1) < RealEpsilon() ) ? Color_Blue : Color_Red,   "b1dir");
-    //  m_plotter.DRAW_VECTOR_AT(P, b2_dir, ( Abs(b2) < RealEpsilon() ) ? Color_Blue : Color_Green, "b2dir");
-    //}
-
 #if defined COUT_DEBUG
     std::cout << "\t[Face #" << face_idx     << "] a1 = " << a1 << std::endl;
     std::cout << "\t[Face #" << face_idx     << "] a2 = " << a2 << std::endl;

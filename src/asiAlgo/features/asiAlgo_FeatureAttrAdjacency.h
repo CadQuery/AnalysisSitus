@@ -96,6 +96,20 @@ public:
     m_edgeIndices = edgeIndices;
   }
 
+  //! Gathers edges by the stored indices.
+  //! \param[out] edges output collection of transient edges as queried
+  //!                   from AAG.
+  void GetEdges(TopTools_IndexedMapOfShape& edges)
+  {
+    const TopTools_IndexedMapOfShape& edgeMap = this->getAAG()->RequestMapOfEdges();
+
+    for ( TColStd_MapIteratorOfPackedMapOfInteger eit(m_edgeIndices); eit.More(); eit.Next() )
+    {
+      const int eid = eit.Key();
+      edges.Add( edgeMap(eid) );
+    }
+  }
+
 protected:
 
   TColStd_PackedMapOfInteger m_edgeIndices; //!< Indices of common edges.

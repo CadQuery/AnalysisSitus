@@ -49,4 +49,45 @@ enum asiAlgo_FeatureAngleType
   FeatureAngleType_SmoothConvex  =  4
 };
 
+//! Auxiliary functions for dealing with feature angles.
+namespace asiAlgo_FeatureAngle
+{
+  //! Returns true if the passed angle type is a smooth angle.
+  //! \param[in] type type to check.
+  //! \return true/false.
+  inline bool IsSmooth(const asiAlgo_FeatureAngleType type)
+  {
+    if ( type == FeatureAngleType_Smooth ||
+         type == FeatureAngleType_SmoothConcave ||
+         type == FeatureAngleType_SmoothConvex )
+      return true;
+
+    return false;
+  }
+
+  //! Returns true if the passed angle type is a convex angle.
+  //! \param[in] type type to check.
+  //! \return true/false.
+  inline bool IsConvex(const asiAlgo_FeatureAngleType type)
+  {
+    if ( type == FeatureAngleType_Convex ||
+         type == FeatureAngleType_SmoothConvex )
+      return true;
+
+    return false;
+  }
+
+  //! Returns true if the passed angle type is a concave angle.
+  //! \param[in] type type to check.
+  //! \return true/false.
+  inline bool IsConcave(const asiAlgo_FeatureAngleType type)
+  {
+    if ( type == FeatureAngleType_Concave ||
+         type == FeatureAngleType_SmoothConcave )
+      return true;
+
+    return false;
+  }
+};
+
 #endif

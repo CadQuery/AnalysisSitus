@@ -158,7 +158,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/setenv_rel.bat
 add_custom_command(
         TARGET asiTest
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E echo "Running unit tests."
+        COMMAND ${CMAKE_COMMAND} -E echo "Running unit tests..."
         COMMAND IF 1==$<CONFIG:Release> ( call ${asiTest_BINARY_DIR}/setenv_rel.bat && $<TARGET_FILE:asiTest> )
         COMMAND IF 1==$<CONFIG:RelWithDebInfo> ( call ${asiTest_BINARY_DIR}/setenv_rel.bat && $<TARGET_FILE:asiTest> )
         COMMAND IF 1==$<CONFIG:Debug> ( call ${asiTest_BINARY_DIR}/setenv_deb.bat && $<TARGET_FILE:asiTest> )

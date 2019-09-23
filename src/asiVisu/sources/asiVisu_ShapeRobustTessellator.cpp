@@ -200,7 +200,7 @@ void asiVisu_ShapeRobustTessellator::internalInit(const double                  
 //! Internal method which builds the polygonal data.
 void asiVisu_ShapeRobustTessellator::internalBuild()
 {
-  if ( m_shape.IsNull() )
+  if ( m_shape.IsNull() || asiAlgo_Utils::IsEmptyShape(m_shape) )
     return;
 
 #if defined COUT_DEBUG
@@ -294,8 +294,10 @@ void asiVisu_ShapeRobustTessellator::internalBuild()
                                   m_fAngDeflectionDeg,
                                   meshInfo) )
   {
-    vtkErrorMacro( << "Cannot tessellate B-Rep model with linear deflection " << m_fLinDeflection
-                   << " and angular deflection " << m_fAngDeflectionDeg << " [deg]");
+    //BRepTools::Write(m_shape, "C:/users/ssv/desktop/faulty.brep");
+
+    vtkWarningMacro( << "Cannot tessellate B-Rep model with linear deflection " << m_fLinDeflection
+                     << " and angular deflection " << m_fAngDeflectionDeg << " [deg]");
   }
 
 #if defined COUT_DEBUG

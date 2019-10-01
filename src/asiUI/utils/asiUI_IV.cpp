@@ -157,6 +157,17 @@ void asiUI_IV::DUMP_PNG3D(const char* filename)
 
 //---------------------------------------------------------------------------//
 
+void asiUI_IV::UPDATE_PART()
+{
+  if ( m_prsMgr3d )
+    m_prsMgr3d->Actualize( m_model->GetPartNode() );
+  //
+  if ( m_pBrowser )
+    m_pBrowser->Populate();
+}
+
+//---------------------------------------------------------------------------//
+
 void asiUI_IV::DRAW_POINT(const gp_XY&                   coord,
                           const ActAPI_Color&            color,
                           const TCollection_AsciiString& name)

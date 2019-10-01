@@ -105,6 +105,9 @@ public:
   asiUI_EXPORT virtual void
     DUMP_PNG3D(const char* filename);
 
+  asiUI_EXPORT virtual void
+    UPDATE_PART();
+
 // GEOMETRY:
 public:
 
@@ -554,6 +557,18 @@ public:
   const Handle(ActAPI_INode)& GetLastNode() const
   {
     return m_lastObj;
+  }
+
+  //! \return Data Model instance.
+  const Handle(asiEngine_Model)& GetModel() const
+  {
+    return m_model;
+  }
+
+  //! \return object browser.
+  asiUI_ObjectBrowser* GetObjectBrowser() const
+  {
+    return m_pBrowser;
   }
 
 protected:

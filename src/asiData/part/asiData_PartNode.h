@@ -83,6 +83,16 @@ public:
     PID_BVH,              //!< BVH structure.
     PID_Naming,           //!< Topology naming service.
   //----------------------//
+  // Transformation       //
+  //----------------------//
+    PID_GroupTrsf,        //!< Transformation group.
+    PID_TrsfTx,           //!< OX displacement.
+    PID_TrsfTy,           //!< OY displacement.
+    PID_TrsfTz,           //!< OZ displacement.
+    PID_TrsfRx,           //!< Rotation around OX.
+    PID_TrsfRy,           //!< Rotation around OY.
+    PID_TrsfRz,           //!< Rotation around O.
+  //----------------------//
   // Facets               //
   //----------------------//
     PID_GroupTess,        //!< Tessellation group.
@@ -142,6 +152,22 @@ public:
 
   asiData_EXPORT bool
     HasNaming() const;
+
+  asiData_EXPORT void
+    SetTransformation(const double tx,
+                      const double ty,
+                      const double tz,
+                      const double rxDeg,
+                      const double ryDeg,
+                      const double rzDeg);
+
+  asiData_EXPORT void
+    GetTransformation(double& tx,
+                      double& ty,
+                      double& tz,
+                      double& rxDeg,
+                      double& ryDeg,
+                      double& rzDeg);
 
   asiData_EXPORT void
     SetLinearDeflection(const double);

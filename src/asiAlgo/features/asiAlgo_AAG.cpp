@@ -902,8 +902,6 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 
   //---------------------------------------------------------------------------
 
-  ShapeAnalysis_Edge sae;
-
   // Extract all sub-shapes with unique indices from the master CAD.
   if ( cachedMaps & CachedMap_SubShapes )
     TopExp::MapShapes(masterCAD, m_subShapes);
@@ -923,6 +921,8 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   // Build child-parent map for edges and their faces.
   if ( cachedMaps & CachedMap_EdgesFaces )
     TopExp::MapShapesAndAncestors(masterCAD, TopAbs_EDGE, TopAbs_FACE, m_edgesFaces);
+
+  ShapeAnalysis_Edge sae;
 
   // Fill adjacency map with empty buckets and provide all required
   // treatment for each individual face.

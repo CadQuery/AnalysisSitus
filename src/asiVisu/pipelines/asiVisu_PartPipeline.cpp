@@ -40,6 +40,7 @@
 #include <vtkActor.h>
 #include <vtkInformation.h>
 #include <vtkMapper.h>
+#include <vtkMatrix4x4.h>
 #include <vtkProperty.h>
 
 #undef COUT_DEBUG
@@ -54,8 +55,13 @@ asiVisu_PartPipeline::asiVisu_PartPipeline() : asiVisu_PartPipelineBase(NULL)
   m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
   m_dmFilter->SetAllowExtraScalars(true);
 
-  // Apply lightning rules
+  // Apply lightning rules.
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
+
+  // Transformation filter.
+  m_tranformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  //
+  this->append(m_tranformFilter);
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +91,10 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
    *  Configure pipeline
    * ==================== */
 
+  // Set transformation from the data provider.
+  m_tranformFilter->SetTransform( DP->GetTransformation() );
+
+  // Lazy update.
   if ( DP->MustExecute( this->GetMTime() ) )
   {
     // Clear cached data which is by design actual for the current state of

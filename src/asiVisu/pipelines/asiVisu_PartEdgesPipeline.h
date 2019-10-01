@@ -34,6 +34,9 @@
 // asiVisu includes
 #include <asiVisu_PartPipelineBase.h>
 
+// VTK includes
+#include <vtkTransformPolyDataFilter.h>
+
 //-----------------------------------------------------------------------------
 
 //! Visualization pipeline for wireframe of OCCT shape. This pipeline is
@@ -54,6 +57,11 @@ public:
 
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
+
+protected:
+
+  //! Filter for transformation.
+  vtkSmartPointer<vtkTransformPolyDataFilter> m_tranformFilter;
 
 };
 

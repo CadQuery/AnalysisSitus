@@ -38,6 +38,10 @@
 // asiData includes
 #include <asiData_PartNode.h>
 
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
+
 //! Data provider from Part Node to Presentation.
 class asiVisu_PartDataProvider : public asiVisu_DataProvider
 {
@@ -78,6 +82,13 @@ public:
 
   asiVisu_EXPORT Handle(asiVisu_ShapeColorSource)
     PrepareColorSource();
+
+  asiVisu_EXPORT void
+    GetTransformation(double& tx, double& ty, double& tz,
+                      double& rx, double& ry, double& rz) const;
+
+  asiVisu_EXPORT vtkSmartPointer<vtkTransform>
+    GetTransformation() const;
 
 public:
 

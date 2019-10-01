@@ -43,10 +43,20 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name,          PID_Name);
   REGISTER_PARAMETER(Bool,          PID_AutoAAG);
   REGISTER_PARAMETER(Shape,         PID_Geometry);
+  //
+  REGISTER_PARAMETER(Group,         PID_GroupTrsf);
+  REGISTER_PARAMETER(Real,          PID_TrsfTx);
+  REGISTER_PARAMETER(Real,          PID_TrsfTy);
+  REGISTER_PARAMETER(Real,          PID_TrsfTz);
+  REGISTER_PARAMETER(Real,          PID_TrsfRx);
+  REGISTER_PARAMETER(Real,          PID_TrsfRy);
+  REGISTER_PARAMETER(Real,          PID_TrsfRz);
+  //
   REGISTER_PARAMETER(Group,         PID_GroupTess);
   REGISTER_PARAMETER(Real,          PID_TessLinDefl);
   REGISTER_PARAMETER(Real,          PID_TessAngDefl);
   REGISTER_PARAMETER(Bool,          PID_KeepTessParams);
+  //
   REGISTER_PARAMETER(Group,         PID_GroupPrs);
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
   REGISTER_PARAMETER(Bool,          PID_HasColor);
@@ -89,9 +99,20 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetDisplayMode       (1);       // Shading.
   this->SetHasVertices       (false);
 
+  // Set identity transformation.
+  this->SetTransformation(0., 0., 0., 0., 0., 0.);
+
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,           "Name",               "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_AutoAAG,        "Auto-construct AAG", "",               ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter(PID_GroupTrsf,      "Transformation",     "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTx,         "Tx",                 "Part_TX",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTy,         "Ty",                 "Part_TY",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTz,         "Tz",                 "Part_TZ",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRx,         "Rx",                 "Part_RX",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRy,         "Ry",                 "Part_RY",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRz,         "Rz",                 "Part_RZ",        ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_GroupTess,      "Tessellation",       "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_TessLinDefl,    "Linear deflection",  "",               ParameterFlag_IsVisible, true);
@@ -168,6 +189,50 @@ Handle(asiAlgo_Naming) asiData_PartNode::GetNaming() const
 bool asiData_PartNode::HasNaming() const
 {
   return !this->GetNaming().IsNull();
+}
+
+//! Sets the transformation components for the Part Node.
+//! \param[in] tx    translation along the OX axis (in model units).
+//! \param[in] ty    translation along the OY axis (in model units).
+//! \param[in] tz    translation along the OZ axis (in model units).
+//! \param[in] rxDeg rotation around OX axis (in degrees).
+//! \param[in] ryDeg rotation around OY axis (in degrees).
+//! \param[in] rzDeg rotation around OZ axis (in degrees).
+void asiData_PartNode::SetTransformation(const double tx,
+                                         const double ty,
+                                         const double tz,
+                                         const double rxDeg,
+                                         const double ryDeg,
+                                         const double rzDeg)
+{
+  ActParamTool::AsReal( this->Parameter(PID_TrsfTx) )->SetValue(tx);
+  ActParamTool::AsReal( this->Parameter(PID_TrsfTy) )->SetValue(ty);
+  ActParamTool::AsReal( this->Parameter(PID_TrsfTz) )->SetValue(tz);
+  ActParamTool::AsReal( this->Parameter(PID_TrsfRx) )->SetValue(rxDeg);
+  ActParamTool::AsReal( this->Parameter(PID_TrsfRy) )->SetValue(ryDeg);
+  ActParamTool::AsReal( this->Parameter(PID_TrsfRz) )->SetValue(rzDeg);
+}
+
+//! Gets the transformation components for the Part Node.
+//! \param[out] tx    translation along the OX axis (in model units).
+//! \param[out] ty    translation along the OY axis (in model units).
+//! \param[out] tz    translation along the OZ axis (in model units).
+//! \param[out] rxDeg rotation around OX axis (in degrees).
+//! \param[out] ryDeg rotation around OY axis (in degrees).
+//! \param[out] rzDeg rotation around OZ axis (in degrees).
+void asiData_PartNode::GetTransformation(double& tx,
+                                         double& ty,
+                                         double& tz,
+                                         double& rxDeg,
+                                         double& ryDeg,
+                                         double& rzDeg)
+{
+  tx    = ActParamTool::AsReal( this->Parameter(PID_TrsfTx) )->GetValue();
+  ty    = ActParamTool::AsReal( this->Parameter(PID_TrsfTy) )->GetValue();
+  tz    = ActParamTool::AsReal( this->Parameter(PID_TrsfTz) )->GetValue();
+  rxDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRx) )->GetValue();
+  ryDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRy) )->GetValue();
+  rzDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRz) )->GetValue();
 }
 
 //! Sets linear deflection.

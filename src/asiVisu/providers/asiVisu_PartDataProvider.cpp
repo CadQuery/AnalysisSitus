@@ -37,6 +37,9 @@
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
+// OpenCascade includes
+#include <gp_Quaternion.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! ctor.
@@ -116,6 +119,48 @@ Handle(asiVisu_ShapeColorSource)
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PartDataProvider::GetTransformation(double& tx, double& ty, double& tz,
+                                                 double& rx, double& ry, double& rz) const
+{
+  m_node->GetTransformation(tx, ty, tz, rx, ry, rz);
+}
+
+//-----------------------------------------------------------------------------
+
+vtkSmartPointer<vtkTransform> asiVisu_PartDataProvider::GetTransformation() const
+{
+  // Get transformation from the data provider.
+  double tx, ty, tz, rxDeg, ryDeg, rzDeg;
+  this->GetTransformation(tx, ty, tz, rxDeg, ryDeg, rzDeg);
+  //
+  const double rx = rxDeg*M_PI/180.;
+  const double ry = ryDeg*M_PI/180.;
+  const double rz = rzDeg*M_PI/180.;
+  //
+  gp_Vec        TT  (tx, ty, tz);
+  gp_Quaternion qRx (gp::DX(), rx);
+  gp_Quaternion qRy (gp::DY(), ry);
+  gp_Quaternion qRz (gp::DZ(), rz);
+  //
+  gp_Trsf T;
+  T.SetRotation(qRz * qRy * qRx);
+  T.SetTranslationPart(TT);
+
+  // Set transformation to VTK filter.
+  vtkSmartPointer<vtkTransform> transform   = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkMatrix4x4> transformMx = vtkSmartPointer<vtkMatrix4x4>::New();
+  //
+  for ( int r = 0; r < 3; ++r )
+    for ( int c = 0; c < 4; ++c)
+      transformMx->SetElement( r, c, T.Value(r + 1, c + 1) );
+  //
+  transform->SetMatrix(transformMx);
+
+  return transform;
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return copy.
 Handle(asiVisu_PartDataProvider) asiVisu_PartDataProvider::Clone() const
 {
@@ -135,7 +180,8 @@ Handle(ActAPI_HParameterList) asiVisu_PartDataProvider::translationSources() con
          << m_node->Parameter(asiData_PartNode::PID_AAG)
          << m_node->Parameter(asiData_PartNode::PID_TessLinDefl)
          << m_node->Parameter(asiData_PartNode::PID_TessAngDefl)
-         << m_node->Parameter(asiData_PartNode::PID_MetadataElems);
+         << m_node->Parameter(asiData_PartNode::PID_MetadataElems)
+         ;
 
   return params.List;
 }

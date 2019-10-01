@@ -48,6 +48,11 @@ asiVisu_PartEdgesPipeline::asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVi
 : asiVisu_PartPipelineBase(source)
 {
   m_dmFilter->SetDisplayMode(ShapeDisplayMode_Wireframe);
+
+  // Transformation filter.
+  m_tranformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  //
+  this->append(m_tranformFilter);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,6 +82,10 @@ void asiVisu_PartEdgesPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
    *  Prepare polygonal data set
    * ============================ */
 
+  // Set transformation from the data provider.
+  m_tranformFilter->SetTransform( DP->GetTransformation() );
+
+  // Lazy update.
   if ( DP->MustExecute( this->GetMTime() ) )
   {
     // Clear cached data which is by design actual for the current state of

@@ -314,22 +314,23 @@ namespace asiAlgo_Utils
   //! Applies the passed transformation to the given shape. Returns another shape
   //! as a result (no deep copy of geometry is performed, only location is
   //! changed).
-  //! \param theShape  [in] shape to apply transformation to.
-  //! \param theXPos   [in] X position.
-  //! \param theYPos   [in] Y position.
-  //! \param theZPos   [in] Z position.
-  //! \param theAngleA [in] rotation angle A.
-  //! \param theAngleB [in] rotation angle B.
-  //! \param theAngleC [in] rotation angle C.
+  //! \param[in] shape  shape to apply transformation to.
+  //! \param[in] XPos   X position.
+  //! \param[in] YPos   Y position.
+  //! \param[in] ZPos   Z position.
+  //! \param[in] AngleA rotation angle A (radians).
+  //! \param[in] AngleB rotation angle B (radians).
+  //! \param[in] AngleC rotation angle C (radians).
+  //! \param[in] doCopy whether to copy the shape.
   //! \return relocated shape.
   asiAlgo_EXPORT TopoDS_Shape
-    ApplyTransformation(const TopoDS_Shape& theShape,
-                        const double        theXPos,
-                        const double        theYPos,
-                        const double        theZPos,
-                        const double        theAngleA,
-                        const double        theAngleB,
-                        const double        theAngleC,
+    ApplyTransformation(const TopoDS_Shape& shape,
+                        const double        XPos,
+                        const double        YPos,
+                        const double        ZPos,
+                        const double        AngleA,
+                        const double        AngleB,
+                        const double        AngleC,
                         const bool          doCopy);
 
   //! Returns OCCT transformation structure for the given elemental
@@ -337,9 +338,9 @@ namespace asiAlgo_Utils
   //! \param theXPos   [in] X position.
   //! \param theYPos   [in] Y position.
   //! \param theZPos   [in] Z position.
-  //! \param theAngleA [in] rotation angle A.
-  //! \param theAngleB [in] rotation angle B.
-  //! \param theAngleC [in] rotation angle C.
+  //! \param theAngleA [in] rotation angle A (radians).
+  //! \param theAngleB [in] rotation angle B (radians).
+  //! \param theAngleC [in] rotation angle C (radians).
   //! \return OCCT transformation structure.
   asiAlgo_EXPORT gp_Trsf
     Transformation(const double theXPos,

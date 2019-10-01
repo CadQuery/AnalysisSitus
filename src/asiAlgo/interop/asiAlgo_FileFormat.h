@@ -80,8 +80,7 @@ class asiAlgo_FileFormatTool
 {
 public:
 
-  //! The list of names for all CAD formats supported by CAD Processor and
-  //! dependent software.
+  //! The list of names for all supported CAD formats.
   asiAlgo_EXPORT static const char* const
     NAMED_FORMATS[FileFormat_Last];
 

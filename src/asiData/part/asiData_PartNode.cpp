@@ -154,10 +154,23 @@ void asiData_PartNode::SetName(const TCollection_ExtendedString& name)
 // Handy accessors
 //-----------------------------------------------------------------------------
 
+//! Returns the stored CAD part.
+//! \param[in] applyTransform indicates whether to apply the persistent
+//!                           transformation.
 //! \return stored shape.
-TopoDS_Shape asiData_PartNode::GetShape() const
+TopoDS_Shape asiData_PartNode::GetShape(const bool applyTransform) const
 {
-  return ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+  TopoDS_Shape shape = ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
+
+  if ( applyTransform )
+  {
+    gp_Trsf T = this->GetTransformationMx();
+    //
+    if ( T.Form() != gp_Identity )
+      shape.Move(T);
+  }
+
+  return shape;
 }
 
 //! Sets flag for automatic AAG construction.
@@ -233,7 +246,7 @@ void asiData_PartNode::GetTransformation(double& tx,
                                          double& tz,
                                          double& rxDeg,
                                          double& ryDeg,
-                                         double& rzDeg)
+                                         double& rzDeg) const
 {
   tx    = ActParamTool::AsReal( this->Parameter(PID_TrsfTx) )->GetValue();
   ty    = ActParamTool::AsReal( this->Parameter(PID_TrsfTy) )->GetValue();
@@ -298,7 +311,7 @@ void asiData_PartNode::GetTransformationMx(double& a11,
                                            double& a31,
                                            double& a32,
                                            double& a33,
-                                           double& a34)
+                                           double& a34) const
 {
   Handle(ActData_RealArrayParameter)
     param = ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) );
@@ -317,6 +330,23 @@ void asiData_PartNode::GetTransformationMx(double& a11,
   a32 = arr->Value(9);
   a33 = arr->Value(10);
   a34 = arr->Value(11);
+}
+
+//! \return transformation matrix.
+gp_Trsf asiData_PartNode::GetTransformationMx() const
+{
+  // Get components of the transformation matrix.
+  double a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34;
+  this->GetTransformationMx(a11, a12, a13, a14,
+                            a21, a22, a23, a24,
+                            a31, a32, a33, a34);
+
+  gp_Trsf T;
+  T.SetValues(a11, a12, a13, a14,
+              a21, a22, a23, a24,
+              a31, a32, a33, a34);
+  //
+  return T;
 }
 
 //! Updates transformation matrix from `Tx`, `Ty`, `Tz`, `Rx`, `Ry`, `Rz`

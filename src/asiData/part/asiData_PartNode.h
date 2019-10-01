@@ -134,7 +134,7 @@ public:
 public:
 
   asiData_EXPORT TopoDS_Shape
-    GetShape() const;
+    GetShape(const bool applyTransform = true) const;
 
   asiData_EXPORT void
     SetAutoAAG(const bool flag) const;
@@ -168,7 +168,7 @@ public:
                       double& tz,
                       double& rxDeg,
                       double& ryDeg,
-                      double& rzDeg);
+                      double& rzDeg) const;
 
   asiData_EXPORT void
     SetTransformationMx(const double a11,
@@ -196,7 +196,10 @@ public:
                         double& a31,
                         double& a32,
                         double& a33,
-                        double& a34);
+                        double& a34) const;
+
+  asiData_EXPORT gp_Trsf
+    GetTransformationMx() const;
 
   asiData_EXPORT void
     UpdateTransformationMx();

@@ -31,6 +31,9 @@
 // Own include
 #include <asiData_PartNode.h>
 
+// asiAlgo includes
+#include <asiAlgo_Utils.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -51,6 +54,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Real,          PID_TrsfRx);
   REGISTER_PARAMETER(Real,          PID_TrsfRy);
   REGISTER_PARAMETER(Real,          PID_TrsfRz);
+  REGISTER_PARAMETER(RealArray,     PID_TrsfMx);
   //
   REGISTER_PARAMETER(Group,         PID_GroupTess);
   REGISTER_PARAMETER(Real,          PID_TessLinDefl);
@@ -100,6 +104,8 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetHasVertices       (false);
 
   // Set identity transformation.
+  ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) )->SetArray( new HRealArray(0, 11, 0.) );
+  //
   this->SetTransformation(0., 0., 0., 0., 0., 0.);
 
   // Initialize Parameter flags.
@@ -211,6 +217,8 @@ void asiData_PartNode::SetTransformation(const double tx,
   ActParamTool::AsReal( this->Parameter(PID_TrsfRx) )->SetValue(rxDeg);
   ActParamTool::AsReal( this->Parameter(PID_TrsfRy) )->SetValue(ryDeg);
   ActParamTool::AsReal( this->Parameter(PID_TrsfRz) )->SetValue(rzDeg);
+
+  this->UpdateTransformationMx();
 }
 
 //! Gets the transformation components for the Part Node.
@@ -233,6 +241,114 @@ void asiData_PartNode::GetTransformation(double& tx,
   rxDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRx) )->GetValue();
   ryDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRy) )->GetValue();
   rzDeg = ActParamTool::AsReal( this->Parameter(PID_TrsfRz) )->GetValue();
+}
+
+//! Sets transformation matrix by its components.
+//!
+//! \verbatim
+//!   V1   V2   V3     T       XYZ       XYZ
+//! | a11  a12  a13   a14 |   | x |     | x'|
+//! | a21  a22  a23   a24 |   | y |     | y'|
+//! | a31  a32  a33   a34 |   | z |  =  | z'|
+//! |  0    0    0     1  |   | 1 |     | 1 |
+//! \endverbatim
+void asiData_PartNode::SetTransformationMx(const double a11,
+                                           const double a12,
+                                           const double a13,
+                                           const double a14,
+                                           const double a21,
+                                           const double a22,
+                                           const double a23,
+                                           const double a24,
+                                           const double a31,
+                                           const double a32,
+                                           const double a33,
+                                           const double a34)
+{
+  Handle(ActData_RealArrayParameter)
+    param = ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) );
+
+  Handle(HRealArray) arr = param->GetArray();
+  //
+  arr->ChangeValue(0)  = a11;
+  arr->ChangeValue(1)  = a12;
+  arr->ChangeValue(2)  = a13;
+  arr->ChangeValue(3)  = a14;
+  arr->ChangeValue(4)  = a21;
+  arr->ChangeValue(5)  = a22;
+  arr->ChangeValue(6)  = a23;
+  arr->ChangeValue(7)  = a24;
+  arr->ChangeValue(8)  = a31;
+  arr->ChangeValue(9)  = a32;
+  arr->ChangeValue(10) = a33;
+  arr->ChangeValue(11) = a34;
+
+  param->SetArray(arr);
+}
+
+//! Returns the stored transformation matrix by its components.
+void asiData_PartNode::GetTransformationMx(double& a11,
+                                           double& a12,
+                                           double& a13,
+                                           double& a14,
+                                           double& a21,
+                                           double& a22,
+                                           double& a23,
+                                           double& a24,
+                                           double& a31,
+                                           double& a32,
+                                           double& a33,
+                                           double& a34)
+{
+  Handle(ActData_RealArrayParameter)
+    param = ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) );
+
+  Handle(HRealArray) arr = param->GetArray();
+  //
+  a11 = arr->Value(0);
+  a12 = arr->Value(1);
+  a13 = arr->Value(2);
+  a14 = arr->Value(3);
+  a21 = arr->Value(4);
+  a22 = arr->Value(5);
+  a23 = arr->Value(6);
+  a24 = arr->Value(7);
+  a31 = arr->Value(8);
+  a32 = arr->Value(9);
+  a33 = arr->Value(10);
+  a34 = arr->Value(11);
+}
+
+//! Updates transformation matrix from `Tx`, `Ty`, `Tz`, `Rx`, `Ry`, `Rz`
+//! parameters.
+void asiData_PartNode::UpdateTransformationMx()
+{
+  double tx, ty, tz, rxDeg, ryDeg, rzDeg;
+  this->GetTransformation(tx, ty, tz, rxDeg, ryDeg, rzDeg);
+
+  const double rx = rxDeg*M_PI/180.;
+  const double ry = ryDeg*M_PI/180.;
+  const double rz = rzDeg*M_PI/180.;
+
+  // Update transformation matrix.
+  gp_Trsf T = asiAlgo_Utils::Transformation(tx, ty, tz, rx, ry, rz);
+  //
+  const double a11 = T.Value(1, 1);
+  const double a12 = T.Value(1, 2);
+  const double a13 = T.Value(1, 3);
+  const double a14 = T.Value(1, 4);
+  const double a21 = T.Value(2, 1);
+  const double a22 = T.Value(2, 2);
+  const double a23 = T.Value(2, 3);
+  const double a24 = T.Value(2, 4);
+  const double a31 = T.Value(3, 1);
+  const double a32 = T.Value(3, 2);
+  const double a33 = T.Value(3, 3);
+  const double a34 = T.Value(3, 4);
+  //
+  this->SetTransformationMx(a11, a12, a13, a14,
+                            a21, a22, a23, a24,
+                            a31, a32, a33, a34);
 }
 
 //! Sets linear deflection.

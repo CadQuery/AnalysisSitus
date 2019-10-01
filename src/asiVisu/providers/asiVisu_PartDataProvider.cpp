@@ -130,29 +130,27 @@ void asiVisu_PartDataProvider::GetTransformation(double& tx, double& ty, double&
 vtkSmartPointer<vtkTransform> asiVisu_PartDataProvider::GetTransformation() const
 {
   // Get transformation from the data provider.
-  double tx, ty, tz, rxDeg, ryDeg, rzDeg;
-  this->GetTransformation(tx, ty, tz, rxDeg, ryDeg, rzDeg);
-  //
-  const double rx = rxDeg*M_PI/180.;
-  const double ry = ryDeg*M_PI/180.;
-  const double rz = rzDeg*M_PI/180.;
-  //
-  gp_Vec        TT  (tx, ty, tz);
-  gp_Quaternion qRx (gp::DX(), rx);
-  gp_Quaternion qRy (gp::DY(), ry);
-  gp_Quaternion qRz (gp::DZ(), rz);
-  //
-  gp_Trsf T;
-  T.SetRotation(qRz * qRy * qRx);
-  T.SetTranslationPart(TT);
+  double a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34;
+  m_node->GetTransformationMx(a11, a12, a13, a14,
+                              a21, a22, a23, a24,
+                              a31, a32, a33, a34);
 
   // Set transformation to VTK filter.
   vtkSmartPointer<vtkTransform> transform   = vtkSmartPointer<vtkTransform>::New();
   vtkSmartPointer<vtkMatrix4x4> transformMx = vtkSmartPointer<vtkMatrix4x4>::New();
   //
-  for ( int r = 0; r < 3; ++r )
-    for ( int c = 0; c < 4; ++c)
-      transformMx->SetElement( r, c, T.Value(r + 1, c + 1) );
+  transformMx->SetElement(0, 0, a11);
+  transformMx->SetElement(0, 1, a12);
+  transformMx->SetElement(0, 2, a13);
+  transformMx->SetElement(0, 3, a14);
+  transformMx->SetElement(1, 0, a21);
+  transformMx->SetElement(1, 1, a22);
+  transformMx->SetElement(1, 2, a23);
+  transformMx->SetElement(1, 3, a24);
+  transformMx->SetElement(2, 0, a31);
+  transformMx->SetElement(2, 1, a32);
+  transformMx->SetElement(2, 2, a33);
+  transformMx->SetElement(2, 3, a34);
   //
   transform->SetMatrix(transformMx);
 

@@ -99,7 +99,7 @@ void asiUI_ParameterEditorListenerDefault::beforeParameterChanged(const Handle(A
 
         // Set reference list to metadata in the Part Node modified to allow for
         // actualization in 3D when the existing face was recolored.
-        m_cf->Model->GetPartNode()->Parameter(asiData_PartNode::PID_MetadataElems)->SetModified();
+        part_n->Parameter(asiData_PartNode::PID_MetadataElems)->SetModified();
       }
 
       // Set update type for Object Browser. Here we need to repopulate the
@@ -157,6 +157,25 @@ void asiUI_ParameterEditorListenerDefault::afterParameterChanged(const Handle(Ac
         edge_n->DisconnectTreeFunction(asiData_ReEdgeNode::PID_FuncSmoothenCorners);
         edge_n->DisconnectTreeFunction(asiData_ReEdgeNode::PID_FuncSmoothenPatches);
       }
+    }
+  }
+
+  /* =============================
+   *  Customization for Part Node
+   * ============================= */
+
+  else if ( N->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+  {
+    Handle(asiData_PartNode) part_n = Handle(asiData_PartNode)::DownCast(N);
+
+    if ( pid == asiData_PartNode::PID_TrsfTx ||
+         pid == asiData_PartNode::PID_TrsfTy ||
+         pid == asiData_PartNode::PID_TrsfTz ||
+         pid == asiData_PartNode::PID_TrsfRx ||
+         pid == asiData_PartNode::PID_TrsfRy ||
+         pid == asiData_PartNode::PID_TrsfRz )
+    {
+      part_n->UpdateTransformationMx();
     }
   }
 }

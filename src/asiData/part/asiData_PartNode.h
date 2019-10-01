@@ -91,7 +91,8 @@ public:
     PID_TrsfTz,           //!< OZ displacement.
     PID_TrsfRx,           //!< Rotation around OX.
     PID_TrsfRy,           //!< Rotation around OY.
-    PID_TrsfRz,           //!< Rotation around O.
+    PID_TrsfRz,           //!< Rotation around OZ.
+    PID_TrsfMx,           //!< Matrix of transformation.
   //----------------------//
   // Facets               //
   //----------------------//
@@ -168,6 +169,37 @@ public:
                       double& rxDeg,
                       double& ryDeg,
                       double& rzDeg);
+
+  asiData_EXPORT void
+    SetTransformationMx(const double a11,
+                        const double a12,
+                        const double a13,
+                        const double a14,
+                        const double a21,
+                        const double a22,
+                        const double a23,
+                        const double a24,
+                        const double a31,
+                        const double a32,
+                        const double a33,
+                        const double a34);
+
+  asiData_EXPORT void
+    GetTransformationMx(double& a11,
+                        double& a12,
+                        double& a13,
+                        double& a14,
+                        double& a21,
+                        double& a22,
+                        double& a23,
+                        double& a24,
+                        double& a31,
+                        double& a32,
+                        double& a33,
+                        double& a34);
+
+  asiData_EXPORT void
+    UpdateTransformationMx();
 
   asiData_EXPORT void
     SetLinearDeflection(const double);

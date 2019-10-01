@@ -898,7 +898,7 @@ gp_Trsf asiAlgo_Utils::Transformation(const double theXPos,
                                       const double theAngleA,
                                       const double theAngleB,
                                       const double theAngleC)
-  {
+{
   gp_Vec aTranslation(theXPos, theYPos, theZPos);
 
   gp_Quaternion aRotationX(gp::DX(), theAngleA);

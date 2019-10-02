@@ -626,6 +626,7 @@ void asiEngine_Part::Clean(const bool cleanMeta)
   part_n->GetEdgeRepresentation()          ->Init();
   part_n->GetCurveRepresentation()         ->Init();
   part_n->GetBoundaryEdgesRepresentation() ->Init();
+  part_n->SetTransformation(0., 0., 0., 0., 0., 0.);
 
   // Clean up tolerant shapes.
   asiEngine_TolerantShapes tolApi(m_model, m_prsMgr, m_progress, m_plotter);

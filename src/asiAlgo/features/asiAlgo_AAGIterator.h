@@ -42,7 +42,7 @@
 
 //-----------------------------------------------------------------------------
 
-//! AAG iterator.
+//! Abstract AAG iterator.
 class asiAlgo_AAGIterator : public Standard_Transient
 {
 public:

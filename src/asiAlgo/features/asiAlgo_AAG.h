@@ -673,6 +673,28 @@ public:
   asiAlgo_EXPORT void
     ClearCache();
 
+  /* Convenience methods */
+
+  //! Returns the casted handle to the node attribute of the template type
+  //! for the given face ID.
+  //! \param[in] fid face ID in question.
+  //! \return attribute.
+  template<typename t_attr_type>
+  Handle(t_attr_type) ATTR_NODE(const int fid) const
+  {
+    return Handle(t_attr_type)::DownCast( this->GetNodeAttribute( fid, t_attr_type::GUID() ) );
+  }
+
+  //! Returns the casted handle to the arc attribute of the template type
+  //! for the given pair of face IDs.
+  //! \param[in] arc face IDs defining the arc in question.
+  //! \return attribute.
+  template<typename t_attr_type>
+  Handle(t_attr_type) ATTR_ARC(const t_arc& arc) const
+  {
+    return Handle(t_attr_type)::DownCast( this->GetArcAttribute( arc, t_attr_type::GUID() ) );
+  }
+
 public:
 
   //! Dumps AAG structure to the passed output stream.

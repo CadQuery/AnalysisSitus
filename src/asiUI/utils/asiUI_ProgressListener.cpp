@@ -169,6 +169,8 @@ void asiUI_ProgressListener::onLogMessage()
 
   // Show messages to the user
   m_logger->Dispatch(listFromAlgo);
+
+  QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------

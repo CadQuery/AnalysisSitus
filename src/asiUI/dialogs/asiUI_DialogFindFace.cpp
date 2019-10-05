@@ -146,7 +146,7 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
   this->onChangeIdType(0);
 
   // Set initial focus to reduce excessive clicks.
-  m_widgets.pFaceIdSel->setFocus();
+  m_widgets.pIdSerial->setFocus();
 }
 
 //-----------------------------------------------------------------------------

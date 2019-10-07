@@ -1288,10 +1288,12 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  if ( argc != 4 )
+  if ( argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  bool isRelax = interp->HasKeyword(argc, argv, "relax");
 
   // Find Node by name.
   Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
@@ -1337,24 +1339,28 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   TIMER_NEW
   TIMER_GO
 
-  // Perform fairing.
+  // Initialize fairing tool.
   geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
   //
-  const int nPolesU = int( mobSurf->GetPoles().size() );
-  const int nPolesV = int( mobSurf->GetPoles()[0].size() );
-  //
-  for ( int i = 0; i < nPolesU; ++i )
+  if ( !isRelax )
   {
-    fairing.AddPinnedPole( i, 0 );
-    fairing.AddPinnedPole( i, nPolesV - 1 );
+    const int nPolesU = int( mobSurf->GetPoles().size() );
+    const int nPolesV = int( mobSurf->GetPoles()[0].size() );
+    //
+    for ( int i = 0; i < nPolesU; ++i )
+    {
+      fairing.AddPinnedPole( i, 0 );
+      fairing.AddPinnedPole( i, nPolesV - 1 );
+    }
+    //
+    for ( int j = 0; j < nPolesV; ++j )
+    {
+      fairing.AddPinnedPole( 0, j );
+      fairing.AddPinnedPole( nPolesU - 1, j );
+    }
   }
-  //
-  for ( int j = 0; j < nPolesV; ++j )
-  {
-    fairing.AddPinnedPole( 0, j );
-    fairing.AddPinnedPole( nPolesU - 1, j );
-  }
-  //
+
+  // Perform fairing.
   if ( !fairing.Perform() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Fairing failed.");
@@ -2862,9 +2868,10 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-surf",
     //
-    "fair-surf resName surfName fairingCoeff\n"
+    "fair-surf resName surfName fairingCoeff [-relax]\n"
     "\t Fairs surface with the given name <surfName>. The passed fairing coefficient\n"
-    "\t is a weight of a fairing term in the goal function.",
+    "\t is a weight of a fairing term in the goal function. If the '-relax' key is passed,\n"
+    "\t the natural boundaries of the surface will remain unconstrained.",
     //
     __FILE__, group, ENGINE_FairSurf);
 

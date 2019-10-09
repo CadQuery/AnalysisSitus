@@ -587,8 +587,8 @@ int ENGINE_SetFaceColorAAG(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
-                           int                          argc,
-                           const char**                 argv)
+                        int                          argc,
+                        const char**                 argv)
 {
   if ( argc != 3 && argc != 5 )
   {
@@ -650,9 +650,13 @@ int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
       Handle(asiData_ElemMetadataNode)
         emn = partApi.CreateElemMetadata( "Color", partApi.GetFace( fit.Key() ) );
       //
-      emn->SetColor( asiVisu_Utils::ColorToInt(colorComponents[0],
-                                               colorComponents[1],
-                                               colorComponents[2]) );
+      const int icolor = asiVisu_Utils::ColorToInt(colorComponents[0],
+                                                   colorComponents[1],
+                                                   colorComponents[2]);
+      //
+      interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Setting face color to %1." << icolor);
+      //
+      emn->SetColor(icolor);
     }
   }
   cmdEngine::model->CommitCommand();

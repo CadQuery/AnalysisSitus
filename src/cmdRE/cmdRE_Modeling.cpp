@@ -35,6 +35,7 @@
 #include <asiAlgo_CheckDeviations.h>
 #include <asiAlgo_Cloudify.h>
 #include <asiAlgo_MeshInterPlane.h>
+#include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_MeshProjectLine.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_PlateOnEdges.h>
@@ -1389,7 +1390,7 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
                   int                          argc,
                   const char**                 argv)
 {
-  if ( argc != 4 && argc != 5 )
+  if ( argc != 4 && argc != 5 && argc != 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
@@ -1409,18 +1410,57 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
   // Whether to sample facets (alternatively, you may want to sample faces).
   const bool onFacets = interp->HasKeyword(argc, argv, "facets");
 
+  // Whether to take vertices as points.
+  const bool useVertices = interp->HasKeyword(argc, argv, "vertices");
+
   // Cloudify shape.
   Handle(asiAlgo_BaseCloud<double>) sampledPts;
   //
-  asiAlgo_Cloudify cloudify( std::min( atof(argv[2]), atof(argv[3]) ) );
-  //
-  cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
-  //
-  if ( onFacets && !cloudify.Sample_Facets (shape, sampledPts) ||
-      !onFacets && !cloudify.Sample_Faces  (shape, sampledPts) )
+  if ( !useVertices )
   {
-    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
-    return TCL_ERROR;
+    asiAlgo_Cloudify cloudify( std::min( atof(argv[2]), atof(argv[3]) ) );
+    //
+    cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
+    //
+    if ( onFacets && !cloudify.Sample_Facets (shape, sampledPts) ||
+        !onFacets && !cloudify.Sample_Faces  (shape, sampledPts) )
+    {
+      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
+      return TCL_ERROR;
+    }
+  }
+  else
+  {
+    sampledPts = new asiAlgo_BaseCloud<double>;
+
+    if ( onFacets )
+    {
+      // Merge facets.
+      asiAlgo_MeshMerge meshMerge(shape);
+      //
+      Handle(Poly_Triangulation)
+        tris = meshMerge.GetResultPoly()->GetTriangulation();
+
+      for ( int n = 1; n <= tris->NbNodes(); ++n )
+      {
+        const gp_Pnt& P = tris->Node(n);
+        //
+        sampledPts->AddElement( P.XYZ() );
+      }
+    }
+    else
+    {
+      // Map vertices.
+      TopTools_IndexedMapOfShape allVertices;
+      TopExp::MapShapes(shape, TopAbs_VERTEX, allVertices);
+      //
+      for ( int n = 1; n <= allVertices.Extent(); ++n )
+      {
+        gp_Pnt P = BRep_Tool::Pnt( TopoDS::Vertex( allVertices(n) ) );
+        //
+        sampledPts->AddElement( P.XYZ() );
+      }
+    }
   }
 
   // Set the result.
@@ -2202,7 +2242,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-sample-part",
     //
-    "re-sample-part res ustep vstep [-facets]\n"
+    "re-sample-part res ustep vstep [-facets] [-vertices]\n"
     "\t Makes a point cloud by sampling CAD part.",
     //
     __FILE__, group, RE_SamplePart);

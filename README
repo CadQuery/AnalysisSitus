@@ -1,6 +1,17 @@
 Release notes:
 
 -------------------------------------------------------------------------------
+v0.3.2, 15 October 2019
+-------------------------------------------------------------------------------
+- STEP reader now imports colored faces.
+- Add a set of handy Tcl commands.
+- Add more functionality to the experimental reverse engineering workbench.
+- Improvements in face finder UI.
+- Add visualization of execution graphs (tree functions of Active Data).
+- Add deviation checker for points vs mesh/brep.
+- Allow PNG dumps as vtkImageData from presentation managers.
+- Enable user-defined part transformation (translation, rotation) from parameter editor.
+-------------------------------------------------------------------------------
 v0.3.1, 31 May 2019
 -------------------------------------------------------------------------------
 - Add possibility to colorize faces.

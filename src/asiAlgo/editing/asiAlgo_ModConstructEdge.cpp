@@ -619,7 +619,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   //
   if ( f1_prev_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1."
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1. "
                                                 "Cannot find t1.");
 
     this->SetErrorStateOn();
@@ -637,7 +637,7 @@ bool asiAlgo_ModConstructEdge::initSituation(const TopoDS_Edge& targetEdge)
   //
   if ( f1_next_neighbors.Extent() != 1 )
   {
-    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1."
+    m_progress.SendLogMessage(LogErr(Normal) << "Unexpected face neighborhood for face f1. "
                                                 "Cannot find t2.");
 
     this->SetErrorStateOn();

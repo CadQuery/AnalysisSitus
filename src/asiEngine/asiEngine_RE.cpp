@@ -56,7 +56,7 @@
   using namespace mobius;
 #endif
 
-#define DRAW_DEBUG
+#undef DRAW_DEBUG
 #if defined DRAW_DEBUG
   #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif

@@ -134,7 +134,7 @@ public:
 public:
 
   asiData_EXPORT TopoDS_Shape
-    GetShape(const bool applyTransform = true) const;
+    GetShape(const bool applyTransform = false) const;
 
   asiData_EXPORT void
     SetAutoAAG(const bool flag) const;

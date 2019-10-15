@@ -51,7 +51,7 @@ asiEngine_STEPWriterInput::asiEngine_STEPWriterInput(const Handle(asiEngine_Mode
 
 TopoDS_Shape asiEngine_STEPWriterInput::GetShape() const
 {
-  return m_model->GetPartNode()->GetShape();
+  return m_model->GetPartNode()->GetShape(true);
 }
 
 //-----------------------------------------------------------------------------

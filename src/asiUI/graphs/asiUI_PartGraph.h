@@ -100,11 +100,11 @@ public:
 
   asiUI_EXPORT void
     RenderAdjacency(const TopoDS_Shape&               shape,
-                    const TopTools_IndexedMapOfShape& selectedFaces);
+                    const TopTools_IndexedMapOfShape& selectedFaces = TopTools_IndexedMapOfShape());
 
   asiUI_EXPORT void
     RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
-                    const TopTools_IndexedMapOfShape& selectedFaces);
+                    const TopTools_IndexedMapOfShape& selectedFaces = TopTools_IndexedMapOfShape());
 
   asiUI_EXPORT void
     RenderEventCallback();

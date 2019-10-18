@@ -2658,11 +2658,21 @@ int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
                    int                          argc,
                    const char**                 argv)
 {
-  if ( argc != 1 )
+  if ( argc != 1 && argc != 2 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
+  if ( !cmdEngine::cf->ViewerPart )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Part viewer is not available.");
+    return TCL_OK;
+  }
+
+  // Get option.
+  const bool excludeSelected = interp->HasKeyword(argc, argv, "nosel");
+
+  // Get part.
   Handle(asiData_PartNode) part_n;
   TopoDS_Shape             part;
   //
@@ -2672,19 +2682,26 @@ int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  if ( !cmdEngine::cf->ViewerPart )
-  {
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Part viewer is not available.");
-    return TCL_OK;
-  }
+  // Get AAG.
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
 
   // Access selected faces (if any).
-  TopTools_IndexedMapOfShape selected;
-  asiEngine_Part( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() ).GetHighlightedSubShapes(selected);
+  TColStd_PackedMapOfInteger selected;
+  asiEngine_Part( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() ).GetHighlightedFaces(selected);
+
+  if ( excludeSelected )
+  {
+    aag->PushSubgraphX(selected);
+  }
 
   // Show graph.
   asiUI_PartGraph* pGraphView = new asiUI_PartGraph(cmdEngine::model, cmdEngine::cf->ViewerPart);
-  pGraphView->RenderAdjacency(part_n->GetAAG(), selected);
+  pGraphView->RenderAdjacency(aag);
+
+  if ( excludeSelected )
+  {
+    aag->PopSubgraph();
+  }
 
   return TCL_OK;
 }
@@ -3353,8 +3370,9 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("show-aag",
     //
-    "show-aag\n"
-    "\t Visualizes AAG for the active part.",
+    "show-aag [-nosel]\n"
+    "\t Visualizes AAG for the active part. If the '-nosel' flag is passed,\n"
+    "\t the selected faces will be excluded from the AAG.",
     //
     __FILE__, group, ENGINE_ShowAAG);
 

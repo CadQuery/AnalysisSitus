@@ -139,6 +139,22 @@ public:
       TCollection_AsciiString( theStr.toLatin1().data() ) : TCollection_AsciiString();
   }
 
+  //! Converts QString to std::string
+  //! \return converted string
+  static std::string ToStandardString(const QString& theStr)
+  {
+    std::string utf8_text = theStr.toUtf8().constData();
+    return utf8_text;
+  }
+
+  //! Converts TCollection_ExtendedString to std::string
+  //! \return converted string
+  static std::string ToStandardString(const TCollection_ExtendedString& theStr)
+  {
+    std::string res = TCollection_AsciiString(theStr).ToCString();
+    return res;
+  }
+
   //! Converts QString to TCollection_ExtendedString
   //! \return converted string
   static TCollection_ExtendedString ToExtString(const QString& theStr)
@@ -250,11 +266,17 @@ public:
 #define ExtStr2QStr(ExtStr) \
   QObject::tr( TCollection_AsciiString(ExtStr).ToCString() )
 
+#define ExtStr2StdStr(ExtStr) \
+  asiUI_Common::ToStandardString(ExtStr)
+
 #define AsciiStr2QStr(AsciiStr) \
   QObject::tr( AsciiStr.ToCString() )
 
 #define QStr2AsciiStr(QStr) \
   asiUI_Common::ToAsciiString(QStr)
+
+#define QStr2StdStr(QStr) \
+  asiUI_Common::ToStandardString(QStr)
 
 #define QStr2ExtStr(QStr) \
   asiUI_Common::ToExtString(QStr)

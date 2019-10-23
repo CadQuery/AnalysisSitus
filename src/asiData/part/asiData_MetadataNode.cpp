@@ -74,33 +74,3 @@ void asiData_MetadataNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
 }
-
-//-----------------------------------------------------------------------------
-
-//! Finds elemental metadata for the passed shape which is normally
-//! a sub-shape of the part shape.
-//! \param[in] shape sub-shape in question.
-//! \return found metadata element or null if there is no such object.
-Handle(asiData_ElemMetadataNode)
-  asiData_MetadataNode::FindElemMetadata(const TopoDS_Shape& shape) const
-{
-  // Iterate over the existing metadata elements to find one for the
-  // requested shape.
-  Handle(asiData_ElemMetadataNode) metadataElem_n;
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    Handle(asiData_ElemMetadataNode)
-      N = Handle(asiData_ElemMetadataNode)::DownCast( cit->Value() );
-    //
-    if ( N.IsNull() || !N->IsWellFormed() )
-      continue;
-
-    if ( N->GetShape().IsSame(shape) )
-    {
-      metadataElem_n = N;
-      break;
-    }
-  }
-
-  return metadataElem_n;
-}

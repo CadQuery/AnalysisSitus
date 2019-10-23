@@ -746,6 +746,12 @@ install (TARGETS asiUI
          CONFIGURATIONS Release)
 
 install (TARGETS asiUI
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         CONFIGURATIONS RelWithDebInfo
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         CONFIGURATIONS RelWithDebInfo)
+
+install (TARGETS asiUI
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
          ARCHIVE DESTINATION framework/libd COMPONENT Library

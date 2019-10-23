@@ -113,6 +113,12 @@ install (TARGETS cmdMisc
          CONFIGURATIONS Release)
 
 install (TARGETS cmdMisc
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         CONFIGURATIONS RelWithDebInfo
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         CONFIGURATIONS RelWithDebInfo)
+
+install (TARGETS cmdMisc
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
          ARCHIVE DESTINATION framework/libd COMPONENT Library

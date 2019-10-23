@@ -78,9 +78,6 @@ public:
   asiData_EXPORT void
     Init();
 
-  asiData_EXPORT Handle(asiData_ElemMetadataNode)
-    FindElemMetadata(const TopoDS_Shape& shape) const;
-
 protected:
 
   //! Allocation is allowed only via Instance() method.

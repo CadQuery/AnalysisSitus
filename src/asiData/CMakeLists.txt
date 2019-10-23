@@ -418,6 +418,12 @@ install (TARGETS asiData
          CONFIGURATIONS Release)
 
 install (TARGETS asiData
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         CONFIGURATIONS RelWithDebInfo
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         CONFIGURATIONS RelWithDebInfo)
+
+install (TARGETS asiData
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
          ARCHIVE DESTINATION framework/libd COMPONENT Library

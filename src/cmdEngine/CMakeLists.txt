@@ -120,6 +120,12 @@ install (TARGETS cmdEngine
          CONFIGURATIONS Release)
 
 install (TARGETS cmdEngine
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         CONFIGURATIONS RelWithDebInfo
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         CONFIGURATIONS RelWithDebInfo)
+
+install (TARGETS cmdEngine
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
          ARCHIVE DESTINATION framework/libd COMPONENT Library

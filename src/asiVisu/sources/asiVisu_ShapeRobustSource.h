@@ -66,7 +66,8 @@ public:
     GetAAG() const;
 
   asiVisu_EXPORT void
-    SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource);
+    SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource,
+                   const bool                              update = true);
 
   asiVisu_EXPORT const Handle(asiVisu_ShapeColorSource)&
     GetColorSource() const;
@@ -90,6 +91,9 @@ public:
 
   asiVisu_EXPORT void
     GetExtraColorsScalars(NCollection_DataMap<int, int>& extraScalars) const;
+
+  asiVisu_EXPORT asiVisu_ShapeRobustTessellator::t_colorScalarGenerator*
+    GetScalarGenerator() const;
 
 protected:
 

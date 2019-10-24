@@ -178,7 +178,6 @@ Handle(ActAPI_HParameterList) asiVisu_PartDataProvider::translationSources() con
          << m_node->Parameter(asiData_PartNode::PID_AAG)
          << m_node->Parameter(asiData_PartNode::PID_TessLinDefl)
          << m_node->Parameter(asiData_PartNode::PID_TessAngDefl)
-         << m_node->Parameter(asiData_PartNode::PID_MetadataElems)
          ;
 
   return params.List;

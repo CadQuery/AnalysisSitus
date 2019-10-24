@@ -49,9 +49,9 @@ vtkStandardNewMacro(asiVisu_ShapeRobustSource);
 //-----------------------------------------------------------------------------
 
 asiVisu_ShapeRobustSource::asiVisu_ShapeRobustSource()
-: vtkPolyDataAlgorithm(),
-  m_fLinDeflection(0.0), // Zeroes lead to automatic selection of faceter parameters
-  m_fAngDeflectionDeg(0.0)
+: vtkPolyDataAlgorithm (),
+  m_fLinDeflection     (0.0), // Zeroes lead to automatic selection of faceter parameters
+  m_fAngDeflectionDeg  (0.0)
 {
   this->SetNumberOfInputPorts(0); // Input is passed from application data model
 }
@@ -80,11 +80,13 @@ const Handle(asiAlgo_AAG)& asiVisu_ShapeRobustSource::GetAAG() const
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ShapeRobustSource::SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource)
+void asiVisu_ShapeRobustSource::SetColorSource(const Handle(asiVisu_ShapeColorSource)& colorSource,
+                                               const bool                              update)
 {
   m_colorSource = colorSource;
-  //
-  this->Modified();
+
+  if ( update )
+    this->Modified();
 }
 
 //-----------------------------------------------------------------------------
@@ -154,6 +156,17 @@ void asiVisu_ShapeRobustSource::GetExtraColorsScalars(NCollection_DataMap<int, i
     return;
 
   m_tessellator->GetExtraColorsScalars(extraScalars);
+}
+
+//-----------------------------------------------------------------------------
+
+asiVisu_ShapeRobustTessellator::t_colorScalarGenerator*
+  asiVisu_ShapeRobustSource::GetScalarGenerator() const
+{
+  if ( !m_tessellator.Get() )
+    return NULL;
+
+  return m_tessellator->GetScalarGenerator();
 }
 
 //-----------------------------------------------------------------------------

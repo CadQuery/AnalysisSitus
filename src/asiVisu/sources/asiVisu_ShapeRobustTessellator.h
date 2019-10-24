@@ -128,10 +128,23 @@ public:
 
   private:
 
-    int m_iUnusedScalar; //!< Current unused scalar.
-
-    NCollection_DataMap<int, int> m_map; //!< Color-scalar map.
+    int                           m_iUnusedScalar; //!< Current unused scalar.
+    NCollection_DataMap<int, int> m_map;           //!< Color-scalar map.
   };
+
+public:
+
+  //! Class-level function to supply faces with scalars.
+  //! \param[in] colorSource abstract color source.
+  //! \param[in] pScalarGen  scalar generator.
+  //! \param[in] faceId      ID of the face of interest.
+  //! \param[in] defaultType default scalar corresponding to face type.
+  //! \return scalar value.
+  asiVisu_EXPORT static int
+    FaceScalar(const Handle(asiVisu_ShapeColorSource)& colorSource,
+               t_colorScalarGenerator*                 pScalarGen,
+               const int                               faceId,
+               const asiVisu_ShapePrimitive            defaultType);
 
 // RTTI and construction:
 public:
@@ -197,6 +210,12 @@ public:
   void GetExtraColorsScalars(NCollection_DataMap<int, int>& extraScalars) const
   {
     extraScalars = m_pScalarGen->GetScalarMap();
+  }
+
+  //! \return scalar generator.
+  t_colorScalarGenerator* GetScalarGenerator() const
+  {
+    return m_pScalarGen;
   }
 
 public:

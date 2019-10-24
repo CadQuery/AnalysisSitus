@@ -61,6 +61,11 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
+protected:
+
+  //! Updates scalars associates with cells.
+  void updateColors();
+
 private:
 
   virtual void callback_update();

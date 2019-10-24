@@ -30,7 +30,7 @@
 
 #include <asiVisu_MeshENScalarFilter.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_Utils.h>
 
 // VTK includes

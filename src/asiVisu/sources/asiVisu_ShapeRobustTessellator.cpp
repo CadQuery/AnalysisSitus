@@ -71,6 +71,27 @@ vtkStandardNewMacro(asiVisu_ShapeRobustTessellator);
 
 //-----------------------------------------------------------------------------
 
+int asiVisu_ShapeRobustTessellator::FaceScalar(const Handle(asiVisu_ShapeColorSource)& colorSource,
+                                               t_colorScalarGenerator*                 pScalarGen,
+                                               const int                               faceId,
+                                               const asiVisu_ShapePrimitive            defaultType)
+{
+  if ( colorSource.IsNull() || !pScalarGen ) // Null check.
+    return defaultType;
+
+  // Get color.
+  const int color = colorSource->GetFaceColor(faceId);
+  //
+  if ( color == -1 )
+    return defaultType;
+
+  // Convert color to scalar.
+  const int scalar = pScalarGen->GetScalar(color);
+  return scalar;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Ctor.
 asiVisu_ShapeRobustTessellator::asiVisu_ShapeRobustTessellator()
 : vtkObject(), m_fGlobalBndDiag(0.0)
@@ -470,18 +491,7 @@ bool asiVisu_ShapeRobustTessellator::isValidFace(const TopoDS_Face& face) const
 int asiVisu_ShapeRobustTessellator::getFaceScalar(const int                    faceId,
                                                   const asiVisu_ShapePrimitive defaultType) const
 {
-  if ( m_colorSource.IsNull() ) // Null check.
-    return defaultType;
-
-  // Get color.
-  const int color = m_colorSource->GetFaceColor(faceId);
-  //
-  if ( color == -1 )
-    return defaultType;
-
-  // Convert color to scalar.
-  const int scalar = m_pScalarGen->GetScalar(color);
-  return scalar;
+  return FaceScalar(m_colorSource, m_pScalarGen, faceId, defaultType);
 }
 
 //-----------------------------------------------------------------------------

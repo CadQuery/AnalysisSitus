@@ -425,27 +425,8 @@ Handle(asiData_ElemMetadataNode)
   asiEngine_Part::FindElemMetadata(const TopoDS_Shape& shape,
                                    const bool          create)
 {
-  Handle(asiData_ElemMetadataNode) metadataElem_n;
-
-  // Find metadata element.
-  Handle(asiData_Partition<asiData_ElemMetadataNode>) P = m_model->GetElemMetadataPartition();
-  //
-  for ( ActData_BasePartition::Iterator it(P); it.More(); it.Next() )
-  {
-    Handle(asiData_ElemMetadataNode)
-      N = Handle(asiData_ElemMetadataNode)::DownCast( it.Value() );
-    //
-    TopoDS_Shape sh = N->GetShape();
-    //
-    if ( sh.IsNull() )
-      continue;
-
-    if ( sh.IsPartner(shape) )
-    {
-      metadataElem_n = N;
-      break;
-    }
-  }
+  Handle(asiData_ElemMetadataNode)
+    metadataElem_n = m_model->GetMetadataNode()->FindElemMetadata(shape);
 
   // Create if requested.
   if ( metadataElem_n.IsNull() && create )

@@ -475,6 +475,14 @@ public:
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
     GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge);
 
+  //! Returns only those neighbor faces which do not share the given edges with
+  //! the passed face of interest.
+  //! \param[in] face_idx ID of the face of interest.
+  //! \param[in] xEdges   edge where neighborhood is restricted.
+  //! \return indices of the neighbor faces not sharing the given edges.
+  asiAlgo_EXPORT TColStd_PackedMapOfInteger
+    GetNeighborsThruX(const int face_idx, const TColStd_PackedMapOfInteger& xEdges);
+
   //! Returns neighbor faces for the given face of interest with additional
   //! filter on edges realizing the neighborhood.
   //! \param[in] face_idx index of the face of interest.
@@ -579,6 +587,13 @@ public:
   //! \return map of edges and their owner faces.
   asiAlgo_EXPORT const asiAlgo_IndexedDataMapOfTShapeListOfShape&
     RequestTMapOfEdgesFaces();
+
+  //! Checks if the graph contains the passed arc (i.e., the referenced
+  //! faces are adjacent).
+  //! \param[in] arc graph arc to check.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    HasArc(const t_arc& arc) const;
 
   //! \return attributes associated with graph arcs.
   asiAlgo_EXPORT const t_arc_attributes&
@@ -692,7 +707,7 @@ public:
   template<typename t_attr_type>
   Handle(t_attr_type) ATTR_ARC(const t_arc& arc) const
   {
-    return Handle(t_attr_type)::DownCast( this->GetArcAttribute( arc, t_attr_type::GUID() ) );
+    return Handle(t_attr_type)::DownCast( this->GetArcAttribute(arc) );
   }
 
 public:

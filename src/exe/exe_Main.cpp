@@ -282,12 +282,12 @@ int main(int argc, char** argv)
     // Execute command.
     if ( !cmd.IsEmpty() )
     {
-      QApplication::processEvents(QEventLoop::AllEvents, 100);
+      QApplication::processEvents(QEventLoop::AllEvents, 10000);
 
       if ( interp->Eval(cmd) != TCL_OK )
         std::cout << "Tcl finished with error." << std::endl;
 
-      QApplication::processEvents(QEventLoop::AllEvents, 100);
+      QApplication::processEvents(QEventLoop::AllEvents, 10000);
 
       if ( interp->Eval("fit") != TCL_OK )
         std::cout << "Tcl finished with error." << std::endl;

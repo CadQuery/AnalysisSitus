@@ -56,6 +56,7 @@
 // OCCT includes
 #include <TColStd_MapIteratorOfPackedMapOfInteger.hxx>
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
 //-----------------------------------------------------------------------------
@@ -756,14 +757,22 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
   //
   for ( int i = 1; i <= subShapes.Extent(); ++i )
   {
-    if ( subShapes.FindKey(i).ShapeType() == TopAbs_FACE )
-      faceIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+    const TopoDS_Shape& sh = subShapes.FindKey(i);
+
+    if ( sh.ShapeType() == TopAbs_FACE )
+      faceIndices.Add( M.FindIndex(sh) );
     //
-    else if ( subShapes.FindKey(i).ShapeType() == TopAbs_EDGE )
-      edgeIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+    else if ( sh.ShapeType() == TopAbs_WIRE )
+    {
+      for ( TopExp_Explorer eexp(sh, TopAbs_EDGE); eexp.More(); eexp.Next() )
+        edgeIndices.Add( M.FindIndex( eexp.Current() ) );
+    }
     //
-    else if ( subShapes.FindKey(i).ShapeType() == TopAbs_VERTEX )
-      vertexIndices.Add( M.FindIndex( subShapes.FindKey(i) ) );
+    else if ( sh.ShapeType() == TopAbs_EDGE )
+      edgeIndices.Add( M.FindIndex(sh) );
+    //
+    else if ( sh.ShapeType() == TopAbs_VERTEX )
+      vertexIndices.Add( M.FindIndex(sh) );
   }
 }
 

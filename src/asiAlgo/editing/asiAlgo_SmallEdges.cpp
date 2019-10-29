@@ -56,23 +56,23 @@ asiAlgo_SmallEdges::asiAlgo_SmallEdges(const TopoDS_Shape&  masterCAD,
 bool asiAlgo_SmallEdges::Perform(const double len,
                                  const double ang_deg)
 {
-  //ShapeFix_Wireframe healer(m_input);
-  //healer.SetPrecision(len);
-  //healer.SetLimitAngle(ang_deg); // Feature angle.
-  //healer.SetContext(m_reShape);
-  ////
-  //healer.FixSmallEdges();
-
-  //// Set output.
-  //m_output = healer.Shape();
-
-  ShapeUpgrade_UnifySameDomain unify(m_input, true, false, true);
-  unify.SetLinearTolerance(len);
-  unify.SetAngularTolerance(ang_deg/180.0*M_PI);
-  unify.Build();
+  ShapeFix_Wireframe healer(m_input);
+  healer.SetPrecision(len);
+  healer.SetLimitAngle(ang_deg); // Feature angle.
+  healer.SetContext(m_reShape);
+  //
+  healer.FixSmallEdges();
 
   // Set output.
-  m_output = unify.Shape();
+  m_output = healer.Shape();
+
+  //ShapeUpgrade_UnifySameDomain unify(m_input, true, false, true);
+  //unify.SetLinearTolerance(len);
+  //unify.SetAngularTolerance(ang_deg/180.0*M_PI);
+  //unify.Build();
+
+  //// Set output.
+  //m_output = unify.Shape();
 
   return true; // Success.
 }

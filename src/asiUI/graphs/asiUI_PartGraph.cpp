@@ -138,8 +138,8 @@ void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   graphItem->SetGraph               ( graphLayout->GetOutput() );
   graphItem->SetColorizeByLocations ( colorizeLocations );
 
-  connect( graphItem, SIGNAL( vertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ),
-           this,      SLOT( onVertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType) ) );
+  connect( graphItem, SIGNAL( vertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType) ),
+           this,      SLOT( onVertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType) ) );
 
   // Context transform
   vtkSmartPointer<vtkContextTransform> trans = vtkSmartPointer<vtkContextTransform>::New();
@@ -257,7 +257,7 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
 {
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
-    graph = this->convertToGraph(shape,
+    graph = this->convertToGraph(shape, shape,
                                  NULL,
                                  selectedFaces,
                                  regime,
@@ -271,19 +271,26 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
 
 //! Renders topology graph.
 //! \param[in] shape             target shape.
+//! \param[in] subshape          target subshape.
 //! \param[in] leafType          target leaf type.
 //! \param[in] colorizeLocations indicates whether to colorize graph nodes
 //!                              in accordance with the locations of their
 //!                              corresponding sub-shapes.
 void asiUI_PartGraph::RenderTopology(const TopoDS_Shape&    shape,
+                                     const TopoDS_Shape&    subshape,
                                      const TopAbs_ShapeEnum leafType,
                                      const bool             colorizeLocations)
 {
-  this->Render(shape,
-               TopTools_IndexedMapOfShape(),
-               Regime_Topology,
-               leafType,
-               colorizeLocations);
+  // Populate graph data from topology graph
+  vtkSmartPointer<vtkGraph>
+    graph = this->convertToGraph(shape, subshape,
+                                 NULL,
+                                 TopTools_IndexedMapOfShape(),
+                                 Regime_Topology,
+                                 leafType);
+
+  // Render VTK graph
+  this->Render(graph, shape, Regime_Topology, colorizeLocations);
 }
 
 //-----------------------------------------------------------------------------
@@ -308,6 +315,7 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
     graph = this->convertToGraph(aag->GetMasterCAD(),
+                                 aag->GetMasterCAD(),
                                  aag,
                                  selectedFaces,
                                  Regime_AAG,
@@ -321,6 +329,7 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
 
 //! Builds one or another graph (depending on the desired regime).
 //! \param[in] shape         master model.
+//! \param[in] subshape      subshape of the master model.
 //! \param[in] aag           master AAG (optional).
 //! \param[in] selectedFaces optional selected faces.
 //! \param[in] regime        desired regime.
@@ -328,6 +337,7 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
   asiUI_PartGraph::convertToGraph(const TopoDS_Shape&               shape,
+                                  const TopoDS_Shape&               subshape,
                                   const Handle(asiAlgo_AAG)&        aag,
                                   const TopTools_IndexedMapOfShape& selectedFaces,
                                   const Regime                      regime,
@@ -339,9 +349,16 @@ vtkSmartPointer<vtkGraph>
   {
     // Create new topology graph or take the existing one from Naming
     if ( m_naming.IsNull() )
-      m_topoGraph = new asiAlgo_TopoGraph(shape);
+      m_topoGraph = new asiAlgo_TopoGraph(subshape);
     else
-      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(shape);
+      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(subshape);
+
+    // Use global indexation
+    m_topoGraph->FillMapsFrom(shape);
+
+    // Build graph.
+    if ( m_naming.IsNull() )
+      m_topoGraph->Build();
 
     // Convert
     vtkSmartPointer<vtkMutableDirectedGraph>
@@ -385,42 +402,30 @@ void asiUI_PartGraph::onViewerClosed()
 //-----------------------------------------------------------------------------
 
 //! Reaction on vertex picking.
+//! \param[in] globalId   global ID.
 //! \param[in] subShapeId sub-shape ID.
 //! \param[in] shapeType  sub-shape type.
 //! \param[in] vid        graph vertex ID.
-void asiUI_PartGraph::onVertexPicked(const int              subShapeId,
+void asiUI_PartGraph::onVertexPicked(const int              globalId,
+                                     const int              subShapeId,
                                      const TopAbs_ShapeEnum shapeType,
                                      const vtkIdType        vid)
 {
+  asiVisu_NotUsed(subShapeId);
+  asiVisu_NotUsed(shapeType);
   asiVisu_NotUsed(vid);
 
-  // Prepare maps of sub-shapes
+  // Prepare map of sub-shapes.
   const TopTools_IndexedMapOfShape&
-    mapOfFaces = m_aag.IsNull() ? m_topoGraph->GetMapOfFaces() : m_aag->GetMapOfFaces();
-  //
-  const TopTools_IndexedMapOfShape&
-    mapOfEdges = m_aag.IsNull() ? m_topoGraph->GetMapOfEdges() : m_aag->RequestMapOfEdges();
-  //
-  const TopTools_IndexedMapOfShape&
-    mapOfVertices = m_aag.IsNull() ? m_topoGraph->GetMapOfVertices() : m_aag->RequestMapOfVertices();
-  //
-  const TopTools_IndexedMapOfShape&
-    mapOfSubShapes = m_aag.IsNull() ? m_topoGraph->GetMapOfSubShapes() : m_aag->RequestMapOfSubShapes();
+    mapOfSubShapes = m_aag.IsNull() ? m_topoGraph->GetMapOfSubShapes()
+                                    : m_aag->RequestMapOfSubShapes();
 
-  if ( subShapeId > 0 && m_partViewer )
+  if ( globalId > 0 && m_partViewer )
   {
-    // Get sub-shape by index
-    TopoDS_Shape subShape;
-    if ( shapeType == TopAbs_FACE )
-      subShape = mapOfFaces.FindKey(subShapeId);
-    else if ( shapeType == TopAbs_EDGE )
-      subShape = mapOfEdges.FindKey(subShapeId);
-    else if ( shapeType == TopAbs_VERTEX )
-      subShape = mapOfVertices.FindKey(subShapeId);
-    else
-      subShape = mapOfSubShapes(subShapeId);
+    // Get sub-shape by index.
+    const TopoDS_Shape& subShape = mapOfSubShapes(globalId);
 
-    // Highlight in the main viewer
+    // Highlight in the main viewer.
     TopTools_IndexedMapOfShape selected;
     selected.Add(subShape);
     //

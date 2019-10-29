@@ -3421,7 +3421,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("recognize-base-faces",
     //
     "recognize-base-faces\n"
-    "\t Recognizes all base faces, i.e., the faces where features may exis.",
+    "\t Recognizes all base faces, i.e., the faces where features may exist.",
     //
     __FILE__, group, ENGINE_RecognizeBaseFaces);
 }

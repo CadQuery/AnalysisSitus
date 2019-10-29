@@ -404,10 +404,10 @@ int ENGINE_KFMV(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
-                          int                          argc,
-                          const char**                 argv,
-                          const TopAbs_ShapeEnum       ssType)
+int _MergeSubShapes(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv,
+                    const TopAbs_ShapeEnum       ssType)
 {
   if ( argc < 3 )
   {
@@ -502,10 +502,10 @@ int ENGINE_MergeSubShapes(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
-                        int                          argc,
-                        const char**                 argv,
-                        const TopAbs_ShapeEnum       ssType)
+int _KillSubShape(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv,
+                  const TopAbs_ShapeEnum       ssType)
 {
   if ( argc != 2 && argc != 3 )
   {
@@ -518,12 +518,15 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
   // Check whether naming service is active.
   const bool hasNaming = !part_n->GetNaming().IsNull();
 
+  // Check if the global identifier is passed.
+  const bool isGlobal = interp->HasKeyword(argc, argv, "gid");
+
   // Sub-shape in question.
   TopoDS_Shape subshape;
 
   // Check if naming service is active. If so, the user may ask to access
   // a sub-shape in question by its unique name.
-  if ( hasNaming && argc == 3 )
+  if ( hasNaming && !isGlobal )
   {
     if ( !interp->IsKeyword(argv[1], "name") )
     {
@@ -544,7 +547,24 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
       }
     }
   }
-  else // Naming is not used to access the argument.
+  else if ( isGlobal && argc == 3 )
+  {
+    const int gssidx = atoi(argv[2]);
+    //
+    if ( gssidx < 1 )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sub-shape global index should be 1-based.");
+      return TCL_OK;
+    }
+
+    // Get map of sub-shapes with respect to those the passed index is relevant.
+    const TopTools_IndexedMapOfShape&
+      subShapes = part_n->GetAAG()->RequestMapOfSubShapes();
+
+    // Get sub-shape in question.
+    subshape = subShapes(gssidx);
+  }
+  else if ( !isGlobal ) // Naming is not used to access the argument.
   {
     const int ssidx = atoi(argv[1]);
     //
@@ -560,6 +580,11 @@ int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
 
     // Get sub-shape in question.
     subshape = subShapesOfType(ssidx);
+  }
+  else
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Inconsistent arguments.");
+    return TCL_ERROR;
   }
 
   // Prepare killer.
@@ -605,7 +630,7 @@ int ENGINE_MergeEdges(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
 {
-  return ENGINE_MergeSubShapes(interp, argc, argv, TopAbs_EDGE);
+  return _MergeSubShapes(interp, argc, argv, TopAbs_EDGE);
 }
 
 //-----------------------------------------------------------------------------
@@ -614,7 +639,16 @@ int ENGINE_MergeVertices(const Handle(asiTcl_Interp)& interp,
                          int                          argc,
                          const char**                 argv)
 {
-  return ENGINE_MergeSubShapes(interp, argc, argv, TopAbs_VERTEX);
+  return _MergeSubShapes(interp, argc, argv, TopAbs_VERTEX);
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_KillSubShape(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  return _KillSubShape(interp, argc, argv, TopAbs_SHAPE);
 }
 
 //-----------------------------------------------------------------------------
@@ -623,7 +657,7 @@ int ENGINE_KillVertex(const Handle(asiTcl_Interp)& interp,
                       int                          argc,
                       const char**                 argv)
 {
-  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_VERTEX);
+  return _KillSubShape(interp, argc, argv, TopAbs_VERTEX);
 }
 
 //-----------------------------------------------------------------------------
@@ -632,7 +666,7 @@ int ENGINE_KillEdge(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
 {
-  return ENGINE_KillSubShape(interp, argc, argv, TopAbs_EDGE);
+  return _KillSubShape(interp, argc, argv, TopAbs_EDGE);
 }
 
 //-----------------------------------------------------------------------------
@@ -642,7 +676,7 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
                     const char**                 argv)
 {
   if ( !interp->HasKeyword(argc, argv, "defeat") )
-    return ENGINE_KillSubShape(interp, argc, argv, TopAbs_FACE);
+    return _KillSubShape(interp, argc, argv, TopAbs_FACE);
 
   /* ========================
    *  Smart face suppression
@@ -2624,7 +2658,6 @@ int ENGINE_ConvertPlaneToBSurf(const Handle(asiTcl_Interp)& interp,
 #endif
 }
 
-
 //-----------------------------------------------------------------------------
 
 int ENGINE_RotateQn(const Handle(asiTcl_Interp)& interp,
@@ -2698,6 +2731,45 @@ int ENGINE_RotateQn(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;
 #endif
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_ResetLocation(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 && argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  //
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Reset location.
+  shape.Location( TopLoc_Location() );
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(shape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -2795,6 +2867,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Kills a solid which contains a face with the passed 1-based index.",
     //
     __FILE__, group, ENGINE_KillSolidByFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-subshape",
+    //
+    "kill-subshape -gid <num>\n"
+    "\t Kills a subshape having the passed global identifier.",
+    //
+    __FILE__, group, ENGINE_KillSubShape);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("move-by-face",
@@ -3054,4 +3134,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t axis of rotation (Vx, Vy, Vz) and the angle in degrees.",
     //
     __FILE__, group, ENGINE_RotateQn);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("reset-location",
+    //
+    "reset-location\n"
+    "\t Resets location associated with the part shape.",
+    //
+    __FILE__, group, ENGINE_ResetLocation);
 }

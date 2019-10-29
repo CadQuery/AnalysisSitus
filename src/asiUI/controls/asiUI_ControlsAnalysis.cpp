@@ -451,6 +451,7 @@ void asiUI_ControlsAnalysis::onShowTopoGraph()
 
   // Shape to visualize a graph for.
   TopoDS_Shape targetShape;
+  TopoDS_Shape partShape =  N->GetShape();
 
   // Access active face.
   Handle(asiData_FaceNode) FN = N->GetFaceRepresentation();
@@ -484,7 +485,7 @@ void asiUI_ControlsAnalysis::onShowTopoGraph()
 
   // Show graph.
   asiUI_DialogTopoGraphDepth*
-    pDlg = new asiUI_DialogTopoGraphDepth(m_model, targetShape, m_partViewer, m_notifier, this);
+    pDlg = new asiUI_DialogTopoGraphDepth(m_model, partShape, targetShape, m_partViewer, m_notifier, this);
   //
   pDlg->open();
 }

@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_Collections.h>
 #include <asiAlgo_FeatureAngleType.h>
 #include <asiAlgo_Naming.h>
 
@@ -66,7 +67,6 @@
 #include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
 #include <math_Function.hxx>
-#include <NCollection_IndexedDataMap.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
@@ -74,32 +74,12 @@
 #include <TopoDS_Wire.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 
 //-----------------------------------------------------------------------------
 
 #define asiAlgo_TooSmallValue 1.0e-4
 #define asiAlgo_SlashStr      "/"
-
-//! Indexed map of shapes distinguished only by their TShape pointers.
-typedef NCollection_DataMap<int, TopoDS_Shape> asiAlgo_DataMapOfShape;
-
-//! Indexed map of shapes distinguished only by their TShape pointers.
-typedef NCollection_IndexedMap<TopoDS_Shape,
-                               asiAlgo_ShapePartnerHasher> asiAlgo_IndexedMapOfTShape;
-
-//! Indexed data map of shapes and their ancestors distinguished only by their
-//! TShape pointers.
-typedef NCollection_IndexedDataMap<TopoDS_Shape,
-                                   TopTools_ListOfShape,
-                                   asiAlgo_ShapePartnerHasher> asiAlgo_IndexedDataMapOfTShapeListOfShape;
-
-//! Data map of shapes and their images distinguished only by their
-//! TShape pointers.
-typedef NCollection_DataMap<TopoDS_Shape,
-                            TopoDS_Shape,
-                            asiAlgo_ShapePartnerHasher> asiAlgo_DataMapOfShapeShape;
 
 //-----------------------------------------------------------------------------
 

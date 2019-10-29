@@ -73,7 +73,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   const TopTools_IndexedMapOfShape& mapOfFaces     = topograph->GetMapOfFaces();
   const TopTools_IndexedMapOfShape& mapOfEdges     = topograph->GetMapOfEdges();
   const TopTools_IndexedMapOfShape& mapOfVertices  = topograph->GetMapOfVertices();
-  const TopTools_IndexedMapOfShape& mapOfSubshapes = topograph->GetMapOfSubShapes();
+  const asiAlgo_IndexedMapOfTShape& mapOfSubshapes = topograph->RequestTMapOfSubShapes();
 
   // Array for groups
   vtkNew<vtkStringArray> groupArr;
@@ -99,6 +99,11 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   vtkNew<vtkIntArray> idsArr;
   idsArr->SetNumberOfComponents(1);
   idsArr->SetName(ARRNAME_PIDS);
+
+  // Array for global indices (sub-shape IDs)
+  vtkNew<vtkIntArray> gidsArr;
+  gidsArr->SetNumberOfComponents(1);
+  gidsArr->SetName(ARRNAME_GIDS);
 
   NCollection_DataMap<int, vtkIdType> ShapeNodeMap;
 
@@ -128,7 +133,8 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     else if ( shape.ShapeType() == TopAbs_VERTEX )
       pid = mapOfVertices.FindIndex(shape);
     //
-    idsArr->InsertNextValue(pid);
+    idsArr  ->InsertNextValue(pid);
+    gidsArr ->InsertNextValue(gid);
 
     // Prepare label
     std::string label;
@@ -261,6 +267,7 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   result->GetEdgeData()   ->AddArray( childOriArr.GetPointer() );
   result->GetEdgeData()   ->AddArray( childLocArr.GetPointer() );
   result->GetVertexData() ->AddArray( idsArr.GetPointer() );
+  result->GetVertexData() ->AddArray( gidsArr.GetPointer() );
 
   return result;
 }

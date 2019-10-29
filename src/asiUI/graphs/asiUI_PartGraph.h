@@ -95,6 +95,7 @@ public:
 
   asiUI_EXPORT void
     RenderTopology(const TopoDS_Shape&    shape,
+                   const TopoDS_Shape&    subshape,
                    const TopAbs_ShapeEnum leafType,
                    const bool             colorizeLocations);
 
@@ -121,6 +122,7 @@ protected:
 
   asiUI_EXPORT vtkSmartPointer<vtkGraph>
     convertToGraph(const TopoDS_Shape&               shape,
+                   const TopoDS_Shape&               subshape,
                    const Handle(asiAlgo_AAG)&        aag,
                    const TopTools_IndexedMapOfShape& selectedFaces,
                    const Regime                      regime,
@@ -129,7 +131,7 @@ protected:
 protected slots:
 
   void onViewerClosed();
-  void onVertexPicked(const int, const TopAbs_ShapeEnum, const vtkIdType);
+  void onVertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType);
 
 protected:
 

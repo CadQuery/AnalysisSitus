@@ -55,7 +55,8 @@ class asiUI_DialogTopoGraphDepth : public QDialog
 public:
 
   asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Model)& model,
-                             const TopoDS_Shape&            partShape,
+                             const TopoDS_Shape&            globalShape,
+                             const TopoDS_Shape&            localShape,
                              asiUI_ViewerPart*              partViewer,
                              ActAPI_ProgressEntry           progress,
                              QWidget*                       parent = NULL);
@@ -95,7 +96,8 @@ protected:
   t_widgets               m_widgets;      //!< UI controls.
   QVBoxLayout*            m_pMainLayout;  //!< Layout of the widget.
   Handle(asiEngine_Model) m_model;        //!< Data Model instance.
-  TopoDS_Shape            m_partShape;    //!< Part shape.
+  TopoDS_Shape            m_globalShape;  //!< Global shape.
+  TopoDS_Shape            m_localShape;   //!< Local shape.
   bool                    m_bColorizeLoc; //!< Indicates whether to colorize locations.
   asiUI_ViewerPart*       m_pPartViewer;  //!< Part viewer.
   ActAPI_ProgressEntry    m_notifier;     //!< Progress Notifier.

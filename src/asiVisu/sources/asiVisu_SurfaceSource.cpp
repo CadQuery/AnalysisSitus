@@ -57,15 +57,15 @@ vtkStandardNewMacro(asiVisu_SurfaceSource);
 //! Default constructor.
 asiVisu_SurfaceSource::asiVisu_SurfaceSource()
 //
-  : vtkPolyDataAlgorithm (),
-    m_iSteps             (0),
-    m_scalars            (Scalars_NoScalars),
-    m_fMinScalar         (0.0),
-    m_fMaxScalar         (0.0),
-    m_fTrimUmin          (-100.0),
-    m_fTrimUmax          (100.0),
-    m_fTrimVmin          (-100.0),
-    m_fTrimVmax          (100.0)
+: vtkPolyDataAlgorithm (),
+  m_iSteps             (0),
+  m_scalars            (Scalars_NoScalars),
+  m_fMinScalar         (0.0),
+  m_fMaxScalar         (0.0),
+  m_fTrimUmin          (-10000.0),
+  m_fTrimUmax          (10000.0),
+  m_fTrimVmin          (-10000.0),
+  m_fTrimVmax          (10000.0)
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline

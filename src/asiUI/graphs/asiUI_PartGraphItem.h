@@ -58,6 +58,7 @@
 
 #define ARRNAME_LABELS            "Labels"
 #define ARRNAME_PIDS              "Pids"
+#define ARRNAME_GIDS              "Gids"
 #define ARRNAME_COLORS            "Colors"
 #define ARRNAME_ANGLES            "Angles"
 #define ARRNAME_CHILD_ORIENTATION "ChildOrientation"
@@ -96,7 +97,8 @@ public:
 
 signals:
 
-  void vertexPicked(const int              subShapeId,
+  void vertexPicked(const int              globalId,
+                    const int              subShapeId,
                     const TopAbs_ShapeEnum subShapeType,
                     const vtkIdType        vertexId);
 
@@ -276,13 +278,20 @@ protected:
     // Get sub-shape ID
     TopAbs_ShapeEnum shapeType   = TopAbs_SHAPE;
     int              subShapeIdx = -1;
+    int              globalIdx   = -1;
     //
     vtkAbstractArray* pids   = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_PIDS);
+    vtkAbstractArray* gids   = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GIDS);
     vtkAbstractArray* groups = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
     //
     if ( pids )
     {
       subShapeIdx = pids->GetVariantValue(focusedVertex).ToInt();
+    }
+    //
+    if ( gids )
+    {
+      globalIdx = gids->GetVariantValue(focusedVertex).ToInt();
     }
     //
     if ( groups )
@@ -295,7 +304,7 @@ protected:
         shapeType = TopAbs_VERTEX;
     }
 
-    emit vertexPicked(subShapeIdx, shapeType, focusedVertex);
+    emit vertexPicked(globalIdx, subShapeIdx, shapeType, focusedVertex);
     return true;
   }
 

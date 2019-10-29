@@ -32,6 +32,7 @@
 #define asiAlgo_TopoGraph_h
 
 // asiAlgo includes
+#include <asiAlgo_Collections.h>
 #include <asiAlgo_ShapePartnerHasher.h>
 #include <asiAlgo_TopoAttr.h>
 
@@ -248,6 +249,10 @@ public:
 
 public:
 
+  //! Builds graph.
+  asiAlgo_EXPORT void
+    Build();
+
   //! \brief Returns map of indexed sub-shapes of the given type.
   //!
   //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
@@ -271,6 +276,12 @@ public:
   //! \brief Returns map of all indexed sub-shapes.
   asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
     GetMapOfSubShapes() const;
+
+  //! Returns all sub-shapes of the master model having unique TShape pointers.
+  //! If the map is empty, it is constructed.
+  //! \return all sub-shapes.
+  asiAlgo_EXPORT const asiAlgo_IndexedMapOfTShape&
+    RequestTMapOfSubShapes();
 
   //! \brief Dumps graph structure to output stream.
   //!
@@ -312,6 +323,12 @@ public:
   //! \return new graph which is a sub-graph corresponding to the passed shape.
   asiAlgo_EXPORT Handle(asiAlgo_TopoGraph)
     SubGraph(const TopoDS_Shape& shape) const;
+
+  //! Fills maps from the passed shape. Use this method to have global-scope
+  //! indices in the topology sub-graphs.
+  //! \param[in] shape shape to fill the maps from.
+  asiAlgo_EXPORT void
+    FillMapsFrom(const TopoDS_Shape& shape);
 
 public:
 
@@ -551,6 +568,8 @@ protected:
   TopTools_IndexedMapOfShape  m_faces;     //!< All faces of the master model.
   TopTools_IndexedMapOfShape  m_edges;     //!< All edges of the master model.
   TopTools_IndexedMapOfShape  m_vertices;  //!< All vertices of the master model.
+  //
+  asiAlgo_IndexedMapOfTShape m_tSubShapes; //!< All sub-shapes with distinct TShape pointers.
   //@}
 
 };

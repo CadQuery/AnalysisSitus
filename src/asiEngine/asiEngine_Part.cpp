@@ -826,21 +826,26 @@ void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndice
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                         const asiVisu_SelectionMode       selMode)
 {
-  // Get Part Node
+  // Get Part Node.
   Handle(asiData_PartNode) N = m_model->GetPartNode();
 
-  // Get Presentation for the Part Node
+  // Get Presentation for the Part Node.
   Handle(asiVisu_PartPrs)
     prs = Handle(asiVisu_PartPrs)::DownCast( m_prsMgr->GetPresentation(N) );
 
   if ( prs.IsNull() )
     return;
 
-  // Highlight
-  if ( selMode == SelectionMode_Face )
-    m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
-  else if ( selMode == SelectionMode_Edge )
-    m_prsMgr->Highlight(N, prs->ContourActor(), subShapeIndices, selMode);
+  // Make sure to restore the previous selection mode.
+  const int prevMode = m_prsMgr->GetCurrentSelection().GetSelectionModes();
+  {
+    // Highlight
+    if ( selMode == SelectionMode_Face )
+      m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
+    else if ( selMode == SelectionMode_Edge )
+      m_prsMgr->Highlight(N, prs->ContourActor(), subShapeIndices, selMode);
+  }
+  m_prsMgr->ChangeCurrentSelection().SetSelectionModes(prevMode);
 }
 
 //-----------------------------------------------------------------------------

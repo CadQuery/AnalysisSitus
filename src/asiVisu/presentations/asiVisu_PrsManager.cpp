@@ -983,6 +983,16 @@ const asiVisu_ActualSelection& asiVisu_PrsManager::GetCurrentSelection() const
 }
 
 //-----------------------------------------------------------------------------
+
+//! Returns non-const reference to the data structure representing the
+//! currently selected entities in viewer.
+//! \return current selection (picking and detection).
+asiVisu_ActualSelection& asiVisu_PrsManager::ChangeCurrentSelection()
+{
+  return m_currentSelection;
+}
+
+//-----------------------------------------------------------------------------
 // Viewer-wise methods
 //-----------------------------------------------------------------------------
 

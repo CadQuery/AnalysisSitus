@@ -352,6 +352,9 @@ public:
   asiVisu_EXPORT const asiVisu_ActualSelection&
     GetCurrentSelection() const;
 
+  asiVisu_EXPORT asiVisu_ActualSelection&
+    ChangeCurrentSelection();
+
 // Visualization kernel:
 public:
 

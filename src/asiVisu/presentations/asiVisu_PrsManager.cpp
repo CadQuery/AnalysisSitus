@@ -1034,17 +1034,12 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 //! \param[in] isOffscreen off-screen rendering mode.
 void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 {
-  // Initialize QVTK widget depending on rendering mode
+  m_widget = new QVTKWidget(pWidget);
+  m_widget->SetRenderWindow(m_renderWindow);
+
   if ( isOffscreen )
-  {
-    m_widget = NULL;
     m_renderWindow->SetOffScreenRendering(1);
-  }
-  else
-  {
-    m_widget = new QVTKWidget(pWidget);
-    m_widget->SetRenderWindow(m_renderWindow);
-  }
+
   m_renderWindowInteractor->Initialize();
 }
 

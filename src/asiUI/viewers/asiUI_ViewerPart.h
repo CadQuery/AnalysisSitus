@@ -63,6 +63,7 @@ public:
   asiUI_EXPORT
     asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
                      const bool                     enableInteraction,
+                     const bool                     isOffscreen,
                      ActAPI_ProgressEntry           progress = NULL,
                      ActAPI_PlotterEntry            plotter  = NULL,
                      QWidget*                       parent   = NULL);

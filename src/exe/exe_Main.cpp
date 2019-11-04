@@ -124,7 +124,8 @@ int main(int argc, char** argv)
 {
   // Check whether batch mode is requested.
   std::string scriptFilename;
-  const bool isBatch = asiExe::GetKeyValue(argc, argv, ASITUS_KW_runscript, scriptFilename);
+  const bool
+    isBatch = asiExe::GetKeyValue(argc, argv, ASITUS_KW_runscript, scriptFilename);
 
   //---------------------------------------------------------------------------
   // Create main window as (it will initialize all resources)

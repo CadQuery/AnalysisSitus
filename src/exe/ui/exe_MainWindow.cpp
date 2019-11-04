@@ -135,7 +135,7 @@ void exe_MainWindow::createPartViewer()
   Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
 
   // Create viewer.
-  Widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true);
+  Widgets.wViewerPart = new asiUI_ViewerPart(cf->Model, true, false);
 
   // Initialize desktop.
   cf->ViewerPart = Widgets.wViewerPart;

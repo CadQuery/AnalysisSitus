@@ -113,11 +113,13 @@ void GetPickedSubshapeIds(const Handle(asiVisu_PickerResult)& pick_res,
 //! Creates a new instance of viewer.
 //! \param[in] model             Data Model instance.
 //! \param[in] enableInteraction enables/disables interaction mechanisms.
+//! \param[in] isOffscreen       enables/disables offscreen rendering mode.
 //! \param[in] progress          progress notifier.
 //! \param[in] plotter           imperative plotter.
 //! \param[in] parent            parent widget.
 asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
                                    const bool                     enableInteraction,
+                                   const bool                     isOffscreen,
                                    ActAPI_ProgressEntry           progress,
                                    ActAPI_PlotterEntry            plotter,
                                    QWidget*                       parent)
@@ -127,7 +129,7 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   m_prs_mgr = vtkSmartPointer<asiVisu_PrsManager>::New();
   //
   m_prs_mgr->SetModel(model);
-  m_prs_mgr->Initialize(this);
+  m_prs_mgr->Initialize(this, isOffscreen);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 
@@ -226,10 +228,10 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   m_axesWidget->SetOrientationMarker(assm);
   //
   vtkRenderer* renderer = m_prs_mgr->GetRenderer();
-  renderer->SetRenderWindow( m_prs_mgr->GetQVTKWidget()->GetRenderWindow() );
+  renderer->SetRenderWindow( m_prs_mgr->GetRenderWindow() );
   //
   m_axesWidget->SetCurrentRenderer( m_prs_mgr->GetRenderer() );
-  m_axesWidget->SetInteractor( m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->GetInteractor() );
+  m_axesWidget->SetInteractor( m_prs_mgr->GetRenderWindow()->GetInteractor() );
   m_axesWidget->SetEnabled(1);
   m_axesWidget->SetInteractive(0);
   m_axesWidget->SetViewport(0, 0, 0.25, 0.25);
@@ -238,9 +240,12 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
    *  Finalize initial state of the scene
    * ===================================== */
 
-  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
-           this,    SLOT   ( onContextMenu(const QPoint&) ) );
+  if ( pViewer )
+  {
+    pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+             this,    SLOT   ( onContextMenu(const QPoint&) ) );
+  }
 
   this->onResetView();
 }
@@ -270,7 +275,8 @@ QSize asiUI_ViewerPart::sizeHint() const
 //! Updates viewer.
 void asiUI_ViewerPart::Repaint()
 {
-  m_prs_mgr->GetQVTKWidget()->repaint();
+  if ( m_prs_mgr->GetQVTKWidget() )
+    m_prs_mgr->GetQVTKWidget()->repaint();
 }
 
 //-----------------------------------------------------------------------------

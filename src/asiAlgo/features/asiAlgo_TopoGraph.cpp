@@ -53,11 +53,6 @@
 asiAlgo_TopoGraph::asiAlgo_TopoGraph(const TopoDS_Shape& shape)
 : Standard_Transient (),
   m_model            (shape)
-{}
-
-//-----------------------------------------------------------------------------
-
-void asiAlgo_TopoGraph::Build()
 {
   this->buildGraph();
 }
@@ -243,8 +238,6 @@ Handle(asiAlgo_TopoGraph)
   asiAlgo_TopoGraph::SubGraph(const TopoDS_Shape& shape) const
 {
   Handle(asiAlgo_TopoGraph) result = new asiAlgo_TopoGraph(shape);
-  //
-  result->Build();
 
   // Transfer names which might be available if naming service is active
   for ( Iterator it(result); it.More(); it.Next() )
@@ -268,27 +261,22 @@ Handle(asiAlgo_TopoGraph)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_TopoGraph::FillMapsFrom(const TopoDS_Shape& shape)
-{
-  // Extract all sub-shapes with unique indices from the master CAD
-  TopExp::MapShapes(shape, m_subShapes);
-
-  // Extract all faces with unique indices from the master CAD
-  TopExp::MapShapes(shape, TopAbs_FACE, m_faces);
-
-  // Extract all edges with unique indices from the master CAD
-  TopExp::MapShapes(shape, TopAbs_EDGE, m_edges);
-
-  // Extract all vertices with unique indices from the master CAD
-  TopExp::MapShapes(shape, TopAbs_VERTEX, m_vertices);
-}
-
-//-----------------------------------------------------------------------------
-
 void asiAlgo_TopoGraph::buildGraph()
 {
   if ( m_subShapes.IsEmpty() || m_faces.IsEmpty() || m_edges.IsEmpty() || m_vertices.IsEmpty() )
-    this->FillMapsFrom(m_model);
+  {
+    // Extract all sub-shapes with unique indices from the master CAD
+    TopExp::MapShapes(m_model, m_subShapes);
+
+    // Extract all faces with unique indices from the master CAD
+    TopExp::MapShapes(m_model, TopAbs_FACE, m_faces);
+
+    // Extract all edges with unique indices from the master CAD
+    TopExp::MapShapes(m_model, TopAbs_EDGE, m_edges);
+
+    // Extract all vertices with unique indices from the master CAD
+    TopExp::MapShapes(m_model, TopAbs_VERTEX, m_vertices);
+  }
 
   // Add root node
   const int iObjectId = m_nodes.Add(m_model);

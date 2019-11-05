@@ -61,16 +61,14 @@
 //! \param progress   [in] progress notifier.
 //! \param parent     [in] parent widget.
 asiUI_DialogTopoGraphDepth::asiUI_DialogTopoGraphDepth(const Handle(asiEngine_Model)& model,
-                                                       const TopoDS_Shape&            globalShape,
-                                                       const TopoDS_Shape&            localShape,
+                                                       const TopoDS_Shape&            partShape,
                                                        asiUI_ViewerPart*              partViewer,
                                                        ActAPI_ProgressEntry           progress,
                                                        QWidget*                       parent)
 //
 : QDialog        (parent),
   m_model        (model),
-  m_globalShape  (globalShape),
-  m_localShape   (localShape),
+  m_shape        (partShape),
   m_bColorizeLoc (false),
   m_pPartViewer  (partViewer),
   m_notifier     (progress)
@@ -164,10 +162,16 @@ void asiUI_DialogTopoGraphDepth::onOpen()
   Handle(asiAlgo_Naming)
     naming = m_model->GetPartNode()->GetNaming();
 
+  // Get AAG
+  Handle(asiAlgo_AAG)
+    aag = m_model->GetPartNode()->GetAAG();
+
   // Show graph
-  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_pPartViewer);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_pPartViewer, m_notifier);
+  //
   pGraphView->SetNaming(naming);
-  pGraphView->RenderTopology(m_globalShape, m_localShape, shapeType, m_bColorizeLoc);
+  pGraphView->SetAAG(aag);
+  pGraphView->RenderTopology(m_shape, shapeType, m_bColorizeLoc);
 
   // Close
   this->close();

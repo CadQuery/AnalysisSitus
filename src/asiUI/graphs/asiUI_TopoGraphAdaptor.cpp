@@ -69,12 +69,6 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   // Get entire shape
   TopoDS_Shape masterShape = topograph->GetShape( topograph->GetRoot() );
 
-  // Prepare maps of sub-shapes
-  const TopTools_IndexedMapOfShape& mapOfFaces     = topograph->GetMapOfFaces();
-  const TopTools_IndexedMapOfShape& mapOfEdges     = topograph->GetMapOfEdges();
-  const TopTools_IndexedMapOfShape& mapOfVertices  = topograph->GetMapOfVertices();
-  const asiAlgo_IndexedMapOfTShape& mapOfSubshapes = topograph->RequestTMapOfSubShapes();
-
   // Array for groups
   vtkNew<vtkStringArray> groupArr;
   groupArr->SetNumberOfComponents(1);
@@ -85,6 +79,11 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   labelArr->SetNumberOfComponents(1);
   labelArr->SetName(ARRNAME_LABELS);
 
+  // Array for shape addresses
+  vtkNew<vtkStringArray> addressArr;
+  addressArr->SetNumberOfComponents(1);
+  addressArr->SetName(ARRNAME_ADDRESS);
+
   // Array for orientation attributes associated with arcs
   vtkNew<vtkIntArray> childOriArr;
   childOriArr->SetNumberOfComponents(1);
@@ -94,16 +93,6 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   vtkNew<vtkStringArray> childLocArr;
   childLocArr->SetNumberOfComponents(1);
   childLocArr->SetName(ARRNAME_CHILD_LOCATION);
-
-  // Array for pedigree indices (sub-shape IDs)
-  vtkNew<vtkIntArray> idsArr;
-  idsArr->SetNumberOfComponents(1);
-  idsArr->SetName(ARRNAME_PIDS);
-
-  // Array for global indices (sub-shape IDs)
-  vtkNew<vtkIntArray> gidsArr;
-  gidsArr->SetNumberOfComponents(1);
-  gidsArr->SetName(ARRNAME_GIDS);
 
   NCollection_DataMap<int, vtkIdType> ShapeNodeMap;
 
@@ -123,41 +112,18 @@ vtkSmartPointer<vtkMutableDirectedGraph>
     const vtkIdType root_vid = result->AddVertex();
     ShapeNodeMap.Bind(n, root_vid);
 
-    // Sub-shape ID
-    int gid = mapOfSubshapes.FindIndex(shape);
-    int pid = 0;
-    if ( shape.ShapeType() == TopAbs_FACE )
-      pid = mapOfFaces.FindIndex(shape);
-    else if ( shape.ShapeType() == TopAbs_EDGE )
-      pid = mapOfEdges.FindIndex(shape);
-    else if ( shape.ShapeType() == TopAbs_VERTEX )
-      pid = mapOfVertices.FindIndex(shape);
-    //
-    idsArr  ->InsertNextValue(pid);
-    gidsArr ->InsertNextValue(gid);
+    // Add address
+    addressArr->InsertNextValue( asiAlgo_Utils::ShapeAddr(shape) );
 
     // Prepare label
     std::string label;
     //
-    label += "Node ID: ";
-    label += asiAlgo_Utils::Str::ToString(n);
-    label += "\n";
+    label = asiAlgo_Utils::ShapeAddrWithPrefix(shape);
     //
-    label += "Shape: ";
-    label += asiAlgo_Utils::ShapeAddrWithPrefix(shape).c_str();
     if ( !shape.Location().IsIdentity() )
       label += "(with location)";
+    //
     label += "\n";
-    //
-    if ( pid )
-    {
-      label += "Sub-shape pedigree ID: ";
-      label += asiAlgo_Utils::Str::ToString(pid);
-      label += "\n";
-    }
-    //
-    label += "Sub-shape global ID: ";
-    label += asiAlgo_Utils::Str::ToString(gid);
     //
     if ( !naming.IsNull() )
     {
@@ -262,12 +228,10 @@ vtkSmartPointer<vtkMutableDirectedGraph>
   }
 
   // Set arrays
-  result->GetVertexData() ->AddArray( labelArr.GetPointer() );
-  result->GetVertexData() ->AddArray( groupArr.GetPointer() );
+  result->GetVertexData() ->AddArray( labelArr   .GetPointer() );
+  result->GetVertexData() ->AddArray( addressArr .GetPointer() );
+  result->GetVertexData() ->AddArray( groupArr   .GetPointer() );
   result->GetEdgeData()   ->AddArray( childOriArr.GetPointer() );
   result->GetEdgeData()   ->AddArray( childLocArr.GetPointer() );
-  result->GetVertexData() ->AddArray( idsArr.GetPointer() );
-  result->GetVertexData() ->AddArray( gidsArr.GetPointer() );
-
   return result;
 }

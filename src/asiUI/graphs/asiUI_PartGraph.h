@@ -73,7 +73,8 @@ public:
 
   asiUI_EXPORT
     asiUI_PartGraph(const Handle(asiEngine_Model)& model,
-                    asiUI_ViewerPart*              pPartViewer);
+                    asiUI_ViewerPart*              pPartViewer,
+                    ActAPI_ProgressEntry           progress);
 
   asiUI_EXPORT
     ~asiUI_PartGraph();
@@ -95,7 +96,6 @@ public:
 
   asiUI_EXPORT void
     RenderTopology(const TopoDS_Shape&    shape,
-                   const TopoDS_Shape&    subshape,
                    const TopAbs_ShapeEnum leafType,
                    const bool             colorizeLocations);
 
@@ -122,7 +122,6 @@ protected:
 
   asiUI_EXPORT vtkSmartPointer<vtkGraph>
     convertToGraph(const TopoDS_Shape&               shape,
-                   const TopoDS_Shape&               subshape,
                    const Handle(asiAlgo_AAG)&        aag,
                    const TopTools_IndexedMapOfShape& selectedFaces,
                    const Regime                      regime,
@@ -144,7 +143,8 @@ protected:
   Handle(asiAlgo_TopoGraph) m_topoGraph;     //!< Topology graph.
   Handle(asiAlgo_AAG)       m_aag;           //!< AAG.
   Handle(asiEngine_Model)   m_model;         //!< Data Model instance.
-  
+  //
+  ActAPI_ProgressEntry      m_progress;      //!< Progress notifer.
 
 };
 

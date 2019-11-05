@@ -2695,7 +2695,10 @@ int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
   }
 
   // Show graph.
-  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(cmdEngine::model, cmdEngine::cf->ViewerPart);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph( cmdEngine::model,
+                                                     cmdEngine::cf->ViewerPart,
+                                                     interp->GetProgress() );
+  //
   pGraphView->RenderAdjacency(aag);
 
   if ( excludeSelected )

@@ -87,14 +87,17 @@
 //! Constructor.
 //! \param[in] model       Data Model instance.
 //! \param[in] pPartViewer part viewer.
+//! \param[in] progress    progress notifier.
 asiUI_PartGraph::asiUI_PartGraph(const Handle(asiEngine_Model)& model,
-                                 asiUI_ViewerPart*              pPartViewer)
+                                 asiUI_ViewerPart*              pPartViewer,
+                                 ActAPI_ProgressEntry           progress)
 : 
   m_pWidget       (NULL),
   m_textWidget    (NULL),
   m_summaryWidget (NULL),
   m_model         (model),
-  m_partViewer    (pPartViewer)
+  m_partViewer    (pPartViewer),
+  m_progress      (progress)
 {}
 
 //-----------------------------------------------------------------------------
@@ -137,6 +140,7 @@ void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   //
   graphItem->SetGraph               ( graphLayout->GetOutput() );
   graphItem->SetColorizeByLocations ( colorizeLocations );
+  graphItem->SetAAG                 ( m_aag );
 
   connect( graphItem, SIGNAL( vertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType) ),
            this,      SLOT( onVertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType) ) );
@@ -257,7 +261,7 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
 {
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
-    graph = this->convertToGraph(shape, shape,
+    graph = this->convertToGraph(shape,
                                  NULL,
                                  selectedFaces,
                                  regime,
@@ -271,19 +275,17 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
 
 //! Renders topology graph.
 //! \param[in] shape             target shape.
-//! \param[in] subshape          target subshape.
 //! \param[in] leafType          target leaf type.
 //! \param[in] colorizeLocations indicates whether to colorize graph nodes
 //!                              in accordance with the locations of their
 //!                              corresponding sub-shapes.
 void asiUI_PartGraph::RenderTopology(const TopoDS_Shape&    shape,
-                                     const TopoDS_Shape&    subshape,
                                      const TopAbs_ShapeEnum leafType,
                                      const bool             colorizeLocations)
 {
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
-    graph = this->convertToGraph(shape, subshape,
+    graph = this->convertToGraph(shape,
                                  NULL,
                                  TopTools_IndexedMapOfShape(),
                                  Regime_Topology,
@@ -315,7 +317,6 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
     graph = this->convertToGraph(aag->GetMasterCAD(),
-                                 aag->GetMasterCAD(),
                                  aag,
                                  selectedFaces,
                                  Regime_AAG,
@@ -329,7 +330,6 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
 
 //! Builds one or another graph (depending on the desired regime).
 //! \param[in] shape         master model.
-//! \param[in] subshape      subshape of the master model.
 //! \param[in] aag           master AAG (optional).
 //! \param[in] selectedFaces optional selected faces.
 //! \param[in] regime        desired regime.
@@ -337,7 +337,6 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
 //! \return graph instance.
 vtkSmartPointer<vtkGraph>
   asiUI_PartGraph::convertToGraph(const TopoDS_Shape&               shape,
-                                  const TopoDS_Shape&               subshape,
                                   const Handle(asiAlgo_AAG)&        aag,
                                   const TopTools_IndexedMapOfShape& selectedFaces,
                                   const Regime                      regime,
@@ -349,16 +348,9 @@ vtkSmartPointer<vtkGraph>
   {
     // Create new topology graph or take the existing one from Naming
     if ( m_naming.IsNull() )
-      m_topoGraph = new asiAlgo_TopoGraph(subshape);
+      m_topoGraph = new asiAlgo_TopoGraph(shape);
     else
-      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(subshape);
-
-    // Use global indexation
-    m_topoGraph->FillMapsFrom(shape);
-
-    // Build graph.
-    if ( m_naming.IsNull() )
-      m_topoGraph->Build();
+      m_topoGraph = m_naming->GetTopoGraph()->SubGraph(shape);
 
     // Convert
     vtkSmartPointer<vtkMutableDirectedGraph>
@@ -402,18 +394,21 @@ void asiUI_PartGraph::onViewerClosed()
 //-----------------------------------------------------------------------------
 
 //! Reaction on vertex picking.
-//! \param[in] globalId   global ID.
-//! \param[in] subShapeId sub-shape ID.
+//! \param[in] globalId   sub-shape global ID.
+//! \param[in] pedigreeId sub-shape pedigree ID.
 //! \param[in] shapeType  sub-shape type.
 //! \param[in] vid        graph vertex ID.
 void asiUI_PartGraph::onVertexPicked(const int              globalId,
-                                     const int              subShapeId,
+                                     const int              pedigreeId,
                                      const TopAbs_ShapeEnum shapeType,
                                      const vtkIdType        vid)
 {
-  asiVisu_NotUsed(subShapeId);
-  asiVisu_NotUsed(shapeType);
   asiVisu_NotUsed(vid);
+
+  m_progress.SendLogMessage(LogInfo(Normal) << "Selected shape:\n\ttype: %1.\n\tglobal ID: %2.\n\tpedigree ID: %3."
+                                            << asiAlgo_Utils::ShapeTypeStr(shapeType)
+                                            << globalId
+                                            << pedigreeId);
 
   // Prepare map of sub-shapes.
   const TopTools_IndexedMapOfShape&

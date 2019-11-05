@@ -249,10 +249,6 @@ public:
 
 public:
 
-  //! Builds graph.
-  asiAlgo_EXPORT void
-    Build();
-
   //! \brief Returns map of indexed sub-shapes of the given type.
   //!
   //! \param[in]  ssType sub-shape type (TopAbs_VERTEX, TopAbs_EDGE or TopAbs_FACE).
@@ -323,12 +319,6 @@ public:
   //! \return new graph which is a sub-graph corresponding to the passed shape.
   asiAlgo_EXPORT Handle(asiAlgo_TopoGraph)
     SubGraph(const TopoDS_Shape& shape) const;
-
-  //! Fills maps from the passed shape. Use this method to have global-scope
-  //! indices in the topology sub-graphs.
-  //! \param[in] shape shape to fill the maps from.
-  asiAlgo_EXPORT void
-    FillMapsFrom(const TopoDS_Shape& shape);
 
 public:
 
@@ -564,10 +554,10 @@ protected:
    *  Members storing the cached sub-shapes with indices.
    */
   //@{
-  TopTools_IndexedMapOfShape  m_subShapes; //!< All sub-shapes.
-  TopTools_IndexedMapOfShape  m_faces;     //!< All faces of the master model.
-  TopTools_IndexedMapOfShape  m_edges;     //!< All edges of the master model.
-  TopTools_IndexedMapOfShape  m_vertices;  //!< All vertices of the master model.
+  TopTools_IndexedMapOfShape m_subShapes; //!< All sub-shapes.
+  TopTools_IndexedMapOfShape m_faces;     //!< All faces of the master model.
+  TopTools_IndexedMapOfShape m_edges;     //!< All edges of the master model.
+  TopTools_IndexedMapOfShape m_vertices;  //!< All vertices of the master model.
   //
   asiAlgo_IndexedMapOfTShape m_tSubShapes; //!< All sub-shapes with distinct TShape pointers.
   //@}

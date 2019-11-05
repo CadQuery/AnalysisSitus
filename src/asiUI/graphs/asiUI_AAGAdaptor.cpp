@@ -68,15 +68,15 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   labelArr->SetNumberOfComponents(1);
   labelArr->SetName(ARRNAME_LABELS);
 
+  // Array for shape addresses
+  vtkNew<vtkStringArray> addressArr;
+  addressArr->SetNumberOfComponents(1);
+  addressArr->SetName(ARRNAME_ADDRESS);
+
   // Array for angle attributes associated with arcs
   vtkNew<vtkIntArray> angleArr;
   angleArr->SetNumberOfComponents(1);
   angleArr->SetName(ARRNAME_ANGLES);
-
-  // Array for pedigree indices (sub-shape IDs)
-  vtkNew<vtkIntArray> idsArr;
-  idsArr->SetNumberOfComponents(1);
-  idsArr->SetName(ARRNAME_PIDS);
 
   // Get faces from AAG
   const TopTools_IndexedMapOfShape& Faces        = aag->GetMapOfFaces();
@@ -87,13 +87,17 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   NCollection_DataMap<int, vtkIdType> FaceVertexMap;
   for ( asiAlgo_AAG::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
   {
-    const int       f_idx     = it.Key();
-    const vtkIdType vertex_id = result->AddVertex();
+    const int          f_idx     = it.Key();
+    const TopoDS_Face& face       = TopoDS::Face( Faces(f_idx) );
+    const vtkIdType    vertex_id = result->AddVertex();
     //
     FaceVertexMap.Bind(f_idx, vertex_id);
 
+    // Add address
+    addressArr->InsertNextValue( asiAlgo_Utils::ShapeAddr(face) );
+
     // Fill property arrays
-    std::string faceName = asiAlgo_Utils::FaceGeometryName( TopoDS::Face( Faces(f_idx) ) );
+    std::string faceName = asiAlgo_Utils::FaceGeometryName(face);
     faceName += ":";
     faceName += asiAlgo_Utils::Str::ToString<int>(f_idx).c_str();
 
@@ -127,18 +131,16 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
     {
       groupArr->InsertNextValue(ARRNAME_GROUP_ORDINARY);
     }
-    //
-    idsArr->InsertNextValue( aag->RequestMapOfSubShapes().FindIndex( aag->GetFace(f_idx) ) );
 
     // Add label
     labelArr->InsertNextValue(faceName);
   }
 
   // Set property arrays
-  result->GetVertexData()->AddArray( labelArr.GetPointer() );
-  result->GetVertexData()->AddArray( groupArr.GetPointer() );
-  result->GetVertexData()->AddArray( idsArr  .GetPointer() );
-  result->GetEdgeData()  ->AddArray( angleArr.GetPointer() );
+  result->GetVertexData()->AddArray( labelArr  .GetPointer() );
+  result->GetVertexData()->AddArray( addressArr.GetPointer() );
+  result->GetVertexData()->AddArray( groupArr  .GetPointer() );
+  result->GetEdgeData()  ->AddArray( angleArr  .GetPointer() );
 
   // Add links for adjacency relations
   for ( asiAlgo_AAG::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )

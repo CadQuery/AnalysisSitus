@@ -32,7 +32,7 @@
 #define asiUI_PartGraphItem_h
 
 // asiAlgo includes
-#include <asiAlgo_FeatureAngleType.h>
+#include <asiAlgo_AAG.h>
 
 // OCCT includes
 #include <TopAbs_ShapeEnum.hxx>
@@ -57,8 +57,7 @@
 #pragma warning(pop)
 
 #define ARRNAME_LABELS            "Labels"
-#define ARRNAME_PIDS              "Pids"
-#define ARRNAME_GIDS              "Gids"
+#define ARRNAME_ADDRESS           "Address"
 #define ARRNAME_COLORS            "Colors"
 #define ARRNAME_ANGLES            "Angles"
 #define ARRNAME_CHILD_ORIENTATION "ChildOrientation"
@@ -104,9 +103,24 @@ signals:
 
 public:
 
+  //! Sets locations coloring flag.
+  //! \param[in] isOn flag to set.
   void SetColorizeByLocations(const bool isOn)
   {
     m_bColorizeLoc = isOn;
+  }
+
+  //! Sets AAG instance.
+  //! \param[in] aag AAG instance.
+  void SetAAG(const Handle(asiAlgo_AAG)& aag)
+  {
+    m_aag = aag;
+  }
+
+  //! \return AAG instance.
+  const Handle(asiAlgo_AAG)& GetAAG() const
+  {
+    return m_aag;
   }
 
 protected:
@@ -124,12 +138,12 @@ protected:
   virtual vtkColor4ub VertexColor(vtkIdType vertex)
   {
     if ( vertex == focusedVertex )
-      return vtkColor4ub(255, 0, 0, 255);
+      return vtkColor4ub(255, 255, 255, 155);
 
     vtkAbstractArray* domain = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
     //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_HIGHLIGHTED )
-      return vtkColor4ub(255, 255, 0, 255);
+      return vtkColor4ub(255, 255, 255, 255);
     //
     if ( domain && domain->GetVariantValue(vertex).ToString() == ARRNAME_GROUP_COMPOUND )
       return vtkColor4ub(218, 0, 170, 255);
@@ -275,36 +289,49 @@ protected:
     this->GetGraph()->Modified();
     this->GetScene()->SetDirty(true);
 
-    // Get sub-shape ID
-    TopAbs_ShapeEnum shapeType   = TopAbs_SHAPE;
-    int              subShapeIdx = -1;
-    int              globalIdx   = -1;
+    // Get sub-shape props.
+    TopAbs_ShapeEnum  shapeType   = TopAbs_SHAPE;
+    vtkAbstractArray* groupArr    = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
+    vtkAbstractArray* addressArr  = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_ADDRESS);
+    int               globalIdx   = -1;
+    int               pedigreeIdx = -1;
     //
-    vtkAbstractArray* pids   = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_PIDS);
-    vtkAbstractArray* gids   = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GIDS);
-    vtkAbstractArray* groups = this->GetGraph()->GetVertexData()->GetAbstractArray(ARRNAME_GROUP);
-    //
-    if ( pids )
+    if ( groupArr )
     {
-      subShapeIdx = pids->GetVariantValue(focusedVertex).ToInt();
-    }
-    //
-    if ( gids )
-    {
-      globalIdx = gids->GetVariantValue(focusedVertex).ToInt();
-    }
-    //
-    if ( groups )
-    {
-      if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_FACE )
+      if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_COMPOUND )
+        shapeType = TopAbs_COMPOUND;
+      if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_COMPSOLID )
+        shapeType = TopAbs_COMPSOLID;
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_SOLID )
+        shapeType = TopAbs_SOLID;
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_SHELL )
+        shapeType = TopAbs_SHELL;
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_FACE )
         shapeType = TopAbs_FACE;
-      else if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_EDGE )
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_WIRE )
+        shapeType = TopAbs_WIRE;
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_EDGE )
         shapeType = TopAbs_EDGE;
-      else if ( groups->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_VERTEX )
+      else if ( groupArr->GetVariantValue(focusedVertex).ToString() == ARRNAME_GROUP_VERTEX )
         shapeType = TopAbs_VERTEX;
     }
+    //
+    if ( addressArr && !m_aag.IsNull() )
+    {
+      std::string  addr     = addressArr->GetVariantValue(focusedVertex).ToString();
+      TopoDS_Shape subShape = m_aag->FindSubShapeByAddr(addr);
 
-    emit vertexPicked(globalIdx, subShapeIdx, shapeType, focusedVertex);
+      // Initialize global index.
+      globalIdx = m_aag->RequestMapOfSubShapes().FindIndex(subShape);
+
+      // Initialize pedigree index.
+      TopTools_IndexedMapOfShape subShapesOfType;
+      m_aag->RequestMapOf(shapeType, subShapesOfType);
+      //
+      pedigreeIdx = subShapesOfType.FindIndex(subShape);
+    }
+
+    emit vertexPicked(globalIdx, pedigreeIdx, shapeType, focusedVertex);
     return true;
   }
 
@@ -316,7 +343,8 @@ protected:
 
 protected:
 
-  bool m_bColorizeLoc; //!< Indicates whether to colorize vertices by sub-shape locations.
+  bool                m_bColorizeLoc; //!< Indicates whether to colorize vertices by sub-shape locations.
+  Handle(asiAlgo_AAG) m_aag;          //!< Attributed adjacency graph of the part.
 
 };
 

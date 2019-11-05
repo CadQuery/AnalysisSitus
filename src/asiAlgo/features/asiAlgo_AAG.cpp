@@ -517,6 +517,28 @@ const asiAlgo_IndexedDataMapOfTShapeListOfShape&
 
 //-----------------------------------------------------------------------------
 
+TopoDS_Shape asiAlgo_AAG::FindSubShapeByAddr(const std::string& addr)
+{
+  // Get all subshapes.
+  const TopTools_IndexedMapOfShape& subShapes = this->RequestMapOfSubShapes();
+
+  // Loop to find the one with the requested address.
+  for ( TopTools_IndexedMapOfShape::Iterator ssit(subShapes); ssit.More(); ssit.Next() )
+  {
+    const TopoDS_Shape& current = ssit.Value();
+
+    // Compare.
+    std::string currentAddr = asiAlgo_Utils::ShapeAddr(current);
+    //
+    if ( currentAddr == addr )
+      return current;
+  }
+
+  return TopoDS_Shape();
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_AAG::HasArc(const t_arc& arc) const
 {
   const t_adjacency& mx = m_neighborsStack.top();

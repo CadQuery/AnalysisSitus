@@ -451,7 +451,6 @@ void asiUI_ControlsAnalysis::onShowTopoGraph()
 
   // Shape to visualize a graph for.
   TopoDS_Shape targetShape;
-  TopoDS_Shape partShape =  N->GetShape();
 
   // Access active face.
   Handle(asiData_FaceNode) FN = N->GetFaceRepresentation();
@@ -485,7 +484,7 @@ void asiUI_ControlsAnalysis::onShowTopoGraph()
 
   // Show graph.
   asiUI_DialogTopoGraphDepth*
-    pDlg = new asiUI_DialogTopoGraphDepth(m_model, partShape, targetShape, m_partViewer, m_notifier, this);
+    pDlg = new asiUI_DialogTopoGraphDepth(m_model, targetShape, m_partViewer, m_notifier, this);
   //
   pDlg->open();
 }
@@ -505,7 +504,7 @@ void asiUI_ControlsAnalysis::onShowAAG()
   asiEngine_Part( m_model, m_partViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
 
   // Show graph.
-  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer, m_notifier);
   pGraphView->RenderAdjacency(part_n->GetAAG(), selected);
 }
 
@@ -530,7 +529,7 @@ void asiUI_ControlsAnalysis::onShowAAGWoSel()
   aag->Remove(selected);
 
   // Show graph.
-  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer);
+  asiUI_PartGraph* pGraphView = new asiUI_PartGraph(m_model, m_partViewer, m_notifier);
   pGraphView->SetAAG(aag);
   //
   vtkSmartPointer<vtkMutableUndirectedGraph>

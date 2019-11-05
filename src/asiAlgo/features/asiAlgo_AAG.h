@@ -588,6 +588,20 @@ public:
   asiAlgo_EXPORT const asiAlgo_IndexedDataMapOfTShapeListOfShape&
     RequestTMapOfEdgesFaces();
 
+  //! Finds a (sub-)shape among those cached in the AAG by the string
+  //! representation of its address. Use this method to access the transient
+  //! pointers to the shapes. These transient pointers can be then used
+  //! to access the persistent pointers (i.e., serial indices or topological
+  //! names).
+  //!
+  //! This method is non-const as it may build the internal map of shapes
+  //! in case this map is not yet available.
+  //!
+  //! \param[in] addr string representation of the address to seek.
+  //! \return shape (transient pointer).
+  asiAlgo_EXPORT TopoDS_Shape
+    FindSubShapeByAddr(const std::string& addr);
+
   //! Checks if the graph contains the passed arc (i.e., the referenced
   //! faces are adjacent).
   //! \param[in] arc graph arc to check.

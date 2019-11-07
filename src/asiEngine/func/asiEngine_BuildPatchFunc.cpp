@@ -400,6 +400,11 @@ bool asiEngine_BuildPatchFunc::approxMeshNodes(const Handle(Geom_BSplineSurface)
   resultSurf = cascade::GetOpenCascadeBSurface(mobResSurf);
   return true;
 #else
+  asiEngine_NotUsed(initSurf);
+  asiEngine_NotUsed(pts);
+  asiEngine_NotUsed(lambda);
+  asiEngine_NotUsed(resultSurf);
+
   m_progress.SendLogMessage(LogErr(Normal) << "Surface approximation module is not available.");
   return false;
 #endif

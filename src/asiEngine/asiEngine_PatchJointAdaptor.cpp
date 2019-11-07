@@ -37,12 +37,14 @@
 // OpenCascade includes
 #include <Geom_TrimmedCurve.hxx>
 
-// Mobius includes
-#include <mobius/cascade.h>
-#include <mobius/core_Precision.h>
-#include <mobius/geom_BSplineCurve.h>
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade.h>
+  #include <mobius/core_Precision.h>
+  #include <mobius/geom_BSplineCurve.h>
 
-using namespace mobius;
+  using namespace mobius;
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -204,6 +206,7 @@ bool
                                                  Handle(Geom_BSplineCurve)& curveRight,
                                                  const bool                 sameSenseRight)
 {
+#if defined USE_MOBIUS
   if ( curveLeft.IsNull() || curveRight.IsNull() )
     return false;
 
@@ -250,6 +253,15 @@ bool
   curveRight = cascade::GetOpenCascadeBCurve(mbCurveRight);
 
   return true; // Success.
+#else
+  asiAlgo_NotUsed(curveLeft);
+  asiAlgo_NotUsed(sameSenseLeft);
+  asiAlgo_NotUsed(curveRight);
+  asiAlgo_NotUsed(sameSenseRight);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

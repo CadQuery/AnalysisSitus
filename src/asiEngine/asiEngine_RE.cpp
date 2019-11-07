@@ -755,6 +755,7 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
                                   const int                                        minNumKnots,
                                   Handle(Geom_BSplineSurface)&                     surf) const
 {
+#if defined USE_MOBIUS
   if ( coedges.size() != 4 )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Only 4-sided contours are supported.");
@@ -946,6 +947,14 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   // Set surface and return.
   surf = cascade::GetOpenCascadeBSurface(mobSurf);
   return true;
+#else
+  asiEngine_NotUsed(coedges);
+  asiEngine_NotUsed(minNumKnots);
+  asiEngine_NotUsed(surf);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

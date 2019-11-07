@@ -667,10 +667,17 @@ bool asiAlgo_InterpolateSurfMesh::collectInteriorNodes(const Handle(Poly_Triangu
 
   return true;
 #else
+  asiAlgo_NotUsed(tris);
   asiAlgo_NotUsed(contour);
+  asiAlgo_NotUsed(boxClipping);
+  asiAlgo_NotUsed(filter);
+  asiAlgo_NotUsed(avrPlane);
   asiAlgo_NotUsed(pts);
+  asiAlgo_NotUsed(lastPtIdx);
+  asiAlgo_NotUsed(size);
+  asiAlgo_NotUsed(plotter);
 
-  m_progress.SendLogMessage(LogErr(Normal) << "Mobius library is not available.");
+  progress.SendLogMessage(LogErr(Normal) << "Mobius library is not available.");
   return false;
 #endif
 }

@@ -1588,8 +1588,8 @@ int RE_InvertPoints(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 #else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
 
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;
@@ -1767,8 +1767,8 @@ int RE_ApproxSurf(const Handle(asiTcl_Interp)& interp,
   interp->GetPlotter().REDRAW_SURFACE(argv[1], cascade::GetOpenCascadeBSurface(resSurf), Color_Default);
   return TCL_OK;
 #else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
+  cmdRE_NotUsed(argc);
+  cmdRE_NotUsed(argv);
 
   interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return TCL_ERROR;

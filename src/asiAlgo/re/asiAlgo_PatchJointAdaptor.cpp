@@ -34,14 +34,16 @@
 // OCCT includes
 #include <ShapeAnalysis_Surface.hxx>
 
-// Mobius includes
-#include <mobius/bspl_UnifyKnots.h>
-#include <mobius/cascade.h>
-#include <mobius/core_Precision.h>
-#include <mobius/geom_BSplineCurve.h>
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/bspl_UnifyKnots.h>
+  #include <mobius/cascade.h>
+  #include <mobius/core_Precision.h>
+  #include <mobius/geom_BSplineCurve.h>
 
-// Mobius namespace.
-using namespace mobius;
+  // Mobius namespace.
+  using namespace mobius;
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -210,6 +212,7 @@ bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve
                                                   const Handle(Geom_BSplineCurve)& isoRight,
                                                   const bool                       areOpposite) const
 {
+#if defined USE_MOBIUS
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
   t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
@@ -249,6 +252,14 @@ bool asiAlgo_PatchJointAdaptor::IsJointCompatible(const Handle(Geom_BSplineCurve
   }
 
   return true;
+#else
+  asiAlgo_NotUsed(isoLeft);
+  asiAlgo_NotUsed(isoRight);
+  asiAlgo_NotUsed(areOpposite);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -261,6 +272,7 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
                                                   const bool                       isoRightMin,
                                                   const bool                       areOpposite)
 {
+#if defined USE_MOBIUS
   // Contract check.
   if ( !this->IsJointCompatible(isoLeft, isoRight, areOpposite) )
     return false;
@@ -333,6 +345,18 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
   m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
 
   return true; // Success.
+#else
+  asiAlgo_NotUsed(isoLeft);
+  asiAlgo_NotUsed(isoLeftU);
+  asiAlgo_NotUsed(isoLeftMin);
+  asiAlgo_NotUsed(isoRight);
+  asiAlgo_NotUsed(isoRightU);
+  asiAlgo_NotUsed(isoRightMin);
+  asiAlgo_NotUsed(areOpposite);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -371,6 +395,7 @@ void asiAlgo_PatchJointAdaptor::insertKnotsLeft(const Handle(Geom_BSplineCurve)&
                                                 const bool                       isoLeftU,
                                                 const bool                       areOpposite)
 {
+#if defined USE_MOBIUS
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
   t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
@@ -406,6 +431,14 @@ void asiAlgo_PatchJointAdaptor::insertKnotsLeft(const Handle(Geom_BSplineCurve)&
 
   // Update left surface.
   m_surfLeft = cascade::GetOpenCascadeBSurface(mbSurfLeft);
+#else
+  asiAlgo_NotUsed(isoLeft);
+  asiAlgo_NotUsed(isoRight);
+  asiAlgo_NotUsed(isoLeftU);
+  asiAlgo_NotUsed(areOpposite);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -415,6 +448,7 @@ void asiAlgo_PatchJointAdaptor::insertKnotsRight(const Handle(Geom_BSplineCurve)
                                                  const bool                       isoRightU,
                                                  const bool                       areOpposite)
 {
+#if defined USE_MOBIUS
   // Convert curves to Mobius structures.
   t_ptr<t_bcurve> mbIsoLeft  = cascade::GetMobiusBCurve(isoLeft);
   t_ptr<t_bcurve> mbIsoRight = cascade::GetMobiusBCurve(isoRight);
@@ -450,4 +484,12 @@ void asiAlgo_PatchJointAdaptor::insertKnotsRight(const Handle(Geom_BSplineCurve)
 
   // Update right surface.
   m_surfRight = cascade::GetOpenCascadeBSurface(mbSurfRight);
+#else
+  asiAlgo_NotUsed(isoLeft);
+  asiAlgo_NotUsed(isoRight);
+  asiAlgo_NotUsed(isoRightU);
+  asiAlgo_NotUsed(areOpposite);
+
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+#endif
 }

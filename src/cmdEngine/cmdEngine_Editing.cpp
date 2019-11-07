@@ -1327,8 +1327,6 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  bool isRelax = interp->HasKeyword(argc, argv, "relax");
-
   // Find Node by name.
   Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[2]);
   //
@@ -1355,6 +1353,8 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   Handle(Geom_BSplineSurface) result;
 
 #if defined USE_MOBIUS
+  bool isRelax = interp->HasKeyword(argc, argv, "relax");
+
   // Get fairing coefficient.
   const double lambda = Atof(argv[3]);
 

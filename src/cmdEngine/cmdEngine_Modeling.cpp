@@ -340,7 +340,7 @@ int ENGINE_MakeShell(const Handle(asiTcl_Interp)& interp,
     //
     if ( itemShape.ShapeType() != TopAbs_FACE )
     {
-      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object %1 is not face. Skipped." << argv[k]);
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object %1 is not a face. Skipped." << argv[k]);
       continue;
     }
     //
@@ -348,6 +348,55 @@ int ENGINE_MakeShell(const Handle(asiTcl_Interp)& interp,
 
     // Add face to the shell being constructed.
     BB.Add(result, itemFace);
+  }
+
+  // Draw in IV.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], result, Color_White, 1.0, false);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MakeSolid(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc < 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TopoDS_Solid result;
+  BRep_Builder BB;
+  BB.MakeSolid(result);
+
+  // Add shells to the resulting solid.
+  for ( int k = 2; k < argc; ++k )
+  {
+    // Get Topology Item Node.
+    Handle(asiData_IVTopoItemNode)
+      node = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[k]) );
+    //
+    if ( node.IsNull() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+      return TCL_OK;
+    }
+
+    // Get item shape.
+    TopoDS_Shape itemShape = node->GetShape();
+    //
+    if ( itemShape.ShapeType() != TopAbs_SHELL )
+    {
+      interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Object %1 is not a shell. Skipped." << argv[k]);
+      continue;
+    }
+    //
+    TopoDS_Shell itemShell = TopoDS::Shell(itemShape);
+
+    // Add shell to the solid being constructed.
+    BB.Add(result, itemShell);
   }
 
   // Draw in IV.
@@ -1121,9 +1170,17 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("make-shell",
     //
     "make-shell result face1 [face2 [...]]\n"
-    "\t Creates shell from the passed faces.",
+    "\t Creates a shell from the passed faces.",
     //
     __FILE__, group, ENGINE_MakeShell);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-solid",
+    //
+    "make-solid result shell1 [shell2 [...]]\n"
+    "\t Creates a solid from the passed shells.",
+    //
+    __FILE__, group, ENGINE_MakeSolid);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-compound",

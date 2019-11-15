@@ -45,6 +45,9 @@
 // asiTcl includes
 #include <asiTcl_Interp.h>
 
+// asiUI includes
+#include <asiUI_CommonFacilities.h>
+
 #ifdef USE_MOBIUS
   #include <mobius/geom_Surface.h>
 #endif
@@ -77,6 +80,11 @@ public:
   cmdMisc_EXPORT static void
     Commands_Coons(const Handle(asiTcl_Interp)&      interp,
                    const Handle(Standard_Transient)& data);
+
+public:
+
+  static Handle(asiEngine_Model)        model; //!< Data Model instance.
+  static Handle(asiUI_CommonFacilities) cf;    //!< UI common facilities.
 
 };
 

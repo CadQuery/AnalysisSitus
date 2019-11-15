@@ -58,17 +58,32 @@ namespace asiAlgo_MeshGen
   asiAlgo_EXPORT double
     AutoSelectAngularDeflection(const TopoDS_Shape& shape);
 
-  //! Generates surface mesh by native OCCT tools.
-  //! \param[in]  shape                 shape to tessellate.
-  //! \param[in]  linearDeflection      linear (chord) deflection.
-  //! \param[in]  angularDeflection_deg angular deflection (in degrees).
-  //! \param[out] info                  output mesh summary.
+  //! Generates surface mesh by native OCCT tools. The generated facets will
+  //! be distributed by the corresponding CAD faces. Use BRep_Tool::Triangulation()
+  //! function to access them.
+  //!
+  //! \param[in,out] shape                 shape to tessellate.
+  //! \param[in]     linearDeflection      linear (chord) deflection.
+  //! \param[in]     angularDeflection_deg angular deflection (in degrees).
+  //! \param[out]    info                  output mesh summary.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     DoNative(const TopoDS_Shape& shape,
              const double        linearDeflection,
              const double        angularDeflection_deg,
              asiAlgo_MeshInfo&   info);
+
+  //! Generates surface mesh by native OCCT tools. The generated facets will
+  //! be distributed by the corresponding CAD faces. Use BRep_Tool::Triangulation()
+  //! function to access them.
+  //!
+  //! This function automatically selects the linear and the angular deflection
+  //! parameters.
+  //!
+  //! \param[in,out] shape shape to tessellate.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    DoNative(const TopoDS_Shape& shape);
 
 };
 

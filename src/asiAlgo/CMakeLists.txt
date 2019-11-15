@@ -7,6 +7,8 @@ project(asiAlgo)
 set (H_FILES
   asiAlgo.h
 )
+set (CPP_FILES
+)
 
 #------------------------------------------------------------------------------
 # Auxiliary

@@ -149,3 +149,15 @@ bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape,
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_MeshGen::DoNative(const TopoDS_Shape& shape)
+{
+  const double linDefl = AutoSelectLinearDeflection(shape);
+  const double angDefl = AutoSelectAngularDeflection(shape);
+  //
+  asiAlgo_MeshInfo info;
+
+  return DoNative(shape, linDefl, angDefl, info);
+}

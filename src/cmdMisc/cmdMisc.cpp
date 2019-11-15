@@ -34,11 +34,13 @@
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_Cloudify.h>
+#include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_MeshOBB.h>
 #include <asiAlgo_PlaneOnPoints.h>
 #include <asiAlgo_ProjectPointOnMesh.h>
 #include <asiAlgo_Timer.h>
+#include <asiAlgo_TopoKill.h>
 #include <asiAlgo_Utils.h>
 
 // asiUI includes
@@ -83,6 +85,8 @@
 #include <GProp_GProps.hxx>
 #include <GProp_PrincipalProps.hxx>
 #include <IntTools_FClass2d.hxx>
+#include <NCollection_CellFilter.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeUpgrade_UnifySameDomain.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -164,6 +168,124 @@ void cmdMisc::DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
 }
 
 #endif
+
+//-----------------------------------------------------------------------------
+
+Handle(asiEngine_Model)        cmdMisc::model = NULL;
+Handle(asiUI_CommonFacilities) cmdMisc::cf    = NULL;
+
+//-----------------------------------------------------------------------------
+
+namespace
+{
+  //---------------------------------------------------------------------------
+  // Inspectors for spatial nodes
+  //---------------------------------------------------------------------------
+
+  //! Spatial point enriched with numeric identifier.
+  struct t_vertex
+  {
+    gp_XYZ        Point;  //!< Geometric representation.
+    TopoDS_Vertex Vertex; //!< Topological representation.
+  };
+
+  //! Auxiliary class to search for coincident spatial points.
+  class InspectPoint : public NCollection_CellFilter_InspectorXYZ
+  {
+  public:
+
+    typedef gp_XYZ Target;
+
+    //! Constructor accepting resolution distance and point.
+    InspectPoint(const double tol, const gp_XYZ& P) : m_fTol(tol), m_bFound(false), m_P(P) {}
+
+    //! \return true/false depending on whether the node was found or not.
+    bool IsFound() const { return m_bFound; }
+
+    //! Implementation of inspection method.
+    NCollection_CellFilter_Action Inspect(const gp_XYZ& Target)
+    {
+      m_bFound = ( (m_P - Target).SquareModulus() <= Square(m_fTol) );
+      return CellFilter_Keep;
+    }
+
+  private:
+
+    gp_XYZ m_P;      //!< Source point.
+    bool   m_bFound; //!< Whether two points are coincident or not.
+    double m_fTol;   //!< Resolution to check for coincidence.
+
+  };
+
+  //! Auxiliary class to search for coincident tessellation nodes.
+  class InspectVertex : public InspectPoint
+  {
+  public:
+
+    typedef t_vertex Target;
+
+    //! Constructor accepting resolution distance and point.
+    InspectVertex(const double tol, const gp_XYZ& P) : InspectPoint(tol, P) {}
+
+    //! \return vertex.
+    const TopoDS_Vertex&
+      GetVertex() const { return m_vertex; }
+
+    //! Implementation of inspection method.
+    NCollection_CellFilter_Action Inspect(const t_vertex& Target)
+    {
+      InspectPoint::Inspect(Target.Point);
+
+      if ( InspectPoint::IsFound() )
+        m_vertex = Target.Vertex;
+
+      return CellFilter_Keep;
+    }
+
+  private:
+
+    TopoDS_Vertex m_vertex; //!< Found target.
+
+  };
+
+  //! Returns a substitution vertex for the passed one.
+  TopoDS_Vertex getCommonVertex(const TopoDS_Vertex&                   old,
+                                NCollection_CellFilter<InspectVertex>& cellFilter)
+  {
+    gp_XYZ       oldCoords = BRep_Tool::Pnt(old).XYZ();
+    const double prec      = Precision::Confusion();
+
+    // Prepare inspection tool.
+    InspectVertex Inspect(prec, oldCoords);
+    gp_XYZ XYZ_min = Inspect.Shift( oldCoords, -prec );
+    gp_XYZ XYZ_max = Inspect.Shift( oldCoords,  prec );
+
+    // Result.
+    TopoDS_Vertex res;
+
+    // Coincidence test.
+    cellFilter.Inspect(XYZ_min, XYZ_max, Inspect);
+    const bool isFound = Inspect.IsFound();
+    //
+    if ( !isFound )
+    {
+      t_vertex V;
+      V.Point  = oldCoords;
+      V.Vertex = old;
+      //
+      cellFilter.Add(V, oldCoords);
+
+      res = V.Vertex;
+    }
+    else
+    {
+      res = Inspect.GetVertex();
+    }
+
+    return res;
+  }
+
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1664,6 +1786,145 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
 
   // TODO: put your test code here.
 
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestFibers(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  const int    segments = 50;
+  const int    poles    = 3;
+  const double radius   = 2.5;
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
+
+  /* =============================
+   *  Restore sharing on vertices.
+   * ============================= */
+
+  NCollection_CellFilter<InspectVertex> cellFilter( Precision::Confusion() );
+
+  Handle(asiAlgo_TopoKill)
+    reshape = new asiAlgo_TopoKill( partShape,
+                                    interp->GetProgress(),
+                                    interp->GetPlotter() );
+
+  // Get all vertices.
+  TopTools_IndexedMapOfShape allVertices;
+  TopExp::MapShapes(partShape, TopAbs_VERTEX, allVertices);
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Num. of vertices: %1." << allVertices.Extent() );
+
+  // Get all unique vertices.
+  NCollection_DataMap<TopoDS_Vertex, TopoDS_Vertex> vvMap;
+  TopTools_IndexedMapOfShape                        uniqueVertices;
+  //
+  for ( int k = 1; k < allVertices.Extent(); ++k )
+  {
+    TopoDS_Vertex oldV = TopoDS::Vertex( allVertices(k) );
+    TopoDS_Vertex newV = getCommonVertex(oldV, cellFilter);
+    //
+    newV.Orientation( oldV.Orientation() );
+    //
+    uniqueVertices.Add(newV);
+    vvMap.Bind(oldV, newV);
+
+    if ( oldV.IsPartner(newV) )
+      continue;
+
+    if ( !reshape->AskReplace(oldV, newV) )
+    {
+      interp->GetProgress().SendLogMessage( LogWarn(Normal) << "Request on modification was declined." );
+      continue;
+    }
+  }
+  //
+  interp->GetProgress().SendLogMessage( LogNotice(Normal) << "Num. of unique vertices: %1." << uniqueVertices.Extent() );
+
+  if ( !reshape->Apply() )
+  {
+    interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot apply the modification." );
+    return TCL_ERROR;
+  }
+
+  // Update part shape.
+  partShape = reshape->GetResult();
+
+  // Modify Data Model.
+  cmdMisc::model->OpenCommand();
+  {
+    asiEngine_Part(cmdMisc::model).Update(partShape);
+  }
+  cmdMisc::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdMisc::cf && cmdMisc::cf->ViewerPart )
+    cmdMisc::cf->ViewerPart->PrsMgr()->Actualize( M->GetPartNode() );
+
+  /* =================================================
+   *  Check valence of vertices and prepare compounds.
+   * ================================================= */
+
+  TopTools_IndexedDataMapOfShapeListOfShape allJoints;
+  TopExp::MapShapesAndAncestors(partShape, TopAbs_VERTEX, TopAbs_EDGE, allJoints);
+
+  BRep_Builder bbuilder;
+
+  // Regular vertices.
+  TopoDS_Compound regularVerts;
+  bbuilder.MakeCompound(regularVerts);
+
+  // Irregular vertices.
+  TopoDS_Compound irregularVerts;
+  bbuilder.MakeCompound(irregularVerts);
+
+  // Compose the compounds of regular/irregular vertices.
+  for ( TopTools_IndexedDataMapOfShapeListOfShape::Iterator vit(allJoints); vit.More(); vit.Next() )
+  {
+    const TopoDS_Shape&         joint        = vit.Key();
+    const TopTools_ListOfShape& edgesAtJoint = vit.Value();
+    //
+    if ( edgesAtJoint.Extent() == 2 )
+      bbuilder.Add(regularVerts, joint);
+    else
+      bbuilder.Add(irregularVerts, joint);
+  }
+
+  interp->GetPlotter().REDRAW_SHAPE("regularVerts",   regularVerts,   Color_Green,   1., true);
+  interp->GetPlotter().REDRAW_SHAPE("irregularVerts", irregularVerts, Color_Magenta, 1., true);
+
+  /* ========================
+   *  Connect edges to wires.
+   * ======================== */
+
+  Handle(TopTools_HSequenceOfShape) hedges = new TopTools_HSequenceOfShape;
+  //
+  for ( TopExp_Explorer exp(partShape, TopAbs_EDGE); exp.More(); exp.Next() )
+  {
+    hedges->Append( exp.Current() );
+  }
+
+  ///
+  Handle(TopTools_HSequenceOfShape) wires;
+  ShapeAnalysis_FreeBounds::ConnectEdgesToWires(hedges, Precision::Confusion(), 0, wires);
+  //
+  TopoDS_Compound wiresComp;
+  bbuilder.MakeCompound(wiresComp);
+
+  for ( TopTools_HSequenceOfShape::Iterator wit(*wires); wit.More(); wit.Next() )
+    bbuilder.Add( wiresComp, wit.Value() );
+
+  interp->GetPlotter().REDRAW_SHAPE("wires", wiresComp, Color_White, 1., true);
   return TCL_OK;
 }
 
@@ -3369,6 +3630,35 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
   static const char* group = "cmdMisc";
+  
+  /* ==========================
+   *  Initialize UI facilities
+   * ========================== */
+
+  // Get common facilities
+  Handle(asiUI_CommonFacilities)
+    passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
+  //
+  if ( passedCF.IsNull() )
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdMisc] No UI facilities are available. GUI will not be updated!");
+  else
+    cf = passedCF;
+
+  /* ================================
+   *  Initialize Data Model instance
+   * ================================ */
+
+  model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  if ( model.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdMisc] Data Model instance is NULL or not of asiEngine_Model kind.");
+    return;
+  }
+
+  /* ==================
+   *  Add Tcl commands
+   * ================== */
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-hexagon-bops",
@@ -3493,6 +3783,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Problem reproducer for anything.",
     //
     __FILE__, group, MISC_Test);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-fibers",
+    //
+    "test-fibers \n"
+    "\t Tests fiber polyhedrization algorithm.",
+    //
+    __FILE__, group, MISC_TestFibers);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-transform-axes",

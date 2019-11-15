@@ -217,7 +217,12 @@ void asiAlgo_TopoGraph::CalculateSummary(int& numCompounds,
   // Loop over the nodes
   for ( int n = 1; n <= this->GetNodes().Extent(); ++n )
   {
-    switch ( m_nodes(n).ShapeType() )
+    TopoDS_Shape sh = m_nodes(n);
+    //
+    if ( sh.IsNull() )
+      continue;
+
+    switch ( sh.ShapeType() )
     {
       case TopAbs_COMPOUND:  ++numCompounds;  break;
       case TopAbs_COMPSOLID: ++numCompSolids; break;

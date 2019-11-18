@@ -104,7 +104,7 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
   BRepAdaptor_Surface AS(A);
 
   // Get all smoothly connected neighbor faces.
-  const TColStd_PackedMapOfInteger& smoothNeighbors = m_aag->GetNeighbors(face_idx, smooth_edge_ids);
+  const TColStd_PackedMapOfInteger& smoothNeighbors = m_aag->GetNeighborsThru(face_idx, smooth_edge_ids);
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(smoothNeighbors); nit.More(); nit.Next() )
   {

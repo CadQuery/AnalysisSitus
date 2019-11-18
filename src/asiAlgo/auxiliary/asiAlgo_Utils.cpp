@@ -3562,3 +3562,45 @@ gp_XYZ asiAlgo_Utils::ComputeAveragePoint(const std::vector<gp_XYZ>& pts)
 
   return P_center;
 }
+
+//-----------------------------------------------------------------------------
+
+TopoDS_Wire asiAlgo_Utils::OuterWire(const TopoDS_Face& face)
+{
+  const double prec = Precision::PConfusion();
+
+  TopoDS_Wire Wres;
+  TopExp_Explorer expw(face, TopAbs_WIRE);
+  //
+  if ( expw.More() )
+  {
+    Wres = TopoDS::Wire( expw.Current() );
+    expw.Next();
+    if ( expw.More() )
+    {
+      double UMin, UMax, VMin, VMax;
+      double umin, umax, vmin, vmax;
+      BRepTools::UVBounds(face, Wres, UMin, UMax, VMin, VMax);
+
+      while ( expw.More() )
+      {
+        const TopoDS_Wire& W = TopoDS::Wire( expw.Current() );
+        BRepTools::UVBounds(face, W, umin, umax, vmin, vmax);
+
+        if ( (umin < UMin || Abs(umin - UMin) < prec) &&
+             (umax > UMax || Abs(umax - UMax) < prec) &&
+             (vmin < VMin || Abs(vmin - VMin) < prec) &&
+             (vmax > VMax || Abs(vmax - VMax) < prec) )
+        {
+          Wres = W;
+          UMin = umin;
+          UMax = umax;
+          VMin = vmin;
+          VMax = vmax;
+        }
+        expw.Next();
+      }
+    }
+  }
+  return Wres;
+}

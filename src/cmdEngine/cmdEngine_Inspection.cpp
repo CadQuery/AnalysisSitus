@@ -76,6 +76,7 @@
 #include <BRep_Builder.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
+#include <BRepTools.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <TopExp.hxx>
@@ -3104,6 +3105,57 @@ int ENGINE_RecognizeBaseFaces(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_GetOuterWire(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  if ( !cmdEngine::cf->ViewerPart )
+  {
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Part viewer is not available.");
+    return TCL_OK;
+  }
+
+  // Get part.
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(cmdEngine::model, part_n, part) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part is not initialized.");
+    return TCL_ERROR;
+  }
+
+  // Get AAG.
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
+
+  // Access selected faces (if any).
+  TColStd_PackedMapOfInteger selected;
+  asiEngine_Part( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() ).GetHighlightedFaces(selected);
+
+  // Get outer wire for each face.
+  for ( TColStd_PackedMapOfInteger::Iterator fit(selected); fit.More(); fit.Next() )
+  {
+    const int          fid  = fit.Key();
+    const TopoDS_Face& face = aag->GetFace(fid);
+
+    TopoDS_Wire wire = BRepTools::OuterWire(face);
+
+    if ( selected.Extent() == 1 )
+      interp->GetPlotter().REDRAW_SHAPE(argv[1], wire, Color_Default, 1., true);
+    else
+      interp->GetPlotter().DRAW_SHAPE(wire, Color_Default, 1., true, argv[1]);
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& data)
 {
@@ -3427,4 +3479,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Recognizes all base faces, i.e., the faces where features may exist.",
     //
     __FILE__, group, ENGINE_RecognizeBaseFaces);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("get-outer-wire",
+    //
+    "get-outer-wire <res>\n"
+    "\t Extracts outer wire of the selected face.",
+    //
+    __FILE__, group, ENGINE_GetOuterWire);
 }

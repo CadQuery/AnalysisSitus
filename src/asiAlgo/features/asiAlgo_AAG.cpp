@@ -269,46 +269,8 @@ TColStd_PackedMapOfInteger
 //-----------------------------------------------------------------------------
 
 TColStd_PackedMapOfInteger
-  asiAlgo_AAG::GetNeighborsThruX(const int                         face_idx,
-                                 const TColStd_PackedMapOfInteger& xEdges)
-{
-  TColStd_PackedMapOfInteger result;
-
-  // Get all neighbors of the face of interest
-  const TColStd_PackedMapOfInteger& neighbors = this->GetNeighbors(face_idx);
-
-  // Traverse all neighborhood arcs to see if there are any containing
-  // the edge of interest in the list of common edges
-  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
-  {
-    const int neighbor_idx = nit.Key();
-
-    // Get neighborhood attribute
-    Handle(asiAlgo_FeatureAttrAdjacency)
-      adjAttr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( this->GetArcAttribute( t_arc(face_idx, neighbor_idx) ) );
-    //
-    if ( adjAttr.IsNull() )
-      continue;
-
-    // Check the collection of common edges
-    TColStd_PackedMapOfInteger commonEdgeIndices = adjAttr->GetEdgeIndices();
-
-    // Subtract the restricted edges
-    commonEdgeIndices.Subtract(xEdges);
-
-    // If any edges remain, the neighbor face is added to the result
-    if ( !commonEdgeIndices.IsEmpty() )
-      result.Add(neighbor_idx);
-  }
-
-  return result;
-}
-
-//-----------------------------------------------------------------------------
-
-TColStd_PackedMapOfInteger
-  asiAlgo_AAG::GetNeighbors(const int                         face_idx,
-                            const TColStd_PackedMapOfInteger& edge_ids)
+  asiAlgo_AAG::GetNeighborsThru(const int                         face_idx,
+                                const TColStd_PackedMapOfInteger& edge_ids)
 {
   TColStd_PackedMapOfInteger result;
 
@@ -342,6 +304,44 @@ TColStd_PackedMapOfInteger
         break;
       }
     }
+  }
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
+TColStd_PackedMapOfInteger
+  asiAlgo_AAG::GetNeighborsThruX(const int                         face_idx,
+                                 const TColStd_PackedMapOfInteger& xEdges)
+{
+  TColStd_PackedMapOfInteger result;
+
+  // Get all neighbors of the face of interest
+  const TColStd_PackedMapOfInteger& neighbors = this->GetNeighbors(face_idx);
+
+  // Traverse all neighborhood arcs to see if there are any containing
+  // the edge of interest in the list of common edges
+  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
+  {
+    const int neighbor_idx = nit.Key();
+
+    // Get neighborhood attribute
+    Handle(asiAlgo_FeatureAttrAdjacency)
+      adjAttr = Handle(asiAlgo_FeatureAttrAdjacency)::DownCast( this->GetArcAttribute( t_arc(face_idx, neighbor_idx) ) );
+    //
+    if ( adjAttr.IsNull() )
+      continue;
+
+    // Check the collection of common edges
+    TColStd_PackedMapOfInteger commonEdgeIndices = adjAttr->GetEdgeIndices();
+
+    // Subtract the restricted edges
+    commonEdgeIndices.Subtract(xEdges);
+
+    // If any edges remain, the neighbor face is added to the result
+    if ( !commonEdgeIndices.IsEmpty() )
+      result.Add(neighbor_idx);
   }
 
   return result;

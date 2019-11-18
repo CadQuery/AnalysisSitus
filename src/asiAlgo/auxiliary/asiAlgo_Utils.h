@@ -1148,6 +1148,13 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT gp_XYZ
     ComputeAveragePoint(const std::vector<gp_XYZ>& pts);
 
+  //! Fixed version of BRepTools::OuterWire (see #31172 in the OpenCascade
+  //! bugtracker).
+  //! \param[in] face face in question.
+  //! \return outer wire.
+  asiAlgo_EXPORT TopoDS_Wire
+    OuterWire(const TopoDS_Face& face);
+
 };
 
 #endif

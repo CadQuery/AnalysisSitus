@@ -576,6 +576,13 @@ bool asiAlgo_AAG::HasNodeAttributes(const int node) const
 
 //-----------------------------------------------------------------------------
 
+const asiAlgo_AAG::t_node_attributes& asiAlgo_AAG::GetNodeAttributes() const
+{
+  return m_nodeAttributes;
+}
+
+//-----------------------------------------------------------------------------
+
 const asiAlgo_AAG::t_attr_set&
   asiAlgo_AAG::GetNodeAttributes(const int node) const
 {
@@ -613,6 +620,20 @@ bool asiAlgo_AAG::RemoveNodeAttribute(const int            node,
     return false;
 
   return (*attrSetPtr).ChangeMap().UnBind(attr_id);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::RemoveNodeAttributes()
+{
+  m_nodeAttributes.Clear();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::SetNodeAttributes(const t_node_attributes& attrs)
+{
+  m_nodeAttributes = attrs;
 }
 
 //-----------------------------------------------------------------------------

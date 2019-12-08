@@ -104,8 +104,8 @@ public:
 
   template <typename T>
   bool ExtractNumericBlockForKey(const std::string& key,
-                                  T&                 result,
-                                  const T            default_value = 0) const
+                                 T&                 result,
+                                 const T            default_value = 0) const
   {
     std::string block;
     if ( !this->ExtractBlockForKey(key, block) )

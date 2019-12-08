@@ -625,6 +625,11 @@ public:
   asiAlgo_EXPORT bool
     HasNodeAttributes(const int node) const;
 
+  //! Accessor for the entire collection of nodal attributes.
+  //! \return attributes associated with all graph node.
+  asiAlgo_EXPORT const t_node_attributes&
+    GetNodeAttributes() const;
+
   //! Accessor for the collection of nodal attributes.
   //! \param[in] node ID of the graph node of interest.
   //! \return attributes associated with the given graph node.
@@ -647,6 +652,15 @@ public:
   asiAlgo_EXPORT bool
     RemoveNodeAttribute(const int            node,
                         const Standard_GUID& attr_id);
+
+  //! Removes all attributes assigned to nodes.
+  asiAlgo_EXPORT void
+    RemoveNodeAttributes();
+
+  //! Sets the entire collection of nodal attributes.
+  //! \param[in] attrs attributes to set.
+  asiAlgo_EXPORT void
+    SetNodeAttributes(const t_node_attributes& attrs);
 
   //! Sets the given attribute for a node in AAG. If an attribute of this type
   //! is already there, this method does nothing and returns false.

@@ -233,6 +233,8 @@ int ENGINE_DumpAAGJSON(const Handle(asiTcl_Interp)& interp,
   }
   //
   aag->DumpJSON(filestream);
+  filestream << "\n";
+  //
   filestream.close();
 
   return TCL_OK;

@@ -746,9 +746,11 @@ public:
     Dump(Standard_OStream& out) const;
 
   //! Dumps AAG structure as JSON.
-  //! \param[in,out] out target stream.
+  //! \param[in,out] out        target stream.
+  //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
-    DumpJSON(Standard_OStream& out) const;
+    DumpJSON(Standard_OStream& out,
+             const int         whitespace = 0) const;
 
 protected:
 
@@ -780,34 +782,42 @@ protected:
     addMates(const TopTools_ListOfShape& mateFaces);
 
   //! Dumps all graph nodes with their attributes to JSON.
-  //! \param[in,out] out target output stream.
+  //! \param[in,out] out        target output stream.
+  //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
-    dumpNodesJSON(Standard_OStream& out) const;
+    dumpNodesJSON(Standard_OStream& out,
+                  const int         whitespace = 0) const;
 
   //! Dumps single graph node with its attributes to JSON.
-  //! \param[in]     node    ID of the graph node to dump.
-  //! \param[in]     isFirst indicates whether the currently dumped node is the
-  //!                        first one to correctly put commas.
-  //! \param[in,out] out     target output stream.
+  //! \param[in]     node       ID of the graph node to dump.
+  //! \param[in]     isFirst    indicates whether the currently dumped node is
+  //!                           the first one to correctly put commas.
+  //! \param[in,out] out        target output stream.
+  //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
     dumpNodeJSON(const int         node,
                  const bool        isFirst,
-                 Standard_OStream& out) const;
+                 Standard_OStream& out,
+                 const int         whitespace = 0) const;
 
   //! Dumps all graph arcs with their attributes to JSON.
-  //! \param[in,out] out target output stream.
+  //! \param[in,out] out        target output stream.
+  //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
-    dumpArcsJSON(Standard_OStream& out) const;
+    dumpArcsJSON(Standard_OStream& out,
+                 const int         whitespace = 0) const;
 
   //! Dumps the given graph arc with its attributes to JSON.
-  //! \param[in]     arc     graph arc in question.
-  //! \param[in]     isFirst indicates whether the currently dumped arc is the
-  //!                        first one to correctly put commas.
-  //! \param[in,out] out     target output stream.
+  //! \param[in]     arc        graph arc in question.
+  //! \param[in]     isFirst    indicates whether the currently dumped arc is
+  //!                           the first one to correctly put commas.
+  //! \param[in,out] out        target output stream.
+  //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
     dumpArcJSON(const t_arc&      arc,
                 const bool        isFirst,
-                Standard_OStream& out) const;
+                Standard_OStream& out,
+                const int         whitespace = 0) const;
 
 protected:
 

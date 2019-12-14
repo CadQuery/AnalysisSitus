@@ -960,22 +960,25 @@ void asiAlgo_AAG::Dump(Standard_OStream& out) const
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AAG::DumpJSON(Standard_OStream& out) const
+void asiAlgo_AAG::DumpJSON(Standard_OStream& out,
+                           const int         whitespaces) const
 {
+  std::string prefix(whitespaces, ' ');
+
   out << std::setprecision( std::numeric_limits<double>::max_digits10 );
-  out << "{";
-  out << "\n  \"nodes\": {";
+  out << prefix << "{";
+  out << "\n" << prefix << "  \"nodes\": {";
   //
-  this->dumpNodesJSON(out);
+  this->dumpNodesJSON(out, whitespaces);
   //
-  out << "\n  },"; // End 'nodes'.
+  out << "\n" << prefix << "  },"; // End 'nodes'.
   //
-  out << "\n  \"arcs\": [";
+  out << "\n" << prefix << "  \"arcs\": [";
   //
-  this->dumpArcsJSON(out);
+  this->dumpArcsJSON(out, whitespaces);
   //
-  out << "\n  ]"; // End 'arcs'.
-  out << "\n}\n";
+  out << "\n" << prefix << "  ]"; // End 'arcs'.
+  out << "\n" << prefix << "}";
 }
 
 //-----------------------------------------------------------------------------
@@ -1151,7 +1154,8 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
+void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out,
+                                const int         whitespaces) const
 {
   int nidx = 0;
   //
@@ -1159,7 +1163,7 @@ void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
   {
     const int nodeId = nit.Key();
     //
-    this->dumpNodeJSON(nodeId, nidx == 0, out);
+    this->dumpNodeJSON(nodeId, nidx == 0, out, whitespaces);
   }
 }
 
@@ -1167,8 +1171,11 @@ void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out) const
 
 void asiAlgo_AAG::dumpNodeJSON(const int         node,
                                const bool        isFirst,
-                               Standard_OStream& out) const
+                               Standard_OStream& out,
+                               const int         whitespaces) const
 {
+  std::string prefix(whitespaces, ' ');
+
   // One attribute which should always be dumped is the surface type.
   std::string
     surfName = asiAlgo_Utils::SurfaceName( BRep_Tool::Surface( this->GetFace(node) ) );
@@ -1176,12 +1183,12 @@ void asiAlgo_AAG::dumpNodeJSON(const int         node,
   if ( !isFirst )
     out << ",";
   //
-  out << "\n    \"" << node << "\": {";
-  out << "\n      \"surface\": \"" << surfName << "\"";
+  out << "\n" << prefix << "    \"" << node << "\": {";
+  out << "\n" << prefix << "      \"surface\": \"" << surfName << "\"";
   //
   if ( this->HasNodeAttributes(node) )
   {
-    out << ",\n      \"attributes\": [";
+    out << ",\n" << prefix << "      \"attributes\": [";
 
     // Dump attributes.
     const t_attr_set& attrs = this->GetNodeAttributes(node);
@@ -1193,18 +1200,19 @@ void asiAlgo_AAG::dumpNodeJSON(const int         node,
       if ( attridx != 0 )
         out << ",";
 
-      ait.GetAttr()->DumpJSON(out, 8);
+      ait.GetAttr()->DumpJSON(out, 8 + whitespaces);
     }
 
-    out << "\n      ]";
+    out << "\n" << prefix << "      ]";
   }
   //
-  out << "\n    }";
+  out << "\n" << prefix << "    }";
 }
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out) const
+void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out,
+                               const int         whitespaces) const
 {
   // Map to filter out the already visited arcs.
   NCollection_Map<t_arc, t_arc> visited;
@@ -1232,7 +1240,7 @@ void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out) const
       visited.Add(arc);
 
       // Dump arc.
-      this->dumpArcJSON(arc, arcidx == 0, out);
+      this->dumpArcJSON(arc, arcidx == 0, out, whitespaces);
     }
   }
 }
@@ -1241,8 +1249,11 @@ void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out) const
 
 void asiAlgo_AAG::dumpArcJSON(const t_arc&      arc,
                               const bool        isFirst,
-                              Standard_OStream& out) const
+                              Standard_OStream& out,
+                              const int         whitespaces) const
 {
+  std::string prefix(whitespaces, ' ');
+
   Handle(asiAlgo_FeatureAttr) arcAttr = this->GetArcAttribute(arc);
   //
   Handle(asiAlgo_FeatureAttrAngle)
@@ -1267,5 +1278,5 @@ void asiAlgo_AAG::dumpArcJSON(const t_arc&      arc,
   if ( !isFirst )
     out << ",";
   //
-  out << "\n    [\"" << arc.F1 << "\", \"" << arc.F2 << "\", \"" << angleTypeStr << "\"]";
+  out << "\n" << prefix << "    [\"" << arc.F1 << "\", \"" << arc.F2 << "\", \"" << angleTypeStr << "\"]";
 }

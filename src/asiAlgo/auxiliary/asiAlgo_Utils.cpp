@@ -151,6 +151,67 @@
 
 //-----------------------------------------------------------------------------
 
+void appendSurfaceDetails(const Handle(Geom_Surface)& surf,
+                          TCollection_AsciiString&    msg)
+{
+  // B-surface.
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
+  {
+    Handle(Geom_BSplineSurface)
+      bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
+    //
+    msg += "\n\t Degree U: ";
+    msg += bsurf->UDegree();
+    msg += "\n\t Degree V: ";
+    msg += bsurf->VDegree();
+    msg += "\n\t Num poles U: ";
+    msg += bsurf->NbUPoles();
+    msg += "\n\t Num poles V: ";
+    msg += bsurf->NbVPoles();
+  }
+
+  // Cylindrical surface.
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_CylindricalSurface) ) )
+  {
+    Handle(Geom_CylindricalSurface)
+      cylsurf = Handle(Geom_CylindricalSurface)::DownCast(surf);
+    //
+    msg += "\n\t Radius: ";
+    msg += cylsurf->Radius();
+  }
+
+  // For trimmed surfaces, we extract the basis surface for detalisation.
+  if ( surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+  {
+    Handle(Geom_RectangularTrimmedSurface)
+      tsurf = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
+
+    // Proceed with the basis surface.
+    Handle(Geom_Surface) basisSurf = tsurf->BasisSurface();
+
+    // Get parametric bounds.
+    double uMin, uMax, vMin, vMax;
+    basisSurf->Bounds(uMin, uMax, vMin, vMax);
+
+    // Dump.
+    msg += "\n\t Basis surface: ";
+    msg += basisSurf->DynamicType()->Name();
+    msg += "\n\t Min U parameter: ";
+    msg += uMin;
+    msg += "\n\t Max U parameter: ";
+    msg += uMax;
+    msg += "\n\t Min V parameter: ";
+    msg += vMin;
+    msg += "\n\t Max V parameter: ";
+    msg += vMax;
+
+    // Recursive call for the basis surface.
+    appendSurfaceDetails(basisSurf, msg);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 #ifdef USE_MOBIUS
 
 void asiAlgo_Utils_DrawSurfPts(const t_ptr<geom_Surface>&     surface,
@@ -563,21 +624,8 @@ TCollection_AsciiString
     msg += vMin;
     msg += "\n\t Max V parameter: ";
     msg += vMax;
-
-    if ( surf->IsInstance( STANDARD_TYPE(Geom_BSplineSurface) ) )
-    {
-      Handle(Geom_BSplineSurface)
-        bsurf = Handle(Geom_BSplineSurface)::DownCast(surf);
-      //
-      msg += "\n\t Degree U: ";
-      msg += bsurf->UDegree();
-      msg += "\n\t Degree V: ";
-      msg += bsurf->VDegree();
-      msg += "\n\t Num poles U: ";
-      msg += bsurf->NbUPoles();
-      msg += "\n\t Num poles V: ";
-      msg += bsurf->NbVPoles();
-    }
+    //
+    appendSurfaceDetails(surf, msg);
   }
 
   return msg;

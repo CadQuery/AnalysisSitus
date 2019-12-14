@@ -964,13 +964,13 @@ void asiAlgo_AAG::DumpJSON(Standard_OStream& out) const
 {
   out << std::setprecision( std::numeric_limits<double>::max_digits10 );
   out << "{";
-  out <<  "\n  \"nodes\": {";
+  out << "\n  \"nodes\": {";
   //
   this->dumpNodesJSON(out);
   //
   out << "\n  },"; // End 'nodes'.
   //
-  out <<  "\n  \"arcs\": [";
+  out << "\n  \"arcs\": [";
   //
   this->dumpArcsJSON(out);
   //

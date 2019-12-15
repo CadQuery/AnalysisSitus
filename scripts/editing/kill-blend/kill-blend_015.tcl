@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile cad/nist/nist_ctc_04.brep
+set datafile cad/blends/0092_nist_ctc_04.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)

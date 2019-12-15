@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/tail_wheel_lg_bracket_grabcad.brep
+set datafile cad/blends/0089_tail_wheel_lg_bracket_grabcad.brep
 set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1

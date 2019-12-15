@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile     cad/blends/boxblend_08.brep
+set datafile     cad/blends/0019_boxblend_08.brep
 set ref_ncomp    1
 set ref_ncompso  0
 set ref_nso      1

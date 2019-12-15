@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/MVE_100-3_AP203.stp
+set datafile cad/blends/0082_MVE_100-3_AP203.stp
 set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1

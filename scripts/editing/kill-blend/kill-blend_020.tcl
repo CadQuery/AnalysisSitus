@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile cad/sheet-metal/azv_clamp.brep
+set datafile cad/blends/0093_azv_clamp.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)

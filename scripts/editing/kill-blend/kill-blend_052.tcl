@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/extruder_drive_grabcad.stp
+set datafile cad/blends/0050_extruder_drive_grabcad.stp
 set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1

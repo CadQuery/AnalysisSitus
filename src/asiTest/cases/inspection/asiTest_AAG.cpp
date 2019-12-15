@@ -174,6 +174,8 @@ outcome asiTest_AAG::testAAG2JSON(const int   funcID,
   // Dump AAG to JSON.
   std::stringstream ss;
   aag->DumpJSON(ss);
+  //
+  ss << "\n";
 
 #if defined FILE_DEBUG
   std::ofstream filestream("aagdump.json");
@@ -185,6 +187,9 @@ outcome asiTest_AAG::testAAG2JSON(const int   funcID,
   }
   //
   aag->DumpJSON(filestream);
+  //
+  filestream << "\n";
+  //
   filestream.close();
 #endif
 

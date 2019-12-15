@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile cad/blends/ski_part_with_hole.step
+set datafile cad/blends/0086_ski_part_with_hole.step
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)

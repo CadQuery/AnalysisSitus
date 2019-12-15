@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/isolated_blends_test_05.brep
+set datafile cad/blends/0036_isolated_blends_test_05.brep
 set ref_ncomp    1
 set ref_ncompso  0
 set ref_nso      1

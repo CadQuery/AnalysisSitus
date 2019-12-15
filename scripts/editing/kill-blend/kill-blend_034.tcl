@@ -1,7 +1,7 @@
 clear
 
 # Set working variables.
-set datafile cad/blends/nist_ctc_01_asme1_ap242.brep
+set datafile cad/blends/0038_nist_ctc_01_asme1_ap242.brep
 set ref_ncomp    0
 set ref_ncompso  0
 set ref_nso      1

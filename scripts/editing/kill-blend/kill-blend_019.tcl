@@ -1,5 +1,5 @@
 # Set working variables.
-set datafile cad/blends/isolated_blends_test_05.brep
+set datafile cad/blends/0036_isolated_blends_test_05.brep
 
 # Read input geometry.
 set datadir $env(ASI_TEST_DATA)

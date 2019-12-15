@@ -49,9 +49,9 @@
 #define filename_brep_001 "cad/box.brep"
 #define filename_brep_002 "cad/ANC101_isolated_components.brep"
 #define filename_brep_003 "cad/ANC101.brep"
-#define filename_brep_004 "cad/blends/3boxesblend_06.brep"
-#define filename_brep_005 "cad/blends/customblend_04.brep"
-#define filename_brep_006 "cad/blends/nist_ctc_01_asme1_ap242.brep"
+#define filename_brep_004 "cad/blends/0006_3boxesblend_06.brep"
+#define filename_brep_005 "cad/blends/0028_customblend_04.brep"
+#define filename_brep_006 "cad/blends/0038_nist_ctc_01_asme1_ap242.brep"
 //
 #define filename_json_001 "reference/aag/testJSON01.json"
 #define filename_json_002 "reference/aag/testJSON02.json"

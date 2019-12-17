@@ -51,7 +51,16 @@ asiEngine_STEPWriterInput::asiEngine_STEPWriterInput(const Handle(asiEngine_Mode
 
 TopoDS_Shape asiEngine_STEPWriterInput::GetShape() const
 {
-  return m_model->GetPartNode()->GetShape(false);
+  // Check transformation: do not apply one if it is an identity matrix.
+  double tx, ty, tz, rx, ry, rz;
+  m_model->GetPartNode()->GetTransformation(tx, ty, tz, rx, ry, rz);
+  //
+  bool isIdentity = true;
+  //
+  if ( tx != 0. || ty != 0. || tz != 0. || rx != 0. || ry != 0. || rz != 0. )
+    isIdentity = false;
+
+  return m_model->GetPartNode()->GetShape(!isIdentity);
 }
 
 //-----------------------------------------------------------------------------

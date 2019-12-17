@@ -60,7 +60,7 @@
 //-----------------------------------------------------------------------------
 
 asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(ActAPI_ProgressEntry progress,
-                                                    ActAPI_PlotterEntry  plotter)
+                                                     ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_bColorMode      (true)
 {
@@ -72,9 +72,9 @@ asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(ActAPI_ProgressEntry progre
 //-----------------------------------------------------------------------------
 
 asiAlgo_WriteSTEPWithMeta::asiAlgo_WriteSTEPWithMeta(const Handle(XSControl_WorkSession)& WS,
-                                                    const bool                           scratch,
-                                                    ActAPI_ProgressEntry                 progress,
-                                                    ActAPI_PlotterEntry                  plotter)
+                                                     const bool                           scratch,
+                                                     ActAPI_ProgressEntry                 progress,
+                                                     ActAPI_PlotterEntry                  plotter)
 : ActAPI_IAlgorithm (progress, plotter),
   m_bColorMode      (true)
 {

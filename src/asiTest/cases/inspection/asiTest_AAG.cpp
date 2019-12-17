@@ -133,7 +133,7 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
     if ( iNext != refFaceIds[refIdx] )
     {
       cf->Progress.SendLogMessage( LogErr(Normal) << "Unexpected next ID (expected %1, while current is %2)."
-                                                           << refFaceIds[refIdx] << iNext );
+                                                  << refFaceIds[refIdx] << iNext );
       return res.failure();
     }
   }
@@ -142,7 +142,7 @@ outcome asiTest_AAG::testAllNeighborsIterator(const int               funcID,
   if ( refFaceIds.size() != refIdx )
   {
     cf->Progress.SendLogMessage( LogErr(Normal) << "Unexpected number of iterations (expected %1, while realized %2)."
-                                                         << int( refFaceIds.size() ) << int(refIdx) );
+                                                << int( refFaceIds.size() ) << int(refIdx) );
     return res.failure();
   }
 

@@ -55,7 +55,7 @@ asiVisu_BSurfPolesPipeline::asiVisu_BSurfPolesPipeline()
   this->Actor()->GetProperty()->SetLineStipplePattern(0xf0f0);
   this->Actor()->GetProperty()->SetLineStippleRepeatFactor(1);
   this->Actor()->GetProperty()->SetPointSize(5.0f);
-  this->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  //this->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 }
 
 //-----------------------------------------------------------------------------

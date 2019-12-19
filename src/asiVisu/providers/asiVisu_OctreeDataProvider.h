@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 25 November 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,59 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_h
-#define asiData_h
+#ifndef asiVisu_OctreeDataProvider_h
+#define asiVisu_OctreeDataProvider_h
 
-#define asiData_NotUsed(x) x
-
-#ifdef asiData_EXPORTS
-  #define asiData_EXPORT __declspec(dllexport)
-#else
-  #define asiData_EXPORT __declspec(dllimport)
-#endif
+// asiVisu includes
+#include <asiVisu_DataProvider.h>
 
 // asiData includes
-#include <asiData_ParameterFlags.h>
+#include <asiData_OctreeParameter.h>
 
-// Active Data includes
-#include <ActAPI_IParameter.h>
+//! Data provider for octree.
+class asiVisu_OctreeDataProvider : public asiVisu_DataProvider
+{
+public:
 
-//-----------------------------------------------------------------------------
-// Custom Active Data Parameters
-//-----------------------------------------------------------------------------
+  // OCCT RTTI
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_OctreeDataProvider, asiVisu_DataProvider)
 
-#define Parameter_AAG       Parameter_LASTFREE
-#define Parameter_BVH       Parameter_LASTFREE + 1
-#define Parameter_Naming    Parameter_LASTFREE + 2
-#define Parameter_Function  Parameter_LASTFREE + 3
-#define Parameter_Octree    Parameter_LASTFREE + 4
-//
-#define Parameter_LASTFREE_ASITUS Parameter_Octree
+public:
+
+  //! Ctor.
+  //! \param[in] param Octree Parameter to source the persistent data from.
+  asiVisu_EXPORT
+    asiVisu_OctreeDataProvider(const Handle(asiData_OctreeParameter)& param);
+
+public:
+
+  //! Returns associated Node ID.
+  //! \return Node ID.
+  virtual ActAPI_DataObjectId GetNodeID() const
+  {
+    return m_param->GetNode()->GetId();
+  }
+
+public:
+
+  //! \return root octree node.
+  asiVisu_EXPORT virtual void*
+    GetOctree() const;
+
+protected:
+
+  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
+  //! translation process. If any Parameter listed by this method is changed
+  //! (more precisely, if its MTime record is updated), the translation must
+  //! be repeated.
+  //! \return list of source Parameters.
+  asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
+    translationSources() const;
+
+protected:
+
+  Handle(asiData_OctreeParameter) m_param; //!< Octree Parameter.
+
+};
 
 #endif

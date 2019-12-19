@@ -55,6 +55,10 @@
 #include <asiEngine_Part.h>
 #include <asiEngine_Triangulation.h>
 
+// asiVisu includes
+#include <asiVisu_OctreePipeline.h>
+#include <asiVisu_PartPrs.h>
+
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
 #include <BRep_Builder.hxx>
@@ -105,9 +109,16 @@
   #include <mobius/geom_InterpolateMultiCurve.h>
   #include <mobius/geom_MakeBicubicBSurf.h>
   #include <mobius/geom_SkinSurface.h>
+  #include <mobius/poly_DistanceField.h>
+  #include <mobius/poly_DistanceFunc.h>
 
   using namespace mobius;
 #endif
+
+// VTK includes
+#pragma warning(push, 0)
+#include <vtkXMLUnstructuredGridWriter.h>
+#pragma warning(pop)
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
@@ -117,7 +128,7 @@
 #ifdef USE_MOBIUS
 
 void cmdMisc::DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
-                          const t_ptr<geom_Surface>&       surface,
+                          const t_ptr<geom_Surface>&     surface,
                           const TCollection_AsciiString& name)
 {
   // Sample patch.
@@ -1779,12 +1790,12 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
               const char**                 argv)
 {
-  if ( argc != 1 )
+  if ( argc != 3 && argc != 4 && argc != 5 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  // TODO: put your test code here.
+  // Test anything here.
 
   return TCL_OK;
 }
@@ -1800,9 +1811,9 @@ int MISC_TestFibers(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  const int    segments = 50;
+  /*const int    segments = 50;
   const int    poles    = 3;
-  const double radius   = 2.5;
+  const double radius   = 2.5;*/
 
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
   //
@@ -3626,6 +3637,325 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_BuildSVO(const Handle(asiTcl_Interp)& interp,
+                  int                          argc,
+                  const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 3 && argc != 4 && argc != 5 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  //const double toler = ( (argc >= 4) ? atof(argv[3]) : 1.0 );
+  const bool   doMC  = interp->HasKeyword(argc, argv, "mc");
+
+  // Get part shape.
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
+
+  /* =============================
+   *  Construct distance function.
+   * ============================= */
+
+  TIMER_NEW
+  TIMER_GO
+
+  ///
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "build-svo function is incomplete.");
+  ///
+
+  //poly_DistanceFunc*
+  //  pDistFunc = new poly_DistanceFunc(poly_DistanceFunc::Mode_Signed);
+  ////
+  //if ( !pDistFunc->Init(partShape) )
+  //{
+  //  delete pDistFunc;
+
+  //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to initialize distance function.");
+  //  return TCL_ERROR;
+  //}
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Construct implicit distance function")
+
+  /* ==========================
+   *  Construct distance field.
+   * ========================== */
+
+  TIMER_RESET
+  TIMER_GO
+
+  //poly_DistanceField*
+  //  pDDF = new poly_DistanceField( interp->GetProgress(), interp->GetPlotter() );
+  ////
+  //if ( !pDDF->Build(toler, pDistFunc) )
+  //{
+  //  delete pDDF;
+
+  //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
+  //  return TCL_ERROR;
+  //}
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build SVO for distance field")
+
+  //poly_SVO* pRoot = pDDF->GetRoot();
+
+  //// Measure SVO.
+  //int                      numSVONodes;
+  //const unsigned long long memBytes  = pRoot->GetMemoryInBytes(numSVONodes);
+  //const double             memMBytes = memBytes / (1024.*1024.);
+  ////
+  //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
+  //                                                      << numSVONodes << int(memBytes) << memMBytes );
+
+  //// Show voxels.
+  //M->OpenCommand();
+  //{
+  //  asiEngine_Part(M).SetOctree(pRoot);
+  //}
+  //M->CommitCommand();
+  ////
+  //cmdMisc::cf->ViewerPart->PrsMgr()->Actualize( M->GetPartNode() );
+
+  /* ===========================
+   *  Construct isosurface mesh.
+   * =========================== */
+
+  if ( doMC )
+  {
+    TIMER_RESET
+    TIMER_GO
+
+    //const double isoLevel = atof(argv[1]);
+    //const int    gridSize = atoi(argv[2]);
+
+    //t_xyz cornerMin = pDDF->CornerMin();
+    //t_xyz cornerMax = pDDF->CornerMax();
+    ////
+    //t_xyz margin( Max(0.0, isoLevel),
+    //              Max(0.0, isoLevel),
+    //              Max(0.0, isoLevel) );
+
+    //cornerMin -= margin;
+    //cornerMax += margin;
+
+    //Box3 domain(cornerMin, cornerMax);
+    //GridMarchingCubes MC(domain, gridSize);
+    //MC.SetUseCache(false);
+    ////
+    //if ( !MC.Perform(pSVO, isoLevel) )
+    //{
+    //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build tessellation for the distance function.");
+    //  return TCL_ERROR;
+    //}
+
+    //Mesh* Mesh = MC.GetLastMesh();
+    //Handle(Poly_Triangulation) tris = Mesh->ConvertToTriangulation();
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Marching cubes")
+
+    //interp->GetPlotter().REDRAW_TRIANGULATION("isomesh", tris, Color_Default, 1.);
+  }
+
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_DumpSVO(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+
+  // Get octree from the Part Node.
+  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
+  //
+  if ( !pOctree )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
+    return TCL_ERROR;
+  }
+
+  if ( !cmdMisc::cf->ViewerPart )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part viewer is not available.");
+    return TCL_ERROR;
+  }
+
+  // Get octree pipeline to access the data source.
+  Handle(asiVisu_PartPrs)
+    partPrs = Handle(asiVisu_PartPrs)::DownCast( cmdMisc::cf->ViewerPart->PrsMgr()->GetPresentation(partNode) );
+  //
+  Handle(asiVisu_OctreePipeline)
+    octreePl = Handle(asiVisu_OctreePipeline)::DownCast( partPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Octree) );
+  //
+  const vtkSmartPointer<asiVisu_OctreeSource>& octreeSource = octreePl->GetSource();
+
+  // Update and dump to file.
+  octreeSource->Update();
+  //
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter>
+    writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  //
+  writer->SetFileName( argv[1] );
+  writer->SetInputConnection( octreeSource->GetOutputPort() );
+  writer->Write();
+
+  // Dump.
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_SetSVO(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc < 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+
+  // Get octree from the Part Node.
+  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
+  //
+  if ( !pOctree )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
+    return TCL_ERROR;
+  }
+
+  // Prepare path.
+  std::vector<size_t> path;
+  //
+  for ( int k = 1; k < argc; ++k )
+    path.push_back( (size_t) atoi(argv[k]) );
+
+  // Access octree node.
+  poly_SVO* pNode = pOctree->FindChild(path);
+  //
+  if ( !pNode )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot access the requested node.");
+    return TCL_ERROR;
+  }
+
+  // Show voxels.
+  M->OpenCommand();
+  {
+    asiEngine_Part(M).SetOctree(pNode);
+  }
+  M->CommitCommand();
+  //
+  cmdMisc::cf->ViewerPart->PrsMgr()->Actualize( M->GetPartNode() );
+
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_EvalSVO(const Handle(asiTcl_Interp)& interp,
+                 int                          argc,
+                 const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+
+  // Get octree from the Part Node.
+  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
+  //
+  if ( !pOctree )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
+    return TCL_ERROR;
+  }
+
+  if ( !pOctree->HasScalars() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The active SVO node is uninitialized.");
+    return TCL_ERROR;
+  }
+
+  // Get coordinates of the point to evaluate.
+  const double x = atof(argv[1]);
+  const double y = atof(argv[2]);
+  const double z = atof(argv[3]);
+  //
+  interp->GetPlotter().REDRAW_POINT("P", gp_Pnt(x, y, z), Color_Red);
+  //
+  t_xyz P(x, y, z);
+
+  // Evaluate.
+  const double f = pOctree->Eval(P);
+  //
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "f(%1, %2, %3) = %4."
+                                                       << x << y << z << f);
+
+  return TCL_OK;
+#else
+  cmdMisc_NotUsed(argc);
+  cmdMisc_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3857,6 +4187,38 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts the control points of a B-surface to itself.",
     //
     __FILE__, group, MISC_InvertBPoles);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("build-svo",
+    //
+    "build-svo <iso-level> <grid-size> <toler> [-mc]\n"
+    "\t Builds SVO for the active part.",
+    //
+    __FILE__, group, MISC_BuildSVO);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-svo",
+    //
+    "dump-svo <filename>\n"
+    "\t Dumps the octree cells of the Part Node to the file of VTU format.",
+    //
+    __FILE__, group, MISC_DumpSVO);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-svo",
+    //
+    "set-svo <id0> [<id1> [<id2> [...]]]>\n"
+    "\t Shrinks the stored octree to the SVO cell with the specified address.",
+    //
+    __FILE__, group, MISC_SetSVO);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("eval-svo",
+    //
+    "eval-svo <x> <y> <z>\n"
+    "\t Evaluates SVO node (the corresponding implicit function) in the passed point.",
+    //
+    __FILE__, group, MISC_EvalSVO);
 
   // Load sub-modules.
   Commands_Coons(interp, data);

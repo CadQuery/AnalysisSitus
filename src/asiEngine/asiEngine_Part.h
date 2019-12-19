@@ -120,6 +120,9 @@ public:
     BuildBVH();
 
   asiEngine_EXPORT void
+    SetOctree(void* pOctree);
+
+  asiEngine_EXPORT void
     Clean(const bool cleanMeta = true);
 
   asiEngine_EXPORT TopoDS_Face

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 20 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 #include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 
+//-----------------------------------------------------------------------------
+
 //! Initializes VTK lookup table charged with default color scheme for
 //! scalar mapping. This default color scheme is built so that to
 //! cover the given range of scalar values.
@@ -64,6 +66,8 @@ vtkSmartPointer<vtkLookupTable>
   */
   return lookup;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initializes the passed VTK mapper with the given Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.
@@ -92,6 +96,8 @@ void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*      theMapper,
   theMapper->Update();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Initializes the passed VTK mapper with the default Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.
 //! \param theScalarsArrName [in]     name of the array storing the scalars
@@ -109,6 +115,8 @@ void asiVisu_MeshResultUtils::InitCellScalarMapper(vtkMapper*   theMapper,
   vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable(theRangeMin, theRangeMax);
   InitCellScalarMapper(theMapper, aLookup, theScalarsArrName, doInterpolation);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initializes the passed VTK mapper with the given Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.
@@ -137,6 +145,8 @@ void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*      theMapper,
   theMapper->Update();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Initializes the passed VTK mapper with the default Lookup Table.
 //! \param theMapper         [in/out] mapper to initialize.
 //! \param theScalarsArrName [in]     name of the array storing the scalars
@@ -154,6 +164,8 @@ void asiVisu_MeshResultUtils::InitPointScalarMapper(vtkMapper*   theMapper,
   vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable(theRangeMin, theRangeMax);
   InitPointScalarMapper(theMapper, aLookup, theScalarsArrName, doInterpolation);
 }
+
+//-----------------------------------------------------------------------------
 
 //! Initializes the passed scalar bar widget for scenes containing
 //! analysis results.
@@ -179,6 +191,8 @@ void asiVisu_MeshResultUtils::InitScalarBarWidget(vtkScalarBarWidget* scalarBarW
   //scalarBarWidget->GetScalarBarActor()->GetProperty()->SetColor(0., 0., 0.);
 }
 
+//-----------------------------------------------------------------------------
+
 //! Returns polygonal source for VTK glyph representing vectorial data.
 //! \return polygonal source of the mentioned glyph.
 vtkSmartPointer<vtkPolyDataAlgorithm> asiVisu_MeshResultUtils::GetVectorGlyph()
@@ -188,6 +202,8 @@ vtkSmartPointer<vtkPolyDataAlgorithm> asiVisu_MeshResultUtils::GetVectorGlyph()
   aResult->SetFilled(0);
   return aResult;
 }
+
+//-----------------------------------------------------------------------------
 
 //! Returns VTK Transformation object describing the relative transformation
 //! to apply on the vector glyphs. The actual transformation defined by this
@@ -201,6 +217,8 @@ vtkSmartPointer<vtkTransform> asiVisu_MeshResultUtils::GetVectorGlyphTransform()
   return aResult;
 }
 
+//-----------------------------------------------------------------------------
+
 //! Sets the predefined lighting options to the passed Actor.
 //! \param actor [in] Actor to adjust lighting options.
 void asiVisu_MeshResultUtils::ApplySoftLightingRules(vtkActor* actor)
@@ -208,4 +226,48 @@ void asiVisu_MeshResultUtils::ApplySoftLightingRules(vtkActor* actor)
   actor->GetProperty()->SetAmbient(0.9);
   actor->GetProperty()->SetDiffuse(0.1);
   actor->GetProperty()->SetSpecular(0.1);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_MeshResultUtils::GetColdHotColorForValue(const double val,
+                                                      const double min,
+                                                      const double max,
+                                                      const double toler,
+                                                      double&      r,
+                                                      double&      g,
+                                                      double&      b)
+
+{
+  static const int numColorNodes = 3;
+  double color[numColorNodes][3] =
+  {
+    0.0, 0.0, 1.0, // blue.
+    1.0, 1.0, 1.0, // white.
+    1.0, 0.0, 0.0  // red.
+  };
+
+  if ( val > -toler && val < toler )
+  {
+    // Use middle color for values in the safety range.
+    r = color[1][0];
+    g = color[1][1];
+    b = color[1][2];
+  }
+  else if ( val < -toler )
+  {
+    const double currFraction = (val - min) / (-toler - min);
+
+    r = color[0][0] * (1.0 - currFraction) + color[1][0] * currFraction;
+    g = color[0][1] * (1.0 - currFraction) + color[1][1] * currFraction;
+    b = color[0][2] * (1.0 - currFraction) + color[1][2] * currFraction;
+  }
+  else if ( val > toler )
+  {
+    const double currFraction = (val - toler) / (max - toler);
+
+    r = color[1][0] * (1.0 - currFraction) + color[2][0] * currFraction;
+    g = color[1][1] * (1.0 - currFraction) + color[2][1] * currFraction;
+    b = color[1][2] * (1.0 - currFraction) + color[2][2] * currFraction;
+  }
 }

@@ -54,50 +54,6 @@
 
 //-----------------------------------------------------------------------------
 
-void getColorCorrespondingToValue(double val,
-                                  double min,
-                                  double max,
-                                  double toler,
-                                  double& r,
-                                  double& g,
-                                  double& b)
-
-{
-  static const int numColorNodes = 3;
-  double color[numColorNodes][3] =
-  {
-    0.0, 0.0, 1.0, // blue
-    1.0, 1.0, 1.0, // white
-    1.0, 0.0, 0.0  // red
-  };
-
-  if ( val > -toler && val < toler )
-  {
-    // Use middle color for values in the safety range.
-    r = color[1][0];
-    g = color[1][1];
-    b = color[1][2];
-  }
-  else if ( val < -toler )
-  {
-    double currFraction = (val - min) / (-toler - min);
-
-    r = color[0][0] * (1.0 - currFraction) + color[1][0] * currFraction;
-    g = color[0][1] * (1.0 - currFraction) + color[1][1] * currFraction;
-    b = color[0][2] * (1.0 - currFraction) + color[1][2] * currFraction;
-  }
-  else if ( val > toler )
-  {
-    double currFraction = (val - toler) / (max - toler);
-
-    r = color[1][0] * (1.0 - currFraction) + color[2][0] * currFraction;
-    g = color[1][1] * (1.0 - currFraction) + color[2][1] * currFraction;
-    b = color[1][2] * (1.0 - currFraction) + color[2][2] * currFraction;
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 asiVisu_MeshNScalarPipeline::asiVisu_MeshNScalarPipeline()
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
@@ -198,7 +154,7 @@ void asiVisu_MeshNScalarPipeline::initLookupTable()
   for ( int i = 0; i < numColors + 1; i++ )
   {
     const double val = minScalar + ( (double) i / numColors ) * range;
-    getColorCorrespondingToValue(val, minScalar, maxScalar, m_fToler, r, g, b);
+    asiVisu_MeshResultUtils::GetColdHotColorForValue(val, minScalar, maxScalar, m_fToler, r, g, b);
     m_lookupTable->SetTableValue(i, r, g, b);
   }
 }

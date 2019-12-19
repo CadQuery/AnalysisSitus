@@ -37,6 +37,8 @@ set (part_H_FILES
   part/asiData_MetadataNode.h
   part/asiData_NamingAttr.h
   part/asiData_NamingParameter.h
+  part/asiData_OctreeAttr.h
+  part/asiData_OctreeParameter.h
   part/asiData_PartNode.h
   part/asiData_SurfDeviationNode.h
   part/asiData_SurfNode.h
@@ -61,6 +63,8 @@ set (part_CPP_FILES
   part/asiData_MetadataNode.cpp
   part/asiData_NamingAttr.cpp
   part/asiData_NamingParameter.cpp
+  part/asiData_OctreeAttr.cpp
+  part/asiData_OctreeParameter.cpp
   part/asiData_PartNode.cpp
   part/asiData_SurfDeviationNode.cpp
   part/asiData_SurfNode.cpp

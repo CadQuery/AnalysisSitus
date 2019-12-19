@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 28 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -68,10 +68,11 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Bool,          PID_HasVertices);
   REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
 
-  // Register custom Parameters specific to Analysis Situs application.
-  this->registerParameter(PID_AAG,    asiData_AAGParameter::Instance(),    false);
-  this->registerParameter(PID_BVH,    asiData_BVHParameter::Instance(),    false);
-  this->registerParameter(PID_Naming, asiData_NamingParameter::Instance(), false);
+  // Register custom Parameters specific to Analysis Situs.
+  this->registerParameter(PID_AAG,    asiData_AAGParameter    ::Instance(), false);
+  this->registerParameter(PID_BVH,    asiData_BVHParameter    ::Instance(), false);
+  this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
+  this->registerParameter(PID_Naming, asiData_NamingParameter ::Instance(), false);
 }
 
 //! Returns new DETACHED instance of Geometry Node ensuring its correct
@@ -86,9 +87,10 @@ Handle(ActAPI_INode) asiData_PartNode::Instance()
 void asiData_PartNode::Init(const bool resetNaming)
 {
   // Set empty initial B-Rep and AAG.
-  this->setShape ( TopoDS_Shape() );
-  this->setAAG   ( NULL );
-  this->setBVH   ( NULL );
+  this->setShape  ( TopoDS_Shape() );
+  this->setAAG    ( NULL );
+  this->setBVH    ( NULL );
+  this->setOctree ( NULL );
   //
   if ( resetNaming )
     this->setNaming ( NULL );
@@ -196,6 +198,12 @@ Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
 Handle(asiAlgo_BVHFacets) asiData_PartNode::GetBVH() const
 {
   return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
+}
+
+//! \return stored octree.
+void* asiData_PartNode::GetOctree() const
+{
+  return Handle(asiData_OctreeParameter)::DownCast( this->Parameter(PID_Octree) )->GetOctree();
 }
 
 //! \return stored naming service.
@@ -670,6 +678,13 @@ void asiData_PartNode::setAAG(const Handle(asiAlgo_AAG)& aag)
 void asiData_PartNode::setBVH(const Handle(asiAlgo_BVHFacets)& bvh)
 {
   Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
+}
+
+//! Sets octree to store.
+//! \param octree [in] octree to store.
+void asiData_PartNode::setOctree(void* octree)
+{
+  Handle(asiData_OctreeParameter)::DownCast( this->Parameter(PID_Octree) )->SetOctree(octree);
 }
 
 //! Sets naming service to store.

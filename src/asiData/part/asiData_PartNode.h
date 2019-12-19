@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 28 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,9 +43,10 @@
 #include <asiData_FaceNormsNode.h>
 #include <asiData_MetadataNode.h>
 #include <asiData_NamingParameter.h>
+#include <asiData_OctreeParameter.h>
 #include <asiData_SurfNode.h>
-#include <asiData_VertexNode.h>
 #include <asiData_TolerantShapesNode.h>
+#include <asiData_VertexNode.h>
 
 // Active Data includes
 #include <ActData_ShapeParameter.h>
@@ -81,6 +82,7 @@ public:
     PID_AutoAAG,          //!< Whether to build AAG automatically.
     PID_AAG,              //!< AAG structure.
     PID_BVH,              //!< BVH structure.
+    PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_Naming,           //!< Topology naming service.
   //----------------------//
   // Transformation       //
@@ -147,6 +149,9 @@ public:
 
   asiData_EXPORT Handle(asiAlgo_BVHFacets)
     GetBVH() const;
+
+  asiData_EXPORT void*
+    GetOctree() const;
 
   asiData_EXPORT Handle(asiAlgo_Naming)
     GetNaming() const;
@@ -296,8 +301,10 @@ protected:
 protected:
 
   //! We prohibit to set shape from external code as such update should
-  //! normally include update of AAG. Therefore, there should be
-  //! "smart update" defined at the upper level of software architecture.
+  //! normally include update of AAG, and, optionally, BVH, octree, etc.
+  //! Therefore, there should be "smart update" logic defined at the upper
+  //! level of software architecture, while simply substituting the B-rep
+  //! shape is not enough.
   asiData_EXPORT void
     setShape(const TopoDS_Shape&);
 
@@ -308,6 +315,10 @@ protected:
   //! See comment for setShape() method.
   asiData_EXPORT void
     setBVH(const Handle(asiAlgo_BVHFacets)&);
+
+  //! See comment for setShape() method.
+  asiData_EXPORT void
+    setOctree(void*);
 
   //! See comment for setShape() method.
   asiData_EXPORT void

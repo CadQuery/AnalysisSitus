@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 November 2015
+// Created on: 25 November 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2015-present, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,84 +28,70 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshNScalarPipeline_h
-#define asiVisu_MeshNScalarPipeline_h
+#ifndef asiVisu_OctreePipeline_h
+#define asiVisu_OctreePipeline_h
 
 // asiVisu includes
+#include <asiVisu_DataProvider.h>
+#include <asiVisu_OctreeSource.h>
 #include <asiVisu_Pipeline.h>
-#include <asiVisu_MeshNScalarDataProvider.h>
 
 // VTK includes
 #include <vtkLookupTable.h>
 
 //-----------------------------------------------------------------------------
 
-//! Visualization pipeline for meshes with nodal scalars.
-class asiVisu_MeshNScalarPipeline : public asiVisu_Pipeline
+//! Visualization pipeline for octrees.
+class asiVisu_OctreePipeline : public asiVisu_Pipeline
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshNScalarPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_OctreePipeline, asiVisu_Pipeline)
 
 public:
 
-  //! Ctor.
   asiVisu_EXPORT
-    asiVisu_MeshNScalarPipeline();
+    asiVisu_OctreePipeline();
 
 public:
 
-  //! Sets input data for the pipeline accepting Active Data entities.
-  //! Actually this method performs translation of DOMAIN data to VTK POLYGONAL
-  //! DATA.
-  //! \param[in] dp Data Provider.
   asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dp);
+    SetInput(const Handle(asiVisu_DataProvider)& DP);
+
+public:
+
+  //! \return octree source.
+  const vtkSmartPointer<asiVisu_OctreeSource>& GetSource() const
+  {
+    return m_source;
+  }
 
 protected:
 
   //! Initializes lookup table for scalar mapping.
-  asiVisu_EXPORT void
+  //! \return true if the lookup table has been initialized, false -- otherwise.
+  asiVisu_EXPORT bool
     initLookupTable();
 
 private:
 
-  //! Callback for AddToRenderer() base routine. Good place to adjust visualization
-  //! properties of the pipeline's actor.
-  virtual void callback_add_to_renderer(vtkRenderer* renderer);
-
-  //! Callback for RemoveFromRenderer() base routine.
-  virtual void callback_remove_from_renderer(vtkRenderer* renderer);
-
-  //! Callback for Update() routine.
-  virtual void callback_update();
+  virtual void callback_add_to_renderer      (vtkRenderer* pRenderer);
+  virtual void callback_remove_from_renderer (vtkRenderer* pRenderer);
+  virtual void callback_update               ();
 
 private:
 
   //! Copying prohibited.
-  asiVisu_MeshNScalarPipeline(const asiVisu_MeshNScalarPipeline&) = delete;
+  asiVisu_OctreePipeline(const asiVisu_OctreePipeline&) = delete;
 
   //! Assignment prohibited.
-  asiVisu_MeshNScalarPipeline& operator=(const asiVisu_MeshNScalarPipeline&) = delete;
+  asiVisu_OctreePipeline& operator=(const asiVisu_OctreePipeline&) = delete;
 
 protected:
 
-  //! Internally used filters.
-  enum FilterId
-  {
-    Filter_NScalar = 1, //!< Filter for populating point scalar array.
-    Filter_Normals,     //!< Filter for calculation of normals.
-    Filter_Last
-  };
-
-  //! Auxiliary map of internal filters by their correspondent IDs.
-  typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
-
-protected:
-
-  //! Map of internally used filters.
-  FilterMap m_filterMap;
+  //! Octree source.
+  vtkSmartPointer<asiVisu_OctreeSource> m_source;
 
   //! Lookup table.
   vtkSmartPointer<vtkLookupTable> m_lookupTable;

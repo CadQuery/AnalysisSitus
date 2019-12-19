@@ -461,6 +461,7 @@ set (VTK_LIB_FILES
   vtkIOCore-8.0
   vtkIOImage-8.0
   vtkIOExport-8.0
+  vtkIOXML-8.0
   vtkImagingCore-8.0
   vtkInteractionStyle-8.0
 )

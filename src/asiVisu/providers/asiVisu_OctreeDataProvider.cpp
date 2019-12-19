@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 25 November 2019
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2019-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,30 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_h
-#define asiData_h
-
-#define asiData_NotUsed(x) x
-
-#ifdef asiData_EXPORTS
-  #define asiData_EXPORT __declspec(dllexport)
-#else
-  #define asiData_EXPORT __declspec(dllimport)
-#endif
-
-// asiData includes
-#include <asiData_ParameterFlags.h>
-
-// Active Data includes
-#include <ActAPI_IParameter.h>
+// Own include
+#include <asiVisu_OctreeDataProvider.h>
 
 //-----------------------------------------------------------------------------
-// Custom Active Data Parameters
+
+asiVisu_OctreeDataProvider::asiVisu_OctreeDataProvider(const Handle(asiData_OctreeParameter)& param)
+: asiVisu_DataProvider (),
+  m_param              (param)
+{}
+
 //-----------------------------------------------------------------------------
 
-#define Parameter_AAG       Parameter_LASTFREE
-#define Parameter_BVH       Parameter_LASTFREE + 1
-#define Parameter_Naming    Parameter_LASTFREE + 2
-#define Parameter_Function  Parameter_LASTFREE + 3
-#define Parameter_Octree    Parameter_LASTFREE + 4
-//
-#define Parameter_LASTFREE_ASITUS Parameter_Octree
+void* asiVisu_OctreeDataProvider::GetOctree() const
+{
+  return m_param->GetOctree();
+}
 
-#endif
+//-----------------------------------------------------------------------------
+
+Handle(ActAPI_HParameterList)
+  asiVisu_OctreeDataProvider::translationSources() const
+{
+  ActAPI_ParameterStream out;
+  out << m_param;
+
+  return out.List;
+}

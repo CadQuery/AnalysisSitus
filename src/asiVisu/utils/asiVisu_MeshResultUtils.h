@@ -96,6 +96,23 @@ namespace asiVisu_MeshResultUtils
 
   asiVisu_EXPORT void
     ApplySoftLightingRules(vtkActor* actor);
+
+  //! Maps the passed scalar value to a color in range cold-to-hot (blue-to-red).
+  //! \param[in]  val   value to map.
+  //! \param[in]  min   min value of range.
+  //! \param[in]  max   max value of range.
+  //! \param[in]  toler vicinity of zero where all scalars are mapped to white.
+  //! \param[out] r     floating-point red component of the mapped color.
+  //! \param[out] g     floating-point green component of the mapped color.
+  //! \param[out] b     floating-point blue component of the mapped color.
+  asiVisu_EXPORT void
+    GetColdHotColorForValue(const double val,
+                            const double min,
+                            const double max,
+                            const double toler,
+                            double&      r,
+                            double&      g,
+                            double&      b);
 };
 
 #endif

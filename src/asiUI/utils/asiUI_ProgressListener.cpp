@@ -139,8 +139,6 @@ void asiUI_ProgressListener::onStep()
     // Set message
     m_statusBar->SetProgressText(Msg);
   }
-
-  QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -149,8 +147,6 @@ void asiUI_ProgressListener::onStep()
 void asiUI_ProgressListener::onMessage()
 {
   m_statusBar->SetProgressText( m_notifier->MessageKey() );
-  //
-  QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -170,7 +166,8 @@ void asiUI_ProgressListener::onLogMessage()
   // Show messages to the user
   m_logger->Dispatch(listFromAlgo);
 
-  QCoreApplication::processEvents();
+  // Update widget.
+  m_logger->GetLogWindow()->repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -229,8 +226,6 @@ void asiUI_ProgressListener::onCancel()
 
   // disable stop button...
   pStatusBar->EnableCancelButton(false);
-  //
-  QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------

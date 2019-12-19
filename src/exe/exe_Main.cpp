@@ -324,47 +324,130 @@ VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);
 VTK_MODULE_INIT(vtkRenderingFreeType)
 
-int main(int, char *[])
+#include <iostream>
+
+#include <Standard_Character.hxx>
+
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <BRepTools.hxx>
+#include <BRep_Builder.hxx>
+#include <MeshTools_VoxelData.hxx>
+#include <MeshTools_DistanceFunction.hxx>
+#include <TopTools_ListOfShape.hxx>
+
+#include <vtkSmartPointer.h>
+#include <vtkFloatArray.h>
+#include <vtkIntArray.h>
+#include <vtkImageData.h>
+#include <vtkCellData.h>
+#include <vtkXMLImageDataWriter.h>
+
+using namespace std;
+
+#define NX 256
+#define NY 256
+#define NZ 128
+
+void computSifSdf(MeshTools_VoxelData& sif, MeshTools_VoxelData& sdf, MeshTools_DistanceFunction& distFunction)
 {
+  float *sdfData = (float*)sdf.Data();
+  int   *sifData = (int*)sif.Data();
 
-  // Create a sphere
-  vtkSmartPointer<vtkSphereSource> sphereSource = 
-    vtkSmartPointer<vtkSphereSource>::New();
-    
-  // Create a mapper and actor
-  vtkSmartPointer<vtkPolyDataMapper> mapper = 
-    vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInputConnection(sphereSource->GetOutputPort());
-  
-  vtkSmartPointer<vtkActor> actor = 
-    vtkSmartPointer<vtkActor>::New();
-  actor->SetMapper(mapper);
-  
-  // A renderer and render window
-  vtkSmartPointer<vtkRenderer> renderer = 
-    vtkSmartPointer<vtkRenderer>::New();
-  vtkSmartPointer<vtkRenderWindow> renderWindow = 
-    vtkSmartPointer<vtkRenderWindow>::New();
-  renderWindow->SetOffScreenRendering( 1 ); 
-  renderWindow->AddRenderer(renderer);
+  //#pragma omp parallel for
+  for (int iz = 0; iz < sdf.SizeZ(); iz++)
+    for (int iy = 0; iy < sdf.SizeY(); iy++)
+      for (int ix = 0; ix < sdf.SizeX(); ix++)
+      {
+        MeshTools_Vec3 voxelMinCorner = sdf.VoxelMinCorner(ix, iy, iz),
+                       voxelMaxCorner = sdf.VoxelMaxCorner(ix, iy, iz);
 
-  // Add the actors to the scene
-  renderer->AddActor(actor);
-  renderer->SetBackground(1,1,1); // Background color white
+        MeshTools_Vec3 voxelCentre = voxelMinCorner.Multiplied(0.5) + voxelMaxCorner.Multiplied(0.5);
+        int sifValue;
 
-  renderWindow->Render();
+        *sdfData = (float) distFunction.Eval(voxelCentre, 0, &sifValue);
+        *sifData = sifValue;
 
-  vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = 
-    vtkSmartPointer<vtkWindowToImageFilter>::New();
-  windowToImageFilter->SetInput(renderWindow);
-  windowToImageFilter->Update();
-  
-  vtkSmartPointer<vtkPNGWriter> writer = 
-    vtkSmartPointer<vtkPNGWriter>::New();
-  writer->SetFileName("C:/users/ssv/desktop/screenshot.png");
-  writer->SetInputConnection(windowToImageFilter->GetOutputPort());
-  writer->Write();
+        if (*sdfData > 0) *sifData = 0;
 
-  return EXIT_SUCCESS;
+        sdfData++;
+        sifData++;
+      }
+}
+
+void writeToVTK(MeshTools_VoxelData& sif, MeshTools_VoxelData& sdf, string vtkFilename)
+{
+  vtkSmartPointer<vtkFloatArray> arrSdf = vtkSmartPointer<vtkFloatArray>::New();
+  arrSdf->SetNumberOfComponents(1);
+  arrSdf->SetName("sdf");
+
+  vtkSmartPointer<vtkIntArray> arrSif = vtkSmartPointer<vtkIntArray>::New();
+  arrSif->SetNumberOfComponents(1);
+  arrSif->SetName("sif");
+
+  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+  imageData->SetDimensions(sdf.SizeX(), sdf.SizeY(), sdf.SizeZ());
+
+  double spacing[3] = { 1.0 / NX, 1.0 / NX, 1.0 / NX };
+	imageData->SetSpacing(spacing);
+	double origin[3] = { 0, 0, 0 };
+	imageData->SetOrigin(origin);
+
+	/*
+	Note: we are working cell centered, therefore we need to stop to -1 from the end
+	because the 1st point would be 0.5, then 1.5 ... until N-0.5
+	*/
+	for (int z = 0; z < sdf.SizeZ() - 1; z++)
+	{
+		for (int y = 0; y < sdf.SizeY() - 1; y++)
+		{
+			for (int x = 0; x < sdf.SizeX() - 1; x++)
+			{
+				arrSdf->InsertNextValue(*(float*)sdf.Value(x, y, z));
+				arrSif->InsertNextValue(*(int*)sif.Value(x, y, z));
+			}
+		}
+	}
+
+	imageData->GetCellData()->AddArray(arrSdf);
+	imageData->GetCellData()->AddArray(arrSif);
+
+	vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+	writer->SetFileName(vtkFilename.c_str());
+	writer->SetInputData(imageData);
+	writer->Write();
+}
+
+int main(int argc, char *argv[])
+{
+  // Read data
+  string filename1 = "c:\\Users\\ssv\\Desktop\\shape_1.brep",
+         filename2 = "c:\\Users\\ssv\\Desktop\\shape_2.brep";
+
+	TopoDS_Shape shape1, shape2;
+	BRep_Builder b;
+	BRepTools::Read(shape1, filename1.c_str(), b);
+	BRepTools::Read(shape2, filename2.c_str(), b);
+
+	TopTools_ListOfShape aLS;
+	aLS.Append(shape1);
+	aLS.Append(shape2);
+	
+	// Init voxel data
+	MeshTools_VoxelData sdf(MeshTools_Vec3(0, 0, 0), MeshTools_Vec3(0.1, 0.1, 0.1/4)),
+                      sif(MeshTools_Vec3(0, 0, 0), MeshTools_Vec3(0.1, 0.1, 0.1/4));
+
+	// Init distance function
+	MeshTools_DistanceFunction distFunction(MeshTools_DistanceFunction::Type_SDF);
+	distFunction.Init(aLS);
+	sdf.Init(MeshTools_DT_REAL32, NX, NY, NZ);
+	sif.Init(MeshTools_DT_INT32,  NX, NY, NZ);
+
+	// Compute
+	computSifSdf(sif, sdf, distFunction);
+
+	// Write to VTK
+	writeToVTK(sif, sdf, "output.vti");
+
 }
 #endif

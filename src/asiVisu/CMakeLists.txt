@@ -68,6 +68,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_MeshEVectorPipeline.h
   pipelines/asiVisu_MeshNScalarPipeline.h
   pipelines/asiVisu_MeshPipeline.h
+  pipelines/asiVisu_OctreePipeline.h
   pipelines/asiVisu_PartEdgesPipeline.h
   pipelines/asiVisu_PartPipeline.h
   pipelines/asiVisu_PartPipelineBase.h
@@ -106,6 +107,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_MeshEVectorPipeline.cpp
   pipelines/asiVisu_MeshNScalarPipeline.cpp
   pipelines/asiVisu_MeshPipeline.cpp
+  pipelines/asiVisu_OctreePipeline.cpp
   pipelines/asiVisu_PartEdgesPipeline.cpp
   pipelines/asiVisu_PartPipeline.cpp
   pipelines/asiVisu_PartPipelineBase.cpp
@@ -220,6 +222,7 @@ set (providers_H_FILES
   providers/asiVisu_LawDataProvider.h
   providers/asiVisu_MeshDataProvider.h
   providers/asiVisu_MeshNScalarDataProvider.h
+  providers/asiVisu_OctreeDataProvider.h
   providers/asiVisu_PartDataProvider.h
   providers/asiVisu_PointsDataProvider.h
   providers/asiVisu_PointsFromListDataProvider.h
@@ -253,6 +256,7 @@ set (providers_CPP_FILES
   providers/asiVisu_IVSurfaceDataProvider.cpp
   providers/asiVisu_LawDataProvider.cpp
   providers/asiVisu_MeshDataProvider.cpp
+  providers/asiVisu_OctreeDataProvider.cpp
   providers/asiVisu_PartDataProvider.cpp
   providers/asiVisu_PointsDataProvider.cpp
   providers/asiVisu_PointsFromListDataProvider.cpp
@@ -310,6 +314,7 @@ set (sources_H_FILES
   sources/asiVisu_FuncLevelsSourceBase.h
   sources/asiVisu_FuncUnivariateSource.h
   sources/asiVisu_MeshSource.h
+  sources/asiVisu_OctreeSource.h
   sources/asiVisu_PCurveSource.h
   sources/asiVisu_PDomainSource.h
   sources/asiVisu_PointsSource.h
@@ -336,6 +341,7 @@ set (sources_CPP_FILES
   sources/asiVisu_CurveSourceBase.cpp
   sources/asiVisu_FuncUnivariateSource.cpp
   sources/asiVisu_MeshSource.cpp
+  sources/asiVisu_OctreeSource.cpp
   sources/asiVisu_PCurveSource.cpp
   sources/asiVisu_PDomainSource.cpp
   sources/asiVisu_PointsSource.cpp

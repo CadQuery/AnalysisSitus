@@ -37,7 +37,11 @@
 // asiAlgo includes
 #include <asiAlgo_AttrFaceColor.h>
 #include <asiAlgo_FileDumper.h>
+#include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_Utils.h>
+
+// asiData includes
+#include <asiData_IVTessItemNode.h>
 
 // asiUI includes
 #include <asiUI_DialogOCAFDump.h>
@@ -369,6 +373,53 @@ int ENGINE_SetAsPart(const Handle(asiTcl_Interp)& interp,
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SetAsTriangulation(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiData_IVTessItemNode)
+    node = Handle(asiData_IVTessItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( node.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find tessellation with name %1." << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Get triangulation to convert.
+  Handle(Poly_Triangulation) trisToSet;
+  //
+  if ( !asiAlgo_MeshConvert::FromPersistent(node->GetMesh(), trisToSet) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot convert tessellation to triangulation.");
+    return TCL_ERROR;
+  }
+
+  // It is usually convenient to erase the source Node.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(node);
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    cmdEngine::model->GetTriangulationNode()->SetTriangulation(trisToSet);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetTriangulationNode() );
 
   return TCL_OK;
 }
@@ -845,6 +896,15 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
     "\t in the section of imperative plotter data.",
     //
     __FILE__, group, ENGINE_SetAsPart);
+
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("set-as-triangulation",
+    //
+    "set-as-triangulation <varName>\n"
+    "\t Sets the object with the given name as the active triangulation.",
+    //
+    __FILE__, group, ENGINE_SetAsTriangulation);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-id",

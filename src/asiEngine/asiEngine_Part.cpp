@@ -605,6 +605,22 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 
 //-----------------------------------------------------------------------------
 
+//! Sets octree for the part.
+//! \param[in] pOctree octree to set.
+void asiEngine_Part::SetOctree(void* pOctree)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+
+  // Store in OCAF.
+  Handle(asiData_OctreeParameter)
+    octreeParam = Handle(asiData_OctreeParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Octree) );
+  //
+  octreeParam->SetOctree(pOctree);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Cleans up Data Model structure related to the Part Node.
 void asiEngine_Part::Clean(const bool cleanMeta)
 {

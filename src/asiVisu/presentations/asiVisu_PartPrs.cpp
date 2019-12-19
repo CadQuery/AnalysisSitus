@@ -32,10 +32,12 @@
 #include <asiVisu_PartPrs.h>
 
 // asiVisu includes
-#include <asiVisu_ShapeDisplayMode.h>
+#include <asiVisu_OctreeDataProvider.h>
+#include <asiVisu_OctreePipeline.h>
 #include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartEdgesPipeline.h>
 #include <asiVisu_PartPipeline.h>
+#include <asiVisu_ShapeDisplayMode.h>
 
 // VTK includes
 #include <vtkCellData.h>
@@ -62,32 +64,36 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
 {
   Handle(asiData_PartNode) partNode = Handle(asiData_PartNode)::DownCast(N);
 
-  // Create Data Provider
+  /* ====================================
+   *  Pipeline for shaded representation.
+   * ==================================== */
+
+  // Create Data Provider.
   Handle(asiVisu_PartDataProvider) dp = new asiVisu_PartDataProvider(partNode);
 
-  // Main pipeline
+  // Main pipeline.
   Handle(asiVisu_PartPipeline) pl = new asiVisu_PartPipeline();
   //
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, dp );
 
-  // Set point size and line width
+  // Set point size and line width.
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
-  pl->Actor()->GetProperty()->SetLineWidth(2.5f);
-  pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  //pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
+  //pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 
-  // Colorize backface so that inverted faces are immediately visible
+  // Colorize backface so that inverted faces are immediately visible.
   vtkSmartPointer<vtkProperty> propBackface = vtkSmartPointer<vtkProperty>::New();
   propBackface->DeepCopy( pl->Actor()->GetProperty() );
   propBackface->SetColor(1.0, 0.0, 0.0);
   pl->Actor()->SetBackfaceProperty(propBackface);
 
   /* ====================
-   *  Pipeline for edges
+   *  Pipeline for edges.
    * ==================== */
 
-  // Create pipeline for edges
+  // Create pipeline for edges.
   Handle(asiVisu_PartEdgesPipeline)
     contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
 
@@ -95,15 +101,38 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  //contour_pl->Actor()->GetProperty()->SetOpacity(0.65);
+  contour_pl->Actor()->GetProperty()->SetOpacity(0.65);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  //contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
+  //contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
   contour_pl->Actor()->SetPickable(0);
   contour_pl->Actor()->GetProperty()->LightingOff();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
+
+  // Resolve coincident topology between shaded facets and border links
+  contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
+
+  /* =====================
+   *  Pipeline for octree.
+   * ===================== */
+
+  Handle(asiData_OctreeParameter)
+    octreeParam = Handle(asiData_OctreeParameter)::DownCast( partNode->Parameter(asiData_PartNode::PID_Octree) );
+
+  // Create data provider.
+  Handle(asiVisu_OctreeDataProvider)
+    octree_dp = new asiVisu_OctreeDataProvider(octreeParam);
+
+  // Create pipeline for octrees.
+  Handle(asiVisu_OctreePipeline)
+    octree_pl = new asiVisu_OctreePipeline;
+  //
+  this->addPipeline        ( Pipeline_Octree, octree_pl );
+  this->assignDataProvider ( Pipeline_Octree, octree_dp );
+
+  octree_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 }
 
 //-----------------------------------------------------------------------------

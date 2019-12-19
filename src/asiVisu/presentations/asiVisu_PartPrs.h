@@ -61,7 +61,8 @@ public:
   enum PipelineId
   {
     Pipeline_Main = 1,
-    Pipeline_Contour
+    Pipeline_Contour,
+	Pipeline_Octree
   };
 
 public:

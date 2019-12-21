@@ -53,7 +53,8 @@ public:
   asiUI_EXPORT
     asiUI_ProgressListener(const Handle(asiUI_IStatusBar)&         statusBar,
                            const Handle(ActAPI_IProgressNotifier)& notifier,
-                           const Handle(asiUI_Logger)&             logger);
+                           const Handle(asiUI_Logger)&             logger,
+                           const bool                              processEvents = false);
 
   asiUI_EXPORT virtual
     ~asiUI_ProgressListener();
@@ -74,9 +75,10 @@ protected slots:
 
 protected:
 
-  Handle(asiUI_IStatusBar)         m_statusBar; //!< Status bar.
-  Handle(ActAPI_IProgressNotifier) m_notifier;  //!< Progress notifier.
-  Handle(asiUI_Logger)             m_logger;    //!< Logger instance.
+  Handle(asiUI_IStatusBar)         m_statusBar;      //!< Status bar.
+  Handle(ActAPI_IProgressNotifier) m_notifier;       //!< Progress notifier.
+  Handle(asiUI_Logger)             m_logger;         //!< Logger instance.
+  bool                             m_bProcessEvents; //!< Whether to process Qt events on updates.
 
 };
 

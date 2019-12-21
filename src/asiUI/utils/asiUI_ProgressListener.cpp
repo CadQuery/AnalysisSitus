@@ -44,16 +44,22 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-//! \param statusBar [in] status bar.
-//! \param notifier  [in] progress notifier.
-//! \param logger    [in] logger instance.
+//! \param statusBar     [in] status bar.
+//! \param notifier      [in] progress notifier.
+//! \param logger        [in] logger instance.
+//! \param processEvents [in] enables/disables Qt events processing. The processing
+//!                           is done to make the progress indication more responsive,
+//!                           though it may slow down the application and lead to
+//!                           strange side effects on VTK visualization.
 asiUI_ProgressListener::asiUI_ProgressListener(const Handle(asiUI_IStatusBar)&         statusBar,
                                                const Handle(ActAPI_IProgressNotifier)& notifier,
-                                               const Handle(asiUI_Logger)&             logger)
-: QObject     (),
-  m_statusBar (statusBar),
-  m_notifier  (notifier),
-  m_logger    (logger)
+                                               const Handle(asiUI_Logger)&             logger,
+                                               const bool                              processEvents)
+: QObject          (),
+  m_statusBar      (statusBar),
+  m_notifier       (notifier),
+  m_logger         (logger),
+  m_bProcessEvents (processEvents)
 {}
 
 //-----------------------------------------------------------------------------
@@ -139,6 +145,9 @@ void asiUI_ProgressListener::onStep()
     // Set message
     m_statusBar->SetProgressText(Msg);
   }
+
+  if ( m_bProcessEvents )
+    QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -147,6 +156,9 @@ void asiUI_ProgressListener::onStep()
 void asiUI_ProgressListener::onMessage()
 {
   m_statusBar->SetProgressText( m_notifier->MessageKey() );
+
+  if ( m_bProcessEvents )
+    QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -166,8 +178,8 @@ void asiUI_ProgressListener::onLogMessage()
   // Show messages to the user
   m_logger->Dispatch(listFromAlgo);
 
-  // Update widget.
-  m_logger->GetLogWindow()->repaint();
+  if ( m_bProcessEvents )
+    QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------
@@ -226,6 +238,9 @@ void asiUI_ProgressListener::onCancel()
 
   // disable stop button...
   pStatusBar->EnableCancelButton(false);
+
+  if ( m_bProcessEvents )
+    QCoreApplication::processEvents();
 }
 
 //-----------------------------------------------------------------------------

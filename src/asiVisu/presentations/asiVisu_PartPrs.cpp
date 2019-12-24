@@ -80,8 +80,8 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // Set point size and line width.
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  //pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  //pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
+  pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 
   // Colorize backface so that inverted faces are immediately visible.
   vtkSmartPointer<vtkProperty> propBackface = vtkSmartPointer<vtkProperty>::New();
@@ -103,16 +103,13 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
   contour_pl->Actor()->GetProperty()->SetOpacity(0.65);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  //contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  //contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
+  contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
   contour_pl->Actor()->SetPickable(0);
   contour_pl->Actor()->GetProperty()->LightingOff();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
-
-  // Resolve coincident topology between shaded facets and border links
-  contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
 
   /* =====================
    *  Pipeline for octree.

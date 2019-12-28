@@ -225,13 +225,25 @@ public:
   asiTcl_EXPORT int
     ErrorOnWrongArgs(const char* cmd);
 
+  //! This function gathers the indices of all keys like `-<key>` into a
+  //! single map.
+  //! \param[in]  argc number of command line arguments.
+  //! \param[in]  argv command line arguments.
+  //! \param[out] ids  gathered indices. The passed map is not cleaned up.
+  asiTcl_EXPORT void
+    GetIndicesOfKeys(const int                   argc,
+                     const char**                argv,
+                     TColStd_PackedMapOfInteger& ids) const;
+
   //! Returns true if the passed command line option specifies the expected key.
   //! \param[in] opt option to check.
-  //! \param[in] key keyword to check (without any "-" prefix).
+  //! \param[in] key keyword to check (without any "-" prefix). You can pass
+  //!                the empty string here. If you do so, the function will
+  //!                only check that the `opt` argument starts with "-" prefix.
   //! \return true/false.
   asiTcl_EXPORT bool
     IsKeyword(const TCollection_AsciiString& opt,
-              const TCollection_AsciiString& key) const;
+              const TCollection_AsciiString& key = "") const;
 
   //! Checks whether the passed command line arguments contain the given
   //! key.
@@ -243,6 +255,19 @@ public:
     HasKeyword(const int                      argc,
                const char**                   argv,
                const TCollection_AsciiString& key) const;
+
+  //! Checks whether the passed command line arguments contain the given
+  //! key. If yes, the index of the corresponding argument is returned.
+  //! \param[in]  argc number of command line arguments.
+  //! \param[in]  argv command line arguments.
+  //! \param[in]  key  keyword in question.
+  //! \param[out] idx  index of the key argument, if found.
+  //! \return true/false.
+  asiTcl_EXPORT bool
+    HasKeyword(const int                      argc,
+               const char**                   argv,
+               const TCollection_AsciiString& key,
+               int&                           idx) const;
 
   //! Searches for the specified key in the list of command line arguments.
   //! If such a key exists, its succeeding argument is taken as value.

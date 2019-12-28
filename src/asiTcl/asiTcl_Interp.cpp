@@ -501,13 +501,38 @@ int asiTcl_Interp::ErrorOnWrongArgs(const char* cmd)
 
 //-----------------------------------------------------------------------------
 
+void asiTcl_Interp::GetIndicesOfKeys(const int                   argc,
+                                     const char**                argv,
+                                     TColStd_PackedMapOfInteger& ids) const
+{
+  for ( int k = 1; k < argc; ++k )
+    if ( this->IsKeyword(argv[k]) )
+      ids.Add(k);
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiTcl_Interp::IsKeyword(const TCollection_AsciiString& opt,
                               const TCollection_AsciiString& key) const
 {
-  TCollection_AsciiString key2check("-"); key2check += key;
-  //
-  if ( opt == key2check )
-    return true;
+  if ( opt.IsEmpty() )
+    return false;
+
+  // Compose the reference key (to check with).
+  TCollection_AsciiString key2check("-");
+  if ( !key.IsEmpty() ) key2check += key;
+
+  // If the passed reference key is not empty, let's do an equality check.
+  if ( !key.IsEmpty() )
+  {
+    if ( opt == key2check )
+      return true;
+  }
+  else // If the reference key is empty, let's check the '-' prefix only.
+  {
+    if ( opt.StartsWith(key2check) )
+      return true;
+  }
 
   return false;
 }
@@ -518,10 +543,24 @@ bool asiTcl_Interp::HasKeyword(const int                      argc,
                                const char**                   argv,
                                const TCollection_AsciiString& key) const
 {
+  int idx; // Not used.
+  return HasKeyword(argc, argv, key, idx);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiTcl_Interp::HasKeyword(const int                      argc,
+                               const char**                   argv,
+                               const TCollection_AsciiString& key,
+                               int&                           idx) const
+{
   for ( int k = 1; k < argc; ++k )
   {
     if ( this->IsKeyword(argv[k], key) )
+    {
+      idx = k;
       return true;
+    }
   }
   return false;
 }

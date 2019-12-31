@@ -77,9 +77,11 @@ void asiUI_ProgressNotifier::Init(const int capacity)
   // --------------------------------------------------------------------
 
   // Reset other members
-  m_status    = Progress_Running;
-  m_iCapacity = capacity;
-  m_iProgress = 0;
+  m_status          = Progress_Running;
+  m_iCapacity       = capacity;
+  m_msgKey          = TCollection_AsciiString();
+  m_bIsCancellation = false;
+  m_iProgress       = 0;
 
   // Inform observers that progress gets running
   m_pSignal->EmitStatusChanged(Progress_Running);

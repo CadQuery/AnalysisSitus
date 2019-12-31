@@ -56,7 +56,7 @@ asiUI_StatusBar::asiUI_StatusBar(QWidget* parent) : QStatusBar(parent)
 
   m_pMessage          = new QLabel(this);
   m_pProgressBar      = new QProgressBar(m_pProgressWidget);
-  m_pInteractiveLabel = new ClickableLabel( this );
+  m_pInteractiveLabel = new ClickableLabel(this);
   //
   QPalette aPalettLabel = m_pInteractiveLabel->palette();
   aPalettLabel.setColor(QPalette::WindowText, Qt::red);
@@ -66,9 +66,7 @@ asiUI_StatusBar::asiUI_StatusBar(QWidget* parent) : QStatusBar(parent)
                                                   QSizePolicy::Expanding) );
 
   // Icon
-  TCollection_AsciiString ico_fn = OSD_Environment("AS_RESOURCES").Value();
-  ico_fn += "/asitus_icon_16x16.png";
-  QIcon cancelIcon( ico_fn.ToCString() );
+  QIcon cancelIcon(":icons/asitus/asitus_cancel_icon_16x16.png");
 
   // Cancel button
   m_pCancelButton = new QToolButton(m_pProgressWidget);

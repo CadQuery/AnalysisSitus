@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="icons">
     <file>asitus/asitus_icon_16x16.png</file>
+    <file>asitus/asitus_cancel_icon_16x16.png</file>
   </qresource>
   <qresource prefix="qss_icons">
     <file>rc/up_arrow_disabled.png</file>

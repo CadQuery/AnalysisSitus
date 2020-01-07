@@ -178,9 +178,9 @@ void asiAlgo_FindSmoothEdges::detect(const TopoDS_Face&          F,
   Handle(asiAlgo_FeatureAttrAngle)
     arcAttrAngle = Handle(asiAlgo_FeatureAttrAngle)::DownCast(arcAttrBase);
 
-  if ( arcAttrAngle->GetAngle() == FeatureAngleType_Smooth ||
-       arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConvex ||
-       arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConcave )
+  if ( arcAttrAngle->GetAngleType() == FeatureAngleType_Smooth ||
+       arcAttrAngle->GetAngleType() == FeatureAngleType_SmoothConvex ||
+       arcAttrAngle->GetAngleType() == FeatureAngleType_SmoothConcave )
   {
     // Collect common edges.
     const TColStd_PackedMapOfInteger eids = arcAttrAngle->GetEdgeIndices();

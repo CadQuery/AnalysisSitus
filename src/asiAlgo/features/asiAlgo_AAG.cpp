@@ -692,8 +692,8 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != FeatureAngleType_Convex &&
-           attr->GetAngle() != FeatureAngleType_SmoothConvex )
+      if ( attr->GetAngleType() != FeatureAngleType_Convex &&
+           attr->GetAngleType() != FeatureAngleType_SmoothConvex )
       {
         isAllConvex = false;
 
@@ -736,8 +736,8 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( this->GetArcAttribute( t_arc(current_face_idx,
                                                                                         neighbor_face_idx) ) );
 
-      if ( attr->GetAngle() != FeatureAngleType_Concave &&
-           attr->GetAngle() != FeatureAngleType_SmoothConcave )
+      if ( attr->GetAngleType() != FeatureAngleType_Concave &&
+           attr->GetAngleType() != FeatureAngleType_SmoothConcave )
       {
         isAllConcave = false;
 
@@ -1047,11 +1047,11 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
         double angRad = 0.0;
         //
         const asiAlgo_FeatureAngleType
-          face_angle = checkDihAngle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
+          angType = checkDihAngle.AngleBetweenFaces(face, face, false, 0.0, edges, angRad);
 
         // Bind attribute representing the type of dihedral angle. This is an
         // exceptional case as normally such attributes are bound to arcs.
-        m_nodeAttributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(face_angle) ) );
+        m_nodeAttributes.Bind( f, t_attr_set( new asiAlgo_FeatureAttrAngle(angType, angRad) ) );
       }
     }
   }
@@ -1141,7 +1141,7 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 
       // Create attribute
       Handle(asiAlgo_FeatureAttr)
-        attrAngle = new asiAlgo_FeatureAttrAngle(angle, commonEdgeIndices);
+        attrAngle = new asiAlgo_FeatureAttrAngle(angle, angRad, commonEdgeIndices);
 
       // Set owner
       attrAngle->setAAG(this);
@@ -1262,21 +1262,28 @@ void asiAlgo_AAG::dumpArcJSON(const t_arc&      arc,
   // Prepare a label for the angle type.
   std::string angleTypeStr;
   //
-  if ( arcAttrAngle->GetAngle() == FeatureAngleType_Convex )
+  if ( arcAttrAngle->GetAngleType() == FeatureAngleType_Convex )
     angleTypeStr = "convex";
-  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_Concave )
+  else if ( arcAttrAngle->GetAngleType() == FeatureAngleType_Concave )
     angleTypeStr = "concave";
-  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_Smooth )
+  else if ( arcAttrAngle->GetAngleType() == FeatureAngleType_Smooth )
     angleTypeStr = "smooth";
-  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConcave )
+  else if ( arcAttrAngle->GetAngleType() == FeatureAngleType_SmoothConcave )
     angleTypeStr = "smooth concave";
-  else if ( arcAttrAngle->GetAngle() == FeatureAngleType_SmoothConvex )
+  else if ( arcAttrAngle->GetAngleType() == FeatureAngleType_SmoothConvex )
     angleTypeStr = "smooth convex";
   else
     angleTypeStr = "undefined";
 
+  // Prepare a label for the angle value (degrees).
+  std::string angleDegStr = asiAlgo_Utils::Str::ToString<double>(arcAttrAngle->GetAngleRad() * 180. / M_PI);
+
+  // Dump to the stream.
   if ( !isFirst )
     out << ",";
   //
-  out << "\n" << prefix << "    [\"" << arc.F1 << "\", \"" << arc.F2 << "\", \"" << angleTypeStr << "\"]";
+  out << "\n" << prefix << "    [\"" << arc.F1 << "\", \""
+                                     << arc.F2 << "\", \""
+                                     << angleTypeStr << "\", "
+                                     << angleDegStr << "]";
 }

@@ -166,7 +166,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
         attr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( aag->GetArcAttribute(arc) );
       //
       if ( !attr.IsNull() )
-        angleArr->InsertNextValue( attr->GetAngle() );
+        angleArr->InsertNextValue( attr->GetAngleType() );
     }
   }
 

@@ -49,21 +49,34 @@ public:
 
   //! Creates feature angle attribute.
   asiAlgo_FeatureAttrAngle()
-  : asiAlgo_FeatureAttrAdjacency(), m_angle(FeatureAngleType_Undefined)
+  //
+  : asiAlgo_FeatureAttrAdjacency (),
+    m_angleType                  (FeatureAngleType_Undefined),
+    m_fAngleRad                  (0.)
   {}
 
   //! Creates feature angle attribute.
-  //! \param[in] angleProp angle property.
-  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType angleProp)
-  : asiAlgo_FeatureAttrAdjacency(), m_angle(angleProp)
+  //! \param[in] type angle type.
+  //! \param[in] ang  angle in radians.
+  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType type,
+                           const double                   ang)
+  //
+  : asiAlgo_FeatureAttrAdjacency (),
+    m_angleType                  (type),
+    m_fAngleRad                  (ang)
   {}
 
   //! Creates feature angle attribute with common edges.
-  //! \param[in] a                 angle property.
+  //! \param[in] type              angle type.
+  //! \param[in] ang               angle in radians.
   //! \param[in] commonEdgeIndices indices of common edges.
-  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType    a,
+  asiAlgo_FeatureAttrAngle(const asiAlgo_FeatureAngleType    type,
+                           const double                      ang,
                            const TColStd_PackedMapOfInteger& commonEdgeIndices)
-  : asiAlgo_FeatureAttrAdjacency(commonEdgeIndices), m_angle(a)
+  //
+  : asiAlgo_FeatureAttrAdjacency (commonEdgeIndices),
+    m_angleType                  (type),
+    m_fAngleRad                  (ang)
   {}
 
 public:
@@ -84,21 +97,28 @@ public:
   //! \return human-readable name of the attribute.
   virtual const char* GetName() const override
   {
-    return "angle type";
+    return "dihedral angle";
   }
 
 public:
 
-  //! \return angle between faces.
-  asiAlgo_FeatureAngleType GetAngle() const { return m_angle; }
+  //! \return type of the angle between faces.
+  asiAlgo_FeatureAngleType GetAngleType() const { return m_angleType; }
 
-  //! Sets angle between faces.
-  //! \param[in] a the angle value.
-  void SetAngle(const asiAlgo_FeatureAngleType a) { m_angle = a; }
+  //! Sets the type of an angle between faces.
+  //! \param[in] type the angle type.
+  void SetAngleType(const asiAlgo_FeatureAngleType type) { m_angleType = type; }
+
+  //! \return angle value in radians.
+  double GetAngleRad() const { return m_fAngleRad; }
+
+  //! Sets the angle value in radians.
+  void SetAngleRad(const double ang) { m_fAngleRad = ang; }
 
 protected:
 
-  asiAlgo_FeatureAngleType m_angle; //!< Angle type.
+  asiAlgo_FeatureAngleType m_angleType; //!< Angle type.
+  double                   m_fAngleRad; //!< Angle in radians.
 
 };
 

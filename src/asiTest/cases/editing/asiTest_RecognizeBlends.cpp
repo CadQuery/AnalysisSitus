@@ -100,7 +100,11 @@ outcome asiTest_RecognizeBlends::runtest(const int   funcID,
   ss << "\n";
 
 #if defined FILE_DEBUG
-  std::ofstream filestream("aagrecognized.json");
+  std::string dumpname(shortFilename);
+  asiAlgo_Utils::Str::ReplaceAll(dumpname, "/", "-");
+  dumpname += ".json";
+  //
+  std::ofstream filestream(dumpname);
   //
   if ( !filestream.is_open() )
   {

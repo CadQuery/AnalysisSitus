@@ -4,7 +4,10 @@ message (STATUS "... Active Data Include dirs: ${3RDPARTY_active_data_INCLUDE_DI
 message (STATUS "... Active Data Library dirs: ${3RDPARTY_active_data_LIBRARY_DIR}")
 message (STATUS "... Active Data Binary  dirs: ${3RDPARTY_active_data_DLL_DIR}")
 
-string (REPLACE lib libd 3RDPARTY_active_data_LIBRARY_DIR_DEBUG ${3RDPARTY_active_data_LIBRARY_DIR})
+if (3RDPARTY_active_data_LIBRARY_DIR)
+  string (REPLACE lib libd 3RDPARTY_active_data_LIBRARY_DIR_DEBUG ${3RDPARTY_active_data_LIBRARY_DIR})
+endif()
+
 if (3RDPARTY_active_data_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}")
   if (WIN32)
     if (NOT EXISTS "${3RDPARTY_active_data_LIBRARY_DIR_DEBUG}/ActiveData.lib")

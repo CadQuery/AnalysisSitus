@@ -1,7 +1,7 @@
 # Useful functions
 
 # Macro
-include (${CMAKE_SOURCE_DIR}/cmake/ASITUS_macros.cmake)
+include (${CMAKE_SOURCE_DIR}/cmake/asitus_macros.cmake)
 
 #-------------------------------------------------------------------------------
 # Name:    ASITUS_RETRIEVE_VERSION

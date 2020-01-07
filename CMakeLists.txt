@@ -204,7 +204,9 @@ set_property(TARGET asiTestEngine    PROPERTY FOLDER Framework)
 set_property(TARGET asiExe           PROPERTY FOLDER Executables)
 set_property(TARGET asiTest          PROPERTY FOLDER Executables)
 ################################################################################
-set_property(TARGET setup            PROPERTY FOLDER Utilities)
+if (NOT "${INNOSETUP_EXE}" STREQUAL "" AND EXISTS "${INNOSETUP_EXE}")
+  set_property(TARGET setup            PROPERTY FOLDER Utilities)
+endif()
 ################################################################################
 set_property(TARGET asiTcl           PROPERTY FOLDER Batch)
 ################################################################################

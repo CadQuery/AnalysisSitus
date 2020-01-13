@@ -33,10 +33,14 @@
 
 #define asiEngine_NotUsed(x) x
 
-#ifdef asiEngine_EXPORTS
-  #define asiEngine_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiEngine_EXPORTS
+    #define asiEngine_EXPORT __declspec(dllexport)
+  #else
+    #define asiEngine_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiEngine_EXPORT __declspec(dllimport)
+  #define asiEngine_EXPORT
 #endif
 
 #endif

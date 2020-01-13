@@ -76,6 +76,9 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 
+// Standard includes
+#include <limits>
+
 //-----------------------------------------------------------------------------
 
 #define asiAlgo_TooSmallValue 1.0e-4
@@ -776,7 +779,7 @@ namespace asiAlgo_Utils
 
   //! Calculates curvature comb for the passed curve at the given parameter
   //! value. The method follows the paper "Farin, G. 2016. Curvature combs
-  //! and curvature plots. CAD Computer Aided Design 80, 6–8."
+  //! and curvature plots. CAD Computer Aided Design 80, 6ï¿½8."
   //!
   //! \param[in]  curve    parametric curve to analyze.
   //! \param[in]  u        parameter value.

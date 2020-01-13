@@ -33,10 +33,14 @@
 
 #define asiData_NotUsed(x) x
 
-#ifdef asiData_EXPORTS
-  #define asiData_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiData_EXPORTS
+    #define asiData_EXPORT __declspec(dllexport)
+  #else
+    #define asiData_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiData_EXPORT __declspec(dllimport)
+  #define asiData_EXPORT
 #endif
 
 // asiData includes

@@ -34,10 +34,14 @@
 
 #define asiUI_NotUsed(x) x
 
-#ifdef asiUI_EXPORTS
-  #define asiUI_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiUI_EXPORTS
+    #define asiUI_EXPORT __declspec(dllexport)
+  #else
+    #define asiUI_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiUI_EXPORT __declspec(dllimport)
+  #define asiUI_EXPORT
 #endif
 
 // There are some warning which we do not care of...

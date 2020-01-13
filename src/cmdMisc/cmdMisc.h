@@ -34,10 +34,14 @@
 
 #define cmdMisc_NotUsed(x) x
 
-#ifdef cmdMisc_EXPORTS
-  #define cmdMisc_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef cmdMisc_EXPORTS
+    #define cmdMisc_EXPORT __declspec(dllexport)
+  #else
+    #define cmdMisc_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define cmdMisc_EXPORT __declspec(dllimport)
+  #define cmdMisc_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------

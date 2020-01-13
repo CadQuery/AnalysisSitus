@@ -31,17 +31,17 @@
 #ifndef asiAlgo_MemChecker_h
 #define asiAlgo_MemChecker_h
 
-// OS includes
-#ifdef _WINDOWS
-#include "windows.h"
-#include "psapi.h"
+// OS-dependent includes
+#ifdef _WIN32
+  #include "windows.h"
+  #include "psapi.h"
 #endif
 
 /************************************************************************
                            MEASURING MEMORY
  ************************************************************************/
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #define MEMCHECK_COUNT_MIB(varname) \
   { \
@@ -56,6 +56,8 @@
     Notifier->SendLogMessage(LogInfo(Normal) << "\tUsed memory (MiB): %1" << varname); \
   }
 
+#else
+  #define MEMCHECK_COUNT_MIB(varname)
 #endif
 
 #endif

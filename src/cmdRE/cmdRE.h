@@ -33,10 +33,14 @@
 
 #define cmdRE_NotUsed(x) x
 
-#ifdef cmdRE_EXPORTS
-  #define cmdRE_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef cmdRE_EXPORTS
+    #define cmdRE_EXPORT __declspec(dllexport)
+  #else
+    #define cmdRE_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define cmdRE_EXPORT __declspec(dllimport)
+  #define cmdRE_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------

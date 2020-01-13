@@ -41,6 +41,8 @@
 #include <Standard_GUID.hxx>
 #include <TCollection_AsciiString.hxx>
 
+class asiAlgo_AAG;
+
 //-----------------------------------------------------------------------------
 
 //! Base class for all feature attributes.

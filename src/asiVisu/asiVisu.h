@@ -33,10 +33,14 @@
 
 #define asiVisu_NotUsed(x) x
 
-#ifdef asiVisu_EXPORTS
-  #define asiVisu_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiVisu_EXPORTS
+    #define asiVisu_EXPORT __declspec(dllexport)
+  #else
+    #define asiVisu_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiVisu_EXPORT __declspec(dllimport)
+  #define asiVisu_EXPORT
 #endif
 
 // VTK includes

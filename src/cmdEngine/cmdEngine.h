@@ -34,10 +34,14 @@
 
 #define cmdEngine_NotUsed(x) x
 
-#ifdef cmdEngine_EXPORTS
-  #define cmdEngine_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef cmdEngine_EXPORTS
+    #define cmdEngine_EXPORT __declspec(dllexport)
+  #else
+    #define cmdEngine_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define cmdEngine_EXPORT __declspec(dllimport)
+  #define cmdEngine_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------

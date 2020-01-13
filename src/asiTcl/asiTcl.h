@@ -34,10 +34,14 @@
 
 #define asiTcl_NotUsed(x) x
 
-#ifdef asiTcl_EXPORTS
-  #define asiTcl_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiTcl_EXPORTS
+    #define asiTcl_EXPORT __declspec(dllexport)
+  #else
+    #define asiTcl_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiTcl_EXPORT __declspec(dllimport)
+  #define asiTcl_EXPORT
 #endif
 
 #define asiTcl_SourceCmd(filename) TCollection_AsciiString("source ").Cat(filename)

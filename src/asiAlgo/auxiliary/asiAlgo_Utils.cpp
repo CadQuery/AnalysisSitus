@@ -31,8 +31,10 @@
 // Own include
 #include <asiAlgo_Utils.h>
 
-// OS dependent
-#include <windows.h>
+// OS-dependent
+#ifdef _WIN32
+  #include <windows.h>
+#endif
 
 // asiAlgo includes
 #include <asiAlgo_BuildCoonsSurf.h>
@@ -106,6 +108,7 @@
 #include <gp_Vec.hxx>
 #include <math_Matrix.hxx>
 #include <NCollection_IncAllocator.hxx>
+#include <OSD_Environment.hxx>
 #include <OSD_OpenFile.hxx>
 #include <Precision.hxx>
 #include <RWStl.hxx>
@@ -147,6 +150,11 @@
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
+// Microsoft's *_s functions are unportable, so we adapt here.
+#ifdef __unix
+#define fopen_s(pFile, filename, mode) ((*(pFile))=fopen((filename), (mode)))==NULL
 #endif
 
 //-----------------------------------------------------------------------------
@@ -500,9 +508,7 @@ std::string asiAlgo_Utils::Env::AsiTestDescr()
 //! \return value of the variable.
 std::string asiAlgo_Utils::Env::GetVariable(const char* varName)
 {
-  TCHAR chNewEnv[BUFSIZE];
-  GetEnvironmentVariable(varName, chNewEnv, BUFSIZE);
-  return chNewEnv;
+  return OSD_Environment(varName).Value().ToCString();
 }
 
 //-----------------------------------------------------------------------------

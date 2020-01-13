@@ -218,11 +218,6 @@ class asiAlgo_AAGNeighborsIterator : public asiAlgo_AAGIterator
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_AAGNeighborsIterator, asiAlgo_AAGIterator)
-
-public:
-
   //! Creates and initializes iterator for AAG.
   //! \param[in] graph graph to iterate.
   //! \param[in] seed  seed face.

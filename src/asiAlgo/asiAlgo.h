@@ -33,10 +33,14 @@
 
 #define asiAlgo_NotUsed(x) x
 
-#ifdef asiAlgo_EXPORTS
-  #define asiAlgo_EXPORT __declspec(dllexport)
+#ifdef _WIN32
+  #ifdef asiAlgo_EXPORTS
+    #define asiAlgo_EXPORT __declspec(dllexport)
+  #else
+    #define asiAlgo_EXPORT __declspec(dllimport)
+  #endif
 #else
-  #define asiAlgo_EXPORT __declspec(dllimport)
+  #define asiAlgo_EXPORT
 #endif
 
 //-----------------------------------------------------------------------------

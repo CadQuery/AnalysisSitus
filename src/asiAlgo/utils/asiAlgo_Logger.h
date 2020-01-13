@@ -37,8 +37,13 @@
 // Active Data includes
 #include <ActAPI_ILogger.h>
 
-// TBB includes
-#include <concurrent_queue.h>
+#if USE_TBB
+  // TBB includes
+  #include <concurrent_queue.h>
+#else
+  // Standard includes
+  #include <queue>
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -103,8 +108,12 @@ protected:
 
 private:
 
+#ifdef USE_TBB
   //! Short-cut for queue of messages in TBB thread-safe form.
   typedef tbb::concurrent_queue<ActAPI_LogMessage> _MessageQueue;
+#else
+  typedef std::queue<ActAPI_LogMessage> _MessageQueue;
+#endif
 
 private:
 

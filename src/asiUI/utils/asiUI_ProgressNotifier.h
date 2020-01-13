@@ -147,7 +147,11 @@ public:
 private:
 
   //! Storage for progress.
+#ifdef USE_TBB
   tbb::atomic<int> m_iProgress;
+#else
+  int m_iProgress;
+#endif
 
   //! Storage for logging messages.
   Handle(asiAlgo_Logger) m_logger;

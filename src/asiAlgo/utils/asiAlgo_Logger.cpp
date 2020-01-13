@@ -118,14 +118,26 @@ asiAlgo_Logger::asiAlgo_Logger() : ActAPI_ILogger()
 //! \return list of logging messages.
 ActAPI_LogMessageList asiAlgo_Logger::PopMessageList()
 {
-  ActAPI_LogMessageList aResultList;
-  ActAPI_LogMessage aMsg;
+  ActAPI_LogMessageList resultList;
+  ActAPI_LogMessage msg;
+
+#ifdef USE_TBB
   while ( m_messageQueue.unsafe_size() > 0 )
   {
-    m_messageQueue.try_pop(aMsg);
-    aResultList.Append(aMsg);
+    m_messageQueue.try_pop(msg);
+    resultList.Append(msg);
   }
-  return aResultList;
+#else
+  while ( m_messageQueue.size() > 0 )
+  {
+    msg = m_messageQueue.front();
+
+    m_messageQueue.pop();
+    resultList.Append(msg);
+  }
+#endif
+
+  return resultList;
 }
 
 //! Checks whether the logger contains any error messages.
@@ -145,7 +157,12 @@ unsigned int asiAlgo_Logger::HasErrors()
 //! Cleans up the internal collection of messages.
 void asiAlgo_Logger::Clear()
 {
+#ifdef USE_TBB
   m_messageQueue.clear();
+#else
+  _MessageQueue empty;
+  std::swap(m_messageQueue, empty);
+#endif
 }
 
 //-----------------------------------------------------------------------------

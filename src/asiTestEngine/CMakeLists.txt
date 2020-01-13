@@ -90,19 +90,19 @@ target_link_libraries(asiTestEngine asiAlgo asiData)
 install (TARGETS asiTestEngine
          RUNTIME DESTINATION framework/bin COMPONENT Runtime
          CONFIGURATIONS Release
-         ARCHIVE DESTINATION framework/lib COMPONENT Library
+         ARCHIVE DESTINATION framework/lib LIBRARY DESTINATION framework/lib COMPONENT Library
          CONFIGURATIONS Release)
 
 install (TARGETS asiTestEngine
          RUNTIME DESTINATION framework/bini COMPONENT Runtime
          CONFIGURATIONS RelWithDebInfo
-         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         ARCHIVE DESTINATION framework/libi LIBRARY DESTINATION framework/libi COMPONENT Library
          CONFIGURATIONS RelWithDebInfo)
 
 install (TARGETS asiTestEngine
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
-         ARCHIVE DESTINATION framework/libd COMPONENT Library
+         ARCHIVE DESTINATION framework/libd LIBRARY DESTINATION framework/libd COMPONENT Library
          CONFIGURATIONS Debug)
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bind CONFIGURATIONS Debug)

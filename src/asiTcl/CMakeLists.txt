@@ -119,7 +119,7 @@ endforeach()
 # Installation of Analysis Situs as a software
 #------------------------------------------------------------------------------
 
-install (TARGETS asiTcl RUNTIME DESTINATION bin COMPONENT Runtime)
+install (TARGETS asiTcl RUNTIME DESTINATION bin LIBRARY DESTINATION bin COMPONENT Runtime)
 
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a framework
@@ -128,19 +128,19 @@ install (TARGETS asiTcl RUNTIME DESTINATION bin COMPONENT Runtime)
 install (TARGETS asiTcl
          RUNTIME DESTINATION framework/bin COMPONENT Runtime
          CONFIGURATIONS Release
-         ARCHIVE DESTINATION framework/lib COMPONENT Library
+         ARCHIVE DESTINATION framework/lib LIBRARY DESTINATION framework/lib COMPONENT Library
          CONFIGURATIONS Release)
 
 install (TARGETS asiTcl
          RUNTIME DESTINATION framework/bini COMPONENT Runtime
          CONFIGURATIONS RelWithDebInfo
-         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         ARCHIVE DESTINATION framework/libi LIBRARY DESTINATION framework/libi COMPONENT Library
          CONFIGURATIONS RelWithDebInfo)
 
 install (TARGETS asiTcl
          RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
-         ARCHIVE DESTINATION framework/libd COMPONENT Library
+         ARCHIVE DESTINATION framework/libd LIBRARY DESTINATION framework/libd COMPONENT Library
          CONFIGURATIONS Debug)
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTcl.pdb DESTINATION framework/bind CONFIGURATIONS Debug)

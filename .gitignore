@@ -8,6 +8,7 @@ doc/reference/generated/
 test/results/*
 test/dumping/*
 include/
+.vscode
 *.exe
 *.psess
 *.vsp

@@ -61,7 +61,8 @@ void asiAlgo_DictionaryGroup::FillDataMap(const LDOM_Element& groupElt,
   //
   for ( int id = 0; id < lists.getLength(); ++id )
   {
-    LDOM_Element listElt( (const LDOM_Element&) lists.item(id) );
+    LDOM_Node     listNode = lists.item(id);
+    LDOM_Element& listElt  = (LDOM_Element&) listNode;
 
     // Read list identifier.
     TCollection_AsciiString listID =
@@ -85,7 +86,8 @@ void asiAlgo_DictionaryGroup::FillDataMap(const LDOM_Element& groupElt,
 
     for ( int valID = 1; valID <= listLength; valID++ )
     {
-      LDOM_Element listItemElt( (const LDOM_Element&) listValueItems.item(valID - 1) );
+      LDOM_Node     listItemNode = listValueItems.item(valID - 1);
+      LDOM_Element& listItemElt  = (LDOM_Element&) listItemNode;
 
       // Read value ID.
       TCollection_AsciiString listValueID =
@@ -139,7 +141,8 @@ void asiAlgo_DictionaryGroup::FillDataMap(const LDOM_Element& groupElt,
   // Read datum items.
   for ( int id = 0; id < datums.getLength(); ++id )
   {
-    LDOM_Element datumElt( (const LDOM_Element&) datums.item(id) );
+    LDOM_Node     datumNode = datums.item(id);
+    LDOM_Element& datumElt  = (LDOM_Element&) datumNode;
 
     // read id and parse datum item
     TCollection_AsciiString itemID =

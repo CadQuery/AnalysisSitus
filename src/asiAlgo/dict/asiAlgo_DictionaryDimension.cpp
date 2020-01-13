@@ -93,7 +93,8 @@ void asiAlgo_DictionaryDimension::FillDataMap(const LDOM_Element& dimElt)
 
   for ( int id = 0; id < unitList.getLength(); ++id )
   {
-    LDOM_Element unitElt( (const LDOM_Element&) unitList.item(id) );
+    LDOM_Node     unitNode = unitList.item(id);
+    LDOM_Element& unitElt  = (LDOM_Element&) unitNode;
 
     // Unit name.
     TCollection_AsciiString unitName =

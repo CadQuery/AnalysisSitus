@@ -77,9 +77,9 @@ void asiData_ContourNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set default values to primitive Parameters
-  this->SetCoords      ( NULL );
-  this->SetPoleIndices ( NULL );
-  this->SetFaces       ( NULL );
+  this->SetCoords      ( nullptr );
+  this->SetPoleIndices ( nullptr );
+  this->SetFaces       ( nullptr );
   this->SetClosed      ( false );
   this->SetShape       ( TopoDS_Shape() );
 }

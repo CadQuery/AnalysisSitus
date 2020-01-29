@@ -81,7 +81,7 @@ public:
   ~asiAlgo_TimeStamp()
   {}
 
-  //! Checks whether this timestamp is NULL (not initialized).
+  //! Checks whether this timestamp is null (not initialized).
   //! \return true/false.
   bool IsOrigin()
   {
@@ -152,11 +152,13 @@ public:
   std::string ToString(const bool useInternal = true,
                        const bool isCompatible = false) const
   {
+    std::string res;
+
+#ifdef _WIN32
     char buf[26];
     ctime_s(buf, 26, &Time);
     buf[24] = '\0'; // Replace EOL [\n\0 --> \0\0]
 
-    std::string res;
     res += buf;
     if ( useInternal )
       res += ":: [" + asiAlgo_Utils::Str::ToString(Internal) + "]";
@@ -168,6 +170,11 @@ public:
       asiAlgo_Utils::Str::ReplaceAll(res, "]", "");
       asiAlgo_Utils::Str::ReplaceAll(res, " ", "_");
     }
+#else
+    std::stringstream ss;
+    ss << Time;
+    res = ss.str();
+#endif
 
     return res;
   }

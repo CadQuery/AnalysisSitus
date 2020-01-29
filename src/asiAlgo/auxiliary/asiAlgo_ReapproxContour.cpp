@@ -394,7 +394,7 @@ bool asiAlgo_ReapproxContour::doApprox(const std::vector<t_segment>&    segments
   {
     const t_segment& seg = segments[seg_idx];
 
-    Handle(TColStd_HSequenceOfReal) params_seq = (isSegmented ? new TColStd_HSequenceOfReal : NULL);
+    Handle(TColStd_HSequenceOfReal) params_seq = (isSegmented ? new TColStd_HSequenceOfReal : nullptr);
     Handle(TColgp_HSequenceOfPnt)   points_seq = (isSegmented ? new TColgp_HSequenceOfPnt   : all_points);
 
     // Evaluate parameters filtering out those conflicting against the

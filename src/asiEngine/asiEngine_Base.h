@@ -47,8 +47,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiEngine_Base(const Handle(asiEngine_Model)& model,
-                 ActAPI_ProgressEntry           progress = NULL,
-                 ActAPI_PlotterEntry            plotter  = NULL)
+                 ActAPI_ProgressEntry           progress = nullptr,
+                 ActAPI_PlotterEntry            plotter  = nullptr)
   //
   : m_model(model), m_progress(progress), m_plotter(plotter) {}
 

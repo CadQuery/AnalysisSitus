@@ -121,43 +121,26 @@ void asiVisu_CurvatureCombsPrs::afterUpdatePipelines() const
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting.
-//! \param[in] renderer  renderer.
-//! \param[in] pickRes   picking results.
-//! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_CurvatureCombsPrs::highlight(vtkRenderer*                        renderer,
-                                          const Handle(asiVisu_PickerResult)& pickRes,
-                                          const asiVisu_SelectionNature       selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(pickRes);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_CurvatureCombsPrs::highlight(vtkRenderer*,
+                                          const Handle(asiVisu_PickerResult)&,
+                                          const asiVisu_SelectionNature) const
+{}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for highlighting reset.
-//! \param[in] renderer renderer.
-void asiVisu_CurvatureCombsPrs::unHighlight(vtkRenderer*                  renderer,
-                                            const asiVisu_SelectionNature selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_CurvatureCombsPrs::unHighlight(vtkRenderer*,
+                                            const asiVisu_SelectionNature) const
+{}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for rendering.
-//! \param[in] renderer renderer.
-void asiVisu_CurvatureCombsPrs::renderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_CurvatureCombsPrs::renderPipelines(vtkRenderer*) const
+{}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param[in] renderer renderer.
-void asiVisu_CurvatureCombsPrs::deRenderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_CurvatureCombsPrs::deRenderPipelines(vtkRenderer*) const
+{}

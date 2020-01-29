@@ -51,8 +51,7 @@ class asiUI_EXPORT asiUI_ControlsModelingListener : public QObject
 
 public:
 
-  asiUI_ControlsModelingListener(asiUI_ControlsModeling*               wControls,
-                                 const Handle(asiUI_CommonFacilities)& cf);
+  asiUI_ControlsModelingListener(asiUI_ControlsModeling* wControls);
 
   virtual
     ~asiUI_ControlsModelingListener();
@@ -64,8 +63,7 @@ public:
 
 protected:
 
-  asiUI_ControlsModeling*        m_wControls; //!< Controls.
-  Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
+  asiUI_ControlsModeling* m_wControls; //!< Controls.
 
 };
 

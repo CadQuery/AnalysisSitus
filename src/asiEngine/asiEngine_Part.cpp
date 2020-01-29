@@ -445,6 +445,51 @@ Handle(asiData_ElemMetadataNode)
 
 //-----------------------------------------------------------------------------
 
+//! \return newly created Octree Node.
+Handle(asiData_OctreeNode) asiEngine_Part::CreateOctree()
+{
+  Handle(asiData_OctreeNode)
+    node = Handle(asiData_OctreeNode)::DownCast( asiData_OctreeNode::Instance() );
+  //
+  m_model->GetOctreePartition()->AddNode(node);
+
+  // Initialize.
+  node->Init();
+  node->SetName("SVO");
+
+  // Set as child for the Part Node.
+  m_model->GetPartNode()->AddChildNode(node);
+
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+
+//! Finds or creates an Octree Node.
+//! \param[in] create whether to create if the Octree Node does not exist.
+//! \return found or the newly created Octree Node.
+Handle(asiData_OctreeNode) asiEngine_Part::FindOctree(const bool create)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return nullptr;
+
+  Handle(asiData_OctreeNode) octree_n = part_n->GetOctree();
+
+  // Create if requested.
+  if ( octree_n.IsNull() && create )
+  {
+    // Create Octree Node.
+    octree_n = this->CreateOctree();
+  }
+
+  return octree_n;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Updates part's geometry in a smart way, so all dependent attributes
 //! are also actualized.
 //! \param[in] model             CAD part to set.
@@ -485,7 +530,7 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
     Handle(asiData_BVHParameter)
       bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
     //
-    bvhParam->SetBVH(NULL);
+    bvhParam->SetBVH(nullptr);
   }
 
   // Build AAG automatically (if not auto-build is not disabled).
@@ -609,14 +654,12 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 //! \param[in] pOctree octree to set.
 void asiEngine_Part::SetOctree(void* pOctree)
 {
-  // Get Part Node.
-  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  // Get Octree Node.
+  Handle(asiData_OctreeNode) octree_n = this->FindOctree(true);
 
   // Store in OCAF.
-  Handle(asiData_OctreeParameter)
-    octreeParam = Handle(asiData_OctreeParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_Octree) );
-  //
-  octreeParam->SetOctree(pOctree);
+  if ( !octree_n.IsNull() && octree_n->IsWellFormed() )
+    octree_n->SetOctree(pOctree);
 }
 
 //-----------------------------------------------------------------------------

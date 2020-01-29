@@ -54,7 +54,7 @@ public:
 
   //! Ctor.
   //! \param[in] masterCAD full CAD model.
-  //! \param[in] aag       AAG (will be created from CAD if NULL is passed).
+  //! \param[in] aag       AAG (will be created from CAD if nullptr is passed).
   //! \param[in] progress  progress notifier.
   //! \param[in] plotter   imperative plotter.
   asiAlgo_EXPORT
@@ -64,7 +64,7 @@ public:
                        ActAPI_PlotterEntry        plotter);
 
   //! Ctor.
-  //! \param[in] aag      AAG (should not be NULL here).
+  //! \param[in] aag      AAG (should not be nullptr here).
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT

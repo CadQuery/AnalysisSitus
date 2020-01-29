@@ -50,8 +50,8 @@ public:
   //! \param plotter  [in] imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
-                        ActAPI_ProgressEntry       progress = NULL,
-                        ActAPI_PlotterEntry        plotter  = NULL);
+                        ActAPI_ProgressEntry       progress = nullptr,
+                        ActAPI_PlotterEntry        plotter  = nullptr);
 
 public:
 

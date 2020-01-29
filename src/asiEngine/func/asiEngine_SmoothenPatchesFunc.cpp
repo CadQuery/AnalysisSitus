@@ -62,12 +62,9 @@ const char* asiEngine_SmoothenPatchesFunc::GetGUID() const
 //-----------------------------------------------------------------------------
 
 int asiEngine_SmoothenPatchesFunc::execute(const Handle(ActAPI_HParameterList)& inputs,
-                                           const Handle(ActAPI_HParameterList)& outputs,
-                                           const Handle(Standard_Transient)&    userData) const
+                                           const Handle(ActAPI_HParameterList)& asiEngine_NotUsed(outputs),
+                                           const Handle(Standard_Transient)&    asiEngine_NotUsed(userData)) const
 {
-  asiEngine_NotUsed(outputs);
-  asiEngine_NotUsed(userData);
-
   // Get transition edge.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );

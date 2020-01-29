@@ -36,6 +36,7 @@
 #include <asiTcl_CommandInfo.h>
 
 // asiAlgo includes
+#include <asiAlgo_Utils.h>
 #include <asiAlgo_Variable.h>
 
 // Active Data includes
@@ -87,7 +88,7 @@ public:
     int Invoke(int          argc,
                const char** argv)
     {
-      return this->Func != NULL ? this->Func(this->Interp, argc, argv) : 1;
+      return this->Func != nullptr ? this->Func(this->Interp, argc, argv) : 1;
     }
 
     Handle(asiTcl_Interp) Interp; //!< Tcl interpreter.
@@ -105,8 +106,8 @@ public:
   //! \param[in] progress optional progress notifier.
   //! \param[in] plotter  optional imperative plotter.
   asiTcl_EXPORT
-    asiTcl_Interp(ActAPI_ProgressEntry progress = NULL,
-                  ActAPI_PlotterEntry  plotter  = NULL);
+    asiTcl_Interp(ActAPI_ProgressEntry progress = nullptr,
+                  ActAPI_PlotterEntry  plotter  = nullptr);
 
   //! Destructor.
   asiTcl_EXPORT
@@ -281,6 +282,36 @@ public:
                 const char**                   argv,
                 const TCollection_AsciiString& key,
                 TCollection_AsciiString&       value) const;
+
+  //! Variation of GetKeyValue() for integer value.
+  bool
+    GetKeyValue(const int                      argc,
+                const char**                   argv,
+                const TCollection_AsciiString& key,
+                int&                           value) const
+  {
+    TCollection_AsciiString valueStr;
+    if ( !this->GetKeyValue(argc, argv, key, valueStr) )
+      return false;
+
+    value = valueStr.IntegerValue();
+    return true;
+  }
+
+  //! Variation of GetKeyValue() for real value.
+  bool
+    GetKeyValue(const int                      argc,
+                const char**                   argv,
+                const TCollection_AsciiString& key,
+                double&                        value) const
+  {
+    TCollection_AsciiString valueStr;
+    if ( !this->GetKeyValue(argc, argv, key, valueStr) )
+      return false;
+
+    value = valueStr.RealValue();
+    return true;
+  }
 
   //! Sets Tcl variable.
   //! \param[in] name variable name.

@@ -115,7 +115,7 @@ const vtkSmartPointer<vtkActor>& asiVisu_PickerResult::GetPickedActor() const
 //! Cleans up the internally stored data structures.
 void asiVisu_PickerResult::Clear()
 {
-  m_pickedActor = NULL;
+  m_pickedActor = nullptr;
   m_pickPos[0] = m_pickPos[1] = m_pickPos[2] = 0.0;
 }
 
@@ -125,7 +125,7 @@ void asiVisu_PickerResult::Clear()
 //! \return true/false.
 bool asiVisu_PickerResult::IsEmpty() const
 {
-  return m_pickedActor.GetPointer() == NULL;
+  return m_pickedActor.GetPointer() == nullptr;
 }
 
 //-----------------------------------------------------------------------------

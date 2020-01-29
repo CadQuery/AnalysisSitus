@@ -45,7 +45,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(asiVisu_MeshNScalarFilter);
+vtkStandardNewMacro(asiVisu_MeshNScalarFilter)
 
 //! Default constructor.
 asiVisu_MeshNScalarFilter::asiVisu_MeshNScalarFilter()

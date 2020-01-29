@@ -80,7 +80,7 @@ public:
                        asiUI_ViewerPart*                          pViewer,
                        ActAPI_ProgressEntry                       progress,
                        ActAPI_PlotterEntry                        plotter,
-                       QWidget*                                   parent = NULL);
+                       QWidget*                                   parent = nullptr);
 
   //! Dtor.
   virtual ~asiUI_DialogFindFace();
@@ -108,20 +108,20 @@ protected:
     asiUI_LineEdit* pIdName;      //!< Face name.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pFind        (NULL),
-                  pFaceIdSel   (NULL),
-                  pIdSerial    (NULL),
-                  pIdTransient (NULL),
-                  pIdName      (NULL)
+    t_widgets() : pFind        (nullptr),
+                  pFaceIdSel   (nullptr),
+                  pIdSerial    (nullptr),
+                  pIdTransient (nullptr),
+                  pIdName      (nullptr)
     {}
 
     void Release()
     {
-      delete pFind;        pFind        = NULL;
-      delete pFaceIdSel;   pFaceIdSel   = NULL;
-      delete pIdSerial;    pIdSerial    = NULL;
-      delete pIdTransient; pIdTransient = NULL;
-      delete pIdName;      pIdName      = NULL;
+      delete pFind;        pFind        = nullptr;
+      delete pFaceIdSel;   pFaceIdSel   = nullptr;
+      delete pIdSerial;    pIdSerial    = nullptr;
+      delete pIdTransient; pIdTransient = nullptr;
+      delete pIdName;      pIdName      = nullptr;
     }
   };
 

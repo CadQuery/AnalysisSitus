@@ -50,7 +50,7 @@
 //! \return instance of the callback class.
 asiUI_PickCallback* asiUI_PickCallback::New()
 {
-  return new asiUI_PickCallback(NULL, NULL);
+  return new asiUI_PickCallback(nullptr, nullptr);
 }
 
 //! Instantiation routine accepting viewer.

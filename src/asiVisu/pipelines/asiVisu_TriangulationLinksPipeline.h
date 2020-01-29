@@ -42,7 +42,7 @@ class asiVisu_TriangulationLinksPipeline : public asiVisu_TriangulationPipelineB
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationLinksPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationLinksPipeline, asiVisu_TriangulationPipelineBase)
 
 public:
 

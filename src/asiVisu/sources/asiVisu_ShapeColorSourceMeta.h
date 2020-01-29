@@ -95,7 +95,7 @@ public:
     Handle(asiAlgo_AAG) aag = m_partNode->GetAAG();
     //
     if ( aag.IsNull() )
-      return -1; // Null check.
+      return -1; // nullptr check.
 
     // Check if the ID in question is valid.
     if ( !aag->HasFace(faceId) )

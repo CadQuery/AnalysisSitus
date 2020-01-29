@@ -48,7 +48,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_ReCoedgeSource);
+vtkStandardNewMacro(asiVisu_ReCoedgeSource)
 
 //-----------------------------------------------------------------------------
 
@@ -104,13 +104,13 @@ int asiVisu_ReCoedgeSource::RequestData(vtkInformation*        request,
 {
   if ( m_curve3d.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL curve" );
+    vtkErrorMacro( << "Invalid domain: nullptr curve" );
     return 0;
   }
 
   if ( m_surf.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL surface" );
+    vtkErrorMacro( << "Invalid domain: nullptr surface" );
     return false;
   }
 

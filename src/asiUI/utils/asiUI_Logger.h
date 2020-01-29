@@ -56,7 +56,7 @@ public:
 public:
 
   asiUI_EXPORT
-    asiUI_Logger(QTextEdit* pLogWindow = NULL);
+    asiUI_Logger(QTextEdit* pLogWindow = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_Logger();
@@ -76,25 +76,25 @@ public:
     Info(const TCollection_AsciiString&    message,
          const ActAPI_LogMessagePriority   priority  = Priority_Normal,
          const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& timeStamp = NULL);
+         const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Notice(const TCollection_AsciiString&    message,
            const ActAPI_LogMessagePriority   priority  = Priority_Normal,
            const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-           const Handle(Standard_Transient)& timeStamp = NULL);
+           const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Warn(const TCollection_AsciiString&    message,
          const ActAPI_LogMessagePriority   priority  = Priority_Normal,
          const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& timeStamp = NULL);
+         const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Error(const TCollection_AsciiString&    message,
           const ActAPI_LogMessagePriority   priority  = Priority_Normal,
           const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-          const Handle(Standard_Transient)& timeStamp = NULL);
+          const Handle(Standard_Transient)& timeStamp = nullptr);
 
 // Custom logging interface:
 public:
@@ -103,25 +103,25 @@ public:
     Info(const QString&                    message,
          const ActAPI_LogMessagePriority   priority  = Priority_Normal,
          const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& timeStamp = NULL);
+         const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Notice(const QString&                    message,
            const ActAPI_LogMessagePriority   priority  = Priority_Normal,
            const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-           const Handle(Standard_Transient)& timeStamp = NULL);
+           const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Warn(const QString&                    message,
          const ActAPI_LogMessagePriority   priority  = Priority_Normal,
          const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& timeStamp = NULL);
+         const Handle(Standard_Transient)& timeStamp = nullptr);
 
   asiUI_EXPORT virtual void
     Error(const QString&                    message,
           const ActAPI_LogMessagePriority   priority  = Priority_Normal,
           const ActAPI_LogArguments&        arguments = ActAPI_LogArguments(),
-          const Handle(Standard_Transient)& timeStamp = NULL);
+          const Handle(Standard_Transient)& timeStamp = nullptr);
 
 // Internal methods:
 private:

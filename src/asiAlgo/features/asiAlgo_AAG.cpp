@@ -596,12 +596,12 @@ Handle(asiAlgo_FeatureAttr)
                                 const Standard_GUID& attr_id) const
 {
   const t_attr_set* attrSetPtr = m_nodeAttributes.Seek(node);
-  if ( attrSetPtr == NULL )
-    return NULL;
+  if ( attrSetPtr == nullptr )
+    return nullptr;
 
   const Handle(asiAlgo_FeatureAttr)* attrPtr = (*attrSetPtr).Seek(attr_id);
-  if ( attrPtr == NULL )
-    return NULL;
+  if ( attrPtr == nullptr )
+    return nullptr;
 
   return (*attrPtr);
 }
@@ -612,11 +612,11 @@ bool asiAlgo_AAG::RemoveNodeAttribute(const int            node,
                                       const Standard_GUID& attr_id)
 {
   t_attr_set* attrSetPtr = m_nodeAttributes.ChangeSeek(node);
-  if ( attrSetPtr == NULL )
+  if ( attrSetPtr == nullptr )
     return false;
 
   const Handle(asiAlgo_FeatureAttr)* attrPtr = (*attrSetPtr).Seek(attr_id);
-  if ( attrPtr == NULL )
+  if ( attrPtr == nullptr )
     return false;
 
   return (*attrSetPtr).ChangeMap().UnBind(attr_id);
@@ -657,7 +657,7 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
     Handle(asiAlgo_FeatureAttrFace)::DownCast(attr)->SetFaceId(node);
 
   t_attr_set* attrSetPtr = m_nodeAttributes.ChangeSeek(node);
-  if ( attrSetPtr == NULL )
+  if ( attrSetPtr == nullptr )
     m_nodeAttributes.Bind( node, t_attr_set(attr) );
   else
     (*attrSetPtr).Add(attr);
@@ -798,7 +798,7 @@ void asiAlgo_AAG::Remove(const TColStd_PackedMapOfInteger& faceIndices)
 
       // Kill the corresponding chunks from the list of neighbors
       TColStd_PackedMapOfInteger* mapPtr = m_neighborsStack.top().ChangeSeek(neighbor_idx);
-      if ( mapPtr != NULL )
+      if ( mapPtr != nullptr )
         (*mapPtr).Subtract(faceIndices);
     }
 
@@ -1039,7 +1039,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
       if ( sae.IsSeam(edge, face) )
       {
         TopTools_IndexedMapOfShape edges;
-        asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
+        asiAlgo_CheckDihedralAngle checkDihAngle(nullptr, nullptr);
 
         // Notice that smooth transitions are not allowed here. This is because
         // the following treatment is designed for periodic faces, and we normally
@@ -1079,7 +1079,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
 void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
 {
   // Prepare dihedral angle calculation.
-  asiAlgo_CheckDihedralAngle checkDihAngle(NULL, NULL);
+  asiAlgo_CheckDihedralAngle checkDihAngle(nullptr, nullptr);
 
   // Now analyze the face pairs
   for ( TopTools_ListIteratorOfListOfShape lit(mateFaces); lit.More(); lit.Next() )

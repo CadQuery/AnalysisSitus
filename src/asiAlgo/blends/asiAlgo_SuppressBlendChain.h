@@ -60,8 +60,8 @@ public:
   asiAlgo_EXPORT
     asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)&     aag,
                                const Handle(asiAlgo_History)& history,
-                               ActAPI_ProgressEntry           progress = NULL,
-                               ActAPI_PlotterEntry            plotter  = NULL);
+                               ActAPI_ProgressEntry           progress = nullptr,
+                               ActAPI_PlotterEntry            plotter  = nullptr);
 
   //! Ctor.
   //! \param[in] aag      attributed adjacency graph containing the recognition
@@ -71,8 +71,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_SuppressBlendChain(const Handle(asiAlgo_AAG)& aag,
-                               ActAPI_ProgressEntry       progress = NULL,
-                               ActAPI_PlotterEntry        plotter  = NULL);
+                               ActAPI_ProgressEntry       progress = nullptr,
+                               ActAPI_PlotterEntry        plotter  = nullptr);
 
 public:
 

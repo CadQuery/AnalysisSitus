@@ -120,7 +120,8 @@ set (asiTest_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
 #
 set (asiTest_include_dir ${asiTest_include_dir_loc} PARENT_SCOPE)
 
-include_directories ( ${asiTest_include_dir_loc}
+include_directories ( SYSTEM
+                      ${asiTest_include_dir_loc}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
                       ${asiEngine_include_dir}
@@ -130,10 +131,12 @@ include_directories ( ${asiTest_include_dir_loc}
                       ${asiTestEngine_include_dir}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
-                      ${3RDPARTY_mobius_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
-                      ${3RDPARTY_vtk_INCLUDE_DIR}
-                      ${3RDPARTY_tbb_INCLUDE_DIR} )
+                      ${3RDPARTY_vtk_INCLUDE_DIR} )
+
+if (USE_MOBIUS)
+  include_directories(SYSTEM ${3RDPARTY_mobius_INCLUDE_DIR})
+endif()
 
 #------------------------------------------------------------------------------
 # Create executable
@@ -174,5 +177,7 @@ target_link_libraries(asiTest asiAlgo asiData asiEngine asiTestEngine asiTcl asi
 # Installation
 #------------------------------------------------------------------------------
 
-install (TARGETS asiTest RUNTIME DESTINATION bin COMPONENT Runtime)
-install (FILES resources/asiTestDictionary.xml DESTINATION bin/resources)
+if (WIN32)
+  install (TARGETS asiTest RUNTIME DESTINATION bin COMPONENT Runtime)
+  install (FILES resources/asiTestDictionary.xml DESTINATION bin/resources)
+endif()

@@ -91,8 +91,8 @@ asiAlgo_PlateOnEdges::asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
                                            ActAPI_ProgressEntry       progress,
                                            ActAPI_PlotterEntry        plotter)
 : ActAPI_IAlgorithm ( progress, plotter ),
-  m_aag             ( aag),
   m_shape           ( aag->GetMasterCAD() ),
+  m_aag             ( aag),
   m_iNumDiscrPts    ( 10 ),
   m_fFairCoeff      ( 0. )
 {}
@@ -323,7 +323,7 @@ bool asiAlgo_PlateOnEdges::BuildSurf(const Handle(TopTools_HSequenceOfShape)& ed
        mobSurf = mobius::cascade::GetMobiusBSurface(support);
 
      // Perform fairing.
-     mobius::geom_FairBSurf fairing(mobSurf, m_fFairCoeff, NULL, NULL);
+     mobius::geom_FairBSurf fairing(mobSurf, m_fFairCoeff, nullptr, nullptr);
      //
      const int nPolesU = int( mobSurf->GetPoles().size() );
      const int nPolesV = int( mobSurf->GetPoles()[0].size() );

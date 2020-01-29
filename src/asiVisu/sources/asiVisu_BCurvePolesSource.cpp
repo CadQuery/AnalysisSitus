@@ -50,7 +50,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BCurvePolesSource);
+vtkStandardNewMacro(asiVisu_BCurvePolesSource)
 
 //! Default constructor.
 asiVisu_BCurvePolesSource::asiVisu_BCurvePolesSource() : vtkPolyDataAlgorithm()

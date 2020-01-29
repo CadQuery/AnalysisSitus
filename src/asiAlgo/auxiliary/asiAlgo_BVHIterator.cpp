@@ -35,7 +35,7 @@
 
 //! Constructs iterator for traversing BVH tree.
 //! \param[in] bvh structure to traverse.
-asiAlgo_BVHIterator::asiAlgo_BVHIterator(const opencascade::handle< BVH_Tree<double, 4> >& bvh)
+asiAlgo_BVHIterator::asiAlgo_BVHIterator(const opencascade::handle< BVH_Tree<double, 3> >& bvh)
 : m_bvh         (bvh),
   m_iStackHead  (-1),
   m_currentNode (0) // First index

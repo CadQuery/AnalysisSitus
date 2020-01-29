@@ -65,7 +65,7 @@ public:
   //! \param[in] parent   parent widget.
   asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
                       ActAPI_ProgressEntry           progress,
-                      QWidget*                       parent = NULL);
+                      QWidget*                       parent = nullptr);
 
   //! Destructor.
   virtual
@@ -102,13 +102,13 @@ public:
   void
     SetSelectedNode(const ActAPI_DataObjectId& nodeId);
 
-  //! \return selected Node or NULL if nothing is selected.
+  //! \return selected Node or nullptr if nothing is selected.
   Handle(ActAPI_INode)
     GetSelectedNode() const;
 
   //! Accessor for a selected Node with its corresponding UI item.
   //! \param[out] pItem UI item.
-  //! \return selected Node or NULL if nothing is selected.
+  //! \return selected Node or nullptr if nothing is selected.
   Handle(ActAPI_INode)
     GetSelectedNode(QTreeWidgetItem*& pItem) const;
 

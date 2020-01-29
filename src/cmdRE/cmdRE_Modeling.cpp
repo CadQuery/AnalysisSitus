@@ -133,7 +133,7 @@ Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
   t_ptr<t_bcurve> mobCurve = cascade::GetMobiusBCurve(curve);
 
   // Perform fairing from Mobius.
-  geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+  geom_FairBCurve fairing(mobCurve, lambda, nullptr, nullptr);
   //
   if ( !fairing.Perform() )
   {
@@ -843,7 +843,7 @@ int RE_SkinSurface(const Handle(asiTcl_Interp)& interp,
     // Perform fairing if requested.
     if ( isFairing )
     {
-      geom_FairBCurve fairing(skinner.IsoU_Curves[k], fairingCoeff, NULL, NULL);
+      geom_FairBCurve fairing(skinner.IsoU_Curves[k], fairingCoeff, nullptr, nullptr);
       //asiAlgo_FairBCurve fairing( occtIsoU,
       //                            fairingCoeff, // Fairing coefficient.
       //                            interp->GetProgress(),
@@ -1136,10 +1136,10 @@ int RE_CheckSurfDeviation(const Handle(asiTcl_Interp)& interp,
   {
     // If there is no BVH for mesh, build one.
     if ( cmdRE::model->GetTriangulationNode()->GetBVH().IsNull() )
-      asiEngine_Triangulation( cmdRE::model, interp->GetProgress(), NULL ).BuildBVH();
+      asiEngine_Triangulation( cmdRE::model, interp->GetProgress(), nullptr ).BuildBVH();
 
     // Create Surface Deviation Node.
-    sdNode = asiEngine_IV(cmdRE::model, interp->GetProgress(), NULL).Create_SurfaceDeviation(argv[1], surfaceNode);
+    sdNode = asiEngine_IV(cmdRE::model, interp->GetProgress(), nullptr).Create_SurfaceDeviation(argv[1], surfaceNode);
   }
   cmdRE::model->CommitCommand();
 
@@ -2081,8 +2081,8 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
           // Store projection.
           if ( projPts.size() > 2 )
           {
-            for ( size_t k = 0; k < projPts.size(); ++k )
-              edge->AddPolylinePole(projPts[k], projInds[k]);
+            for ( size_t kk = 0; kk < projPts.size(); ++kk )
+              edge->AddPolylinePole(projPts[kk], projInds[kk]);
 
             edge->AddPolylinePole(quadVertices[nextIdx]->GetPoint(), -1);
           }
@@ -2124,10 +2124,8 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
-                              const Handle(Standard_Transient)& data)
+                              const Handle(Standard_Transient)& cmdRE_NotUsed(data))
 {
-  cmdRE_NotUsed(data);
-  //
   static const char* group = "cmdRE";
 
   //-------------------------------------------------------------------------//

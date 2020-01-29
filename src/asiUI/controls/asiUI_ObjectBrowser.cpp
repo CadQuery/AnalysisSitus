@@ -161,7 +161,7 @@ void asiUI_ObjectBrowser::Populate()
 void asiUI_ObjectBrowser::UpdateSelectedNode()
 {
   Handle(ActAPI_INode) N;
-  QTreeWidgetItem*     pItem = NULL;
+  QTreeWidgetItem*     pItem = nullptr;
 
   if ( !this->selectedNode(N, pItem) )
     return;
@@ -203,7 +203,7 @@ Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode() const
 {
   Handle(ActAPI_INode) selected;
   if ( !this->selectedNode(selected) )
-    return NULL;
+    return nullptr;
 
   return selected;
 }
@@ -214,7 +214,7 @@ Handle(ActAPI_INode) asiUI_ObjectBrowser::GetSelectedNode(QTreeWidgetItem*& pIte
 {
   Handle(ActAPI_INode) selected;
   if ( !this->selectedNode(selected, pItem) )
-    return NULL;
+    return nullptr;
 
   return selected;
 }
@@ -225,7 +225,7 @@ Handle(ActAPI_HNodeList) asiUI_ObjectBrowser::GetSelectedNodes() const
 {
   Handle(ActAPI_HNodeList) selected;
   if ( !this->selectedNodes(selected) )
-    return NULL;
+    return nullptr;
 
   return selected;
 }
@@ -276,7 +276,7 @@ void asiUI_ObjectBrowser::onSelectionChanged()
     Handle(ActAPI_HNodeList) nodes = this->GetSelectedNodes();
     //
     if ( nodes.IsNull() || nodes->Length() != 1 )
-      m_paramEditor->SetParameters( NULL );
+      m_paramEditor->SetParameters( nullptr );
     else
       m_paramEditor->SetParameters( nodes->First()->Parameters() );
 
@@ -1058,7 +1058,7 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node,
 //! \return true in case of success, false -- otherwise.
 bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node) const
 {
-  QTreeWidgetItem* pItem = NULL;
+  QTreeWidgetItem* pItem = nullptr;
   return this->selectedNode(Node, pItem);
 }
 

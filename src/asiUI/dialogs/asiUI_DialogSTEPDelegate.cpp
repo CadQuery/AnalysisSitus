@@ -38,6 +38,9 @@
 #include <QSpinBox>
 #pragma warning(pop)
 
+// Standard includes
+#include <float.h>
+
 //! Constructor.
 asiUI_DialogSTEPDelegate::asiUI_DialogSTEPDelegate(QObject* parent)
 : QStyledItemDelegate(parent)
@@ -48,7 +51,7 @@ QWidget* asiUI_DialogSTEPDelegate::createEditor(QWidget*                    pare
                                                 const QStyleOptionViewItem& /*option*/,
                                                 const QModelIndex&          index) const
 {
-  QWidget* wEditor = NULL;
+  QWidget* wEditor = nullptr;
   //
   if ( !index.column() )
     return wEditor;

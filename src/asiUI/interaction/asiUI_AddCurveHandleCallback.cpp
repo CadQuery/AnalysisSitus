@@ -41,7 +41,7 @@
 
 asiUI_AddCurveHandleCallback* asiUI_AddCurveHandleCallback::New()
 {
-  return new asiUI_AddCurveHandleCallback(NULL);
+  return new asiUI_AddCurveHandleCallback(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -58,12 +58,10 @@ asiUI_AddCurveHandleCallback::~asiUI_AddCurveHandleCallback()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_AddCurveHandleCallback::Execute(vtkObject*    pCaller,
+void asiUI_AddCurveHandleCallback::Execute(vtkObject*    asiUI_NotUsed(pCaller),
                                            unsigned long eventId,
                                            void*         pCallData)
 {
-  asiUI_NotUsed(pCaller);
-
   if ( eventId == EVENT_SELECT_CELL )
   {
     // Get picked point.

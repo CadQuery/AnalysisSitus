@@ -67,7 +67,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_ShapeRobustTessellator);
+vtkStandardNewMacro(asiVisu_ShapeRobustTessellator)
 
 //-----------------------------------------------------------------------------
 
@@ -905,11 +905,9 @@ void asiVisu_ShapeRobustTessellator::addCurve(const Handle(Geom_Curve)&    curve
 
 void asiVisu_ShapeRobustTessellator::addBrokenEdgeCurve(const TopoDS_Edge&           edge,
                                                         const vtkIdType              shapeId,
-                                                        const int                    edgeId,
+                                                        const int                    asiVisu_NotUsed(edgeId),
                                                         const asiVisu_ShapePrimitive scType)
 {
-  asiVisu_NotUsed(edgeId);
-
   double f, l;
   Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, f, l);
   //

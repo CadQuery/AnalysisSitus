@@ -53,7 +53,7 @@ public:
 
   asiUI_Viewer(ActAPI_ProgressEntry progress,
                ActAPI_PlotterEntry  plotter,
-               QWidget*             parent = NULL);
+               QWidget*             parent = nullptr);
 
   virtual ~asiUI_Viewer();
 

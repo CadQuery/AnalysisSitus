@@ -100,7 +100,7 @@ protected:
   //! \return translation sources.
   virtual Handle(ActAPI_HParameterList) translationSources() const
   {
-    return NULL;
+    return nullptr;
   }
 
 protected:

@@ -66,7 +66,7 @@ void asiUI_IV::FIT3D()
     asiVisu_Utils::AdjustCamera( m_prsMgr3d->GetRenderer(),
                                  m_prsMgr3d->PropsByTrihedron() );
     //
-    m_prsMgr3d->GetQVTKWidget()->repaint();
+    m_prsMgr3d->GetQVTKWidget()->GetRenderWindow()->Render();
   }
 }
 
@@ -906,8 +906,8 @@ void asiUI_IV::REPAINT_ON()
 {
   m_bRepaintOn = true;
 
-  this->prsManager(false)->GetQVTKWidget()->repaint();
-  this->prsManager(true)->GetQVTKWidget()->repaint();
+  this->prsManager(false)->GetQVTKWidget()->GetRenderWindow()->Render();
+  this->prsManager(true)->GetQVTKWidget()->GetRenderWindow()->Render();
 }
 
 //---------------------------------------------------------------------------//
@@ -961,7 +961,7 @@ void asiUI_IV::visualize(const bool                  is2d,
     //
     if ( pl.IsNull() )
     {
-      std::cout << "Pipeline is NULL" << std::endl;
+      std::cout << "Pipeline is null" << std::endl;
       return;
     }
 

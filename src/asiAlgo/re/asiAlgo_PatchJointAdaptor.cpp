@@ -99,13 +99,13 @@ bool asiAlgo_PatchJointAdaptor::AnalyzeJoint(const Handle(Geom_Curve)&   curve,
   // Define which curvilinear axis works out this shift. Here we rely on the
   // fact that the joint curve is an isoparametric curve for both surfaces.
   const double confPrec    = 1e-5;
-  bool         sameSense   = true;
+  //bool         sameSense   = true;
   //
   if ( fabs(Cproj_U_next - Cproj_U) < confPrec &&
        fabs(Cproj_V_next - Cproj_V) > confPrec )
   {
     isSurfGoesU = false;
-    sameSense   = (Cproj_V_next - Cproj_V) > 0;
+    //sameSense   = (Cproj_V_next - Cproj_V) > 0;
 
     if ( fabs(Cproj_U - uMin) < projPrec )
       isLeftBound = true;
@@ -114,7 +114,7 @@ bool asiAlgo_PatchJointAdaptor::AnalyzeJoint(const Handle(Geom_Curve)&   curve,
             fabs(Cproj_V_next - Cproj_V) < confPrec )
   {
     isSurfGoesU = true;
-    sameSense   = (Cproj_U_next - Cproj_U) > 0;
+    //sameSense   = (Cproj_U_next - Cproj_U) > 0;
 
     if ( fabs(Cproj_V - vMin) < projPrec )
       isLeftBound = true;
@@ -294,7 +294,7 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
   //
   for ( int k = 0; k < numPoles; ++k )
   {
-    t_xyz* pPoleLeft = NULL, *pPoleRight = NULL;
+    t_xyz* pPoleLeft = nullptr, *pPoleRight = nullptr;
 
     // Get row or column of poles from the left surface.
     if ( isoLeftU && isoLeftMin )

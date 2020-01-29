@@ -90,7 +90,7 @@ QLabel* asiUI_DatumLabel::Editor::GetLabel() const
 //! \return string value of the datum.
 QString asiUI_DatumLabel::Editor::getString() const
 {
-  return (GetLabel() == NULL) ? QString() : GetLabel()->text();
+  return (GetLabel() == nullptr) ? QString() : GetLabel()->text();
 }
 
 //! Set label control string.

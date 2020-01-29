@@ -52,8 +52,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiEngine_Part(const Handle(asiEngine_Model)&             model,
                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                 ActAPI_ProgressEntry                       progress = NULL,
-                 ActAPI_PlotterEntry                        plotter  = NULL)
+                 ActAPI_ProgressEntry                       progress = nullptr,
+                 ActAPI_PlotterEntry                        plotter  = nullptr)
   //
   : asiEngine_Base(model, progress, plotter), m_prsMgr(prsMgr) {}
 
@@ -62,10 +62,10 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiEngine_Part(const Handle(asiEngine_Model)& model,
-                 ActAPI_ProgressEntry           progress = NULL,
-                 ActAPI_PlotterEntry            plotter  = NULL)
+                 ActAPI_ProgressEntry           progress = nullptr,
+                 ActAPI_PlotterEntry            plotter  = nullptr)
   //
-  : asiEngine_Base(model, progress, plotter), m_prsMgr(NULL) {}
+  : asiEngine_Base(model, progress, plotter), m_prsMgr(nullptr) {}
 
 public:
 
@@ -102,9 +102,15 @@ public:
     FindElemMetadata(const TopoDS_Shape& shape,
                      const bool          create = false);
 
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    CreateOctree();
+
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    FindOctree(const bool create);
+
   asiEngine_EXPORT Handle(asiData_PartNode)
     Update(const TopoDS_Shape&            model,
-           const Handle(asiAlgo_History)& history = NULL,
+           const Handle(asiAlgo_History)& history = nullptr,
            const bool                     doResetTessParams = false);
 
   asiEngine_EXPORT bool

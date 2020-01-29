@@ -32,7 +32,7 @@
 #ifndef cmdMisc_h
 #define cmdMisc_h
 
-#define cmdMisc_NotUsed(x) x
+#define cmdMisc_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef cmdMisc_EXPORTS

@@ -59,7 +59,7 @@ public:
   asiUI_DialogPipelines(const Handle(asiVisu_Prs)&                 prs,
                         const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                         ActAPI_ProgressEntry                       notifier,
-                        QWidget*                                   parent = NULL);
+                        QWidget*                                   parent = nullptr);
 
   virtual ~asiUI_DialogPipelines();
 
@@ -82,11 +82,11 @@ private:
   {
     QTableWidget* pPipelines; //!< Table with pipelines.
 
-    t_widgets() : pPipelines(NULL) {}
+    t_widgets() : pPipelines(nullptr) {}
 
     void Release()
     {
-      delete pPipelines; pPipelines = NULL;
+      delete pPipelines; pPipelines = nullptr;
     }
   };
 

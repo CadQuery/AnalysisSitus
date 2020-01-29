@@ -54,8 +54,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_CheckValidity(ActAPI_ProgressEntry progress = NULL,
-                          ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_CheckValidity(ActAPI_ProgressEntry progress = nullptr,
+                          ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 

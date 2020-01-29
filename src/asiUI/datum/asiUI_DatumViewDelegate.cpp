@@ -67,12 +67,12 @@ asiUI_DatumItemEditor* asiUI_DatumViewDelegate::createDatum(
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );
 
   if ( !aViewBaseApi )
-    return NULL;
+    return nullptr;
 
   QString aDatumId = aViewBaseApi->DatumId(theIndex);
 
   if ( aDatumId.isEmpty() )
-    return NULL;
+    return nullptr;
 
   asiUI_Datum* aDatum = aViewBaseApi->AccessFactory()->CreateEditor(
     aDatumId, theParent, asiUI_Datum::Control);
@@ -92,7 +92,7 @@ bool asiUI_DatumViewDelegate::isColorItem(const QModelIndex& theIndex) const
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );
 
   if ( !aViewBaseApi )
-    return NULL;
+    return false;
 
   return ( qobject_cast<asiUI_DatumColorItem*>( aViewBaseApi->AccessViewDatum(theIndex) ) != 0 );
 }
@@ -109,7 +109,7 @@ bool asiUI_DatumViewDelegate::isBoolItem(const QModelIndex& theIndex) const
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );
 
   if ( !aViewBaseApi )
-    return NULL;
+    return false;
 
   return ( qobject_cast<asiUI_DatumCheckBox*>( aViewBaseApi->AccessViewDatum(theIndex) ) != 0 );
 }
@@ -124,7 +124,7 @@ asiUI_DatumPathItem* asiUI_DatumViewDelegate::isPathItem(const QModelIndex& theI
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );
 
   if ( !aViewBaseApi )
-    return NULL;
+    return nullptr;
 
   return qobject_cast<asiUI_DatumPathItem*>( aViewBaseApi->AccessViewDatum(theIndex) );
 }
@@ -140,7 +140,7 @@ asiUI_DatumCustomSelector*
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );
 
   if ( !aViewBaseApi )
-    return NULL;
+    return nullptr;
 
   return qobject_cast<asiUI_DatumCustomSelector*>( aViewBaseApi->AccessViewDatum(theIndex) );
 }
@@ -155,17 +155,15 @@ Qt::Alignment asiUI_DatumViewDelegate::checkBoxAlignment() const
 //! Provide model role for storing and getting value for putting in editor.
 //! \param theIndex [in] the model index.
 //! \return integer id corresponding to the role.
-int asiUI_DatumViewDelegate::valueRole(const QModelIndex& theIndex) const
+int asiUI_DatumViewDelegate::valueRole(const QModelIndex& asiUI_NotUsed(theIndex)) const
 {
-  asiUI_NotUsed(theIndex);
-
   return DatumViewRole_ModelValue;
 }
 
 //! Provide model role for getting display string for datum.
 //! \param theIndex [in] the model index.
 //! \return integer id corresponding to the role.
-int asiUI_DatumViewDelegate::displayRole(const QModelIndex& /*theIndex*/) const
+int asiUI_DatumViewDelegate::displayRole(const QModelIndex& asiUI_NotUsed(theIndex)) const
 {
   return Qt::DisplayRole;
 }

@@ -72,7 +72,7 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
                                   int&          facet_index,
                                   gp_XYZ&       result) const
 {
-  const opencascade::handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
+  const opencascade::handle< BVH_Tree<double, 3> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
     return false;
 
@@ -118,10 +118,10 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
     }
     else // sub-volume
     {
-      const BVH_Vec4d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
-      const BVH_Vec4d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
-      const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
-      const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
+      const BVH_Vec3d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
+      const BVH_Vec3d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
+      const BVH_Vec3d& minCorner_Right = bvh->MinPoint( nodeData.z() );
+      const BVH_Vec3d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
 
       const bool isLeftOut  = this->isOut(ray, minCorner_Left, maxCorner_Left, prec);
       const bool isRightOut = this->isOut(ray, minCorner_Right, maxCorner_Right, prec);
@@ -173,7 +173,7 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
                                     gp_Pnt&       P_proj,
                                     int&          facet_index) const
 {
-  const opencascade::handle< BVH_Tree<double, 4> >& bvh = m_facets->BVH();
+  const opencascade::handle< BVH_Tree<double, 3> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
     return false;
 
@@ -211,10 +211,10 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
     }
     else // sub-volume
     {
-      const BVH_Vec4d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
-      const BVH_Vec4d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
-      const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
-      const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
+      const BVH_Vec3d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
+      const BVH_Vec3d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
+      const BVH_Vec3d& minCorner_Right = bvh->MinPoint( nodeData.z() );
+      const BVH_Vec3d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
 
       const bool isLeftOut  = asiAlgo_BVHAlgo::isOut(minCorner_Left, maxCorner_Left, P, intersectPrec);
       const bool isRightOut = asiAlgo_BVHAlgo::isOut(minCorner_Right, maxCorner_Right, P, intersectPrec);
@@ -387,8 +387,8 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
 //! \param[in] boxMax upper corner of the box to test.
 //! \return true/false.
 bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
-                             const BVH_Vec4d& boxMin,
-                             const BVH_Vec4d& boxMax,
+                             const BVH_Vec3d& boxMin,
+                             const BVH_Vec3d& boxMax,
                              const double     prec) const
 {
   double xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
@@ -403,7 +403,7 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
   double myYmax = boxMax.y() + prec;
   double myZmax = boxMax.z() + prec;
 
-  if ( Abs(L.Direction().XYZ().X()) > 0.0 )
+  if ( Abs( L.Direction().XYZ().X() ) > 0.0 )
   {
     par1 = (myXmin - L.Location().XYZ().X()) / L.Direction().XYZ().X();
     par2 = (myXmax - L.Location().XYZ().X()) / L.Direction().XYZ().X();

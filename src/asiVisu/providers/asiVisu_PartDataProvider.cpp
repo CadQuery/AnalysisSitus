@@ -159,6 +159,19 @@ vtkSmartPointer<vtkTransform> asiVisu_PartDataProvider::GetTransformation() cons
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_PartDataProvider::GetColor(double& r, double& g, double& b) const
+{
+  const int icolor = m_node->GetColor();
+
+  QColor qcolor = asiVisu_Utils::IntToColor(icolor);
+
+  r = qcolor.redF();
+  g = qcolor.greenF();
+  b = qcolor.blueF();
+}
+
+//-----------------------------------------------------------------------------
+
 //! \return copy.
 Handle(asiVisu_PartDataProvider) asiVisu_PartDataProvider::Clone() const
 {

@@ -46,22 +46,23 @@
 #include <vtkUnstructuredGrid.h>
 
 #if defined USE_MOBIUS
-  // Mobius includes
   #include <mobius/cascade.h>
+  #include <mobius/poly_DistanceField.h>
   #include <mobius/poly_SVO.h>
 #endif
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_OctreeSource);
+vtkStandardNewMacro(asiVisu_OctreeSource)
 
 //-----------------------------------------------------------------------------
 
 asiVisu_OctreeSource::asiVisu_OctreeSource()
-: vtkUnstructuredGridAlgorithm (),
-  m_pOctree                    (nullptr),
-  m_fMinScalar                 (DBL_MAX),
-  m_fMaxScalar                 (-DBL_MAX)
+: vtkUnstructuredGridAlgorithm ( ),
+  m_pOctree                    ( nullptr ),
+  m_fMinScalar                 ( DBL_MAX ),
+  m_fMaxScalar                 (-DBL_MAX ),
+  m_bZeroCrossingOnly          ( false   )
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline.
@@ -90,16 +91,22 @@ void* asiVisu_OctreeSource::GetInputOctree() const
 
 //-----------------------------------------------------------------------------
 
-int asiVisu_OctreeSource::RequestData(vtkInformation*        request,
-                                      vtkInformationVector** inputVector,
+void asiVisu_OctreeSource::SetZeroCrossingOnly(const bool isOn)
+{
+  m_bZeroCrossingOnly = isOn;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(request),
+                                      vtkInformationVector** asiVisu_NotUsed(inputVector),
                                       vtkInformationVector*  outputVector)
 {
-  asiVisu_NotUsed(request);
-  asiVisu_NotUsed(inputVector);
-
   if ( !m_pOctree )
   {
-    vtkErrorMacro( << "Invalid input: NULL octree." );
+    vtkErrorMacro( << "Invalid input: nullptr octree." );
     return 0;
   }
 
@@ -136,48 +143,52 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
     return;
 
 #if defined USE_MOBIUS
-  mobius::poly_SVO* pMobNode = reinterpret_cast<mobius::poly_SVO*>(pNode);
+  mobius::poly_SVO* pMobNode = static_cast<mobius::poly_SVO*>(pNode);
 
   if ( pMobNode->IsLeaf() )
   {
-    const double sc0 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 0, 0) );
-    const double sc1 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 0, 0) );
-    const double sc2 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 1, 0) );
-    const double sc3 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 1, 0) );
-    //
-    const double sc4 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 0, 1) );
-    const double sc5 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 0, 1) );
-    const double sc6 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 1, 1) );
-    const double sc7 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 1, 1) );
+    if ( (  m_bZeroCrossingOnly && mobius::poly_DistanceField::IsZeroCrossing(pMobNode) ) ||
+           !m_bZeroCrossingOnly )
+    {
+      const double sc0 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 0, 0) );
+      const double sc1 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 0, 0) );
+      const double sc2 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 1, 0) );
+      const double sc3 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 1, 0) );
+      //
+      const double sc4 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 0, 1) );
+      const double sc5 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 0, 1) );
+      const double sc6 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 1, 1) );
+      const double sc7 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 1, 1) );
 
-    m_fMinScalar = Min(m_fMinScalar, sc0);
-    m_fMinScalar = Min(m_fMinScalar, sc1);
-    m_fMinScalar = Min(m_fMinScalar, sc2);
-    m_fMinScalar = Min(m_fMinScalar, sc3);
-    m_fMinScalar = Min(m_fMinScalar, sc4);
-    m_fMinScalar = Min(m_fMinScalar, sc5);
-    m_fMinScalar = Min(m_fMinScalar, sc6);
-    m_fMinScalar = Min(m_fMinScalar, sc7);
+      m_fMinScalar = Min(m_fMinScalar, sc0);
+      m_fMinScalar = Min(m_fMinScalar, sc1);
+      m_fMinScalar = Min(m_fMinScalar, sc2);
+      m_fMinScalar = Min(m_fMinScalar, sc3);
+      m_fMinScalar = Min(m_fMinScalar, sc4);
+      m_fMinScalar = Min(m_fMinScalar, sc5);
+      m_fMinScalar = Min(m_fMinScalar, sc6);
+      m_fMinScalar = Min(m_fMinScalar, sc7);
 
-    m_fMaxScalar = Max(m_fMaxScalar, sc0);
-    m_fMaxScalar = Max(m_fMaxScalar, sc1);
-    m_fMaxScalar = Max(m_fMaxScalar, sc2);
-    m_fMaxScalar = Max(m_fMaxScalar, sc3);
-    m_fMaxScalar = Max(m_fMaxScalar, sc4);
-    m_fMaxScalar = Max(m_fMaxScalar, sc5);
-    m_fMaxScalar = Max(m_fMaxScalar, sc6);
-    m_fMaxScalar = Max(m_fMaxScalar, sc7);
+      m_fMaxScalar = Max(m_fMaxScalar, sc0);
+      m_fMaxScalar = Max(m_fMaxScalar, sc1);
+      m_fMaxScalar = Max(m_fMaxScalar, sc2);
+      m_fMaxScalar = Max(m_fMaxScalar, sc3);
+      m_fMaxScalar = Max(m_fMaxScalar, sc4);
+      m_fMaxScalar = Max(m_fMaxScalar, sc5);
+      m_fMaxScalar = Max(m_fMaxScalar, sc6);
+      m_fMaxScalar = Max(m_fMaxScalar, sc7);
 
-    this->registerVoxel( mobius::cascade::GetOpenCascadePnt( pMobNode->GetP0() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP1() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP2() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP3() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP4() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP5() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP6() ),
-                         mobius::cascade::GetOpenCascadePnt( pMobNode->GetP7() ),
-                         sc0, sc1, sc2, sc3, sc4, sc5, sc6, sc7,
-                         pData );
+      this->registerVoxel( mobius::cascade::GetOpenCascadePnt( pMobNode->GetP0() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP1() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP2() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP3() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP4() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP5() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP6() ),
+                           mobius::cascade::GetOpenCascadePnt( pMobNode->GetP7() ),
+                           sc0, sc1, sc2, sc3, sc4, sc5, sc6, sc7,
+                           pData );
+    }
   }
   else
     for ( size_t k = 0; k < 8; ++k )
@@ -185,8 +196,6 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
       this->addVoxels( pMobNode->GetChild(k), pData );
     }
 #else
-  asiVisu_NotUsed(pData);
-
   vtkErrorMacro( << "Mobius SVO data structure is not available." );
 #endif
 }

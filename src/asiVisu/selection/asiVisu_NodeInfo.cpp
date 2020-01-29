@@ -37,7 +37,7 @@
 #include <vtkInformationObjectBaseKey.h>
 #include <vtkObjectFactory.h>
 
-vtkSmartPointer<vtkInformationObjectBaseKey> asiVisu_NodeInfo::m_key = NULL;
+vtkSmartPointer<vtkInformationObjectBaseKey> asiVisu_NodeInfo::m_key = nullptr;
 
 vtkStandardNewMacro(asiVisu_NodeInfo);
 
@@ -68,19 +68,19 @@ const ActAPI_DataObjectId& asiVisu_NodeInfo::GetNodeId() const
 //! \return information key.
 vtkInformationObjectBaseKey* asiVisu_NodeInfo::GetKey()
 {
-  if ( m_key.GetPointer() == NULL )
+  if ( m_key.GetPointer() == nullptr )
     m_key = new vtkInformationObjectBaseKey("NodeInformation", "asiVisu_NodeInfo::m_key");
   return m_key;
 }
 
 //! Retrieves Information properties from the passed actor attempting to
 //! access NodeInformation reference. If such reference is not bound, returns
-//! NULL pointer.
+//! nullptr pointer.
 //! \param actor [in] actor to access information from.
-//! \return requested NodeInformation reference or NULL.
+//! \return requested NodeInformation reference or nullptr.
 asiVisu_NodeInfo* asiVisu_NodeInfo::Retrieve(vtkActor* actor)
 {
-  asiVisu_NodeInfo* result = NULL;
+  asiVisu_NodeInfo* result = nullptr;
   //
   if ( !actor )
     return result;

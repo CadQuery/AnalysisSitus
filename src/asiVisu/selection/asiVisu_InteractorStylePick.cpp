@@ -63,7 +63,7 @@ asiVisu_InteractorStylePick::~asiVisu_InteractorStylePick()
 //! Prohibited copy constructor.
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&)
 : vtkInteractorStyleTrackballCamera(),
-  m_pPickInput(NULL),
+  m_pPickInput(nullptr),
   m_bIsLeftButtonDown(false),
   m_bIsRotation(false)
 {
@@ -132,7 +132,7 @@ void asiVisu_InteractorStylePick::OnLeftButtonDown()
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
                           this->Interactor->GetEventPosition()[1]);
 
-  if ( this->CurrentRenderer == NULL )
+  if ( this->CurrentRenderer == nullptr )
     return;
 
   m_bIsLeftButtonDown = true;
@@ -180,7 +180,7 @@ void asiVisu_InteractorStylePick::OnLeftButtonUp()
   // Invoke observers
   m_bIsRotation = false;
   this->EndRotate();
-  this->InvokeEvent(EVENT_ROTATION_END, NULL);
+  this->InvokeEvent(EVENT_ROTATION_END, nullptr);
 }
 
 //! Callback for "Key Press" event.

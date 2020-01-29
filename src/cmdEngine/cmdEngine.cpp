@@ -39,8 +39,8 @@
 
 //-----------------------------------------------------------------------------
 
-Handle(asiEngine_Model)        cmdEngine::model = NULL;
-Handle(asiUI_CommonFacilities) cmdEngine::cf    = NULL;
+Handle(asiEngine_Model)        cmdEngine::model = nullptr;
+Handle(asiUI_CommonFacilities) cmdEngine::cf    = nullptr;
 
 //-----------------------------------------------------------------------------
 
@@ -95,7 +95,7 @@ int ENGINE_ShowCommands(const Handle(asiTcl_Interp)& interp,
     return TCL_OK;
 
   asiUI_DialogCommands*
-    pDlg = new asiUI_DialogCommands(interp, interp->GetProgress(), NULL);
+    pDlg = new asiUI_DialogCommands(interp, interp->GetProgress(), nullptr);
   //
   pDlg->show();
 
@@ -156,7 +156,7 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
   //
   if ( passedCF.IsNull() )
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdEngine] No UI facilities are available. GUI will not be updated!");
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdEngine] UI facilities are not available. GUI may not be updated.");
   else
     cf = passedCF;
 
@@ -168,7 +168,7 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
   //
   if ( model.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdEngine] Data Model instance is NULL or not of asiEngine_Model kind.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdEngine] Data Model instance is null or not of asiEngine_Model kind.");
     return;
   }
 

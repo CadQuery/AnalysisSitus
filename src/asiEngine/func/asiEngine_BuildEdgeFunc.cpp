@@ -61,12 +61,9 @@ const char* asiEngine_BuildEdgeFunc::GetGUID() const
 //-----------------------------------------------------------------------------
 
 int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs,
-                                     const Handle(ActAPI_HParameterList)& outputs,
-                                     const Handle(Standard_Transient)&    userData) const
+                                     const Handle(ActAPI_HParameterList)& asiEngine_NotUsed(outputs),
+                                     const Handle(Standard_Transient)&    asiEngine_NotUsed(userData)) const
 {
-  asiEngine_NotUsed(outputs);
-  asiEngine_NotUsed(userData);
-
   // Get Edge Node.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );

@@ -38,11 +38,12 @@
 #include <Precision.hxx>
 
 // Standard includes
+#include <limits>
 #include <set>
 
 //-----------------------------------------------------------------------------
 
-const static double TOLER = Precision::Confusion();
+const static double TOLER   = Precision::Confusion();
 const static double SQTOLER = TOLER * TOLER;
 
 //-----------------------------------------------------------------------------
@@ -77,23 +78,24 @@ struct ProjectionInfoMesh
                     const double theSqDistance,
                     const int theIdx)
   {
-    if (theSqDistance > mySqDistance + SQTOLER)
+    if ( theSqDistance > mySqDistance + SQTOLER )
       return;
-    else if (theSqDistance < mySqDistance - SQTOLER)
+
+    else if ( theSqDistance < mySqDistance - SQTOLER )
     {
       myProjectedPoint = thePnt;
-      mySqDistance = theSqDistance;
+      mySqDistance     = theSqDistance;
 
-      myIdx = 0;
+      myIdx           = 0;
       myTriIdx[myIdx] = theIdx;
     }
     else
     {
       myProjectedPoint = thePnt;
-      mySqDistance = theSqDistance;
+      mySqDistance     = theSqDistance;
 
       ++myIdx;
-      if (myIdx < myTriIdx.size())
+      if ( myIdx < int( myTriIdx.size() ) )
         myTriIdx[myIdx] = theIdx;
       else
         myTriIdx.push_back(theIdx);
@@ -148,7 +150,7 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
 {
   ProjectionInfoMesh aProjected;
 
-  const opencascade::handle<BVH_Tree<double, 4> >& BVH = m_facets->BVH();
+  const opencascade::handle<BVH_Tree<double, 3> >& BVH = m_facets->BVH();
   if ( BVH.IsNull() )
     return aProjected.myProjectedPoint;
 
@@ -163,7 +165,7 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
     projectPntToTriangle(P, aTD, aProjected, anIdx[i]);
   }
 
-  for (asiAlgo_BVHIterator it(BVH); it.More(); it.Next())
+  for ( asiAlgo_BVHIterator it(BVH); it.More(); it.Next() )
   {
     const BVH_Vec4i& aNodeData = it.Current();
 
@@ -174,10 +176,10 @@ gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
     }
     else // sub-volume
     {
-      const BVH_Vec4d& aMinPntLft1 = BVH->MinPoint(aNodeData.y());
-      const BVH_Vec4d& aMaxPntLft1 = BVH->MaxPoint(aNodeData.y());
-      const BVH_Vec4d& aMinPntRgh1 = BVH->MinPoint(aNodeData.z());
-      const BVH_Vec4d& aMaxPntRgh1 = BVH->MaxPoint(aNodeData.z());
+      const BVH_Vec3d& aMinPntLft1 = BVH->MinPoint(aNodeData.y());
+      const BVH_Vec3d& aMaxPntLft1 = BVH->MaxPoint(aNodeData.y());
+      const BVH_Vec3d& aMinPntRgh1 = BVH->MinPoint(aNodeData.z());
+      const BVH_Vec3d& aMaxPntRgh1 = BVH->MaxPoint(aNodeData.z());
 
       bool anOut1 = isOut(aMinPntLft1, aMaxPntLft1, P, Sqrt(aProjected.mySqDistance));
       bool anOut2 = isOut(aMinPntRgh1, aMaxPntRgh1, P, Sqrt(aProjected.mySqDistance));

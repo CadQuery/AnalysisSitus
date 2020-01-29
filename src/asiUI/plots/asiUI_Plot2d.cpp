@@ -76,7 +76,7 @@ asiUI_Plot2d::asiUI_Plot2d(ActAPI_ProgressEntry progress,
                            QWidget*             parent)
 : QWidget     (parent),
   m_bLogScale (false),
-  m_pViewer   (NULL),
+  m_pViewer   (nullptr),
   m_progress  (progress),
   m_plotter   (plotter)
 {}

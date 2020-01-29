@@ -61,7 +61,7 @@ asiVisu_InteractorStylePick2d::~asiVisu_InteractorStylePick2d()
 //! Prohibited copy constructor.
 asiVisu_InteractorStylePick2d::asiVisu_InteractorStylePick2d(const asiVisu_InteractorStylePick2d&)
 : vtkInteractorStyleImage(),
-  m_pPickInput(NULL)
+  m_pPickInput(nullptr)
 {
 }
 
@@ -108,7 +108,7 @@ void asiVisu_InteractorStylePick2d::OnLeftButtonDown()
   this->FindPokedRenderer(this->Interactor->GetEventPosition()[0],
                           this->Interactor->GetEventPosition()[1]);
 
-  if ( this->CurrentRenderer == NULL )
+  if ( this->CurrentRenderer == nullptr )
     return;
 
   m_PickedPos[0] = this->Interactor->GetEventPosition()[0];

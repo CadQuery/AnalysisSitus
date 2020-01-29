@@ -31,8 +31,10 @@
 // Own include
 #include <asiAlgo_TimeStamp.h>
 
-// Windows includes
-#include <windows.h>
+#if defined _WIN32
+  // Windows includes
+  #include <windows.h>
+#endif
 
 //! Generates timestamp structure for the current time.
 //! \return timestamp structure.
@@ -43,9 +45,17 @@ Handle(asiAlgo_TimeStamp) asiAlgo_TimeStampTool::Generate()
 
   int internalCount = 0;
 
-  // TODO: Windows ONLY (!!!)
+#if defined _WIN32
   static LONG INTERNAL = 0;
   internalCount = (int) InterlockedIncrement(&INTERNAL);
+#else
+  static unsigned long INTERNAL = 0;
+  static Standard_Mutex MUTEX;
+
+  MUTEX.Lock();
+  internalCount = ++INTERNAL;
+  MUTEX.Unlock();
+#endif
 
   return new asiAlgo_TimeStamp(t, internalCount);
 }
@@ -61,7 +71,12 @@ std::vector<int>
   if ( TS->Time != -1 )
   {
     tm timeInfo;
+
+#ifdef _WIN32
     localtime_s(&timeInfo, &TS->Time);
+#else
+    localtime_r(&TS->Time, &timeInfo);
+#endif
 
     res.push_back(timeInfo.tm_sec);
     res.push_back(timeInfo.tm_min);

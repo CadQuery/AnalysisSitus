@@ -41,7 +41,7 @@
 //! \return instance of the callback class.
 asiUI_PartCallback* asiUI_PartCallback::New()
 {
-  return new asiUI_PartCallback(NULL);
+  return new asiUI_PartCallback(nullptr);
 }
 
 //! Instantiation routine accepting viewer.
@@ -68,13 +68,10 @@ asiUI_PartCallback::~asiUI_PartCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PartCallback::Execute(vtkObject*    pCaller,
+void asiUI_PartCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
                                  unsigned long eventId,
-                                 void*         pCallData)
+                                 void*         asiVisu_NotUsed(pCallData))
 {
-  asiVisu_NotUsed(pCaller);
-  asiVisu_NotUsed(pCallData);
-
   if ( eventId == EVENT_FIND_FACE )
     emit findFace();
 

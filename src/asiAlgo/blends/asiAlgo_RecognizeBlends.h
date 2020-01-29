@@ -50,28 +50,28 @@ public:
   //! \param[in] plotter   imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_RecognizeBlends(const TopoDS_Shape&  masterCAD,
-                            ActAPI_ProgressEntry progress = NULL,
-                            ActAPI_PlotterEntry  plotter  = NULL);
+                            ActAPI_ProgressEntry progress = nullptr,
+                            ActAPI_PlotterEntry  plotter  = nullptr);
 
   //! Ctor.
   //! \param[in] masterCAD full CAD model.
-  //! \param[in] aag       AAG (will be created from CAD if NULL is passed).
+  //! \param[in] aag       AAG (will be created from CAD if nullptr is passed).
   //! \param[in] progress  progress notifier.
   //! \param[in] plotter   imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_RecognizeBlends(const TopoDS_Shape&        masterCAD,
                             const Handle(asiAlgo_AAG)& aag,
-                            ActAPI_ProgressEntry       progress = NULL,
-                            ActAPI_PlotterEntry        plotter  = NULL);
+                            ActAPI_ProgressEntry       progress = nullptr,
+                            ActAPI_PlotterEntry        plotter  = nullptr);
 
   //! Ctor.
-  //! \param[in] aag      AAG (should not be NULL here).
+  //! \param[in] aag      AAG (should not be nullptr here).
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
-                            ActAPI_ProgressEntry       progress = NULL,
-                            ActAPI_PlotterEntry        plotter  = NULL);
+                            ActAPI_ProgressEntry       progress = nullptr,
+                            ActAPI_PlotterEntry        plotter  = nullptr);
 
 public:
 

@@ -67,7 +67,7 @@ protected:
   {
     if ( m_func.IsNull() )
     {
-      vtkErrorMacro( << "Invalid domain: NULL function" );
+      vtkErrorMacro( << "Invalid domain: nullptr function" );
       return 0;
     }
 

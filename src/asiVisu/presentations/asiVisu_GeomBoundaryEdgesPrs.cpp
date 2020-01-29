@@ -134,31 +134,20 @@ void asiVisu_GeomBoundaryEdgesPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*                        renderer,
-                                             const Handle(asiVisu_PickerResult)& pickRes,
-                                             const asiVisu_SelectionNature       selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(pickRes);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_GeomBoundaryEdgesPrs::highlight(vtkRenderer*,
+                                             const Handle(asiVisu_PickerResult)&,
+                                             const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
-void asiVisu_GeomBoundaryEdgesPrs::unHighlight(vtkRenderer*                  renderer,
-                                               const asiVisu_SelectionNature selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_GeomBoundaryEdgesPrs::unHighlight(vtkRenderer*,
+                                               const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-void asiVisu_GeomBoundaryEdgesPrs::renderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_GeomBoundaryEdgesPrs::renderPipelines(vtkRenderer*) const
+{}
 
 //! Callback for de-rendering.
-void asiVisu_GeomBoundaryEdgesPrs::deRenderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_GeomBoundaryEdgesPrs::deRenderPipelines(vtkRenderer*) const
+{}

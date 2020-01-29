@@ -57,7 +57,7 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_ContourPointsDataProvider::GetPoints()
     contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get B-Rep representation of the contour
   TopoDS_Wire contourWire = contour_n->AsShape();
@@ -68,7 +68,7 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_ContourPointsDataProvider::GetPoints()
   const int nVertices = vertices.Extent();
   //
   if ( !nVertices )
-    return NULL;
+    return nullptr;
 
   // Build point cloud from vertices
   Handle(HRealArray) coords = new HRealArray(0, nVertices*3 - 1);

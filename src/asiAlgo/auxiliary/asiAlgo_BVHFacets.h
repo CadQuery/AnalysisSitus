@@ -51,7 +51,7 @@
 
 //! BVH-based accelerating structure representing CAD model's
 //! facets in computations.
-class asiAlgo_BVHFacets : public BVH_PrimitiveSet<double, 4>
+class asiAlgo_BVHFacets : public BVH_PrimitiveSet<double, 3>
 {
 public:
 
@@ -61,7 +61,7 @@ public:
     t_facet()               : FaceIndex(-1) {}
     t_facet(const int fidx) : FaceIndex(fidx) {}
 
-    BVH_Vec4d P0, P1, P2; //!< Triangle nodes.
+    BVH_Vec3d P0, P1, P2; //!< Triangle nodes.
     gp_Vec    N;          //!< Cached normal calculated by nodes.
     int       FaceIndex;  //!< Index of the host face.
   };
@@ -78,21 +78,21 @@ public:
   asiAlgo_EXPORT
     asiAlgo_BVHFacets(const TopoDS_Shape&  model,
                       const BuilderType    builderType = Builder_Binned,
-                      ActAPI_ProgressEntry progress    = NULL,
-                      ActAPI_PlotterEntry  plotter     = NULL);
+                      ActAPI_ProgressEntry progress    = nullptr,
+                      ActAPI_PlotterEntry  plotter     = nullptr);
 
   asiAlgo_EXPORT
     asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
                       const BuilderType                 builderType = Builder_Binned,
-                      ActAPI_ProgressEntry              progress    = NULL,
-                      ActAPI_PlotterEntry               plotter     = NULL);
+                      ActAPI_ProgressEntry              progress    = nullptr,
+                      ActAPI_PlotterEntry               plotter     = nullptr);
 
 public:
 
   asiAlgo_EXPORT virtual int
     Size() const override;
 
-  asiAlgo_EXPORT virtual BVH_Box<double, 4>
+  asiAlgo_EXPORT virtual BVH_Box<double, 3>
     Box(const int index) const override;
 
   asiAlgo_EXPORT virtual double
@@ -107,9 +107,9 @@ public:
 
   asiAlgo_EXPORT void
     GetVertices(const int  index,
-                BVH_Vec4d& vertex1,
-                BVH_Vec4d& vertex2,
-                BVH_Vec4d& vertex3) const;
+                BVH_Vec3d& vertex1,
+                BVH_Vec3d& vertex2,
+                BVH_Vec3d& vertex3) const;
 
   asiAlgo_EXPORT double
     GetBoundingDiag() const;
@@ -127,6 +127,19 @@ public:
   const t_facet& GetFacet(const int index)
   {
     return m_facets[index];
+  }
+
+  //! \return AABB of the entire set of objects.
+  virtual BVH_Box<double, 3> Box() const
+  {
+    BVH_Box<double, 3> aabb;
+    const int size = this->Size();
+
+    for ( int i = 0; i < size; ++i )
+    {
+      aabb.Combine( this->Box(i) );
+    }
+    return aabb;
   }
 
 protected:

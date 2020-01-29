@@ -77,25 +77,25 @@ public:
     Info(const TCollection_AsciiString&    theMessage,
          const ActAPI_LogMessagePriority   thePriority  = Priority_Normal,
          const ActAPI_LogArguments&        theArguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& theTimeStamp = NULL);
+         const Handle(Standard_Transient)& theTimeStamp = nullptr);
 
   asiAlgo_EXPORT virtual void
     Notice(const TCollection_AsciiString&    theMessage,
            const ActAPI_LogMessagePriority   thePriority  = Priority_Normal,
            const ActAPI_LogArguments&        theArguments = ActAPI_LogArguments(),
-           const Handle(Standard_Transient)& theTimeStamp = NULL);
+           const Handle(Standard_Transient)& theTimeStamp = nullptr);
 
   asiAlgo_EXPORT virtual void
     Warn(const TCollection_AsciiString&    theMessage,
          const ActAPI_LogMessagePriority   thePriority  = Priority_Normal,
          const ActAPI_LogArguments&        theArguments = ActAPI_LogArguments(),
-         const Handle(Standard_Transient)& theTimeStamp = NULL);
+         const Handle(Standard_Transient)& theTimeStamp = nullptr);
 
   asiAlgo_EXPORT virtual void
     Error(const TCollection_AsciiString&    theMessage,
           const ActAPI_LogMessagePriority   thePriority  = Priority_Normal,
           const ActAPI_LogArguments&        theArguments = ActAPI_LogArguments(),
-          const Handle(Standard_Transient)& theTimeStamp = NULL);
+          const Handle(Standard_Transient)& theTimeStamp = nullptr);
 
 // Internal methods:
 protected:

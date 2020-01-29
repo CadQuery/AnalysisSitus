@@ -79,14 +79,14 @@ public:
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_ReadSTEPWithMeta(ActAPI_ProgressEntry progress = NULL,
-                             ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_ReadSTEPWithMeta(ActAPI_ProgressEntry progress = nullptr,
+                             ActAPI_PlotterEntry  plotter  = nullptr);
 
   asiAlgo_EXPORT
     asiAlgo_ReadSTEPWithMeta(const Handle(XSControl_WorkSession)& WS,
                              const bool                           scratch = true,
-                             ActAPI_ProgressEntry                 progress = NULL,
-                             ActAPI_PlotterEntry                  plotter  = NULL);
+                             ActAPI_ProgressEntry                 progress = nullptr,
+                             ActAPI_PlotterEntry                  plotter  = nullptr);
 
 public:
 

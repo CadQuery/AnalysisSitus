@@ -46,11 +46,6 @@
 template <typename T_ARGUMENT>
 class asiData_FuncAttr : public TDF_Attribute
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_FuncAttr<T_ARGUMENT>, TDF_Attribute)
-
 // Construction & settling-down routines:
 public:
 

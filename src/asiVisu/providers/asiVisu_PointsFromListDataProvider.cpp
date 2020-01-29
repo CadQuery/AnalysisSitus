@@ -34,7 +34,7 @@
 //-----------------------------------------------------------------------------
 
 asiVisu_PointsFromListDataProvider::asiVisu_PointsFromListDataProvider()
-: asiVisu_PointsDataProvider(NULL)
+: asiVisu_PointsDataProvider(nullptr)
 {
   m_pts = new asiAlgo_BaseCloud<double>;
 }
@@ -59,7 +59,7 @@ Handle(asiAlgo_BaseCloud<double>)
 Handle(TColStd_HPackedMapOfInteger)
   asiVisu_PointsFromListDataProvider::GetIndices() const
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -90,5 +90,5 @@ void asiVisu_PointsFromListDataProvider::Clear()
 Handle(ActAPI_HParameterList)
   asiVisu_PointsFromListDataProvider::translationSources() const
 {
-  return NULL;
+  return nullptr;
 }

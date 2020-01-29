@@ -32,7 +32,7 @@
 #ifndef asiUI_h
 #define asiUI_h
 
-#define asiUI_NotUsed(x) x
+#define asiUI_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiUI_EXPORTS

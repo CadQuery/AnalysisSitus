@@ -64,14 +64,14 @@ foreach (FILE ${reportgen_CPP_FILES})
   source_group ("Source Files\\Reporting" FILES "${FILE}")
 endforeach (FILE)
 
-include_directories ( ${asiTestEngine_include_dir_loc}
+include_directories ( SYSTEM
+                      ${asiTestEngine_include_dir_loc}
                       ${asiData_include_dir_loc}
                       ${asiAlgo_include_dir}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
-                      ${3RDPARTY_vtk_INCLUDE_DIR}
-                      ${3RDPARTY_tbb_INCLUDE_DIR} )
+                      ${3RDPARTY_vtk_INCLUDE_DIR} )
 
 add_library (asiTestEngine SHARED
   ${H_FILES}           ${CPP_FILES}
@@ -88,22 +88,22 @@ target_link_libraries(asiTestEngine asiAlgo asiData)
 #------------------------------------------------------------------------------
 
 install (TARGETS asiTestEngine
-         RUNTIME DESTINATION framework/bin COMPONENT Runtime
          CONFIGURATIONS Release
-         ARCHIVE DESTINATION framework/lib LIBRARY DESTINATION framework/lib COMPONENT Library
-         CONFIGURATIONS Release)
+         RUNTIME DESTINATION framework/bin COMPONENT Runtime
+         ARCHIVE DESTINATION framework/lib COMPONENT Library
+         LIBRARY DESTINATION framework/lib COMPONENT Library)
 
 install (TARGETS asiTestEngine
-         RUNTIME DESTINATION framework/bini COMPONENT Runtime
          CONFIGURATIONS RelWithDebInfo
-         ARCHIVE DESTINATION framework/libi LIBRARY DESTINATION framework/libi COMPONENT Library
-         CONFIGURATIONS RelWithDebInfo)
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         LIBRARY DESTINATION framework/libi COMPONENT Library)
 
 install (TARGETS asiTestEngine
-         RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
-         ARCHIVE DESTINATION framework/libd LIBRARY DESTINATION framework/libd COMPONENT Library
-         CONFIGURATIONS Debug)
+         RUNTIME DESTINATION framework/bind COMPONENT Runtime
+         ARCHIVE DESTINATION framework/libd COMPONENT Library
+         LIBRARY DESTINATION framework/libd COMPONENT Library)
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bind CONFIGURATIONS Debug)
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bini CONFIGURATIONS RelWithDebInfo)

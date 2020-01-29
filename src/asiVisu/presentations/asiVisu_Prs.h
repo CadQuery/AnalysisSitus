@@ -229,7 +229,7 @@ protected:
   //! To be provided by descendants.
   virtual void deRenderPipelines(vtkRenderer*) const = 0;
 
-private:
+protected:
 
   //! Type definition for a collection of visualization pipelines comprising
   //! the presentation object. Notice that each pipeline is associated with
@@ -472,7 +472,7 @@ protected:
     if ( selNature == SelectionNature_Detection )
       return m_detection;
 
-    return NULL;
+    return nullptr;
   }
 
 private:

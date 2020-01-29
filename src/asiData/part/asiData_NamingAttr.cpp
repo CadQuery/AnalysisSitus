@@ -103,10 +103,8 @@ void asiData_NamingAttr::Restore(const Handle(TDF_Attribute)& mainAttr)
 //! \param[in] into       where to paste.
 //! \param[in] relocTable relocation table.
 void asiData_NamingAttr::Paste(const Handle(TDF_Attribute)&       into,
-                               const Handle(TDF_RelocationTable)& relocTable) const
+                               const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
 {
-  asiData_NotUsed(relocTable);
-
   Handle(asiData_NamingAttr) intoCasted = Handle(asiData_NamingAttr)::DownCast(into);
   intoCasted->SetNaming(m_naming);
 }

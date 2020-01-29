@@ -67,7 +67,7 @@
 //! \param[in] model Data Model instance.
 asiUI_DependencyGraph::asiUI_DependencyGraph(const Handle(asiEngine_Model)& model)
 : m_model      (model),
-  m_textWidget (NULL)
+  m_textWidget (nullptr)
 {}
 
 //-----------------------------------------------------------------------------

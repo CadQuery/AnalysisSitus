@@ -171,8 +171,8 @@ public:
   asiTestEngine_EXPORT
     asiTestEngine_FileComparator(const TCollection_AsciiString&                  filename1,
                                  const TCollection_AsciiString&                  filename2,
-                                 ActAux_StrFilter                                lineFilter     = NULL,
-                                 const Handle(asiTestEngine_BaseLineComparator)& lineComparator = NULL);
+                                 ActAux_StrFilter                                lineFilter     = nullptr,
+                                 const Handle(asiTestEngine_BaseLineComparator)& lineComparator = nullptr);
 
 public:
 

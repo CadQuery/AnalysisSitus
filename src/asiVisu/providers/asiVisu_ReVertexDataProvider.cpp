@@ -51,11 +51,11 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_ReVertexDataProvider::GetPoints() cons
     vertex_n = Handle(asiData_ReVertexNode)::DownCast(m_node);
   //
   if ( vertex_n.IsNull() || !vertex_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   double x, y, z;
   if ( !vertex_n->GetPoint(x, y, z) )
-    return NULL;
+    return nullptr;
 
   m_cloud->SetElement(0, x, y, z);
   return m_cloud;
@@ -63,10 +63,10 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_ReVertexDataProvider::GetPoints() cons
 
 //-----------------------------------------------------------------------------
 
-//! \return NULL filter.
+//! \return nullptr filter.
 Handle(TColStd_HPackedMapOfInteger) asiVisu_ReVertexDataProvider::GetIndices() const
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

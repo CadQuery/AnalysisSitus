@@ -87,10 +87,10 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   QMenu menu;
 
   // Actions
-  QAction* pPickRotationPoint = NULL;
-  QAction* pChangeBg          = NULL;
-  QAction* pDumpGraphics      = NULL;
-  QAction* pToggleAxes        = NULL;
+  QAction* pPickRotationPoint = nullptr;
+  QAction* pChangeBg          = nullptr;
+  QAction* pDumpGraphics      = nullptr;
+  QAction* pToggleAxes        = nullptr;
 
   // Action for picking custom rotation point
   if ( m_pViewer->PrsMgr()->GetInteractionMode() != asiVisu_PrsManager::InteractionMode_2D )
@@ -120,12 +120,12 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
     m_pViewer->PrsMgr()->GetDefaultInteractorStyle()->GetPickedPos(pickedX, pickedY);
 
     // Pick world position
-    vtkSmartPointer<vtkWorldPointPicker>
-      worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+    vtkSmartPointer<vtkCellPicker>
+      positionPicker = vtkSmartPointer<vtkCellPicker>::New();
     //
-    worldPicker->Pick( pickedX, pickedY, 0, m_pViewer->PrsMgr()->GetRenderer() );
+    positionPicker->Pick( pickedX, pickedY, 0, m_pViewer->PrsMgr()->GetRenderer() );
     double coord[3];
-    worldPicker->GetPickPosition(coord);
+    positionPicker->GetPickPosition(coord);
 
     // The idea is to change focal point of the camera to the picked position because the
     // focal point is the center of rotation.

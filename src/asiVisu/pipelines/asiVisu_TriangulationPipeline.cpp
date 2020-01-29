@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 asiVisu_TriangulationPipeline::asiVisu_TriangulationPipeline()
-: asiVisu_TriangulationPipelineBase(NULL)
+: asiVisu_TriangulationPipelineBase(nullptr)
 {
   m_dmFilter->SetDisplayMode(MeshDisplayMode_Shaded);
 

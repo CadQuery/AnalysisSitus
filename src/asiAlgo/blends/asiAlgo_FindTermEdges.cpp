@@ -72,10 +72,8 @@ bool asiAlgo_FindTermEdges::PerformForFace(const int                         fac
                                            const TopTools_IndexedMapOfShape& smoothEdges,
                                            const TopTools_IndexedMapOfShape& springEdges,
                                            const TopTools_IndexedMapOfShape& crossEdges,
-                                           const double                      candidateRadius)
+                                           const double                      asiAlgo_NotUsed(candidateRadius))
 {
-  asiAlgo_NotUsed(candidateRadius);
-
   // Build master AAG
   if ( m_aag.IsNull() )
   {

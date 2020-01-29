@@ -89,32 +89,32 @@ public:
     asiUI_Console*          wConsole;          //!< Console for scripting.
     asiUI_ParameterEditor*  wParamEditor;      //!< Parameter editor.
 
-    t_widgets() : wBrowser          (NULL),
-                  wViewerDomain     (NULL),
-                  wViewerPart       (NULL),
-                  wViewerSurface    (NULL),
-                  wControlsAnalysis (NULL),
-                  wControlsPart     (NULL),
-                  wControlsModeling (NULL),
-                  wControlsMesh     (NULL),
-                  wLogger           (NULL),
-                  wConsole          (NULL),
-                  wParamEditor      (NULL)
+    t_widgets() : wBrowser          (nullptr),
+                  wViewerDomain     (nullptr),
+                  wViewerPart       (nullptr),
+                  wViewerSurface    (nullptr),
+                  wControlsAnalysis (nullptr),
+                  wControlsPart     (nullptr),
+                  wControlsModeling (nullptr),
+                  wControlsMesh     (nullptr),
+                  wLogger           (nullptr),
+                  wConsole          (nullptr),
+                  wParamEditor      (nullptr)
     {}
 
     void Release()
     {
-      delete wBrowser;          wBrowser          = NULL;
-      delete wViewerDomain;     wViewerDomain     = NULL;
-      delete wViewerPart;       wViewerPart       = NULL;
-      delete wViewerSurface;    wViewerSurface    = NULL;
-      delete wControlsAnalysis; wControlsAnalysis = NULL;
-      delete wControlsPart;     wControlsPart     = NULL;
-      delete wControlsModeling; wControlsModeling = NULL;
-      delete wControlsMesh;     wControlsMesh     = NULL;
-      delete wLogger;           wLogger           = NULL;
-      delete wConsole;          wConsole          = NULL;
-      delete wParamEditor;      wParamEditor      = NULL;
+      delete wBrowser;          wBrowser          = nullptr;
+      delete wViewerDomain;     wViewerDomain     = nullptr;
+      delete wViewerPart;       wViewerPart       = nullptr;
+      delete wViewerSurface;    wViewerSurface    = nullptr;
+      delete wControlsAnalysis; wControlsAnalysis = nullptr;
+      delete wControlsPart;     wControlsPart     = nullptr;
+      delete wControlsModeling; wControlsModeling = nullptr;
+      delete wControlsMesh;     wControlsMesh     = nullptr;
+      delete wLogger;           wLogger           = nullptr;
+      delete wConsole;          wConsole          = nullptr;
+      delete wParamEditor;      wParamEditor      = nullptr;
     }
   };
 
@@ -131,28 +131,28 @@ public:
     asiUI_ViewerHostListener*       pViewerHost;       //!< Listener for host viewer.
     asiUI_ParameterEditorListener*  pParamEditor;      //!< Listener for parameter editor.
 
-    t_listeners() : pObjectBrowser    (NULL),
-                    pControlsAnalysis (NULL),
-                    pControlsPart     (NULL),
-                    pControlsModeling (NULL),
-                    pControlsMesh     (NULL),
-                    pViewerPart       (NULL),
-                    pViewerDomain     (NULL),
-                    pViewerHost       (NULL),
-                    pParamEditor      (NULL)
+    t_listeners() : pObjectBrowser    (nullptr),
+                    pControlsAnalysis (nullptr),
+                    pControlsPart     (nullptr),
+                    pControlsModeling (nullptr),
+                    pControlsMesh     (nullptr),
+                    pViewerPart       (nullptr),
+                    pViewerDomain     (nullptr),
+                    pViewerHost       (nullptr),
+                    pParamEditor      (nullptr)
     {}
 
     void Release()
     {
-      delete pObjectBrowser;    pObjectBrowser    = NULL;
-      delete pControlsAnalysis; pControlsAnalysis = NULL;
-      delete pControlsPart;     pControlsPart     = NULL;
-      delete pControlsModeling; pControlsModeling = NULL;
-      delete pControlsMesh;     pControlsMesh     = NULL;
-      delete pViewerPart;       pViewerPart       = NULL;
-      delete pViewerDomain;     pViewerDomain     = NULL;
-      delete pViewerHost;       pViewerHost       = NULL;
-      delete pParamEditor;      pParamEditor      = NULL;
+      delete pObjectBrowser;    pObjectBrowser    = nullptr;
+      delete pControlsAnalysis; pControlsAnalysis = nullptr;
+      delete pControlsPart;     pControlsPart     = nullptr;
+      delete pControlsModeling; pControlsModeling = nullptr;
+      delete pControlsMesh;     pControlsMesh     = nullptr;
+      delete pViewerPart;       pViewerPart       = nullptr;
+      delete pViewerDomain;     pViewerDomain     = nullptr;
+      delete pViewerHost;       pViewerHost       = nullptr;
+      delete pParamEditor;      pParamEditor      = nullptr;
     }
   };
 

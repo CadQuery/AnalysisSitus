@@ -65,42 +65,39 @@ set (OCCT_LIB_FILES
   TKXDEIGES
 )
 #------------------------------------------------------------------------------
-set (TBB_LIB_FILES
-  tbb
-)
-#------------------------------------------------------------------------------
 set (VTK_LIB_FILES
-  vtkChartsCore-8.0
-  vtkCommonCore-8.0
-  vtkCommonDataModel-8.0
-  vtkCommonExecutionModel-8.0
-  vtkCommonMath-8.0
-  vtkCommonTransforms-8.0
-  vtkCommonMisc-8.0
-  vtkFiltersCore-8.0
-  vtkFiltersGeneral-8.0
-  vtkFiltersSources-8.0
-  vtkFiltersGeometry-8.0
-  vtkFiltersParallel-8.0
-  vtkFiltersExtraction-8.0
-  vtkFiltersModeling-8.0
-  vtkGUISupportQt-8.0
-  vtkInfovisLayout-8.0
-  vtkIOCore-8.0
-  vtkIOImage-8.0
-  vtkIOExportOpenGL2-8.0
-  vtkImagingCore-8.0
-  vtkInteractionStyle-8.0
-  vtkInteractionWidgets-8.0
-  vtkRenderingAnnotation-8.0
-  vtkRenderingContext2D-8.0
-  vtkRenderingContextOpenGL2-8.0
-  vtkRenderingCore-8.0
-  vtkRenderingFreeType-8.0
-  vtkRenderingOpenGL2-8.0
-  vtkRenderingGL2PSOpenGL2-8.0
-  vtkViewsContext2D-8.0
-  vtkViewsInfovis-8.0
+  vtkChartsCore-8.2
+  vtkCommonCore-8.2
+  vtkCommonColor-8.2
+  vtkCommonDataModel-8.2
+  vtkCommonExecutionModel-8.2
+  vtkCommonMath-8.2
+  vtkCommonTransforms-8.2
+  vtkCommonMisc-8.2
+  vtkFiltersCore-8.2
+  vtkFiltersGeneral-8.2
+  vtkFiltersSources-8.2
+  vtkFiltersGeometry-8.2
+  vtkFiltersParallel-8.2
+  vtkFiltersExtraction-8.2
+  vtkFiltersModeling-8.2
+  vtkGUISupportQt-8.2
+  vtkInfovisLayout-8.2
+  vtkIOCore-8.2
+  vtkIOImage-8.2
+  vtkIOExportOpenGL2-8.2
+  vtkImagingCore-8.2
+  vtkInteractionStyle-8.2
+  vtkInteractionWidgets-8.2
+  vtkRenderingAnnotation-8.2
+  vtkRenderingContext2D-8.2
+  vtkRenderingContextOpenGL2-8.2
+  vtkRenderingCore-8.2
+  vtkRenderingFreeType-8.2
+  vtkRenderingOpenGL2-8.2
+  vtkRenderingGL2PSOpenGL2-8.2
+  vtkViewsContext2D-8.2
+  vtkViewsInfovis-8.2
 )
 
 #------------------------------------------------------------------------------
@@ -155,7 +152,8 @@ set (exe_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
 #
 set (exe_include_dir ${exe_include_dir_loc} PARENT_SCOPE)
 
-include_directories ( ${exe_include_dir_loc}
+include_directories ( SYSTEM
+                      ${exe_include_dir_loc}
                       ${asiTcl_include_dir}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
@@ -169,7 +167,7 @@ include_directories ( ${exe_include_dir_loc}
                       ${3RDPARTY_tbb_INCLUDE_DIR} )
 
 if (USE_MOBIUS)
-  include_directories(${3RDPARTY_mobius_INCLUDE_DIR})
+  include_directories(SYSTEM ${3RDPARTY_mobius_INCLUDE_DIR})
 endif()
 
 #------------------------------------------------------------------------------
@@ -186,7 +184,9 @@ source_group ("Generated" FILES "${RCC_FILE}")
 
 add_executable(asiExe ${ui_moc_files} ${src_files} ${RCC_FILE} resources/asiExeDictionary.xml)
 
-COPY_RESOURCES_TO_BINARY_DIRS(resources/asiExeDictionary.xml)
+if (WIN32)
+  COPY_RESOURCES_TO_BINARY_DIRS(resources/asiExeDictionary.xml)
+endif()
 
 set (USE_CONSOLE OFF CACHE BOOL "Using of debug console")
 if (WIN32 AND MSVC)
@@ -265,24 +265,23 @@ foreach (LIB_FILE ${VTK_LIB_FILES})
   endif()
 endforeach()
 
-foreach (LIB_FILE ${TBB_LIB_FILES})
-  if (WIN32)
-    set (LIB_FILENAME "${LIB_FILE}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    set (LIB_FILENAME_DEBUG "${LIB_FILE}_debug${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  else()
-    set (LIB_FILENAME "lib${LIB_FILE}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    set (LIB_FILENAME_DEBUG "lib${LIB_FILE}_debug${CMAKE_SHARED_LIBRARY_SUFFIX}")
-  endif()
-
-  target_link_libraries (asiExe debug ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME_DEBUG})
-  target_link_libraries (asiExe optimized ${3RDPARTY_tbb_LIBRARY_DIR}/${LIB_FILENAME})
-endforeach()
-
 #------------------------------------------------------------------------------
 # Installation of Analysis Situs as a software
 #------------------------------------------------------------------------------
 
-install (TARGETS asiExe RUNTIME DESTINATION bin COMPONENT Runtime)
+if (WIN32)
+  install (TARGETS asiExe RUNTIME DESTINATION bin COMPONENT Runtime)
+else()
+  install (FILES ${CMAKE_BINARY_DIR}/${OS_WITH_BIT}/${COMPILER}/bin/asiExe DESTINATION bin
+           PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                       GROUP_EXECUTE GROUP_READ
+                       WORLD_EXECUTE WORLD_READ)
+  install (FILES ${CMAKE_SOURCE_DIR}/asiExe.sh DESTINATION bin
+           PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                       GROUP_EXECUTE GROUP_READ
+                       WORLD_EXECUTE WORLD_READ)
+endif()
+
 install (FILES resources/asitus/icon.ico DESTINATION bin)
 install (FILES resources/asitus/icon64.ico DESTINATION bin)
 install (FILES resources/asiExeDictionary.xml DESTINATION bin/resources)

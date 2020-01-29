@@ -143,7 +143,7 @@ Handle(Standard_Type) asiVisu_FaceDataProvider::GetSurfaceType() const
   TopoDS_Face F = this->ExtractFace();
   //
   if ( F.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get host surface
   Handle(Geom_Surface) surf = BRep_Tool::Surface(F);
@@ -169,7 +169,7 @@ Handle(Geom_Surface)
   TopoDS_Face F = this->ExtractFace();
   //
   if ( F.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get host surface
   Handle(Geom_Surface) surf = BRep_Tool::Surface(F);
@@ -202,7 +202,7 @@ Handle(asiVisu_FaceDataProvider) asiVisu_FaceDataProvider::Clone() const
     return new asiVisu_FaceDataProvider(surfNode);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ Handle(ActAPI_HParameterList) asiVisu_FaceDataProvider::translationSources() con
     PID = asiData_SurfNode::PID_SelectedFace;
 
   if ( PID == -1 )
-    return NULL;
+    return nullptr;
 
   return ActParamStream() << m_node->Parameter(PID); // Parameter for face index
 }

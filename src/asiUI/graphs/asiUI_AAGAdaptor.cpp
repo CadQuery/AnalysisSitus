@@ -88,7 +88,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   for ( asiAlgo_AAG::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
   {
     const int          f_idx     = it.Key();
-    const TopoDS_Face& face       = TopoDS::Face( Faces(f_idx) );
+    const TopoDS_Face& face      = TopoDS::Face( Faces(f_idx) );
     const vtkIdType    vertex_id = result->AddVertex();
     //
     FaceVertexMap.Bind(f_idx, vertex_id);
@@ -112,10 +112,10 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
       groupArr->InsertNextValue(ARRNAME_GROUP_ATTRIBUTED);
 
       // Loop over the available attributes
-      for ( asiAlgo_AAG::t_attr_set::Iterator it( aag->GetNodeAttributes(f_idx) );
-            it.More(); it.Next() )
+      for ( asiAlgo_AAG::t_attr_set::Iterator it2( aag->GetNodeAttributes(f_idx) );
+            it2.More(); it2.Next() )
       {
-        const Handle(asiAlgo_FeatureAttr)& attr = it.GetAttr();
+        const Handle(asiAlgo_FeatureAttr)& attr = it2.GetAttr();
         faceName += " / ";
         faceName += attr->DynamicType()->Name();
 

@@ -314,13 +314,13 @@ void asiAlgo_WriteSTEPWithMeta::makeSTEPStyles(STEPConstruct_Styles&            
 
         Handle(StepVisual_PresentationStyleAssignment) PSA;
         if ( !surfColor.IsNull() )
-          PSA = Styles.MakeColorPSA(item, surfColor, NULL, false);
+          PSA = Styles.MakeColorPSA(item, surfColor, nullptr, false);
         else
         {
           // Default color is white.
           surfColor = Styles.EncodeColor(Quantity_Color(1, 1, 1, Quantity_TOC_RGB), DPDCs, ColRGBs);
           //
-          PSA = Styles.MakeColorPSA(item, surfColor, NULL, false);
+          PSA = Styles.MakeColorPSA(item, surfColor, nullptr, false);
         }
 
         STEPstyle = Styles.AddStyle(item, PSA, override);

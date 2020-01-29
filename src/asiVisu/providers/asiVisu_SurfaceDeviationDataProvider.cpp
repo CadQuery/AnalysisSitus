@@ -64,7 +64,7 @@ Handle(Standard_Type) asiVisu_SurfaceDeviationDataProvider::GetSurfaceType() con
   Handle(asiData_IVSurfaceNode) surface_n = sdNode->GetSurfaceNode();
   //
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return surface_n->GetSurface()->DynamicType();
 }
@@ -91,7 +91,7 @@ Handle(Geom_Surface)
   Handle(asiData_IVSurfaceNode) surface_n = sdNode->GetSurfaceNode();
   //
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get bounds.
   surface_n->GetLimits(uMin, uMax, vMin, vMax);
@@ -113,7 +113,7 @@ Handle(asiAlgo_BVHFacets)
   Handle(asiData_TriangulationNode) tris_n = sdNode->GetTriangulationNode();
   //
   if ( tris_n.IsNull() || !tris_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return tris_n->GetBVH(); // Return BVH structure.
 }

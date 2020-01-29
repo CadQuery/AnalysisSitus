@@ -67,10 +67,8 @@ double asiAlgo_MeshGen::AutoSelectLinearDeflection(const TopoDS_Shape& shape)
 
 //-----------------------------------------------------------------------------
 
-double asiAlgo_MeshGen::AutoSelectAngularDeflection(const TopoDS_Shape& shape)
+double asiAlgo_MeshGen::AutoSelectAngularDeflection(const TopoDS_Shape& asiAlgo_NotUsed(shape))
 {
-  asiAlgo_NotUsed(shape);
-
   return 0.5; // In degrees.
 }
 

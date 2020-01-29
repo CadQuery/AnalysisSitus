@@ -87,7 +87,7 @@ private:
   exe_CommonFacilities() //!< ctor.
   //
   : asiUI_CommonFacilities (),
-    ProgressListener       (NULL)
+    ProgressListener       (nullptr)
   {
     // Create Data Model
     this->Model = new asiEngine_Model;

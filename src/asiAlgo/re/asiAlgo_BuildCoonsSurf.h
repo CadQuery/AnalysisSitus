@@ -65,8 +65,8 @@ public:
                            const Handle(Geom_BSplineCurve)& c1,
                            const Handle(Geom_BSplineCurve)& b0,
                            const Handle(Geom_BSplineCurve)& b1,
-                           ActAPI_ProgressEntry             progress = NULL,
-                           ActAPI_PlotterEntry              plotter  = NULL);
+                           ActAPI_ProgressEntry             progress = nullptr,
+                           ActAPI_PlotterEntry              plotter  = nullptr);
 
 public:
 

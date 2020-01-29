@@ -125,10 +125,8 @@ public:
   //! to succeed, such vertices should be unfreezed.
   //!
   //! \param[out] edges output collection of edges to rebuild.
-  virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& edges) const
-  {
-    asiAlgo_NotUsed(edges);
-  }
+  virtual void GatherAffectedEdges(asiAlgo_Edges2Rebuild& asiAlgo_NotUsed(edges)) const
+  {}
 
 };
 

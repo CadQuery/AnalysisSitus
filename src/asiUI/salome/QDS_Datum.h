@@ -117,7 +117,7 @@ public:
   static QString            format( const double, const QString&, const bool = false );
   static QString            units( const QString& );
 
-  virtual QString           getString() const = 0;
+  virtual QString           getString() const { return QString(); }
 
   virtual bool              eventFilter( QObject*, QEvent* );
 

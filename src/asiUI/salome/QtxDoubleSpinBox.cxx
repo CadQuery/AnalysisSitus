@@ -77,7 +77,8 @@ const double PSEUDO_ZERO = 1.e-20;
 */
 QtxDoubleSpinBox::QtxDoubleSpinBox( QWidget* parent )
 : QDoubleSpinBox( parent ),
-  myCleared( false )
+  myCleared( false ),
+  myPrecision(-1)
 {
   // VSR 01/07/2010: Disable thousands separator for spin box
   // (to avoid incosistency of double-2-string and string-2-double conversion)
@@ -85,9 +86,6 @@ QtxDoubleSpinBox::QtxDoubleSpinBox( QWidget* parent )
   loc.setNumberOptions(loc.numberOptions() | QLocale::OmitGroupSeparator | QLocale::RejectGroupSeparator);
   setLocale(loc);
 
-  // Use precision equal to default Qt decimals
-  myPrecision = decimals();
-  
   connect( lineEdit(), SIGNAL( textChanged( const QString& ) ), 
            this, SLOT( onTextChanged( const QString& ) ) );
 }
@@ -106,7 +104,8 @@ QtxDoubleSpinBox::QtxDoubleSpinBox( QWidget* parent )
 */
 QtxDoubleSpinBox::QtxDoubleSpinBox( double min, double max, double step, QWidget* parent )
 : QDoubleSpinBox( parent ),
-  myCleared( false )
+  myCleared( false ),
+  myPrecision( -1 )
 {
   // VSR 01/07/2010: Disable thousands separator for spin box
   // (to avoid incosistency of double-2-string and string-2-double conversion)
@@ -114,9 +113,6 @@ QtxDoubleSpinBox::QtxDoubleSpinBox( double min, double max, double step, QWidget
   loc.setNumberOptions(loc.numberOptions() | QLocale::OmitGroupSeparator | QLocale::RejectGroupSeparator);
   setLocale(loc);
 
-  // Use precision equal to default Qt decimals
-  myPrecision = decimals();
-  
   setMinimum( min );
   setMaximum( max );
   setSingleStep( step );
@@ -313,7 +309,7 @@ QValidator::State QtxDoubleSpinBox::validate( QString& str, int& pos ) const
   int overhead = pref.length() + suff.length();
   QValidator::State state = QValidator::Invalid;
   
-  QDoubleValidator v (NULL);
+  QDoubleValidator v (nullptr);
   
   // If 'g' format is used (myPrecision < 0), then
   // myPrecision - 1 digits are allowed after the decimal point.

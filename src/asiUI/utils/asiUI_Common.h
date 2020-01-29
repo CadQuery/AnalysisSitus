@@ -243,7 +243,7 @@ public:
 //-----------------------------------------------------------------------------
 
   asiUI_EXPORT static QString
-    selectFile(const QStringList&   filter,
+    selectFile(const QString&       filter,
                const QString&       openTitle,
                const QString&       saveTitle,
                const OpenSaveAction action);

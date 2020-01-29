@@ -65,8 +65,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_IneqOpt(ActAPI_ProgressEntry progress = NULL,
-                    ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_IneqOpt(ActAPI_ProgressEntry progress = nullptr,
+                    ActAPI_PlotterEntry  plotter  = nullptr);
 
   //! Ctor accepting optimization parameters.
   //! \param[in] params   parameters defining the optimization problem.
@@ -74,8 +74,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_IneqOpt(const Handle(asiAlgo_IneqOptParams)& params,
-                    ActAPI_ProgressEntry                 progress = NULL,
-                    ActAPI_PlotterEntry                  plotter  = NULL);
+                    ActAPI_ProgressEntry                 progress = nullptr,
+                    ActAPI_PlotterEntry                  plotter  = nullptr);
 
 public:
 

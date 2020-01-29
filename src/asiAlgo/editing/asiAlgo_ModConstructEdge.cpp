@@ -96,20 +96,13 @@ void asiAlgo_ModConstructEdge::Dump(ActAPI_PlotterEntry plotter) const
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_ModConstructEdge::NewSurface(const TopoDS_Face&    F,
-                                          Handle(Geom_Surface)& S,
-                                          TopLoc_Location&      L,
-                                          double&               tol,
-                                          bool&                 revWires,
-                                          bool&                 revFace)
+bool asiAlgo_ModConstructEdge::NewSurface(const TopoDS_Face&    asiAlgo_NotUsed(F),
+                                          Handle(Geom_Surface)& asiAlgo_NotUsed(S),
+                                          TopLoc_Location&      asiAlgo_NotUsed(L),
+                                          double&               asiAlgo_NotUsed(tol),
+                                          bool&                 asiAlgo_NotUsed(revWires),
+                                          bool&                 asiAlgo_NotUsed(revFace))
 {
-  asiAlgo_NotUsed(F);
-  asiAlgo_NotUsed(S);
-  asiAlgo_NotUsed(L);
-  asiAlgo_NotUsed(tol);
-  asiAlgo_NotUsed(revWires);
-  asiAlgo_NotUsed(revFace);
-
   // Surfaces are not changed.
   return false;
 }
@@ -177,7 +170,7 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
   }
 
   // Intersection point.
-  asiAlgo_ModEdgeInfo::Resolution::t_vertexStatus* ipoint = NULL;
+  asiAlgo_ModEdgeInfo::Resolution::t_vertexStatus* ipoint = nullptr;
 
   // Curve and surface to intersect.
   Handle(Geom_Curve)   icurve = m_edgeInfo.resolution.icurve->C;
@@ -313,14 +306,12 @@ bool asiAlgo_ModConstructEdge::NewPoint(const TopoDS_Vertex& V,
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_ModConstructEdge::NewCurve2d(const TopoDS_Edge&    E,
-                                          const TopoDS_Face&    F,
+                                          const TopoDS_Face&    asiAlgo_NotUsed(F),
                                           const TopoDS_Edge&    NewE,
                                           const TopoDS_Face&    NewF,
                                           Handle(Geom2d_Curve)& C,
                                           double&               tol)
 {
-  asiAlgo_NotUsed(F);
-
   if ( !E.IsPartner(m_edgeInfo.situation.e_s1_s2) )
     return false;
 
@@ -419,14 +410,10 @@ GeomAbs_Shape
   asiAlgo_ModConstructEdge::Continuity(const TopoDS_Edge& E,
                                        const TopoDS_Face& F1,
                                        const TopoDS_Face& F2,
-                                       const TopoDS_Edge& NewE,
-                                       const TopoDS_Face& NewF1,
-                                       const TopoDS_Face& NewF2)
+                                       const TopoDS_Edge& asiAlgo_NotUsed(NewE),
+                                       const TopoDS_Face& asiAlgo_NotUsed(NewF1),
+                                       const TopoDS_Face& asiAlgo_NotUsed(NewF2))
 {
-  asiAlgo_NotUsed(NewE);
-  asiAlgo_NotUsed(NewF1);
-  asiAlgo_NotUsed(NewF2);
-
   return BRep_Tool::Continuity(E, F1, F2);
 }
 

@@ -35,7 +35,7 @@
 #include <asiVisu_DataProvider.h>
 
 // asiData includes
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 
 // OCCT includes
 #include <Geom_Surface.hxx>

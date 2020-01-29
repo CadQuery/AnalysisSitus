@@ -63,7 +63,7 @@ class asiAlgo_BVHIterator
 public:
 
   asiAlgo_EXPORT
-    asiAlgo_BVHIterator(const opencascade::handle<BVH_Tree<double, 4> >& bvh);
+    asiAlgo_BVHIterator(const opencascade::handle<BVH_Tree<double, 3> >& bvh);
 
 public:
 
@@ -90,7 +90,7 @@ public:
 
 protected:
 
-  opencascade::handle< BVH_Tree<double, 4> > m_bvh; //!< Structure to iterate over.
+  opencascade::handle< BVH_Tree<double, 3> > m_bvh; //!< Structure to iterate over.
 
   // Iteration state variables
   BVH_Item                   m_stack[96];   //!< Non-traversed nodes to return.

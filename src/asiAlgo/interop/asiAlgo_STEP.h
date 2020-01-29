@@ -53,7 +53,7 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_STEP(ActAPI_ProgressEntry progress,
-               ActAPI_PlotterEntry  plotter = NULL)
+               ActAPI_PlotterEntry  plotter = nullptr)
   //
   : ActAPI_IAlgorithm(progress, plotter) {}
 

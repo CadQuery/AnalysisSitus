@@ -47,7 +47,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BCurveRepersSource);
+vtkStandardNewMacro(asiVisu_BCurveRepersSource)
 
 //-----------------------------------------------------------------------------
 

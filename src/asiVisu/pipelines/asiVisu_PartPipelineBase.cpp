@@ -256,6 +256,7 @@ void asiVisu_PartPipelineBase::callback_update()
   if ( !m_bMapperColorsSet )
   {
     asiVisu_Utils::InitShapeMapper(m_mapper);
+
     m_bMapperColorsSet = true;
   }
 }

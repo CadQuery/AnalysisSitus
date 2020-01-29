@@ -93,37 +93,21 @@ void asiVisu_CalculusLawPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_CalculusLawPrs::highlight(vtkRenderer*                       theRenderer,
-                                      const Handle(asiVisu_PickerResult)& thePickRes,
-                                      const asiVisu_SelectionNature       theSelNature) const
+void asiVisu_CalculusLawPrs::highlight(vtkRenderer*,
+                                      const Handle(asiVisu_PickerResult)&,
+                                      const asiVisu_SelectionNature) const
 {
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
 }
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_CalculusLawPrs::unHighlight(vtkRenderer*                  theRenderer,
-                                         const asiVisu_SelectionNature theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_CalculusLawPrs::unHighlight(vtkRenderer*,
+                                         const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_CalculusLawPrs::renderPipelines(vtkRenderer* theRenderer) const
-{
-  asiVisu_NotUsed(theRenderer);
-}
+void asiVisu_CalculusLawPrs::renderPipelines(vtkRenderer*) const
+{}
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_CalculusLawPrs::deRenderPipelines(vtkRenderer* theRenderer) const
-{
-  asiVisu_NotUsed(theRenderer);
-}
+void asiVisu_CalculusLawPrs::deRenderPipelines(vtkRenderer*) const
+{}

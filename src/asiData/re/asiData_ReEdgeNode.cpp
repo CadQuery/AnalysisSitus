@@ -95,8 +95,8 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
     this->ConnectReference(PID_VertexLastRef, vlast);
 
   // Set default values.
-  ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) )       ->SetArray( NULL );
-  ActParamTool::AsIntArray  ( this->Parameter(PID_PolylineInds) )   ->SetArray( NULL );
+  ActParamTool::AsRealArray ( this->Parameter(PID_Polyline) )       ->SetArray( nullptr );
+  ActParamTool::AsIntArray  ( this->Parameter(PID_PolylineInds) )   ->SetArray( nullptr );
   ActParamTool::AsShape     ( this->Parameter(PID_Curve) )          ->SetShape( TopoDS_Shape() );
   ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue( -1 );
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue( -1 );
@@ -243,7 +243,7 @@ Handle(Geom_Curve) asiData_ReEdgeNode::GetCurve(double& f, double& l) const
   TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Curve) )->GetShape();
   //
   if ( sh.IsNull() || sh.ShapeType() != TopAbs_EDGE )
-    return NULL;
+    return nullptr;
 
   // Extract edge and its host geometry
   const TopoDS_Edge& E = TopoDS::Edge(sh);
@@ -292,7 +292,7 @@ Handle(asiData_ReVertexNode)
   if (  dc.IsNull()
     || !dc->IsWellFormed()
     || !dc->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) ) )
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReVertexNode)::DownCast(dc);
 }
@@ -309,7 +309,7 @@ Handle(asiData_ReVertexNode)
   if (  dc.IsNull()
     || !dc->IsWellFormed()
     || !dc->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) ) )
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReVertexNode)::DownCast(dc);
 }

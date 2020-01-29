@@ -249,7 +249,7 @@ bool asiAlgo_JoinEdges::joinEdges(const TopoDS_Edge& eFirst,
     Interp.Perform();
 
     // Build edge
-    Handle(Geom2d_Curve) crv2d = Interp.Curve();
+    Handle(Geom2d_BSplineCurve) crv2d = Interp.Curve();
     BRepBuilderAPI_MakeEdge mkEdge(crv2d, surf);
     eResult = mkEdge.Edge();
 

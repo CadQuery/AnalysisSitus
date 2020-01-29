@@ -155,7 +155,7 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetPipeline(const int id) const
   const PipelineMap& plMap = m_pipelineRepo.Find(Group_Prs);
   //
   if ( !plMap.IsBound(id) )
-    return NULL;
+    return nullptr;
 
   return plMap.Find(id);
 }
@@ -187,7 +187,7 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetSelectionPipeline(const int idx) const
   const PipelineMap& plMap = m_pipelineRepo.Find(Group_Selection);
   //
   if ( !plMap.IsBound(idx) )
-    return NULL;
+    return nullptr;
 
   return plMap.Find(idx);
 }
@@ -218,7 +218,7 @@ Handle(asiVisu_Pipeline) asiVisu_Prs::GetDetectionPipeline(const int idx) const
   const PipelineMap& plMap = m_pipelineRepo.Find(Group_Detection);
   //
   if ( !plMap.IsBound(idx) )
-    return NULL;
+    return nullptr;
 
   return plMap.Find(idx);
 }
@@ -328,10 +328,8 @@ void asiVisu_Prs::UnHighlight(vtkRenderer*                  renderer,
 //! to their particular needs. E.g. a Presentation may prepare a cell
 //! locator tool on the available VTK data for fast picking.
 //! \param[in] picker picker to initialize at Presentation level.
-void asiVisu_Prs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
-{
-  asiVisu_NotUsed(picker); // Do nothing at super-class
-}
+void asiVisu_Prs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& asiVisu_NotUsed(renderer)) const
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -384,7 +382,7 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProvider(const int id) const
   const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Prs);
   //
   if ( !dataPrvMap.IsBound(id) )
-    return NULL;
+    return nullptr;
 
   return dataPrvMap.Find(id);
 }
@@ -411,7 +409,7 @@ Handle(asiVisu_DataProvider)
     }
 
   if ( ID == -1 )
-    return NULL;
+    return nullptr;
 
   // Access Data Providers.
   const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(group);
@@ -429,7 +427,7 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderSelection(const int id) co
   const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Selection);
   //
   if ( !dataPrvMap.IsBound(id) )
-    return NULL;
+    return nullptr;
 
   return dataPrvMap.Find(id);
 }
@@ -445,7 +443,7 @@ Handle(asiVisu_DataProvider) asiVisu_Prs::dataProviderDetection(const int id) co
   const DataProviderMap& dataPrvMap = m_dataPrvRepo.Find(Group_Detection);
   //
   if ( !dataPrvMap.IsBound(id) )
-    return NULL;
+    return nullptr;
 
   return dataPrvMap.Find(id);
 }

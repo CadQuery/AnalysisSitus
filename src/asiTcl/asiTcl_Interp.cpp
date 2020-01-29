@@ -75,18 +75,18 @@ static const Tcl_ChannelType consoleChannelType = {
     ConsoleClose,           /* Close proc. */
     ConsoleInput,           /* Input proc. */
     ConsoleOutput,          /* Output proc. */
-    NULL,                   /* Seek proc. */
-    NULL,                   /* Set option proc. */
-    NULL,                   /* Get option proc. */
+    nullptr,                   /* Seek proc. */
+    nullptr,                   /* Set option proc. */
+    nullptr,                   /* Get option proc. */
     ConsoleWatch,           /* Watch for events on console. */
     ConsoleHandle,          /* Get a handle from the device. */
-    NULL,                   /* close2proc. */
-    NULL,                   /* Always non-blocking.*/
-    NULL,                   /* flush proc. */
-    NULL,                   /* handler proc. */
-    NULL,                   /* wide seek proc */
-    NULL,                   /* thread action proc */
-    NULL
+    nullptr,                   /* close2proc. */
+    nullptr,                   /* Always non-blocking.*/
+    nullptr,                   /* flush proc. */
+    nullptr,                   /* handler proc. */
+    nullptr,                   /* wide seek proc */
+    nullptr,                   /* thread action proc */
+    nullptr
 };
 
 /*
@@ -100,7 +100,7 @@ struct ConsoleInfo
   Handle(asiTcl_Interp) asiInterp;
   int                   refCount;
 
-  ConsoleInfo() : asiInterp(NULL), refCount(0) {} //!< Default ctor.
+  ConsoleInfo() : asiInterp(nullptr), refCount(0) {} //!< Default ctor.
 };
 
 /*
@@ -115,7 +115,7 @@ struct ChannelData
   ConsoleInfo* info;
   int          type; /* TCL_STDOUT or TCL_STDERR */
 
-  ChannelData() : info(NULL), type(TCL_STDOUT) {} //!< Default ctor.
+  ChannelData() : info(nullptr), type(TCL_STDOUT) {} //!< Default ctor.
 };
 
 /*
@@ -172,16 +172,11 @@ static int ConsoleOutput(ClientData  instanceData, /* Indicates which device to 
  *----------------------------------------------------------------------
  */
 
-static int ConsoleInput(ClientData instanceData, /* Unused. */
-                        char*      buf,          /* Where to store data read. */
-                        int        bufSize,      /* How much space is available in the buffer? */
-                        int*       errorCode)    /* Where to store error code. */
+static int ConsoleInput(ClientData asiTcl_NotUsed(instanceData), /* Unused. */
+                        char*      asiTcl_NotUsed(buf),          /* Where to store data read. */
+                        int        asiTcl_NotUsed(bufSize),      /* How much space is available in the buffer? */
+                        int*       asiTcl_NotUsed(errorCode))    /* Where to store error code. */
 {
-  asiTcl_NotUsed(instanceData);
-  asiTcl_NotUsed(buf);
-  asiTcl_NotUsed(bufSize);
-  asiTcl_NotUsed(errorCode);
-
   return 0; /* Always return EOF. */
 }
 
@@ -202,10 +197,8 @@ static int ConsoleInput(ClientData instanceData, /* Unused. */
  */
 
 static int ConsoleClose(ClientData  instanceData,
-                        Tcl_Interp* interp)
+                        Tcl_Interp* asiTcl_NotUsed(interp))
 {
-  asiTcl_NotUsed(interp);
-
   ChannelData *data = (ChannelData*) instanceData;
   ConsoleInfo *info = data->info;
 
@@ -238,14 +231,11 @@ static int ConsoleClose(ClientData  instanceData,
  *----------------------------------------------------------------------
  */
 
-static void ConsoleWatch(ClientData instanceData, /* Device ID for the channel. */
-                         int        mask)         /* OR-ed combination of TCL_READABLE,
-                                                   * TCL_WRITABLE and TCL_EXCEPTION, for the
-                                                   * events we are interested in. */
-{
-  asiTcl_NotUsed(instanceData);
-  asiTcl_NotUsed(mask);
-}
+static void ConsoleWatch(ClientData asiTcl_NotUsed(instanceData), /* Device ID for the channel. */
+                         int        asiTcl_NotUsed(mask))         /* OR-ed combination of TCL_READABLE,
+                                                                   * TCL_WRITABLE and TCL_EXCEPTION, for the
+                                                                   * events we are interested in. */
+{}
 
 /*
  *----------------------------------------------------------------------
@@ -264,16 +254,12 @@ static void ConsoleWatch(ClientData instanceData, /* Device ID for the channel. 
  *----------------------------------------------------------------------
  */
 
-static int ConsoleHandle(ClientData  instanceData, /* Device ID for the channel. */
-                         int         direction,    /* TCL_READABLE or TCL_WRITABLE to indicate
-                                                    * which direction of the channel is being
-                                                    * requested. */
-                         ClientData* handlePtr)    /* Where to store handle */
+static int ConsoleHandle(ClientData  asiTcl_NotUsed(instanceData), /* Device ID for the channel. */
+                         int         asiTcl_NotUsed(direction),    /* TCL_READABLE or TCL_WRITABLE to indicate
+                                                                    * which direction of the channel is being
+                                                                    * requested. */
+                         ClientData* asiTcl_NotUsed(handlePtr))    /* Where to store handle */
 {
-  asiTcl_NotUsed(instanceData);
-  asiTcl_NotUsed(direction);
-  asiTcl_NotUsed(handlePtr);
-
   return TCL_ERROR;
 }
 
@@ -291,8 +277,6 @@ static int TclProcInvoke(void*       pClientData,
                          int         argc,
                          const char* argv[])
 {
-  asiTcl_NotUsed(pInterpTcl);
-
   static int code;
   code = TCL_OK;
   asiTcl_Interp::t_tcl_callback*
@@ -342,7 +326,7 @@ static void OverrideTclChannel(const Handle(asiTcl_Interp)& interp,
   // Unregister standard channel (if any).
   Tcl_Channel nativeChannel = Tcl_GetStdChannel(channelType);
   //
-  if ( nativeChannel != NULL )
+  if ( nativeChannel != nullptr )
     Tcl_UnregisterChannel(interp->GetTclInterp(), nativeChannel);
 
   // Create custom channel.
@@ -351,11 +335,11 @@ static void OverrideTclChannel(const Handle(asiTcl_Interp)& interp,
                                                 data,
                                                 TCL_READABLE | TCL_WRITABLE);
 
-  if ( customChannel != NULL )
+  if ( customChannel != nullptr )
   {
-    Tcl_SetChannelOption(NULL, customChannel, "-translation", "lf");
-    Tcl_SetChannelOption(NULL, customChannel, "-buffering", "none");
-    Tcl_SetChannelOption(NULL, customChannel, "-encoding", "utf-8");
+    Tcl_SetChannelOption(nullptr, customChannel, "-translation", "lf");
+    Tcl_SetChannelOption(nullptr, customChannel, "-buffering", "none");
+    Tcl_SetChannelOption(nullptr, customChannel, "-encoding", "utf-8");
 
     Tcl_SetStdChannel(customChannel, channelType);
     Tcl_RegisterChannel(interp->GetTclInterp(), customChannel);
@@ -368,7 +352,7 @@ asiTcl_Interp::asiTcl_Interp(ActAPI_ProgressEntry progress,
                              ActAPI_PlotterEntry  plotter)
 : Standard_Transient (),
   m_bNotifierOn      (true),
-  m_pInterp          (NULL),
+  m_pInterp          (nullptr),
   m_progress         (progress),
   m_plotter          (plotter)
 {}
@@ -598,7 +582,7 @@ asiTcl_Interp& asiTcl_Interp::Append(const char* str)
 {
   // Convert string to UTF-8 format for Tcl.
   Tcl_DString TclString;
-  Tcl_ExternalToUtfDString(NULL, str, -1, &TclString);
+  Tcl_ExternalToUtfDString(nullptr, str, -1, &TclString);
   Tcl_AppendResult(m_pInterp, Tcl_DStringValue(&TclString), (const char*) 0);
   Tcl_DStringFree(&TclString);
   //
@@ -734,9 +718,9 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
                                       (void*) callback,
                                       TclProcDelete);
 
-  if ( cmd == NULL )
+  if ( cmd == nullptr )
   {
-    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl_CreateCommand has returned NULL.");
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl_CreateCommand has returned nullptr.");
     return false;
   }
 

@@ -72,7 +72,7 @@ public:
                            asiUI_ObjectBrowser*           pBrowser,
                            ActAPI_ProgressEntry           notifier,
                            ActAPI_PlotterEntry            plotter,
-                           QWidget*                       parent = NULL);
+                           QWidget*                       parent = nullptr);
 
 public slots:
 
@@ -123,12 +123,12 @@ private:
     struct t_validity
     {
       //! Ctor.
-      t_validity() : pDiagnose             (NULL),
-                     pCheckToler           (NULL),
-                     pCheckEuler           (NULL),
-                     pCheckContours        (NULL),
-                     pFindOpenEdges        (NULL),
-                     pFindNonManifoldEdges (NULL)
+      t_validity() : pDiagnose             (nullptr),
+                     pCheckToler           (nullptr),
+                     pCheckEuler           (nullptr),
+                     pCheckContours        (nullptr),
+                     pFindOpenEdges        (nullptr),
+                     pFindNonManifoldEdges (nullptr)
       {}
 
       QPushButton* pDiagnose;             //!< To diagnose part.
@@ -142,12 +142,12 @@ private:
     struct t_features
     {
       //! Ctor.
-      t_features() : pShowTopoGraph   (NULL),
-                     pShowAAG         (NULL),
-                     pShowAAGWoSel    (NULL),
-                     pCheckDihAngles  (NULL),
-                     pFindSmoothEdges (NULL),
-                     pFindConvexOnly  (NULL)
+      t_features() : pShowTopoGraph   (nullptr),
+                     pShowAAG         (nullptr),
+                     pShowAAGWoSel    (nullptr),
+                     pCheckDihAngles  (nullptr),
+                     pFindSmoothEdges (nullptr),
+                     pFindConvexOnly  (nullptr)
       {}
 
       QPushButton* pShowTopoGraph;   //!< To show topology graph.
@@ -161,12 +161,12 @@ private:
     struct t_properties
     {
       //! Ctor.
-      t_properties() : pEdgeCurvature (NULL),
-                       pEdgeLength    (NULL),
-                       pEdgeStrain    (NULL),
-                       pFaceArea      (NULL),
-                       pFaceEnergy    (NULL),
-                       pAABB          (NULL)
+      t_properties() : pEdgeCurvature (nullptr),
+                       pEdgeLength    (nullptr),
+                       pEdgeStrain    (nullptr),
+                       pFaceArea      (nullptr),
+                       pFaceEnergy    (nullptr),
+                       pAABB          (nullptr)
       {}
 
       QPushButton* pEdgeCurvature; //!< To check edge curvature.

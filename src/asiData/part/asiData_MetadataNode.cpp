@@ -34,6 +34,9 @@
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
+// OCCT includes
+#include <TNaming_NamedShape.hxx>
+
 //-----------------------------------------------------------------------------
 
 //! Default constructor. Registers all involved Parameters.
@@ -79,7 +82,7 @@ void asiData_MetadataNode::SetName(const TCollection_ExtendedString& name)
 
 //! Finds elemental metadata for the passed shape which is normally
 //! a sub-shape of the part shape.
-//! \param[in] shape sub-shape in question.
+//! \param[in] shape  sub-shape in question.
 //! \return found metadata element or null if there is no such object.
 Handle(asiData_ElemMetadataNode)
   asiData_MetadataNode::FindElemMetadata(const TopoDS_Shape& shape) const
@@ -89,15 +92,29 @@ Handle(asiData_ElemMetadataNode)
   Handle(asiData_ElemMetadataNode) metadataElem_n;
   for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
   {
-    Handle(asiData_ElemMetadataNode)
-      N = Handle(asiData_ElemMetadataNode)::DownCast( cit->Value() );
+    /*
+       Make this accessor as fast as possible by using labels directly and
+       not using data cursors. Doing so, we avoid overheads on cursor
+       construction and validation thus saving quite a lot of CPU cycles.
+     */
+
+    TDF_Label root = cit->ValueLabel();
+
+    // Access label with user Parameters.
+    TDF_Label shapeLab = root.FindChild(ActData_BaseNode::TagUser)
+                             .FindChild(asiData_ElemMetadataNode::PID_Shape);
+
+    // Get shape attribute.
+    Handle(TNaming_NamedShape) shapeAttr;
+    shapeLab.FindAttribute(TNaming_NamedShape::GetID(), shapeAttr);
     //
-    if ( N.IsNull() || !N->IsWellFormed() )
+    if ( shapeAttr.IsNull() )
       continue;
 
-    if ( N->GetShape().IsSame(shape) )
+    // Compare shape and return if that's one requested.
+    if ( shapeAttr->Get().IsSame(shape) )
     {
-      metadataElem_n = N;
+      metadataElem_n = Handle(asiData_ElemMetadataNode)::DownCast( ActData_NodeFactory::NodeSettle(root) );
       break;
     }
   }

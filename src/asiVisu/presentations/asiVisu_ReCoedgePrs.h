@@ -36,7 +36,7 @@
 #include <asiVisu_Utils.h>
 
 // asiData includes
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 
 //-----------------------------------------------------------------------------
 

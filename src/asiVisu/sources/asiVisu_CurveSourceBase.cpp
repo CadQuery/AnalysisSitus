@@ -45,7 +45,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_CurveSourceBase);
+vtkStandardNewMacro(asiVisu_CurveSourceBase)
 
 //-----------------------------------------------------------------------------
 

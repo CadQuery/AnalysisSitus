@@ -69,17 +69,14 @@ asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout = new QHBoxLayout();
+  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout*            pBaseLayout = new QHBoxLayout(this);
+
+  pBaseLayout->addWidget(pViewer);
 
   // Configure layout
   pBaseLayout->setSpacing(0);
-  pBaseLayout->addWidget(pViewer);
-  pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
-
-  // Set central widget
-  this->setLayout(pBaseLayout);
 
   /* ===============================
    *  Setting up rotation callbacks
@@ -102,11 +99,14 @@ asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
    * ===================================== */
 
   // Enable context menu
-  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
-           this,    SLOT   ( onContextMenu(const QPoint&) ) );
+  if ( pViewer )
+  {
+    pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+             this,    SLOT   ( onContextMenu(const QPoint&) ) );
 
-  this->onResetView();
+    this->onResetView();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ QSize asiUI_ViewerHost::sizeHint() const
 //! Updates viewer.
 void asiUI_ViewerHost::Repaint()
 {
-  m_prs_mgr->GetQVTKWidget()->repaint();
+  m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -151,8 +151,8 @@ void asiUI_ViewerHost::onResetView()
 
 void asiUI_ViewerHost::onContextMenu(const QPoint& pos)
 {
-  QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
-  QPoint      globalPos = pViewer->mapToGlobal(pos);
+  QVTKOpenGLNativeWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint                  globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
 }

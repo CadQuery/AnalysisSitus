@@ -130,7 +130,7 @@ Handle(ActAPI_IProgressNotifier) asiAlgo_Dictionary::GetNotifier()
 {
   Handle(asiAlgo_DictionaryImpl) anImpl = getImpl();
   if ( anImpl.IsNull() )
-    return NULL;
+    return nullptr;
 
   return anImpl->GetNotifier();
 }

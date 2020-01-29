@@ -45,7 +45,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BSurfAxesSource);
+vtkStandardNewMacro(asiVisu_BSurfAxesSource)
 
 //-----------------------------------------------------------------------------
 

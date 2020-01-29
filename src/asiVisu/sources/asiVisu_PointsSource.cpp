@@ -51,8 +51,17 @@ template class asiVisu_PointsSource<float>;
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_PointsSource<double>);
-vtkStandardNewMacro(asiVisu_PointsSource<float>);
+template<>
+asiVisu_PointsSource<double>* asiVisu_PointsSource<double>::New()
+{
+  return new asiVisu_PointsSource<double>();
+}
+
+template<>
+asiVisu_PointsSource<float>* asiVisu_PointsSource<float>::New()
+{
+  return new asiVisu_PointsSource<float>();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -134,7 +143,7 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
 {
   if ( m_points.IsNull() )
   {
-    vtkErrorMacro( << "Invalid input: NULL point cloud" );
+    vtkErrorMacro( << "Invalid input: nullptr point cloud" );
     return 0;
   }
 
@@ -142,7 +151,7 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
   //
   if ( coords.IsNull() )
   {
-    vtkErrorMacro( << "Invalid input: NULL point cloud" );
+    vtkErrorMacro( << "Invalid input: nullptr point cloud" );
     return 0;
   }
 

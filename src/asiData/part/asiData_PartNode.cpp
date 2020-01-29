@@ -71,7 +71,6 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   // Register custom Parameters specific to Analysis Situs.
   this->registerParameter(PID_AAG,    asiData_AAGParameter    ::Instance(), false);
   this->registerParameter(PID_BVH,    asiData_BVHParameter    ::Instance(), false);
-  this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
   this->registerParameter(PID_Naming, asiData_NamingParameter ::Instance(), false);
 }
 
@@ -88,12 +87,11 @@ void asiData_PartNode::Init(const bool resetNaming)
 {
   // Set empty initial B-Rep and AAG.
   this->setShape  ( TopoDS_Shape() );
-  this->setAAG    ( NULL );
-  this->setBVH    ( NULL );
-  this->setOctree ( NULL );
+  this->setAAG    ( nullptr );
+  this->setBVH    ( nullptr );
   //
   if ( resetNaming )
-    this->setNaming ( NULL );
+    this->setNaming ( nullptr );
 
   // Set default values to primitive Parameters.
   this->SetAutoAAG           (true);
@@ -101,8 +99,8 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetAngularDeflection (0.0);
   this->SetKeepTessParams    (false);
   this->SetHasColor          (true);
-  this->SetColor             (2500134); // Sort of dark color.
-  this->SetDisplayMode       (1);       // Shading.
+  this->SetColor             (220 << 16 | 220 << 8 | 220); // Initial color.
+  this->SetDisplayMode       (1);                          // Shading.
   this->SetHasVertices       (false);
 
   // Set identity transformation.
@@ -198,12 +196,6 @@ Handle(asiAlgo_AAG) asiData_PartNode::GetAAG() const
 Handle(asiAlgo_BVHFacets) asiData_PartNode::GetBVH() const
 {
   return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
-}
-
-//! \return stored octree.
-void* asiData_PartNode::GetOctree() const
-{
-  return Handle(asiData_OctreeParameter)::DownCast( this->Parameter(PID_Octree) )->GetOctree();
 }
 
 //! \return stored naming service.
@@ -504,7 +496,7 @@ Handle(asiData_FaceNode) asiData_PartNode::GetFaceRepresentation() const
       return face_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying normal vectors representation Node.
@@ -519,7 +511,7 @@ Handle(asiData_FaceNormsNode) asiData_PartNode::GetNormsRepresentation() const
       return norms_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying surface representation Node.
@@ -534,7 +526,7 @@ Handle(asiData_SurfNode) asiData_PartNode::GetSurfaceRepresentation() const
       return surf_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying Face Contour Node.
@@ -549,7 +541,7 @@ Handle(asiData_FaceContourNode) asiData_PartNode::GetContourRepresentation() con
       return contour_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying boundary edges representation Node.
@@ -564,7 +556,7 @@ Handle(asiData_BoundaryEdgesNode) asiData_PartNode::GetBoundaryEdgesRepresentati
       return edges_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying edge representation Node.
@@ -579,7 +571,7 @@ Handle(asiData_EdgeNode) asiData_PartNode::GetEdgeRepresentation() const
       return edge_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying curve representation Node.
@@ -594,7 +586,7 @@ Handle(asiData_CurveNode) asiData_PartNode::GetCurveRepresentation() const
       return curve_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying contour Node.
@@ -609,7 +601,7 @@ Handle(asiData_ContourNode) asiData_PartNode::GetContour() const
       return contour_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying Vertex Node.
@@ -624,7 +616,7 @@ Handle(asiData_VertexNode) asiData_PartNode::GetVertexRepresentation() const
       return vertex_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying Node representing the group of tolerant shapes.
@@ -639,7 +631,7 @@ Handle(asiData_TolerantShapesNode) asiData_PartNode::GetTolerantShapes() const
       return tolShapes_n;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying Node which stores metadata.
@@ -654,7 +646,22 @@ Handle(asiData_MetadataNode) asiData_PartNode::GetMetadata() const
       return meta_n;
   }
 
-  return NULL;
+  return nullptr;
+}
+
+//! \return underlying Node which stores octree.
+Handle(asiData_OctreeNode) asiData_PartNode::GetOctree() const
+{
+  Handle(asiData_OctreeNode) octree_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    octree_n = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
+
+    if ( !octree_n.IsNull() && octree_n->IsWellFormed() )
+      return octree_n;
+  }
+
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -678,13 +685,6 @@ void asiData_PartNode::setAAG(const Handle(asiAlgo_AAG)& aag)
 void asiData_PartNode::setBVH(const Handle(asiAlgo_BVHFacets)& bvh)
 {
   Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
-}
-
-//! Sets octree to store.
-//! \param octree [in] octree to store.
-void asiData_PartNode::setOctree(void* octree)
-{
-  Handle(asiData_OctreeParameter)::DownCast( this->Parameter(PID_Octree) )->SetOctree(octree);
 }
 
 //! Sets naming service to store.

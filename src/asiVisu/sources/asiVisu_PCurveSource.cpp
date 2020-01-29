@@ -47,7 +47,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_PCurveSource);
+vtkStandardNewMacro(asiVisu_PCurveSource)
 
 //! Default constructor.
 asiVisu_PCurveSource::asiVisu_PCurveSource() : asiVisu_CurveSource()
@@ -73,13 +73,13 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
 {
   if ( edge.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: edge is NULL" );
+    vtkErrorMacro( << "Invalid domain: edge is null" );
     return;
   }
 
   if ( face.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: face is NULL" );
+    vtkErrorMacro( << "Invalid domain: face is null" );
     return;
   }
 
@@ -96,7 +96,7 @@ void asiVisu_PCurveSource::SetEdgeOnFace(const TopoDS_Edge& edge,
   //
   if ( c2d.IsNull() )
   {
-    vtkWarningMacro( << "Null p-curve" );
+    vtkWarningMacro( << "nullptr p-curve" );
     return;
   }
 

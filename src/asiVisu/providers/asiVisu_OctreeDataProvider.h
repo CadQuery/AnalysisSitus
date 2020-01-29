@@ -35,7 +35,7 @@
 #include <asiVisu_DataProvider.h>
 
 // asiData includes
-#include <asiData_OctreeParameter.h>
+#include <asiData_OctreeNode.h>
 
 //! Data provider for octree.
 class asiVisu_OctreeDataProvider : public asiVisu_DataProvider
@@ -48,9 +48,9 @@ public:
 public:
 
   //! Ctor.
-  //! \param[in] param Octree Parameter to source the persistent data from.
+  //! \param[in] node Octree Node to source the persistent data from.
   asiVisu_EXPORT
-    asiVisu_OctreeDataProvider(const Handle(asiData_OctreeParameter)& param);
+    asiVisu_OctreeDataProvider(const Handle(asiData_OctreeNode)& N);
 
 public:
 
@@ -58,7 +58,7 @@ public:
   //! \return Node ID.
   virtual ActAPI_DataObjectId GetNodeID() const
   {
-    return m_param->GetNode()->GetId();
+    return m_node->GetId();
   }
 
 public:
@@ -66,6 +66,11 @@ public:
   //! \return root octree node.
   asiVisu_EXPORT virtual void*
     GetOctree() const;
+
+  //! \return Boolean flag indicating whether the zero-crossing voxels
+  //!         should only be visualized.
+  asiVisu_EXPORT virtual bool
+    IsZeroCrossingOnly() const;
 
 protected:
 
@@ -79,7 +84,7 @@ protected:
 
 protected:
 
-  Handle(asiData_OctreeParameter) m_param; //!< Octree Parameter.
+  Handle(asiData_OctreeNode) m_node; //!< Octree Node.
 
 };
 

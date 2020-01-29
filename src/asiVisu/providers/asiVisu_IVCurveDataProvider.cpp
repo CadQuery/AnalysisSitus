@@ -50,7 +50,7 @@ Handle(Standard_Type)
   Handle(Geom_Curve) curve = this->GetCurve(f, l);
 
   if ( curve.IsNull() )
-    return NULL;
+    return nullptr;
 
   return curve->DynamicType();
 }
@@ -60,7 +60,7 @@ Handle(Standard_Type)
 Handle(Geom2d_Curve)
   asiVisu_IVCurveDataProvider::GetCurve2d(double&, double&) const
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +69,7 @@ Handle(Geom_Curve)
   asiVisu_IVCurveDataProvider::GetCurve(double& f, double& l) const
 {
   if ( m_node.IsNull() )
-    return NULL;
+    return nullptr;
 
   return m_node->GetCurve(f, l);
 }
@@ -80,7 +80,7 @@ Handle(HRealArray)
   asiVisu_IVCurveDataProvider::GetHandles() const
 {
   if ( m_node.IsNull() )
-    return NULL;
+    return nullptr;
 
   return m_node->GetHandles();
 }

@@ -45,7 +45,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_CurveSource);
+vtkStandardNewMacro(asiVisu_CurveSource)
 
 //-----------------------------------------------------------------------------
 
@@ -212,7 +212,7 @@ int asiVisu_CurveSource::RequestData(vtkInformation*        request,
 {
   if ( m_XCoords.IsNull() || m_YCoords.IsNull() || m_ZCoords.IsNull() )
   {
-    vtkWarningMacro( << "Invalid domain: NULL coordinate arrays" );
+    vtkWarningMacro( << "Invalid domain: nullptr coordinate arrays" );
     return Superclass::RequestData(request, inputVector, outputVector);
   }
 

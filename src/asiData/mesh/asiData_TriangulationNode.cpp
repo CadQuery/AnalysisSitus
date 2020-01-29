@@ -70,8 +70,8 @@ void asiData_TriangulationNode::Init()
   this->InitParameter(PID_Name, "Name");
 
   // Set empty initial mesh with empty options
-  this->SetOptions(NULL);
-  this->SetBVH(NULL);
+  this->SetOptions(nullptr);
+  this->SetBVH(nullptr);
 
   // Set Presentation values
   this->SetHasColor    (true);

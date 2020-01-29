@@ -65,7 +65,7 @@ public:
     myName       ( theName),
     myHasNormals ( hasNormals )
   {
-    if ( myFile == NULL )
+    if ( myFile == nullptr )
     {
       std::cout << "Error: OBJ file cannot be created" << std::endl;
       return;
@@ -75,20 +75,20 @@ public:
   //! Destructor, will emit error message if file was not closed.
   ~ObjWriter()
   {
-    if ( myFile != NULL )
+    if ( myFile != nullptr )
     {
       ::fclose(myFile);
     }
   }
 
   //! Return true if file has been opened.
-  bool IsOpened() const { return myFile != NULL; }
+  bool IsOpened() const { return myFile != nullptr; }
 
   //! Correctly close the file.
   void Close()
   {
     ::fclose(myFile);
-    myFile = NULL;
+    myFile = nullptr;
   }
 
   //! Writes the header.

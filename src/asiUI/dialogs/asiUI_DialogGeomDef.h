@@ -56,7 +56,7 @@ public:
     asiUI_DialogGeomDef(const Handle(asiEngine_Model)& model,
                         ActAPI_ProgressEntry           progress,
                         ActAPI_PlotterEntry            plotter,
-                        QWidget*                       parent = NULL);
+                        QWidget*                       parent = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_DialogGeomDef();
@@ -83,18 +83,18 @@ protected:
     QPushButton*  pApply;      //!< Apply.
     QPushButton*  pClose;      //!< Close.
 
-    t_base_widgets() : pName       (NULL),
-                       pDefinition (NULL),
-                       pApply      (NULL),
-                       pClose      (NULL)
+    t_base_widgets() : pName       (nullptr),
+                       pDefinition (nullptr),
+                       pApply      (nullptr),
+                       pClose      (nullptr)
     {}
 
     void Release()
     {
-      delete pName;       pName       = NULL;
-      delete pDefinition; pDefinition = NULL;
-      delete pApply;      pApply      = NULL;
-      delete pClose;      pClose      = NULL;
+      delete pName;       pName       = nullptr;
+      delete pDefinition; pDefinition = nullptr;
+      delete pApply;      pApply      = nullptr;
+      delete pClose;      pClose      = nullptr;
     }
   };
 

@@ -32,7 +32,7 @@ message (STATUS "Analysis Situs VERSION_PATCH: ${VERSION_PATCH}")
 set (3RDPARTY_DIR "" CACHE PATH "The root directory for all 3-rd parties.")
 
 if (NOT DEFINED ${3RDPARTY_DIR} AND ${3RDPARTY_DIR} STREQUAL "")
-  message (FATAL_ERROR "... root 3rdparty directory was not found.")
+  message (FATAL_ERROR "... root 3rdparty directory was not found.\nPlease, set 3RDPARTY_DIR variable.")
 endif()
 
 # Qt
@@ -86,7 +86,6 @@ ${3RDPARTY_tk_DLL_DIR};\
 ${3RDPARTY_freetype_DLL_DIR};\
 ${3RDPARTY_freeimage_DLL_DIR};\
 ${3RDPARTY_gl2ps_DLL_DIR};\
-${3RDPARTY_tbb_DLL_DIR};\
 ${3RDPARTY_QT_DIR}/bin;")
 
 set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_PATH}")
@@ -133,7 +132,7 @@ if (MSVC)
   add_definitions (/W4)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHa")
 elseif (CMAKE_COMPILER_IS_GNUCXX)
-  add_definitions (-Wall -pedantic)
+  add_definitions (-Wall -pedantic -Wno-unknown-pragmas)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")  
 else()
   message ("Unknown compiler")
@@ -175,8 +174,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiVisu)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiUI)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTestEngine)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
+
+if (WIN32)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
+endif()
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdDDF)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdEngine)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdMisc)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/cmdRE)
@@ -193,27 +197,27 @@ endif()
 # Folders
 #-------------------------------------------------------------------------------
 
-################################################################################
-set_property(TARGET asiAlgo          PROPERTY FOLDER Framework)
-set_property(TARGET asiData          PROPERTY FOLDER Framework)
-set_property(TARGET asiVisu          PROPERTY FOLDER Framework)
-set_property(TARGET asiEngine        PROPERTY FOLDER Framework)
-set_property(TARGET asiUI            PROPERTY FOLDER Framework)
-set_property(TARGET asiTestEngine    PROPERTY FOLDER Framework)
-################################################################################
-set_property(TARGET asiExe           PROPERTY FOLDER Executables)
-set_property(TARGET asiTest          PROPERTY FOLDER Executables)
-################################################################################
-if (NOT "${INNOSETUP_EXE}" STREQUAL "" AND EXISTS "${INNOSETUP_EXE}")
-  set_property(TARGET setup            PROPERTY FOLDER Utilities)
+set_property(TARGET asiAlgo       PROPERTY FOLDER Framework)
+set_property(TARGET asiData       PROPERTY FOLDER Framework)
+set_property(TARGET asiVisu       PROPERTY FOLDER Framework)
+set_property(TARGET asiEngine     PROPERTY FOLDER Framework)
+set_property(TARGET asiUI         PROPERTY FOLDER Framework)
+set_property(TARGET asiTestEngine PROPERTY FOLDER Framework)
+set_property(TARGET asiExe        PROPERTY FOLDER Executables)
+
+if (WIN32)
+  set_property(TARGET asiTest PROPERTY FOLDER Executables)
 endif()
-################################################################################
-set_property(TARGET asiTcl           PROPERTY FOLDER Batch)
-################################################################################
-set_property(TARGET cmdEngine        PROPERTY FOLDER Commands)
-set_property(TARGET cmdMisc          PROPERTY FOLDER Commands)
-set_property(TARGET cmdRE            PROPERTY FOLDER Commands)
-################################################################################
+
+if (NOT "${INNOSETUP_EXE}" STREQUAL "" AND EXISTS "${INNOSETUP_EXE}")
+  set_property(TARGET setup PROPERTY FOLDER Utilities)
+endif()
+
+set_property(TARGET asiTcl    PROPERTY FOLDER Batch)
+set_property(TARGET cmdDDF    PROPERTY FOLDER Commands)
+set_property(TARGET cmdEngine PROPERTY FOLDER Commands)
+set_property(TARGET cmdMisc   PROPERTY FOLDER Commands)
+set_property(TARGET cmdRE     PROPERTY FOLDER Commands)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 

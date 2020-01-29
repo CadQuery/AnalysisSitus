@@ -137,10 +137,8 @@ int RE_SetPatchesAsPart(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdRE::Commands_Data(const Handle(asiTcl_Interp)&      interp,
-                          const Handle(Standard_Transient)& data)
+                          const Handle(Standard_Transient)& cmdRE_NotUsed(data))
 {
-  cmdRE_NotUsed(data);
-  //
   static const char* group = "cmdRE";
 
   //-------------------------------------------------------------------------//

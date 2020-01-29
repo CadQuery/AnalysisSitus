@@ -83,8 +83,8 @@ asiUI_HistoryGraph::asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
                                        const Handle(asiAlgo_Naming)&  naming,
                                        ActAPI_ProgressEntry           progress,
                                        ActAPI_PlotterEntry            plotter)
-: m_pWidget    ( NULL ),
-  m_textWidget ( NULL ),
+: m_pWidget    ( nullptr ),
+  m_textWidget ( nullptr ),
   m_model      ( model ),
   m_naming     ( naming ),
   m_history    ( naming->GetHistory() ),
@@ -103,8 +103,8 @@ asiUI_HistoryGraph::asiUI_HistoryGraph(const Handle(asiEngine_Model)& model,
                                        const Handle(asiAlgo_History)& history,
                                        ActAPI_ProgressEntry           progress,
                                        ActAPI_PlotterEntry            plotter)
-: m_pWidget    (NULL),
-  m_textWidget (NULL),
+: m_pWidget    (nullptr),
+  m_textWidget (nullptr),
   m_model      (model),
   m_history    (history),
   m_progress   (progress),
@@ -261,10 +261,8 @@ void asiUI_HistoryGraph::onViewerClosed()
 //!                        to the picked vertex.
 //! \param[in] vid         graph vertex ID.
 void asiUI_HistoryGraph::onVertexPicked(const int       graphItemId,
-                                        const vtkIdType vid)
+                                        const vtkIdType asiVisu_NotUsed(vid))
 {
-  asiVisu_NotUsed(vid);
-
   asiAlgo_History::t_item* pItem = m_history->GetNode(graphItemId);
   //
   if ( !pItem )

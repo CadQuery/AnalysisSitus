@@ -81,10 +81,10 @@ asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*            
 : asiUI_Viewer3dListener (wViewerPart, model, progress, plotter),
   m_wViewerDomain        (wViewerDomain),
   m_wViewerHost          (wViewerHost),
-  m_pSaveBREPAction      (NULL),
-  m_pShowNormsAction     (NULL),
-  m_pInvertFacesAction   (NULL),
-  m_pShowOriContour      (NULL)
+  m_pSaveBREPAction      (nullptr),
+  m_pShowNormsAction     (nullptr),
+  m_pInvertFacesAction   (nullptr),
+  m_pShowOriContour      (nullptr)
 {}
 
 //-----------------------------------------------------------------------------

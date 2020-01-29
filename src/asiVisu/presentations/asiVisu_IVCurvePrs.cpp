@@ -145,12 +145,10 @@ Handle(asiVisu_Prs) asiVisu_IVCurvePrs::Instance(const Handle(ActAPI_INode)& N)
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
+void asiVisu_IVCurvePrs::highlight(vtkRenderer*,
                                    const Handle(asiVisu_PickerResult)& pickRes,
                                    const asiVisu_SelectionNature       selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Check picked actor.
   vtkActor* pPickedActor = pickRes->GetPickedActor();
   //
@@ -218,11 +216,9 @@ void asiVisu_IVCurvePrs::highlight(vtkRenderer*                        renderer,
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*                  renderer,
+void asiVisu_IVCurvePrs::unHighlight(vtkRenderer*,
                                      const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   if ( selNature == SelectionNature_Detection )
   {
     Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();

@@ -40,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 asiUI_ViewerCallback::asiUI_ViewerCallback(asiUI_Viewer* pViewer)
-: vtkCommand(), m_pViewer(pViewer), m_pBrowser(NULL)
+: vtkCommand(), m_pViewer(pViewer), m_pBrowser(nullptr)
 {}
 
 //-----------------------------------------------------------------------------

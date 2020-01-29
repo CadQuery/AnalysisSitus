@@ -75,10 +75,8 @@ public:
 
   //! Dumps the attribute to the passed output stream.
   //! \param[out] out target output stream.
-  virtual void Dump(Standard_OStream& out) const
-  {
-    asiAlgo_NotUsed(out);
-  }
+  virtual void Dump(Standard_OStream& asiAlgo_NotUsed(out)) const
+  {}
 
   //! Dumps this attribute as a JSON object.
   //! \param[in,out] out       target output stream.

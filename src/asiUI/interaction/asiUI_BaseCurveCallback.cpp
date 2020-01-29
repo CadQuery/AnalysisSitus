@@ -89,7 +89,7 @@ Handle(Geom_Curve)
   curveNode = this->getPickedCurveNode(pCallData);
   //
   if ( curveNode.IsNull() || !curveNode->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get Curve.
   return curveNode->GetCurve();
@@ -107,13 +107,13 @@ Handle(asiData_IVCurveNode)
   asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve( pPickRes->GetPickedActor() );
   //
   if ( !nodeInfo )
-    return NULL;
+    return nullptr;
 
   // Get Curve Node.
   Handle(ActAPI_INode) N = m_model->FindNode( nodeInfo->GetNodeId() );
   //
   if ( !N->IsInstance( STANDARD_TYPE(asiData_IVCurveNode) ) )
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_IVCurveNode)::DownCast(N);
 }

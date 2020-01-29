@@ -70,8 +70,8 @@ void asiData_ReVertexNode::Init(const double x,
   this->InitParameter(PID_Name, "Name");
 
   // Initialize arrays.
-  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(NULL);
-  ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray(nullptr);
+  ActParamTool::AsRealArray( this->Parameter(PID_Norm) )->SetArray(nullptr);
 
   // Initialize coordinates.
   this->SetPoint(x, y, z);

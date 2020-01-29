@@ -43,6 +43,7 @@
 // VTK includes
 #include <vtkCamera.h>
 #include <vtkCellData.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkIdTypeArray.h>
 #include <vtkInformation.h>
 #include <vtkObjectFactory.h>
@@ -88,7 +89,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_PrsManager);
+vtkStandardNewMacro(asiVisu_PrsManager)
 
 //-----------------------------------------------------------------------------
 
@@ -102,10 +103,8 @@ void asiVisu_PrsManager::PrintSelf(ostream& os, vtkIndent indent)
 //! Constructs presentation manager.
 asiVisu_PrsManager::asiVisu_PrsManager()
 : vtkObject (),
-  m_widget  (NULL)
-{
-  this->init();
-}
+  m_widget  (nullptr)
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -114,10 +113,8 @@ asiVisu_PrsManager::asiVisu_PrsManager()
 asiVisu_PrsManager::asiVisu_PrsManager(const Handle(ActAPI_IModel)& model)
 : vtkObject (),
   m_model   (model),
-  m_widget  (NULL)
-{
-  this->init();
-}
+  m_widget  (nullptr)
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -284,9 +281,9 @@ bool asiVisu_PrsManager::SetPresentation(const Handle(ActAPI_INode)& node)
 //-----------------------------------------------------------------------------
 
 //! Returns Presentation registered for the passed Node. If no Presentation
-//! is registered, returns NULL.
+//! is registered, returns nullptr.
 //! \param[in] node Node to access Presentation for.
-//! \return requested Presentation or NULL.
+//! \return requested Presentation or nullptr.
 Handle(asiVisu_Prs)
   asiVisu_PrsManager::GetPresentation(const Handle(ActAPI_INode)& node)
 {
@@ -296,14 +293,14 @@ Handle(asiVisu_Prs)
 //-----------------------------------------------------------------------------
 
 //! Returns Presentation registered for the passed Node. If no Presentation
-//! is registered, returns NULL.
+//! is registered, returns nullptr.
 //! \param[in] nodeId ID of the Node to access Presentation for.
-//! \return requested Presentation or NULL.
+//! \return requested Presentation or nullptr.
 Handle(asiVisu_Prs)
   asiVisu_PrsManager::GetPresentation(const ActAPI_DataObjectId& nodeId)
 {
   if ( !m_nodePresentations.IsBound(nodeId) )
-    return NULL;
+    return nullptr;
 
   return m_nodePresentations.Find(nodeId);
 }
@@ -424,7 +421,7 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
 
   // Update view window to have it cleared for user
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -449,7 +446,7 @@ void asiVisu_PrsManager::GarbageCollect()
   }
 
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -627,7 +624,7 @@ void asiVisu_PrsManager::SetSelectionMode(const int mode)
   m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -752,7 +749,7 @@ bool
 
   // Update view window.
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 
   return true;
 }
@@ -868,7 +865,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
 
   // Update view window
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -942,7 +939,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
 
   // Update view window
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -954,7 +951,7 @@ void asiVisu_PrsManager::CleanDetection()
 
   // Update view window
   if ( m_widget )
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -1027,6 +1024,11 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 
 //-----------------------------------------------------------------------------
 
+#include <QApplication>
+#include <QHBoxLayout>
+#include <QDockWidget>
+#include <vtkSphereSource.h>
+
 //! Initializes rendering process for the input QVTK widget
 //! and VTK render window handled by Presentation Manager.
 //!
@@ -1034,36 +1036,63 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 //! \param[in] isOffscreen off-screen rendering mode.
 void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 {
-  m_widget = new QVTKWidget(pWidget);
+  // Initialize widget.
+  m_widget = new QVTKOpenGLNativeWidget(pWidget);
+
+  // Initialize render window.
+  m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+  //
+  m_renderWindow->SetMultiSamples(16);
+  m_renderWindow->SetLineSmoothing(true);
+  m_renderWindow->SetPolygonSmoothing(false);
+  //
   m_widget->SetRenderWindow(m_renderWindow);
+
+  // Initialize renderer.
+  m_renderer = vtkSmartPointer<vtkRenderer>::New();
+  m_renderer->GetActiveCamera()->ParallelProjectionOn();
+  m_renderer->LightFollowCameraOn();
+  m_renderer->TwoSidedLightingOff();
+  m_renderer->SetBackground(0.15, 0.15, 0.15);
+  //
+  m_widget->GetRenderWindow()->AddRenderer(m_renderer);
+
+  // Initialize Interactor Style instance for normal operation mode.
+  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
+
+  // Initialize Interactor Style instance for 2D scenes.
+  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
+
+  // Initialize Render Window Interactor.
+  m_renderWindowInteractor = m_renderWindow->GetInteractor();
+  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+
+  /* =========
+   *  Pickers.
+   * ========= */
+
+  // Initialize employed pickers.
+  this->InitializePickers( Handle(ActAPI_INode)() );
+
+  // Set default selection mode.
+  m_currentSelection.SetSelectionModes(SelectionMode_None);
+
+  /* ===========
+   *  Trihedron.
+   * =========== */
+
+  // Initialize trihedron.
+  m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
+  m_trihedron->SetAxisLabels(0);
+  m_trihedron->SetConeRadius(0);
+  m_renderer->AddActor(m_trihedron);
+
+  /* ==========
+   *  Finalize.
+   * ========== */
 
   if ( isOffscreen )
     m_renderWindow->SetOffScreenRendering(1);
-
-  m_renderWindowInteractor->Initialize();
-}
-
-//-----------------------------------------------------------------------------
-
-void asiVisu_PrsManager::InitializeRenderWindow(const int aams)
-{
-  // Initialize Render Window
-  m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-  m_renderWindow->AddRenderer(m_renderer);
-  m_renderWindow->SetMultiSamples(aams);
-  m_renderWindow->SetLineSmoothing(true);
-  m_renderWindow->SetPolygonSmoothing(false);
-
-  // Initialize Interactor Style instance for normal operation mode
-  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
-
-  // Initialize Interactor Style instance for 2D scenes
-  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
-
-  // Initialize Render Window Interactor
-  m_renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-  m_renderWindowInteractor->SetRenderWindow(m_renderWindow);
-  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
 }
 
 //-----------------------------------------------------------------------------
@@ -1084,7 +1113,7 @@ void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
 
 //! Returns QVTK widget handled by Presentation Manager.
 //! \return QVTK widget.
-QVTKWidget* asiVisu_PrsManager::GetQVTKWidget() const
+QVTKOpenGLNativeWidget* asiVisu_PrsManager::GetQVTKWidget() const
 {
   return m_widget;
 }
@@ -1125,7 +1154,10 @@ vtkAxesActor* asiVisu_PrsManager::GetTrihedron() const
 vtkSmartPointer<vtkPropCollection> asiVisu_PrsManager::PropsByTrihedron() const
 {
   vtkSmartPointer<vtkPropCollection> res = vtkSmartPointer<vtkPropCollection>::New();
-  m_trihedron->GetActors(res);
+
+  if ( m_trihedron.Get() )
+    m_trihedron->GetActors(res);
+
   return res;
 }
 
@@ -1192,40 +1224,6 @@ bool asiVisu_PrsManager::RemoveUpdateCallback(unsigned long eventID,
 
 //-----------------------------------------------------------------------------
 
-//! Initializes presentation manager.
-void asiVisu_PrsManager::init()
-{
-  // Initialize renderer
-  m_renderer = vtkSmartPointer<vtkRenderer>::New();
-  m_renderer->GetActiveCamera()->ParallelProjectionOn();
-  m_renderer->LightFollowCameraOn();
-  m_renderer->TwoSidedLightingOff();
-
-  // Set background color
-  m_renderer->SetBackground(0.15, 0.15, 0.15);
-
-  // Initialize employed pickers
-  this->InitializePickers( Handle(ActAPI_INode)() );
-
-  // Set default selection mode
-  m_currentSelection.SetSelectionModes(SelectionMode_None);
-
-  // Initialize render window
-  this->InitializeRenderWindow(16);
-
-  /* =======================
-   *  Button to toggle axes
-   * ======================= */
-
-  // Initialize trihedron
-  m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
-  m_trihedron->SetAxisLabels(0);
-  m_trihedron->SetConeRadius(0);
-  m_renderer->AddActor(m_trihedron);
-}
-
-//-----------------------------------------------------------------------------
-
 bool
   asiVisu_PrsManager::cellPickerResult(const asiVisu_SelectionNature           selNature,
                                        const Handle(asiVisu_CellPickerResult)& pickRes)
@@ -1278,7 +1276,7 @@ bool
 #if defined COUT_DEBUG
     std::cout << "No picked actor" << std::endl;
 #endif
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
     return false; // Nothing has been picked.
   }
 
@@ -1344,7 +1342,7 @@ bool
   //
   if ( !pickedActor )
   {
-    m_widget->repaint();
+    m_widget->GetRenderWindow()->Render();
     return false; // Nothing has been picked.
   }
 
@@ -1442,7 +1440,7 @@ Handle(asiVisu_Prs)
                                        const Handle(asiVisu_PickerResult)& pickRes)
 {
   if ( pickRes.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Retrieve the corresponding Presentation by the data object ID.
   asiVisu_NodeInfo* nodeInfo = asiVisu_NodeInfo::Retrieve( pickRes->GetPickedActor() );

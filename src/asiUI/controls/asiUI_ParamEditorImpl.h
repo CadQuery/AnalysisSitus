@@ -77,7 +77,7 @@ public:
 public:
 
   asiUI_EXPORT virtual void
-    SetParameters(const Handle(ActAPI_HSparseParameterList)& params);
+    SetParameters(const Handle(ActAPI_HIndexedParameterMap)& params);
 
   asiUI_EXPORT virtual void
     UpdateParameters();
@@ -106,7 +106,7 @@ private:
 
 private:
 
-  Handle(ActAPI_HSparseParameterList) m_paramList; //!< Internal cache.
+  Handle(ActAPI_HIndexedParameterMap) m_paramList; //!< Internal cache.
   asiUI_ParameterEditor*              m_pEditor;   //!< Encapsulated widget.
 };
 

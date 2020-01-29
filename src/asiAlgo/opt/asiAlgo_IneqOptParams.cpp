@@ -83,7 +83,7 @@ double asiAlgo_IneqOptParams::GetAMinus(const int nu) const
 
 void asiAlgo_IneqOptParams::SetAMinus(const int nu, const double a)
 {
-  if ( nu > m_ANu.size() )
+  if ( nu > int( m_ANu.size() ) )
     m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.first = a;
@@ -100,7 +100,7 @@ double asiAlgo_IneqOptParams::GetAPlus(const int nu) const
 
 void asiAlgo_IneqOptParams::SetAPlus(const int nu, const double a)
 {
-  if ( nu > m_ANu.size() )
+  if ( nu > int( m_ANu.size() ) )
     m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.second = a;
@@ -119,7 +119,7 @@ void asiAlgo_IneqOptParams::GetCoeffs(const int             nu,
 void asiAlgo_IneqOptParams::SetCoeffs(const int                   nu,
                                       const t_ineqNCoord<double>& coeffs)
 {
-  if ( nu > m_coeffs.size() )
+  if ( nu > int( m_coeffs.size() ) )
     m_coeffs.push_back( t_ineqNCoord<double>() );
 
   m_coeffs[nu-1] = coeffs;
@@ -141,7 +141,7 @@ void asiAlgo_IneqOptParams::SetInterval0(const int    nu,
                                          const double left,
                                          const double right)
 {
-  if ( nu > m_K0Nu.size() )
+  if ( nu > int( m_K0Nu.size() ) )
     m_K0Nu.push_back( t_ineqRange() );
 
   m_K0Nu[nu-1].values.first  = left;

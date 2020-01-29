@@ -52,7 +52,7 @@ asiAlgo_DictionaryDimension::asiAlgo_DictionaryDimension(const TCollection_Ascii
 Handle(asiAlgo_DictionaryUnit) asiAlgo_DictionaryDimension::GetSIUnit() const
 {
   if ( m_iSI < 1 || m_iSI > m_unitMap.Extent() )
-    return NULL;
+    return nullptr;
 
   return m_unitMap.FindFromIndex(m_iSI);
 }
@@ -63,7 +63,7 @@ Handle(asiAlgo_DictionaryUnit)
   asiAlgo_DictionaryDimension::GetUnit(const TCollection_AsciiString& name)
 {
   if ( !m_unitMap.Contains(name) )
-    return NULL;
+    return nullptr;
 
   return m_unitMap.FindFromKey(name);
 }

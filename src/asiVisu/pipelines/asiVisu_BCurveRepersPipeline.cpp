@@ -99,10 +99,12 @@ void asiVisu_BCurveRepersPipeline::SetInput(const Handle(asiVisu_DataProvider)& 
 
     // Set active reper ID if any.
     if ( m_bAllowSelection )
+    {
       if ( m_iForcedActiveReper != -1 )
         bRepersSrc->SetActiveReper( m_iForcedActiveReper );
       else
         bRepersSrc->SetActiveReper( dp->GetActiveReper() );
+    }
 
     // Connect data source to the pipeline.
     this->SetInputConnection( bRepersSrc->GetOutputPort() );

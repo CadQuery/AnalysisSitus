@@ -89,14 +89,14 @@ Handle(asiAlgo_AAG) asiData_AAGParameter::GetAAG()
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_AAG, false);
   //
   if ( dataLab.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get AAG attribute
   Handle(asiData_AAGAttr) attr;
   dataLab.FindAttribute(asiData_AAGAttr::GUID(), attr);
   //
   if ( attr.IsNull() )
-    return NULL;
+    return nullptr;
 
   return attr->GetAAG();
 }

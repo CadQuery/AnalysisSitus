@@ -146,7 +146,7 @@ bool asiAlgo_IneqSystem::Solve(const t_ineqNCoord<double>& x0,
 
   TCollection_AsciiString NextXStr;
   //
-  for ( size_t k = 0; k < x_next.Dim; ++k )
+  for ( int k = 0; k < x_next.Dim; ++k )
   {
     NextXStr += x_next.V[k];
 
@@ -324,7 +324,7 @@ double asiAlgo_IneqSystem::GetAMinus(const int nu) const
 
 void asiAlgo_IneqSystem::SetAMinus(const int nu, const double a)
 {
-  if ( nu > m_ANu.size() )
+  if ( nu > int( m_ANu.size() ) )
     m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.first = a;
@@ -341,7 +341,7 @@ double asiAlgo_IneqSystem::GetAPlus(const int nu) const
 
 void asiAlgo_IneqSystem::SetAPlus(const int nu, const double a)
 {
-  if ( nu > m_ANu.size() )
+  if ( nu > int( m_ANu.size() ) )
     m_ANu.push_back( t_ineqRange() );
 
   m_ANu[nu-1].values.second = a;
@@ -360,7 +360,7 @@ void asiAlgo_IneqSystem::GetCoeffs(const int             nu,
 void asiAlgo_IneqSystem::SetCoeffs(const int                   nu,
                                    const t_ineqNCoord<double>& coeffs)
 {
-  if ( nu > m_coeffs.size() )
+  if ( nu > int( m_coeffs.size() ) )
     m_coeffs.push_back( t_ineqNCoord<double>() );
 
   m_coeffs[nu-1] = coeffs;

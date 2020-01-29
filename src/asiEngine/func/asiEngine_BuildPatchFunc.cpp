@@ -156,7 +156,7 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
    *  Build patch
    * ============= */
 
-  asiEngine_RE reApi(M, m_progress, m_bPlotterEnabled ? m_plotter : NULL);
+  asiEngine_RE reApi(M, m_progress, m_bPlotterEnabled ? m_plotter : nullptr);
 
   // Fill Coons.
   Handle(Geom_BSplineSurface) bsurf;
@@ -320,7 +320,7 @@ bool asiEngine_BuildPatchFunc::extractMeshNodes(const Handle(asiEngine_Model)&  
                                                 Handle(asiAlgo_BaseCloud<double>)& pts) const
 {
   // Prepare service API.
-  asiEngine_RE api(model, m_progress, m_bPlotterEnabled ? m_plotter : NULL);
+  asiEngine_RE api(model, m_progress, m_bPlotterEnabled ? m_plotter : nullptr);
 
   // Get triangles captured by contour.
   Handle(Poly_Triangulation) regionTris;
@@ -400,11 +400,6 @@ bool asiEngine_BuildPatchFunc::approxMeshNodes(const Handle(Geom_BSplineSurface)
   resultSurf = cascade::GetOpenCascadeBSurface(mobResSurf);
   return true;
 #else
-  asiEngine_NotUsed(initSurf);
-  asiEngine_NotUsed(pts);
-  asiEngine_NotUsed(lambda);
-  asiEngine_NotUsed(resultSurf);
-
   m_progress.SendLogMessage(LogErr(Normal) << "Surface approximation module is not available.");
   return false;
 #endif

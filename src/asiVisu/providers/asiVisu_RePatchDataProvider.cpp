@@ -60,13 +60,13 @@ Handle(Standard_Type) asiVisu_RePatchDataProvider::GetSurfaceType() const
     patch_n = Handle(asiData_RePatchNode)::DownCast(m_node);
   //
   if ( patch_n.IsNull() || !patch_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get surface.
   Handle(Geom_Surface) surf = patch_n->GetSurface();
   //
   if ( surf.IsNull() )
-    return NULL;
+    return nullptr;
 
   return surf->DynamicType();
 }
@@ -89,7 +89,7 @@ Handle(Geom_Surface)
     patch_n = Handle(asiData_RePatchNode)::DownCast(m_node);
   //
   if ( patch_n.IsNull() || !patch_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get surface.
   Handle(Geom_Surface) surf = patch_n->GetSurface();

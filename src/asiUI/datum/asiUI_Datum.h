@@ -272,7 +272,7 @@ public:
 
 public:
 
-  virtual void UpdateUnits() { unitSystemChanged( QString() ); }
+  virtual void UpdateUnits() { SuitDatumClass::unitSystemChanged( QString() ); }
 
   virtual void ColorizeText(const QColor& theColor);
 

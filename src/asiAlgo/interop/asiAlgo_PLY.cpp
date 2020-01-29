@@ -176,7 +176,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     filename,
 
       if ( tokens.size() >= 3 )
       {
-        int* iTarget = NULL;
+        int* iTarget = nullptr;
         if ( tokens[1] == "vertex" )
         {
           iTarget       = &nVertices;
@@ -207,7 +207,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     filename,
         if ( iTarget )
         {
           *iTarget = atoi( tokens[2].c_str() );
-          iTarget = NULL;
+          iTarget = nullptr;
         }
       }
     }
@@ -225,7 +225,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     filename,
 
         const int id = MeshDS->AddNode(xyz[0], xyz[1], xyz[2]);
 
-        for ( int k = 3; k < tokens.size(); ++k )
+        for ( int k = 3; k < int( tokens.size() ); ++k )
         {
           const double val = atof( tokens[k].c_str() );
           nodeArrays(k - 2).Data->SetValue( id - 1, val );
@@ -265,7 +265,7 @@ bool asiAlgo_PLY::Read(const TCollection_AsciiString&     filename,
           elem_id = MeshDS->AddFace(nodes, 4);
         }
 
-        for ( int k = nNodes + 1; k < tokens.size(); ++k )
+        for ( int k = nNodes + 1; k < int ( tokens.size() ); ++k )
         {
           const double val = atof( tokens[k].c_str() );
           elemArrays(k - nNodes).Data->SetValue( elem_id - 1, val );
@@ -415,9 +415,9 @@ void asiAlgo_PLY::writeElements(const Handle(Poly_Triangulation)& tris,
 {
   const Poly_Array1OfTriangle& trisArr = tris->Triangles();
   //
-  for ( int k = 1; k <= trisArr.Length(); ++k )
+  for ( int i = 1; i <= trisArr.Length(); ++i )
   {
-    const Poly_Triangle& tri = trisArr(k);
+    const Poly_Triangle& tri = trisArr(i);
 
     // Get node IDs.
     int node_idx[4] = {0, 0, 0, 0};

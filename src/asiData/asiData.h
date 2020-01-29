@@ -31,7 +31,7 @@
 #ifndef asiData_h
 #define asiData_h
 
-#define asiData_NotUsed(x) x
+#define asiData_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiData_EXPORTS

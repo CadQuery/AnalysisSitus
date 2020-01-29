@@ -1287,7 +1287,7 @@ int ENGINE_FairCurve(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   // Perform fairing from Mobius.
-  geom_FairBCurve fairing(mobCurve, lambda, NULL, NULL);
+  geom_FairBCurve fairing(mobCurve, lambda, nullptr, nullptr);
   //
   if ( !fairing.Perform() )
   {
@@ -1374,7 +1374,7 @@ int ENGINE_FairSurf(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   // Initialize fairing tool.
-  geom_FairBSurf fairing(mobSurf, lambda, NULL, NULL);
+  geom_FairBSurf fairing(mobSurf, lambda, nullptr, nullptr);
   //
   if ( !isRelax )
   {
@@ -1520,7 +1520,7 @@ int ENGINE_ExtendSurf(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtSurface.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is null.");
     return TCL_OK;
   }
 
@@ -1917,7 +1917,7 @@ int ENGINE_KillBlendsInc(const Handle(asiTcl_Interp)& interp,
   // Perform suppression incrementally.
   int numSuppressedChains = 0;
   //
-  asiAlgo_SuppressBlendsInc incSuppress( interp->GetProgress(), NULL );
+  asiAlgo_SuppressBlendsInc incSuppress( interp->GetProgress(), nullptr );
   //
   if ( !incSuppress.Perform(aag, maxRadius, result, history,
                             numSuppressedChains) )
@@ -2775,10 +2775,8 @@ int ENGINE_ResetLocation(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
-                                 const Handle(Standard_Transient)& data)
+                                 const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
-  cmdEngine_NotUsed(data);
-  //
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//

@@ -59,7 +59,7 @@ public:
   //! comes with a default empty realization here.
   //!
   //! \return array of curve parameters representing the interaction handles.
-  virtual Handle(HRealArray) GetHandles() const { return NULL; }
+  virtual Handle(HRealArray) GetHandles() const { return nullptr; }
 
   //! Returns handle ID which is currently active. Not all curve types use
   //! interactive handles, so this method returns -1 (no handle) by default.
@@ -72,7 +72,7 @@ public:
   //! recorded, this method has an empty default implementation.
   //!
   //! \param[out] pts vector of reper points which were used to build the curve.
-  virtual void GetReperPoints(std::vector<gp_XYZ>& pts) const { asiVisu_NotUsed(pts); }
+  virtual void GetReperPoints(std::vector<gp_XYZ>& asiVisu_NotUsed(pts)) const {}
 
   //! Returns reper point ID which is currently active. Not all curve types use
   //! reper points, so this method returns -1 (no point) by default.

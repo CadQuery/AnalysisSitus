@@ -74,8 +74,8 @@ asiUI_ViewerFuncUnivariate::asiUI_ViewerFuncUnivariate(ActAPI_ProgressEntry prog
   m_prs_mgr->GetRenderer()->SetBackground2(0.1, 0.1, 0.1);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout* pBaseLayout = new QVBoxLayout();
+  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout*            pBaseLayout = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);

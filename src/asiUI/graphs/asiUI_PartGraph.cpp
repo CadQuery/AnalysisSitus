@@ -59,11 +59,11 @@
 #include <vtkContextInteractorStyle.h>
 #include <vtkContextScene.h>
 #include <vtkContextTransform.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkGraphLayout.h>
 #include <vtkNew.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
-#include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSimple2DLayoutStrategy.h>
 #include <vtkSmartPointer.h>
@@ -92,11 +92,11 @@ asiUI_PartGraph::asiUI_PartGraph(const Handle(asiEngine_Model)& model,
                                  asiUI_ViewerPart*              pPartViewer,
                                  ActAPI_ProgressEntry           progress)
 : 
-  m_pWidget       (NULL),
-  m_textWidget    (NULL),
-  m_summaryWidget (NULL),
-  m_model         (model),
+  m_pWidget       (nullptr),
+  m_textWidget    (nullptr),
+  m_summaryWidget (nullptr),
   m_partViewer    (pPartViewer),
+  m_model         (model),
   m_progress      (progress)
 {}
 
@@ -163,7 +163,7 @@ void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Render window
-  vtkNew<vtkRenderWindow> renderWindow;
+  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderer->AddActor(actor);
 
@@ -262,7 +262,7 @@ void asiUI_PartGraph::Render(const TopoDS_Shape&               shape,
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
     graph = this->convertToGraph(shape,
-                                 NULL,
+                                 nullptr,
                                  selectedFaces,
                                  regime,
                                  leafType);
@@ -286,7 +286,7 @@ void asiUI_PartGraph::RenderTopology(const TopoDS_Shape&    shape,
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
     graph = this->convertToGraph(shape,
-                                 NULL,
+                                 nullptr,
                                  TopTools_IndexedMapOfShape(),
                                  Regime_Topology,
                                  leafType);
@@ -401,10 +401,8 @@ void asiUI_PartGraph::onViewerClosed()
 void asiUI_PartGraph::onVertexPicked(const int              globalId,
                                      const int              pedigreeId,
                                      const TopAbs_ShapeEnum shapeType,
-                                     const vtkIdType        vid)
+                                     const vtkIdType        asiVisu_NotUsed(vid))
 {
-  asiVisu_NotUsed(vid);
-
   m_progress.SendLogMessage(LogInfo(Normal) << "Selected shape:\n\ttype: %1.\n\tglobal ID: %2.\n\tpedigree ID: %3."
                                             << asiAlgo_Utils::ShapeTypeStr(shapeType)
                                             << globalId

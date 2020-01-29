@@ -75,7 +75,7 @@ void asiData_IVSurfaceNode::Init()
 {
   // Set default values.
   this->SetSurfaceType (SurfaceType_General);
-  this->SetSurface     (NULL);
+  this->SetSurface     (nullptr);
   this->SetLimits      (0.0, 0.0, 0.0, 0.0);
   this->SetHasColor    (false);
   this->SetColor       (2500134); // Sort of dark color.
@@ -136,7 +136,7 @@ Handle(Geom_Surface) asiData_IVSurfaceNode::GetSurface() const
   TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
   //
   if ( sh.IsNull() || sh.ShapeType() != TopAbs_FACE )
-    return NULL;
+    return nullptr;
 
   // Extract face and its host geometry
   const TopoDS_Face& F = TopoDS::Face(sh);

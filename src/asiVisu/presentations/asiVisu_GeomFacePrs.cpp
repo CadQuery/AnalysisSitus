@@ -270,17 +270,10 @@ void asiVisu_GeomFacePrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFacePrs::highlight(vtkRenderer*                        theRenderer,
-                                    const Handle(asiVisu_PickerResult)& thePickRes,
-                                    const asiVisu_SelectionNature       theSelNature) const
+void asiVisu_GeomFacePrs::highlight(vtkRenderer*,
+                                    const Handle(asiVisu_PickerResult)&,
+                                    const asiVisu_SelectionNature) const
 {
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
-
   //// Get target actor which is the only sensitive
   //Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
   ////
@@ -326,13 +319,9 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*                        theRende
 }
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                  theRenderer,
-                                      const asiVisu_SelectionNature theSelNature) const
+void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*,
+                                      const asiVisu_SelectionNature) const
 {
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-
   //// Access pipeline for highlighting
   //Handle(asiVisu_FaceDomainPipeline) hili_pl;
   ////
@@ -352,14 +341,13 @@ void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*                  theRenderer,
 }
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* renderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
-    m_textWidget->SetInteractor      ( theRenderer->GetRenderWindow()->GetInteractor() );
-    m_textWidget->SetDefaultRenderer ( theRenderer );
-    m_textWidget->SetCurrentRenderer ( theRenderer );
+    m_textWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
+    m_textWidget->SetDefaultRenderer ( renderer );
+    m_textWidget->SetCurrentRenderer ( renderer );
     m_textWidget->On                 ( );
     m_textWidget->ReleaseFocus       ( );
   }
@@ -374,13 +362,12 @@ void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* theRenderer) const
 
   // Picking pipeline must be added to renderer the LAST (!). Otherwise
   // we experience some strange coloring bug because of their coincidence
-  /* (1) */ detect_pl->AddToRenderer(theRenderer);
-  /* (2) */ pick_pl->AddToRenderer(theRenderer);
+  /* (1) */ detect_pl->AddToRenderer(renderer);
+  /* (2) */ pick_pl->AddToRenderer(renderer);
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   m_textWidget->Off();
 
@@ -392,6 +379,6 @@ void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* theRenderer) const
     detect_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetDetectionPipeline() ),
     pick_pl = Handle(asiVisu_FaceDomainPipeline)::DownCast( this->GetSelectionPipeline() );
   //
-  detect_pl->RemoveFromRenderer(theRenderer);
-  pick_pl->RemoveFromRenderer(theRenderer);
+  detect_pl->RemoveFromRenderer(renderer);
+  pick_pl->RemoveFromRenderer(renderer);
 }

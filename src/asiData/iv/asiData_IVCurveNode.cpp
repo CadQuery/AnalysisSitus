@@ -65,13 +65,13 @@ Handle(ActAPI_INode) asiData_IVCurveNode::Instance()
 
 void asiData_IVCurveNode::Init()
 {
-  this->SetCurve              ( NULL, 0.0, 0.0 );
-  this->SetHandles            ( NULL );
+  this->SetCurve              ( nullptr, 0.0, 0.0 );
+  this->SetHandles            ( nullptr );
   this->SetActiveHandle       ( -1 );
   this->SetActiveReper        ( -1 );
   this->SetDrawOrientationTip ( true );
 
-  ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_ReperPoints) )->SetArray(nullptr);
 
   // Initialize properties.
   this->InitParameter (PID_Name,       "Name",             "", ParameterFlag_IsVisible, true);
@@ -107,7 +107,7 @@ Handle(Geom_Curve) asiData_IVCurveNode::GetCurve(double& f, double& l) const
   TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Geometry) )->GetShape();
   //
   if ( sh.IsNull() || sh.ShapeType() != TopAbs_EDGE )
-    return NULL;
+    return nullptr;
 
   // Extract edge and its host geometry
   const TopoDS_Edge& E = TopoDS::Edge(sh);

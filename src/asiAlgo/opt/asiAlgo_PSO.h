@@ -32,52 +32,11 @@
 #define asiAlgo_PSO_h
 
 // asiAlgo includes
+#include <asiAlgo_BullardRNG.h>
 #include <asiAlgo_Function.h>
 
 // STD includes
 #include <vector>
-
-//-----------------------------------------------------------------------------
-// Random number generator
-//-----------------------------------------------------------------------------
-
-//! RNG based on code presented by Ian C. Bullard (more
-//! accurate than standard C rand() and at least 10 times
-//! faster).
-class asiAlgo_BullardRNG
-{
-public:
-
-  asiAlgo_BullardRNG(const unsigned seed = 1)
-  {
-    this->Initialize(seed);
-  }
-
-  void Initialize(const unsigned seed)
-  {
-    m_iHi = seed;
-    m_iLo = seed ^ 0x49616E42;
-  }
-
-  unsigned RandInt()
-  {
-    static const int shift = sizeof(int) / 2;
-    m_iHi = (m_iHi >> shift) + (m_iHi << shift);
-    m_iHi += m_iLo;
-    m_iLo += m_iHi;
-    return m_iHi;
-  }
-
-  double RandDouble()
-  {
-    return RandInt() / (double) (0xFFFFFFFF);
-  }
-
-protected:
-
-  unsigned m_iLo, m_iHi;
-
-};
 
 //-----------------------------------------------------------------------------
 // Optimization tool
@@ -135,7 +94,7 @@ public:
                         m              (0.0),
                         mu_cognition   (0.0),
                         nu_social      (0.0),
-                        pFunc          (NULL)
+                        pFunc          (nullptr)
     {}
   };
 

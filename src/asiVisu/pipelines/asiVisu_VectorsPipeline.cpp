@@ -137,19 +137,15 @@ void asiVisu_VectorsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataP
 
 //! Callback for adding the actor to a renderer.
 //! \param renderer [in] target renderer.
-void asiVisu_VectorsPipeline::callback_add_to_renderer(vtkRenderer* renderer)
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_VectorsPipeline::callback_add_to_renderer(vtkRenderer* asiVisu_NotUsed(renderer))
+{}
 
 //-----------------------------------------------------------------------------
 
 //! Callback for removal of the actor from a renderer.
 //! \param renderer [in] target renderer.
-void asiVisu_VectorsPipeline::callback_remove_from_renderer(vtkRenderer* renderer)
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_VectorsPipeline::callback_remove_from_renderer(vtkRenderer* asiVisu_NotUsed(renderer))
+{}
 
 //-----------------------------------------------------------------------------
 

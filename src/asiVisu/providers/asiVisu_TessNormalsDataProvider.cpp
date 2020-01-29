@@ -175,7 +175,7 @@ void asiVisu_TessNormalsDataProvider::elementNodes(const Handle(ActData_Mesh)&  
 {
   nodes.clear();
   int  numNodes = elem->NbNodes();
-  int* nodeIDs  = NULL;
+  int* nodeIDs  = nullptr;
 
   if ( numNodes == 3 )
   {

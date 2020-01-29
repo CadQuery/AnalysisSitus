@@ -89,8 +89,8 @@ public:
   //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
     asiAlgo_MeshOBB(const Handle(Poly_Triangulation)& mesh,
-                    ActAPI_ProgressEntry              progress = NULL,
-                    ActAPI_PlotterEntry               plotter  = NULL);
+                    ActAPI_ProgressEntry              progress = nullptr,
+                    ActAPI_PlotterEntry               plotter  = nullptr);
 
 public:
 

@@ -103,10 +103,8 @@ void asiData_AAGAttr::Restore(const Handle(TDF_Attribute)& mainAttr)
 //! \param[in] into       where to paste.
 //! \param[in] relocTable relocation table.
 void asiData_AAGAttr::Paste(const Handle(TDF_Attribute)&       into,
-                            const Handle(TDF_RelocationTable)& relocTable) const
+                            const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
 {
-  asiData_NotUsed(relocTable);
-
   Handle(asiData_AAGAttr) intoCasted = Handle(asiData_AAGAttr)::DownCast(into);
   intoCasted->SetAAG(m_aag);
 }

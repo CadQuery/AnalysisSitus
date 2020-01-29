@@ -171,7 +171,7 @@ int asiVisu_ShapeDisplayModeFilter::RequestData(vtkInformation*        pInfo,
   {
     vtkDataArray* pInArr = pInputCellData->GetArray(i);
 
-    if ( !_strcmpi( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
+    if ( !strcasecmp( pInArr->GetName(), ARRNAME_PART_SUBSHAPE_IDS ) )
       continue;
 
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );

@@ -66,7 +66,7 @@ public:
                        asiUI_ViewerPart*              pPartViewer,
                        ActAPI_ProgressEntry           notifier,
                        ActAPI_PlotterEntry            plotter,
-                       QWidget*                       parent = NULL);
+                       QWidget*                       parent = nullptr);
 
 public slots:
 
@@ -91,7 +91,7 @@ private:
     struct t_load
     {
       //! Ctor.
-      t_load() : pFromStl(NULL), pFromPly(NULL), pFromObj(NULL)
+      t_load() : pFromStl(nullptr), pFromPly(nullptr), pFromObj(nullptr)
       {}
 
       QPushButton* pFromStl; //!< Button for STL loading.
@@ -102,7 +102,7 @@ private:
     struct t_save
     {
       //! Ctor.
-      t_save() : pToStl(NULL), pFacetsToPly(NULL)
+      t_save() : pToStl(nullptr), pFacetsToPly(nullptr)
       {}
 
       QPushButton* pToStl;       //!< Button for STL saving.
@@ -112,7 +112,7 @@ private:
     struct t_select
     {
       //! Ctor.
-      t_select() : pFaces(NULL), pEdges(NULL), pVertices(NULL)
+      t_select() : pFaces(nullptr), pEdges(nullptr), pVertices(nullptr)
       {}
 
       QPushButton* pFaces;    //!< Button to enable selection of faces.

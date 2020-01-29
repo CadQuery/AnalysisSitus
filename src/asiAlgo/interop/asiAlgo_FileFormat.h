@@ -38,6 +38,9 @@
 #include <NCollection_IndexedMap.hxx>
 #include <TCollection_AsciiString.hxx>
 
+// Standard includes
+#include <cstring>
+
 //-----------------------------------------------------------------------------
 
 //! Supported file types.

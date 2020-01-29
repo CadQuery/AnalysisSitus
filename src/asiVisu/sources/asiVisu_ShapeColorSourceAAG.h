@@ -67,7 +67,7 @@ public:
   virtual int GetFaceColor(const int faceId) const
   {
     if ( m_aag.IsNull() )
-      return -1; // Null check.
+      return -1; // nullptr check.
 
     Handle(asiAlgo_FeatureAttr)
       attrBase = m_aag->GetNodeAttribute( faceId, asiAlgo_AttrFaceColor::GUID() );

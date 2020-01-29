@@ -56,7 +56,7 @@ public:
   asiUI_DialogRefineTessellation(const Handle(asiEngine_Model)&             model,
                                  const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                                  asiUI_ViewerPart*                          pViewer,
-                                 QWidget*                                   parent = NULL);
+                                 QWidget*                                   parent = nullptr);
 
   virtual ~asiUI_DialogRefineTessellation();
 
@@ -82,18 +82,18 @@ protected:
     asiUI_LineEdit* pAngDefl; //!< Angular deflection.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pReset   (NULL),
-                  pRefine  (NULL),
-                  pLinDefl (NULL),
-                  pAngDefl (NULL)
+    t_widgets() : pReset   (nullptr),
+                  pRefine  (nullptr),
+                  pLinDefl (nullptr),
+                  pAngDefl (nullptr)
     {}
 
     void Release()
     {
-      delete pReset;   pReset   = NULL;
-      delete pRefine;  pRefine  = NULL;
-      delete pLinDefl; pLinDefl = NULL;
-      delete pAngDefl; pAngDefl = NULL;
+      delete pReset;   pReset   = nullptr;
+      delete pRefine;  pRefine  = nullptr;
+      delete pLinDefl; pLinDefl = nullptr;
+      delete pAngDefl; pAngDefl = nullptr;
     }
   };
 

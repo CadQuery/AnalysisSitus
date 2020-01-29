@@ -56,7 +56,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_MeshSource);
+vtkStandardNewMacro(asiVisu_MeshSource)
 
 //-----------------------------------------------------------------------------
 

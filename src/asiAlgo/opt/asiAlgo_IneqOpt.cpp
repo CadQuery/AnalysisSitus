@@ -92,7 +92,7 @@ bool asiAlgo_IneqOpt::Perform()
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(m_progress, "Populate M-dimensional grid")
 
-  for ( int k = 0; k < MGrid.size(); ++k )
+  for ( int k = 0; k < int( MGrid.size() ); ++k )
   {
     indices.push_back(k);
 
@@ -114,7 +114,7 @@ bool asiAlgo_IneqOpt::Perform()
   // Check.
   const int numPtsExpected = int( Pow(pMax - pMin + 1, M) );
   //
-  if ( MGrid.size() != numPtsExpected )
+  if ( int( MGrid.size() ) != numPtsExpected )
   {
     m_progress.SendLogMessage(LogErr(Normal) << "Unexpected number of grid points.");
     return false;
@@ -278,7 +278,7 @@ void asiAlgo_IneqOpt::populateLexicographic(const int                         di
       std::vector< t_ineqNCoord<int> > restPositions;
       this->populateLexicographic(dim - k - 1, minVal, maxVal, restPositions);
       //
-      for ( int j = 0; j < restPositions.size(); ++j )
+      for ( int j = 0; j < int( restPositions.size() ); ++j )
       {
         for ( int jj = 0; jj < restPositions[j].Dim; ++jj )
         {

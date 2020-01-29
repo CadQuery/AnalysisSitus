@@ -32,7 +32,7 @@
 #ifndef asiTcl_h
 #define asiTcl_h
 
-#define asiTcl_NotUsed(x) x
+#define asiTcl_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiTcl_EXPORTS

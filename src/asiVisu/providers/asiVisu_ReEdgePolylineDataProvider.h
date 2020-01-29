@@ -60,10 +60,10 @@ public:
 
 public:
 
-  //! \return null map of indices since no filtering is supposed here.
+  //! \return nullptr map of indices since no filtering is supposed here.
   virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
   {
-    return NULL;
+    return nullptr;
   }
 
 private:

@@ -35,7 +35,7 @@
 //! \param parent [in] parent widget.
 //! \param f      [in] window flags.
 asiUI_VtkWindow::asiUI_VtkWindow(QWidget* parent, Qt::WindowFlags f)
-: QVTKWidget(parent, f)
+: QVTKOpenGLNativeWidget(parent, f)
 {}
 
 //! Destructor.
@@ -44,16 +44,14 @@ asiUI_VtkWindow::~asiUI_VtkWindow()
 
 //! Custom reaction on close event.
 //! \param pEvent [in] event instance.
-void asiUI_VtkWindow::closeEvent(QCloseEvent* pEvent)
+void asiUI_VtkWindow::closeEvent(QCloseEvent* asiUI_NotUsed(pEvent))
 {
-  asiUI_NotUsed(pEvent);
-
   emit windowClosed();
 }
 
 void asiUI_VtkWindow::wheelEvent(QWheelEvent* pEvent)
 {
-  QVTKWidget::wheelEvent(pEvent);
+  QVTKOpenGLNativeWidget::wheelEvent(pEvent);
 
   emit wheelEventOccurred();
 }

@@ -213,7 +213,7 @@ namespace asiAlgo_AAGIterationRule
     ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
 
   };
-};
+}
 
 //-----------------------------------------------------------------------------
 

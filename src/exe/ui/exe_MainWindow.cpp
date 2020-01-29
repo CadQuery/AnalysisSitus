@@ -57,12 +57,12 @@
 
 #define EXE_LOAD_MODULE(name) \
 { \
-  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();\
+  Handle(exe_CommonFacilities) __cf = exe_CommonFacilities::Instance();\
   \
-  if ( !asiTcl_Plugin::Load(cf->Interp, cf, name) ) \
-    cf->Progress.SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
+  if ( !asiTcl_Plugin::Load(__cf->Interp, __cf, name) ) \
+    __cf->Progress.SendLogMessage(LogErr(Normal) << "Cannot load %1 commands." << name); \
   else \
-    cf->Progress.SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
+    __cf->Progress.SendLogMessage(LogInfo(Normal) << "Loaded %1 commands." << name); \
 }
 
 //-----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ void exe_MainWindow::createDockWindows()
     pDockDomain = new QDockWidget("Domain", this);
     pDockDomain->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, NULL, NULL, pDockDomain);
+    Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, nullptr, nullptr, pDockDomain);
     pDockDomain->setWidget(Widgets.wViewerDomain);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDockDomain);
@@ -172,7 +172,7 @@ void exe_MainWindow::createDockWindows()
     pDockHost = new QDockWidget("Host", this);
     pDockHost->setAllowedAreas(Qt::AllDockWidgetAreas);
     //
-    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, NULL, NULL, pDockHost);
+    Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, nullptr, nullptr, pDockHost);
     pDockHost->setWidget(Widgets.wViewerSurface);
     //
     this->addDockWidget(Qt::RightDockWidgetArea, pDockHost);
@@ -325,12 +325,17 @@ void exe_MainWindow::createDockWindows()
                                                                    cf);
 
   // Listener for modeling controls.
-  Listeners.pControlsModeling = new asiUI_ControlsModelingListener(Widgets.wControlsModeling,
-                                                                   cf);
+  Listeners.pControlsModeling = new asiUI_ControlsModelingListener(Widgets.wControlsModeling);
 
   // Listener for part controls.
   Listeners.pControlsPart = new asiUI_ControlsPartListener(Widgets.wControlsPart,
-                                                           cf);
+                                                           cf->Model,
+                                                           cf->ViewerPart,
+                                                           cf->ViewerHost,
+                                                           cf->ViewerDomain,
+                                                           cf->ObjectBrowser,
+                                                           cf->MainWindow,
+                                                           cf->Progress);
 
   // Listener for mesh controls.
   Listeners.pControlsMesh = new asiUI_ControlsMeshListener(Widgets.wControlsMesh,
@@ -416,6 +421,7 @@ void exe_MainWindow::createDockWindows()
   EXE_LOAD_MODULE("cmdMisc")
   EXE_LOAD_MODULE("cmdEngine")
   EXE_LOAD_MODULE("cmdRE")
+  EXE_LOAD_MODULE("cmdDDF")
 
   // Lookup for custom plugins and try to load them.
   QDir pluginDir( QDir::currentPath() + "/asi-plugins" );

@@ -50,8 +50,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_InvertShells(const TopoDS_Shape&  shape,
-                         ActAPI_ProgressEntry progress = NULL,
-                         ActAPI_PlotterEntry  plotter  = NULL);
+                         ActAPI_ProgressEntry progress = nullptr,
+                         ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 

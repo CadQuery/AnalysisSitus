@@ -72,12 +72,9 @@ public:
   }
 
   //! \return 2D curve.
-  virtual Handle(Geom2d_Curve) GetCurve2d(double& f, double& l) const
+  virtual Handle(Geom2d_Curve) GetCurve2d(double& asiVisu_NotUsed(f), double& asiVisu_NotUsed(l)) const
   {
-    asiVisu_NotUsed(f);
-    asiVisu_NotUsed(l);
-
-    return NULL;
+    return nullptr;
   }
 
   //! \return 3D curve.
@@ -86,7 +83,7 @@ public:
     Handle(asiData_CurveNode) curve_n = m_combsNode->GetRefCurve();
     //
     if ( curve_n.IsNull() || !curve_n->IsWellFormed() )
-      return NULL;
+      return nullptr;
 
     // Get ID of the active edge
     const int globalId = curve_n->GetSelectedEdge();
@@ -94,13 +91,13 @@ public:
     const TopTools_IndexedMapOfShape& subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
     //
     if ( globalId <= 0 || globalId > subShapes.Extent() )
-      return NULL;
+      return nullptr;
 
     // Get edge
     const TopoDS_Shape& shape = subShapes(globalId);
     //
     if ( shape.ShapeType() != TopAbs_EDGE )
-      return NULL;
+      return nullptr;
 
     // Return curve
     return BRep_Tool::Curve( TopoDS::Edge(shape), f, l );

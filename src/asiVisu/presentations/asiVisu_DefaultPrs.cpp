@@ -60,31 +60,20 @@ void asiVisu_DefaultPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_DefaultPrs::highlight(vtkRenderer*                        renderer,
-                                   const Handle(asiVisu_PickerResult)& pickRes,
-                                   const asiVisu_SelectionNature       selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(pickRes);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_DefaultPrs::highlight(vtkRenderer*                        asiVisu_NotUsed(renderer),
+                                   const Handle(asiVisu_PickerResult)& asiVisu_NotUsed(pickRes),
+                                   const asiVisu_SelectionNature       asiVisu_NotUsed(selNature)) const
+{}
 
 //! Callback for highlighting reset.
-void asiVisu_DefaultPrs::unHighlight(vtkRenderer*                  renderer,
-                                     const asiVisu_SelectionNature selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_DefaultPrs::unHighlight(vtkRenderer*                  asiVisu_NotUsed(renderer),
+                                     const asiVisu_SelectionNature asiVisu_NotUsed(selNature)) const
+{}
 
 //! Callback for rendering.
-void asiVisu_DefaultPrs::renderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_DefaultPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+{}
 
 //! Callback for de-rendering.
-void asiVisu_DefaultPrs::deRenderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_DefaultPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
+{}

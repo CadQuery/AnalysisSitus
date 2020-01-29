@@ -110,8 +110,8 @@ namespace asiAlgo_AAGIterationRule
     //! \param[in] plottter  imperative plotter.
     RecognizeEdgeBlends(const Handle(asiAlgo_AAG)& aag,
                         const double               maxRadius,
-                        ActAPI_ProgressEntry       progress = NULL,
-                        ActAPI_PlotterEntry        plotter  = NULL)
+                        ActAPI_ProgressEntry       progress = nullptr,
+                        ActAPI_PlotterEntry        plotter  = nullptr)
     : m_aag(aag), m_fMaxRadius(maxRadius), m_bBlockingModeOn(true)
     {
       m_localReco = new asiAlgo_RecognizeEBF(aag, progress, plotter);
@@ -297,7 +297,7 @@ namespace asiAlgo_AAGIterationRule
 
     Handle(asiAlgo_AAG) m_aag; //!< AAG instance.
   };
-};
+}
 
 //-----------------------------------------------------------------------------
 
@@ -305,7 +305,7 @@ asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const TopoDS_Shape&  masterCAD,
                                                  ActAPI_ProgressEntry progress,
                                                  ActAPI_PlotterEntry  plotter)
 //
-: asiAlgo_Recognizer(masterCAD, NULL, progress, plotter)
+: asiAlgo_Recognizer(masterCAD, nullptr, progress, plotter)
 {}
 
 //-----------------------------------------------------------------------------

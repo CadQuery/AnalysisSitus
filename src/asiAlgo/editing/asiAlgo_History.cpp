@@ -411,7 +411,7 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
     m_progress.SendLogMessage(LogWarn(Normal) << "Concatenation is not contiguous. "
                                                  "The successive history will be added from its roots.");
   //
-  if ( thisLeafs.size() && ( numJoints == thisLeafs.size() ) )
+  if ( thisLeafs.size() && ( numJoints == int( thisLeafs.size() ) ) )
     m_progress.SendLogMessage(LogNotice(Normal) << "One-to-one history joint.");
   //
   m_progress.SendLogMessage(LogInfo(Normal) << "History was merged at %1 nodes." << numJoints);
@@ -432,7 +432,7 @@ asiAlgo_History::t_item*
   asiAlgo_History::findItem(const TopoDS_Shape& shape) const
 {
   if ( !m_items.Contains(shape) )
-    return NULL;
+    return nullptr;
 
   return m_items.FindFromKey(shape);
 }
@@ -454,7 +454,7 @@ asiAlgo_History::t_item*
       m_roots.push_back(pRootItem);
     }
     else
-      return NULL;
+      return nullptr;
   }
 
   return m_items.FindFromKey(shape);
@@ -486,6 +486,6 @@ void asiAlgo_History::gatherLeafs(t_item*               pSeed,
   if ( !evolved.size() )
     leafs.push_back(pSeed); // Add to result if no further evolution exists.
   else
-    for ( int k = 0; k < evolved.size(); ++k )
+    for ( size_t k = 0; k < evolved.size(); ++k )
       this->gatherLeafs(evolved[k], evolution, leafs); // Proceed recursively.
 }

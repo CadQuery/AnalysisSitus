@@ -125,14 +125,14 @@ bool asiUI_ParameterEditorDelegate::isBoolItem(const QModelIndex& theIndex) cons
 asiUI_DatumPathItem* asiUI_ParameterEditorDelegate::isPathItem(const QModelIndex& theIndex) const
 {
   if ( theIndex.column() != Column_Value )
-    return false;
+    return nullptr;
 
   if ( m_pTreeView.isNull() )
-    return false;
+    return nullptr;
 
   asiUI_ParameterEditorItem* anItem = m_pTreeView->GetItem(theIndex);
   if ( !anItem )
-    return false;
+    return nullptr;
 
   return qobject_cast<asiUI_DatumPathItem*>( anItem->GetDatum() );
 }
@@ -145,14 +145,14 @@ asiUI_DatumCustomSelector*
   asiUI_ParameterEditorDelegate::isCustomSelector(const QModelIndex& theIndex) const
 {
   if ( theIndex.column() != Column_Value )
-    return false;
+    return nullptr;
 
   if ( m_pTreeView.isNull() )
-    return false;
+    return nullptr;
 
   asiUI_ParameterEditorItem* anItem = m_pTreeView->GetItem(theIndex);
   if ( !anItem )
-    return false;
+    return nullptr;
 
   return qobject_cast<asiUI_DatumCustomSelector*>( anItem->GetDatum() );
 }
@@ -167,10 +167,8 @@ Qt::Alignment asiUI_ParameterEditorDelegate::checkBoxAlignment() const
 //! Provide model role for storing and getting value for putting in editor.
 //! \param theIndex [in] the model index.
 //! \return integer id corresponding to the role.
-int asiUI_ParameterEditorDelegate::valueRole(const QModelIndex& theIndex) const
+int asiUI_ParameterEditorDelegate::valueRole(const QModelIndex& asiUI_NotUsed(theIndex)) const
 {
-  asiUI_NotUsed(theIndex);
-
   return Qt::EditRole;
 }
 

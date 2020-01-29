@@ -116,38 +116,20 @@ void asiVisu_GeomFaceContourPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param renderer  [in] renderer.
-//! \param pickRes   [in] picking results.
-//! \param selNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFaceContourPrs::highlight(vtkRenderer*                        renderer,
-                                           const Handle(asiVisu_PickerResult)& pickRes,
-                                           const asiVisu_SelectionNature       selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(pickRes);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_GeomFaceContourPrs::highlight(vtkRenderer*,
+                                           const Handle(asiVisu_PickerResult)&,
+                                           const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
-//! \param renderer  [in] renderer.
-//! \param selNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFaceContourPrs::unHighlight(vtkRenderer*                  renderer,
-                                             const asiVisu_SelectionNature selNature) const
-{
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(selNature);
-}
+void asiVisu_GeomFaceContourPrs::unHighlight(vtkRenderer*,
+                                             const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param renderer [in] renderer.
-void asiVisu_GeomFaceContourPrs::renderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_GeomFaceContourPrs::renderPipelines(vtkRenderer*) const
+{}
 
 //! Callback for de-rendering.
-//! \param renderer [in] renderer.
-void asiVisu_GeomFaceContourPrs::deRenderPipelines(vtkRenderer* renderer) const
-{
-  asiVisu_NotUsed(renderer);
-}
+void asiVisu_GeomFaceContourPrs::deRenderPipelines(vtkRenderer*) const
+{}

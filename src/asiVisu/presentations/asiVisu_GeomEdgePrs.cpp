@@ -167,45 +167,33 @@ void asiVisu_GeomEdgePrs::afterUpdatePipelines() const
 {}
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomEdgePrs::highlight(vtkRenderer*                       theRenderer,
-                                   const Handle(asiVisu_PickerResult)& thePickRes,
-                                   const asiVisu_SelectionNature       theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomEdgePrs::highlight(vtkRenderer*,
+                                   const Handle(asiVisu_PickerResult)&,
+                                   const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
 //! \param theRenderer [in] renderer.
-void asiVisu_GeomEdgePrs::unHighlight(vtkRenderer*                  theRenderer,
-                                      const asiVisu_SelectionNature theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomEdgePrs::unHighlight(vtkRenderer*,
+                                      const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomEdgePrs::renderPipelines(vtkRenderer* theRenderer) const
+//! \param[in] renderer renderer.
+void asiVisu_GeomEdgePrs::renderPipelines(vtkRenderer* renderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
-    m_textWidget->SetInteractor      ( theRenderer->GetRenderWindow()->GetInteractor() );
-    m_textWidget->SetDefaultRenderer ( theRenderer );
-    m_textWidget->SetCurrentRenderer ( theRenderer );
+    m_textWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
+    m_textWidget->SetDefaultRenderer ( renderer );
+    m_textWidget->SetCurrentRenderer ( renderer );
     m_textWidget->On                 ( );
     m_textWidget->ReleaseFocus       ( );
   }
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomEdgePrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomEdgePrs::deRenderPipelines(vtkRenderer*) const
 {
-  asiVisu_NotUsed(theRenderer);
   m_textWidget->Off();
 }

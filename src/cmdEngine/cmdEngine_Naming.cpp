@@ -73,10 +73,8 @@ int ENGINE_InitNaming(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdEngine::Commands_Naming(const Handle(asiTcl_Interp)&      interp,
-                                const Handle(Standard_Transient)& data)
+                                const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
-  cmdEngine_NotUsed(data);
-  //
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//

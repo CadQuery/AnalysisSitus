@@ -50,7 +50,6 @@
 #include <asiAlgo_ExtractFeatures.h>
 #include <asiAlgo_FeatureAttrBaseFace.h>
 #include <asiAlgo_FeatureType.h>
-#include <asiAlgo_MeshCheckInter.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_Timer.h>
@@ -909,7 +908,7 @@ int ENGINE_EvalCurve(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtCurve.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is null.");
     return TCL_OK;
   }
 
@@ -1287,7 +1286,7 @@ int ENGINE_EvalSurf(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtSurface.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is null.");
     return TCL_OK;
   }
 
@@ -1978,7 +1977,7 @@ int ENGINE_GetCurveStrain(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtCurve.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is null.");
     return TCL_OK;
   }
 
@@ -2028,7 +2027,7 @@ int ENGINE_GetSurfaceBending(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtSurf.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is null.");
     return TCL_OK;
   }
 
@@ -2221,7 +2220,7 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtSurf.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface is NULL or not a spline surface.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface is null or not a spline surface.");
     return TCL_ERROR;
   }
 
@@ -2282,87 +2281,6 @@ int ENGINE_DrawCP(const Handle(asiTcl_Interp)& interp,
   PName += j;
   //
   interp->GetPlotter().REDRAW_POINT(PName, P, isMobius ? Color_Blue : Color_Red);
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_CheckTriangulation(const Handle(asiTcl_Interp)& interp,
-                              int                          argc,
-                              const char**                 argv)
-{
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get triangulation.
-  Handle(asiData_TriangulationNode)
-    trisNode = cmdEngine::model->GetTriangulationNode();
-  //
-  if ( trisNode.IsNull() || !trisNode->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation Node is null or ill-defined.");
-    return TCL_OK;
-  }
-  //
-  Handle(Poly_Triangulation) tris = trisNode->GetTriangulation();
-
-  // Perform check.
-  asiAlgo_MeshCheckInter meshChecker( tris,
-                                      interp->GetProgress(),
-                                      interp->GetPlotter() );
-  //
-  asiAlgo_MeshCheckInter::t_status res = meshChecker.Perform();
-
-  if ( res == asiAlgo_MeshCheckInter::Status_Ok )
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is OK.");
-  else if ( res == asiAlgo_MeshCheckInter::Status_HasIntersections )
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is self-intersecting.");
-  else if ( res == asiAlgo_MeshCheckInter::Status_Failed )
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation checker failed for unknown reason.");
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int ENGINE_CheckTess(const Handle(asiTcl_Interp)& interp,
-                     int                          argc,
-                     const char**                 argv)
-{
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get triangulation.
-  Handle(asiData_TessNode)
-    tessNode = cmdEngine::model->GetTessellationNode();
-  //
-  if ( tessNode.IsNull() || !tessNode->IsWellFormed() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Tessellation Node is null or ill-defined.");
-    return TCL_OK;
-  }
-  //
-  Handle(Poly_Triangulation) tris;
-  asiAlgo_MeshConvert::FromPersistent(tessNode->GetMesh(), tris);
-
-  // Perform check.
-  asiAlgo_MeshCheckInter meshChecker( tris,
-                                      interp->GetProgress(),
-                                      interp->GetPlotter() );
-  //
-  asiAlgo_MeshCheckInter::t_status res = meshChecker.Perform();
-
-  if ( res == asiAlgo_MeshCheckInter::Status_Ok )
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is OK.");
-  else if ( res == asiAlgo_MeshCheckInter::Status_HasIntersections )
-    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Triangulation is self-intersecting.");
-  else if ( res == asiAlgo_MeshCheckInter::Status_Failed )
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation checker failed for unknown reason.");
 
   return TCL_OK;
 }
@@ -2584,7 +2502,7 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   else
   {
     // Prepare tool to extract features from AAG.
-    asiAlgo_ExtractFeatures extractor(interp->GetProgress(), NULL);
+    asiAlgo_ExtractFeatures extractor(interp->GetProgress(), nullptr);
     extractor.RegisterFeatureType( FeatureType_BlendOrdinary,
                                    asiAlgo_AttrBlendCandidate::GUID() );
 
@@ -2870,7 +2788,7 @@ int ENGINE_InvertPointSurf(const Handle(asiTcl_Interp)& interp,
     // Set diagnostic tools.
     t_ptr<asiUI_IVMobius> ivMob = new asiUI_IVMobius( interp->GetPlotter().Access() );
     //
-    mobSurf->SetDiagnosticTools( NULL, core_PlotterEntry(ivMob) );
+    mobSurf->SetDiagnosticTools( nullptr, core_PlotterEntry(ivMob) );
 
     // Invert point.
     t_uv projUV;
@@ -3076,7 +2994,7 @@ int ENGINE_RecognizeBaseFaces(const Handle(asiTcl_Interp)& interp,
   }
 
   // Prepare tool to extract features from AAG.
-  asiAlgo_ExtractFeatures extractor(interp->GetProgress(), NULL);
+  asiAlgo_ExtractFeatures extractor(interp->GetProgress(), nullptr);
   extractor.RegisterFeatureType( FeatureType_UNDEFINED,
                                  asiAlgo_FeatureAttrBaseFace::GUID() );
 
@@ -3157,10 +3075,8 @@ int ENGINE_GetOuterWire(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
-                                    const Handle(Standard_Transient)& data)
+                                    const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
-  cmdEngine_NotUsed(data);
-  //
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//
@@ -3357,22 +3273,6 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Draws control point of a free-form surface.",
     //
     __FILE__, group, ENGINE_DrawCP);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("check-triangulation",
-    //
-    "check-triangulation\n"
-    "\t Checks triangulation for self-intersections.",
-    //
-    __FILE__, group, ENGINE_CheckTriangulation);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("check-tess",
-    //
-    "check-tess\n"
-    "\t Checks tessellation for self-intersections.",
-    //
-    __FILE__, group, ENGINE_CheckTess);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-open-edges",

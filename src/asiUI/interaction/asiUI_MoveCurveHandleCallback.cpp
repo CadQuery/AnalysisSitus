@@ -44,7 +44,7 @@
 
 asiUI_MoveCurveHandleCallback* asiUI_MoveCurveHandleCallback::New()
 {
-  return new asiUI_MoveCurveHandleCallback(NULL);
+  return new asiUI_MoveCurveHandleCallback(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,12 +61,10 @@ asiUI_MoveCurveHandleCallback::~asiUI_MoveCurveHandleCallback()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_MoveCurveHandleCallback::Execute(vtkObject*    pCaller,
+void asiUI_MoveCurveHandleCallback::Execute(vtkObject*    asiUI_NotUsed(pCaller),
                                             unsigned long eventId,
                                             void*         pCallData)
 {
-  asiUI_NotUsed(pCaller);
-
   // Process event.
   if ( eventId == EVENT_SELECT_CELL )
   {

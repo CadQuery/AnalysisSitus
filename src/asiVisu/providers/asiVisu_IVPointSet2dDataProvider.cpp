@@ -51,11 +51,11 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() 
     points_n = Handle(asiData_IVPointSet2dNode)::DownCast(m_node);
   //
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   Handle(TColStd_HArray1OfReal) coords2d = points_n->GetPoints();
   if ( coords2d.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Re-pack to 3d
   const int nPts = coords2d->Length() / 2;
@@ -73,10 +73,10 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSet2dDataProvider::GetPoints() 
 
 //-----------------------------------------------------------------------------
 
-//! \return NULL filter.
+//! \return nullptr filter.
 Handle(TColStd_HPackedMapOfInteger) asiVisu_IVPointSet2dDataProvider::GetIndices() const
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

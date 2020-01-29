@@ -344,7 +344,7 @@ void asiVisu_GeomSurfPrs::afterInitPipelines()
   // Get working face and its host surface
   const int            F_idx = DP->GetFaceIndexAmongFaces();
   TopoDS_Face          F     = DP->ExtractFace();
-  Handle(Geom_Surface) S     = F.IsNull() ? NULL : BRep_Tool::Surface(F);
+  Handle(Geom_Surface) S     = F.IsNull() ? nullptr : BRep_Tool::Surface(F);
 
   // Prepare main title
   TCollection_AsciiString TITLE("Face (#");
@@ -425,37 +425,25 @@ void asiVisu_GeomSurfPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomSurfPrs::highlight(vtkRenderer*                        theRenderer,
-                                    const Handle(asiVisu_PickerResult)& thePickRes,
-                                    const asiVisu_SelectionNature       theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomSurfPrs::highlight(vtkRenderer*,
+                                    const Handle(asiVisu_PickerResult)&,
+                                    const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*                  theRenderer,
-                                      const asiVisu_SelectionNature theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomSurfPrs::unHighlight(vtkRenderer*,
+                                      const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* renderer) const
 {
   // Annotation
   if ( !m_textWidget->GetCurrentRenderer() )
   {
-    m_textWidget->SetInteractor      ( theRenderer->GetRenderWindow()->GetInteractor() );
-    m_textWidget->SetDefaultRenderer ( theRenderer );
-    m_textWidget->SetCurrentRenderer ( theRenderer );
+    m_textWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
+    m_textWidget->SetDefaultRenderer ( renderer );
+    m_textWidget->SetCurrentRenderer ( renderer );
     m_textWidget->On                 ( );
     m_textWidget->ReleaseFocus       ( );
   }
@@ -463,9 +451,9 @@ void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* theRenderer) const
   // Scalar bar
   if ( !m_scalarBarWidget->GetCurrentRenderer() )
   {
-    m_scalarBarWidget->SetInteractor( theRenderer->GetRenderWindow()->GetInteractor() );
-    m_scalarBarWidget->SetDefaultRenderer(theRenderer);
-    m_scalarBarWidget->SetCurrentRenderer(theRenderer);
+    m_scalarBarWidget->SetInteractor( renderer->GetRenderWindow()->GetInteractor() );
+    m_scalarBarWidget->SetDefaultRenderer(renderer);
+    m_scalarBarWidget->SetCurrentRenderer(renderer);
   }
 
   /* ==============================================
@@ -499,21 +487,18 @@ void asiVisu_GeomSurfPrs::renderPipelines(vtkRenderer* theRenderer) const
     buttonRepresentation->SetButtonTexture(2, image3);
     buttonRepresentation->SetButtonTexture(3, image4);
 
-    m_modeButton->SetInteractor( theRenderer->GetRenderWindow()->GetInteractor() );
+    m_modeButton->SetInteractor( renderer->GetRenderWindow()->GetInteractor() );
     m_modeButton->SetRepresentation(buttonRepresentation);
     //
     m_modeButton->On();
     //
-    PlaceButton(m_modeButton, theRenderer);
+    PlaceButton(m_modeButton, renderer);
   }
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomSurfPrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomSurfPrs::deRenderPipelines(vtkRenderer*) const
 {
-  asiVisu_NotUsed(theRenderer);
-
   m_textWidget->Off();
   //
   if ( this->IsShadedAndScalars() )

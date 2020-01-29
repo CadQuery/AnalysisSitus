@@ -56,7 +56,6 @@
 #include <asiEngine_Triangulation.h>
 
 // asiVisu includes
-#include <asiVisu_OctreePipeline.h>
 #include <asiVisu_PartPrs.h>
 
 // OCCT includes
@@ -109,16 +108,9 @@
   #include <mobius/geom_InterpolateMultiCurve.h>
   #include <mobius/geom_MakeBicubicBSurf.h>
   #include <mobius/geom_SkinSurface.h>
-  #include <mobius/poly_DistanceField.h>
-  #include <mobius/poly_DistanceFunc.h>
 
   using namespace mobius;
 #endif
-
-// VTK includes
-#pragma warning(push, 0)
-#include <vtkXMLUnstructuredGridWriter.h>
-#pragma warning(pop)
 
 #undef DRAW_DEBUG
 #if defined DRAW_DEBUG
@@ -182,8 +174,8 @@ void cmdMisc::DrawSurfPts(const Handle(asiTcl_Interp)&   interp,
 
 //-----------------------------------------------------------------------------
 
-Handle(asiEngine_Model)        cmdMisc::model = NULL;
-Handle(asiUI_CommonFacilities) cmdMisc::cf    = NULL;
+Handle(asiEngine_Model)        cmdMisc::model = nullptr;
+Handle(asiUI_CommonFacilities) cmdMisc::cf    = nullptr;
 
 //-----------------------------------------------------------------------------
 
@@ -633,350 +625,6 @@ int MISC_PushPull(const Handle(asiTcl_Interp)& interp,
   fused = Maximize.Shape();
 
   interp->GetPlotter().REDRAW_SHAPE("fused", fused, Color_Green);
-
-  return TCL_OK;
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_TestExtend(const Handle(asiTcl_Interp)& interp,
-                    int                          argc,
-                    const char**                 argv)
-{
-  if ( argc != 4 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  /* ================
-   *  Process inputs
-   * ================ */
-
-  TopoDS_Shape
-    partShape = Handle(asiEngine_Model)::DownCast( interp->GetModel() )->GetPartNode()->GetShape();
-
-  enum t_dim
-  {
-    dim_X, dim_Y, dim_Z
-  };
-
-  enum t_dir
-  {
-    dir_up, dir_down, dir_both
-  };
-
-  // Take dimension of interest
-  t_dim dim;
-  TCollection_AsciiString dimStr(argv[1]);
-  //
-  if ( dimStr == "X" )
-    dim = dim_X;
-  else if ( dimStr == "Y" )
-    dim = dim_Y;
-  else if ( dimStr == "Z" )
-    dim = dim_Z;
-  else
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected dimension.");
-    return TCL_OK;
-  }
-
-  // Take direction of interest
-  t_dir dir;
-  TCollection_AsciiString dirStr(argv[2]);
-  //
-  if ( dirStr == "up" )
-    dir = dir_up;
-  else if ( dirStr == "down" )
-    dir = dir_down;
-  else if ( dirStr == "both" )
-    dir = dir_both;
-  else
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected direction.");
-    return TCL_OK;
-  }
-
-  // Take offset value
-  const double offset = atof(argv[3]);
-
-  /* =================================
-   *  Build AABB for the working part
-   * ================================= */
-
-  double xMin, yMin, zMin, xMax, yMax, zMax;
-  asiAlgo_Utils::Bounds(partShape, xMin, yMin, zMin, xMax, yMax, zMax);
-  //
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Bounding box:\n"
-                                                           "\t X min = %1\n"
-                                                           "\t Y min = %2\n"
-                                                           "\t Z min = %3\n"
-                                                           "\t X max = %4\n"
-                                                           "\t Y max = %5\n"
-                                                           "\t Z max = %6"
-                                                        << xMin << yMin << zMin
-                                                        << xMax << yMax << zMax );
-
-  // Create bounding box to draw it
-  TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
-  //
-  interp->GetPlotter().REDRAW_SHAPE("bounding box", bndbox, Color_Yellow, 1.0, true);
-
-  /* ======================
-   *  Build section planes
-   * ====================== */
-
-  const double xMid = (xMin + xMax)*0.5;
-  const double yMid = (yMin + yMax)*0.5;
-  const double zMid = (zMin + zMax)*0.5;
-  //
-  gp_Pnt P_mid(xMid, yMid, zMid);
-
-  // Build infinite planes for slicing
-  Handle(Geom_Plane) nX_plane = new Geom_Plane( P_mid, gp::DX() );
-  Handle(Geom_Plane) nY_plane = new Geom_Plane( P_mid, gp::DY() );
-  Handle(Geom_Plane) nZ_plane = new Geom_Plane( P_mid, gp::DZ() );
-
-  double maxDelta = Max( xMax - xMid, Max(yMax - yMid, zMax - zMid) );
-  maxDelta += maxDelta*0.1;
-
-  // Draw
-  interp->GetPlotter().REDRAW_SURFACE("nX_plane", nX_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Red,   0.7);
-  interp->GetPlotter().REDRAW_SURFACE("nY_plane", nY_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Green, 0.7);
-  interp->GetPlotter().REDRAW_SURFACE("nZ_plane", nZ_plane, -maxDelta, maxDelta, -maxDelta, maxDelta, Color_Blue,  0.7);
-
-  // Choose the working section plane
-  Handle(Geom_Plane) sectionPlane;
-  switch ( dim )
-  {
-    case dim_X: sectionPlane = nX_plane; break;
-    case dim_Y: sectionPlane = nY_plane; break;
-    case dim_Z: sectionPlane = nZ_plane; break;
-    default: break;
-  }
-
-  TopoDS_Face sectionFace = BRepBuilderAPI_MakeFace(sectionPlane->Pln(),
-                                                   -maxDelta,
-                                                    maxDelta,
-                                                   -maxDelta,
-                                                    maxDelta);
-
-  /* =============
-   *  Split solid
-   * ============= */
-
-  // Prepare objects and tools
-  TopTools_ListOfShape objects;
-  objects.Append(partShape);
-  //
-  TopTools_ListOfShape tools;
-  tools.Append(sectionFace);
-
-  BOPAlgo_Splitter mkSplit;
-  mkSplit.SetArguments(objects);
-  mkSplit.SetTools(tools);
-  mkSplit.Perform();
-  mkSplit.SetGlue(BOPAlgo_GlueFull);
-  //
-  if ( mkSplit.HasErrors() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter failed.");
-    return TCL_OK;
-  }
-
-  // Get result
-  const TopoDS_Shape& resVols = mkSplit.Shape();
-  //
-  //interp->GetPlotter().REDRAW_SHAPE("resVols", resVols);
-
-  // Get output solids: there should be two
-  std::vector<TopoDS_Solid> solids;
-  //
-  for ( TopExp_Explorer exp(resVols, TopAbs_SOLID); exp.More(); exp.Next() )
-  {
-    solids.push_back( TopoDS::Solid( exp.Current() ) );
-  }
-  //
-  if ( solids.size() < 2 )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BOP splitter is expected to return several solids while returned %1."
-                                                        << int ( solids.size() ) );
-    return TCL_OK;
-  }
-
-  // Get image of the section face. This image is necessary to prepare the
-  // tool object.
-  const TopTools_ListOfShape& modifiedSectionList = mkSplit.Modified(sectionFace);
-  //
-  TopoDS_Compound modifiedSection;
-  BRep_Builder().MakeCompound(modifiedSection);
-  //
-  for ( TopTools_ListIteratorOfListOfShape lit(modifiedSectionList); lit.More(); lit.Next() )
-  {
-    BRep_Builder().Add( modifiedSection, lit.Value() );
-  }
-  //
-  interp->GetPlotter().REDRAW_SHAPE("modifiedSection", modifiedSection);
-
-  /* ================================================
-   *  Prepare deep copy to resolve non-manifold face
-   * ================================================ */
-
-  // This code is bad. It should be reworked to copy non-manifold face only
-  for ( size_t s = 0; s < solids.size(); ++s )
-    solids[s] = TopoDS::Solid( BRepBuilderAPI_Copy(solids[s]) );
-
-  // Redraw
-  //for ( size_t s = 0; s < solids.size(); ++s )
-  //{
-  //  interp->GetPlotter().DRAW_SHAPE(solids[s], "spart");
-  //}
-
-  /* ======================================================
-   *  Attribute solids as belonging to up/down half-spaces
-   * ====================================================== */
-
-  std::vector<TopoDS_Solid> upSolids, downSolids;
-
-  for ( size_t s = 0; s < solids.size(); ++s )
-  {
-    // Get center of solid
-    double xMin, yMin, zMin, xMax, yMax, zMax;
-    asiAlgo_Utils::Bounds(solids[s], xMin, yMin, zMin, xMax, yMax, zMax);
-    //
-    gp_Pnt P_mid( 0.5*(xMin + xMax), 0.5*(yMin + yMax), 0.5*(zMin + zMax) );
-
-    // Classify wrt half-space
-    if ( SignedDistance(sectionPlane->Pln(), P_mid) > 0 )
-      upSolids.push_back(solids[s]);
-    else
-      downSolids.push_back(solids[s]);
-  }
-
-  // Redraw
-  //interp->GetPlotter().REDRAW_SHAPE("upSolid", upSolid, Color_Red, 0.5);
-  //interp->GetPlotter().REDRAW_SHAPE("downSolid", downSolid, Color_Blue, 0.5);
-
-  /* ======================================
-   *  Move solids wrt the passed direction
-   * ====================================== */
-
-  if ( dir == dir_up )
-  {
-    // Prepare transformation
-    gp_Trsf T; T.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() )*offset );
-
-    for ( size_t s = 0; s < upSolids.size(); ++s )
-      upSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(upSolids[s], T, true) );
-  }
-  else if ( dir == dir_down )
-  {
-    // Prepare transformation
-    gp_Trsf T; T.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset );
-
-    for ( size_t s = 0; s < downSolids.size(); ++s )
-      downSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(downSolids[s], T, true) );
-  }
-  else if ( dir == dir_both )
-  {
-    // Prepare transformation
-    gp_Trsf T_down; T_down.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset*0.5 );
-    gp_Trsf T_up; T_up.SetTranslation( gp_Vec( sectionPlane->Axis().Direction() )*offset*0.5 );
-
-    for ( size_t s = 0; s < downSolids.size(); ++s )
-      downSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(downSolids[s], T_down, true) );
-
-    for ( size_t s = 0; s < upSolids.size(); ++s )
-      upSolids[s] = TopoDS::Solid( BRepBuilderAPI_Transform(upSolids[s], T_up, true) );
-  }
-
-  TopoDS_Compound upSolidsComp, downSolidsComp;
-  BRep_Builder().MakeCompound(upSolidsComp);
-  BRep_Builder().MakeCompound(downSolidsComp);
-  //
-  for ( size_t s = 0; s < upSolids.size(); ++s )
-    BRep_Builder().Add(upSolidsComp, upSolids[s]);
-  //
-  for ( size_t s = 0; s < downSolids.size(); ++s )
-    BRep_Builder().Add(downSolidsComp, downSolids[s]);
-
-  // Redraw
-  {
-    interp->GetPlotter().REDRAW_SHAPE("upSolid_moved",   upSolidsComp,   Color_White, 1.0, true);
-    interp->GetPlotter().REDRAW_SHAPE("downSolid_moved", downSolidsComp, Color_White, 1.0, true);
-  }
-
-  /* =====================
-   *  Prepare tool object
-   * ===================== */
-
-  TopoDS_Shape toolObj;
-
-  if ( dir == dir_up )
-  {
-    // Prepare extrusion vector
-    gp_Vec vec = gp_Vec( sectionPlane->Axis().Direction() )*offset;
-    //
-    toolObj = BRepPrimAPI_MakePrism(modifiedSection, vec, true);
-  }
-  else if ( dir == dir_down )
-  {
-    // Prepare extrusion vector
-    gp_Vec vec = gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset;
-    //
-    toolObj = BRepPrimAPI_MakePrism(modifiedSection, vec, true);
-  }
-  else if ( dir == dir_both )
-  {
-    // Prepare extrusion vector
-    gp_Vec vecUp   = gp_Vec( sectionPlane->Axis().Direction() )*offset*0.5;
-    gp_Vec vecDown = gp_Vec( sectionPlane->Axis().Direction() ).Reversed()*offset*0.5;
-    //
-    TopoDS_Shape toolUp   = BRepPrimAPI_MakePrism(modifiedSection, vecUp, true);
-    TopoDS_Shape toolDown = BRepPrimAPI_MakePrism(modifiedSection, vecDown, true);
-
-    TopoDS_Compound toolComp;
-    BRep_Builder().MakeCompound(toolComp);
-    BRep_Builder().Add(toolComp, toolUp);
-    BRep_Builder().Add(toolComp, toolDown);
-    //
-    toolObj = toolComp;
-  }
-  //
-  interp->GetPlotter().REDRAW_SHAPE("toolObj", toolObj, Color_Magenta);
-
-  /* ===================================
-   *  Fuse tool object with other parts
-   * =================================== */
-
-  // Prepare objects to fuse
-  TopTools_ListOfShape objects2Fuse;
-  //
-  for ( TopoDS_Iterator it(upSolidsComp); it.More(); it.Next() )
-  {
-    objects2Fuse.Append( it.Value() );
-  }
-  //
-  for ( TopoDS_Iterator it(downSolidsComp); it.More(); it.Next() )
-  {
-    objects2Fuse.Append( it.Value() );
-  }
-  //
-  if ( toolObj.ShapeType() == TopAbs_COMPOUND )
-  {
-    for ( TopoDS_Iterator it(toolObj); it.More(); it.Next() )
-    {
-      objects2Fuse.Append( it.Value() );
-    }
-  }
-  else
-    objects2Fuse.Append(toolObj);
-
-  TopoDS_Shape result = asiAlgo_Utils::BooleanFuse(objects2Fuse);
-
-  asiAlgo_Utils::MaximizeFaces(result);
-
-  interp->GetPlotter().REDRAW_SHAPE("result", result);
 
   return TCL_OK;
 }
@@ -1586,7 +1234,7 @@ int MISC_TestEvalCurve(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtCurve.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is null.");
     return TCL_OK;
   }
 
@@ -1703,7 +1351,7 @@ int MISC_TestEvalSurf(const Handle(asiTcl_Interp)& interp,
   //
   if ( occtSurface.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is NULL.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The surface in question is null.");
     return TCL_OK;
   }
 
@@ -2133,7 +1781,7 @@ int MISC_TestFair(const Handle(asiTcl_Interp)& interp,
   bspl_FindSpan findSpanV(V, q);
 
   // Prepare fairing operator.
-  geom_FairBSurf F(mobSurf, 1.0, NULL, NULL);
+  geom_FairBSurf F(mobSurf, 1.0, nullptr, nullptr);
 
   // Calculate characteristics size for discretization of boundary.
   double uMin, uMax, vMin, vMax;
@@ -3186,7 +2834,7 @@ int MISC_TestCoons2(const Handle(asiTcl_Interp)& interp,
   geom_MakeBicubicBSurf mkBicubic(S00, S01, S10, S11,
                                   dS_du00, dS_du01, dS_du10, dS_du11,
                                   dS_dv00, dS_dv01, dS_dv10, dS_dv11,
-                                  d2S_dudv00, d2S_dudv01, d2S_dudv10, d2S_dudv11, NULL, NULL);
+                                  d2S_dudv00, d2S_dudv01, d2S_dudv10, d2S_dudv11, nullptr, nullptr);
 
   if ( !mkBicubic.Perform() )
   {
@@ -3637,325 +3285,6 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-int MISC_BuildSVO(const Handle(asiTcl_Interp)& interp,
-                  int                          argc,
-                  const char**                 argv)
-{
-#if defined USE_MOBIUS
-  if ( argc != 3 && argc != 4 && argc != 5 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  //const double toler = ( (argc >= 4) ? atof(argv[3]) : 1.0 );
-  const bool   doMC  = interp->HasKeyword(argc, argv, "mc");
-
-  // Get part shape.
-  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
-  //
-  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
-
-  /* =============================
-   *  Construct distance function.
-   * ============================= */
-
-  TIMER_NEW
-  TIMER_GO
-
-  ///
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "build-svo function is incomplete.");
-  ///
-
-  //poly_DistanceFunc*
-  //  pDistFunc = new poly_DistanceFunc(poly_DistanceFunc::Mode_Signed);
-  ////
-  //if ( !pDistFunc->Init(partShape) )
-  //{
-  //  delete pDistFunc;
-
-  //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to initialize distance function.");
-  //  return TCL_ERROR;
-  //}
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Construct implicit distance function")
-
-  /* ==========================
-   *  Construct distance field.
-   * ========================== */
-
-  TIMER_RESET
-  TIMER_GO
-
-  //poly_DistanceField*
-  //  pDDF = new poly_DistanceField( interp->GetProgress(), interp->GetPlotter() );
-  ////
-  //if ( !pDDF->Build(toler, pDistFunc) )
-  //{
-  //  delete pDDF;
-
-  //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
-  //  return TCL_ERROR;
-  //}
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build SVO for distance field")
-
-  //poly_SVO* pRoot = pDDF->GetRoot();
-
-  //// Measure SVO.
-  //int                      numSVONodes;
-  //const unsigned long long memBytes  = pRoot->GetMemoryInBytes(numSVONodes);
-  //const double             memMBytes = memBytes / (1024.*1024.);
-  ////
-  //interp->GetProgress().SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
-  //                                                      << numSVONodes << int(memBytes) << memMBytes );
-
-  //// Show voxels.
-  //M->OpenCommand();
-  //{
-  //  asiEngine_Part(M).SetOctree(pRoot);
-  //}
-  //M->CommitCommand();
-  ////
-  //cmdMisc::cf->ViewerPart->PrsMgr()->Actualize( M->GetPartNode() );
-
-  /* ===========================
-   *  Construct isosurface mesh.
-   * =========================== */
-
-  if ( doMC )
-  {
-    TIMER_RESET
-    TIMER_GO
-
-    //const double isoLevel = atof(argv[1]);
-    //const int    gridSize = atoi(argv[2]);
-
-    //t_xyz cornerMin = pDDF->CornerMin();
-    //t_xyz cornerMax = pDDF->CornerMax();
-    ////
-    //t_xyz margin( Max(0.0, isoLevel),
-    //              Max(0.0, isoLevel),
-    //              Max(0.0, isoLevel) );
-
-    //cornerMin -= margin;
-    //cornerMax += margin;
-
-    //Box3 domain(cornerMin, cornerMax);
-    //GridMarchingCubes MC(domain, gridSize);
-    //MC.SetUseCache(false);
-    ////
-    //if ( !MC.Perform(pSVO, isoLevel) )
-    //{
-    //  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build tessellation for the distance function.");
-    //  return TCL_ERROR;
-    //}
-
-    //Mesh* Mesh = MC.GetLastMesh();
-    //Handle(Poly_Triangulation) tris = Mesh->ConvertToTriangulation();
-
-    TIMER_FINISH
-    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Marching cubes")
-
-    //interp->GetPlotter().REDRAW_TRIANGULATION("isomesh", tris, Color_Default, 1.);
-  }
-
-  return TCL_OK;
-#else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
-
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
-
-  return TCL_ERROR;
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_DumpSVO(const Handle(asiTcl_Interp)& interp,
-                 int                          argc,
-                 const char**                 argv)
-{
-#if defined USE_MOBIUS
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  Handle(asiEngine_Model)
-    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
-
-  Handle(asiData_PartNode) partNode = M->GetPartNode();
-
-  // Get octree from the Part Node.
-  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
-  //
-  if ( !pOctree )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
-    return TCL_ERROR;
-  }
-
-  if ( !cmdMisc::cf->ViewerPart )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part viewer is not available.");
-    return TCL_ERROR;
-  }
-
-  // Get octree pipeline to access the data source.
-  Handle(asiVisu_PartPrs)
-    partPrs = Handle(asiVisu_PartPrs)::DownCast( cmdMisc::cf->ViewerPart->PrsMgr()->GetPresentation(partNode) );
-  //
-  Handle(asiVisu_OctreePipeline)
-    octreePl = Handle(asiVisu_OctreePipeline)::DownCast( partPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Octree) );
-  //
-  const vtkSmartPointer<asiVisu_OctreeSource>& octreeSource = octreePl->GetSource();
-
-  // Update and dump to file.
-  octreeSource->Update();
-  //
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter>
-    writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-  //
-  writer->SetFileName( argv[1] );
-  writer->SetInputConnection( octreeSource->GetOutputPort() );
-  writer->Write();
-
-  // Dump.
-  return TCL_OK;
-#else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
-
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
-
-  return TCL_ERROR;
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_SetSVO(const Handle(asiTcl_Interp)& interp,
-                int                          argc,
-                const char**                 argv)
-{
-#if defined USE_MOBIUS
-  if ( argc < 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  Handle(asiEngine_Model)
-    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
-
-  Handle(asiData_PartNode) partNode = M->GetPartNode();
-
-  // Get octree from the Part Node.
-  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
-  //
-  if ( !pOctree )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
-    return TCL_ERROR;
-  }
-
-  // Prepare path.
-  std::vector<size_t> path;
-  //
-  for ( int k = 1; k < argc; ++k )
-    path.push_back( (size_t) atoi(argv[k]) );
-
-  // Access octree node.
-  poly_SVO* pNode = pOctree->FindChild(path);
-  //
-  if ( !pNode )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot access the requested node.");
-    return TCL_ERROR;
-  }
-
-  // Show voxels.
-  M->OpenCommand();
-  {
-    asiEngine_Part(M).SetOctree(pNode);
-  }
-  M->CommitCommand();
-  //
-  cmdMisc::cf->ViewerPart->PrsMgr()->Actualize( M->GetPartNode() );
-
-  return TCL_OK;
-#else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
-
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
-
-  return TCL_ERROR;
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
-int MISC_EvalSVO(const Handle(asiTcl_Interp)& interp,
-                 int                          argc,
-                 const char**                 argv)
-{
-#if defined USE_MOBIUS
-  if ( argc != 4 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  Handle(asiEngine_Model)
-    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
-
-  Handle(asiData_PartNode) partNode = M->GetPartNode();
-
-  // Get octree from the Part Node.
-  poly_SVO* pOctree = reinterpret_cast<poly_SVO*>( partNode->GetOctree() );
-  //
-  if ( !pOctree )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Octree is not initialized.");
-    return TCL_ERROR;
-  }
-
-  if ( !pOctree->HasScalars() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The active SVO node is uninitialized.");
-    return TCL_ERROR;
-  }
-
-  // Get coordinates of the point to evaluate.
-  const double x = atof(argv[1]);
-  const double y = atof(argv[2]);
-  const double z = atof(argv[3]);
-  //
-  interp->GetPlotter().REDRAW_POINT("P", gp_Pnt(x, y, z), Color_Red);
-  //
-  t_xyz P(x, y, z);
-
-  // Evaluate.
-  const double f = pOctree->Eval(P);
-  //
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "f(%1, %2, %3) = %4."
-                                                       << x << y << z << f);
-
-  return TCL_OK;
-#else
-  cmdMisc_NotUsed(argc);
-  cmdMisc_NotUsed(argv);
-
-  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
-
-  return TCL_ERROR;
-#endif
-}
-
-//-----------------------------------------------------------------------------
-
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3970,7 +3299,7 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
   //
   if ( passedCF.IsNull() )
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdMisc] No UI facilities are available. GUI will not be updated!");
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdMisc] UI facilities are not available. GUI may not be updated.");
   else
     cf = passedCF;
 
@@ -3982,7 +3311,7 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
   //
   if ( model.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdMisc] Data Model instance is NULL or not of asiEngine_Model kind.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdMisc] Data Model instance is null or not of asiEngine_Model kind.");
     return;
   }
 
@@ -4016,17 +3345,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Push/pull operation.",
     //
     __FILE__, group, MISC_PushPull);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("test-extend",
-    //
-    "test-extend dim dir offset \n"
-    "\t Shape extension operation. The following parameters are accepted: \n"
-    "\t - dim: dimension to change (\"X\", \"Y\" or \"Z\"); \n"
-    "\t - dir: in which direction to move (\"up\", \"down\" or \"both\"); \n"
-    "\t - offset: offset to apply (can be positive or negative).",
-    //
-    __FILE__, group, MISC_TestExtend);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("test-builder",
@@ -4187,38 +3505,6 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts the control points of a B-surface to itself.",
     //
     __FILE__, group, MISC_InvertBPoles);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("build-svo",
-    //
-    "build-svo <iso-level> <grid-size> <toler> [-mc]\n"
-    "\t Builds SVO for the active part.",
-    //
-    __FILE__, group, MISC_BuildSVO);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("dump-svo",
-    //
-    "dump-svo <filename>\n"
-    "\t Dumps the octree cells of the Part Node to the file of VTU format.",
-    //
-    __FILE__, group, MISC_DumpSVO);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("set-svo",
-    //
-    "set-svo <id0> [<id1> [<id2> [...]]]>\n"
-    "\t Shrinks the stored octree to the SVO cell with the specified address.",
-    //
-    __FILE__, group, MISC_SetSVO);
-
-  //-------------------------------------------------------------------------//
-  interp->AddCommand("eval-svo",
-    //
-    "eval-svo <x> <y> <z>\n"
-    "\t Evaluates SVO node (the corresponding implicit function) in the passed point.",
-    //
-    __FILE__, group, MISC_EvalSVO);
 
   // Load sub-modules.
   Commands_Coons(interp, data);

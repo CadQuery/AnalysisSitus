@@ -198,8 +198,8 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 
     // If A is a blend, then a2 is a blend curvature, and a1 is other
     // curvature.
-    double a1, a2, b1, b2;
-    gp_Dir a1_dir, a2_dir, b1_dir, b2_dir;
+    double a1, a2, b2;
+    gp_Dir a1_dir, a2_dir, b2_dir;
     //
     if ( Abs( A_minD.Dot(T) ) > Abs( A_maxD.Dot(T) ) )
     {
@@ -218,15 +218,11 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
     //
     if ( Abs( B_minD.Dot(T) ) > Abs( B_maxD.Dot(T) ) )
     {
-      b1_dir = B_minD;
-      b1     = B_minK;
       b2_dir = B_maxD;
       b2     = B_maxK;
     }
     else
     {
-      b1_dir = B_maxD;
-      b1     = B_maxK;
       b2_dir = B_minD;
       b2     = B_minK;
     }
@@ -234,7 +230,6 @@ bool asiAlgo_FindSpringEdges::PerformForFace(const int                         f
 #if defined COUT_DEBUG
     std::cout << "\t[Face #" << face_idx     << "] a1 = " << a1 << std::endl;
     std::cout << "\t[Face #" << face_idx     << "] a2 = " << a2 << std::endl;
-    std::cout << "\t[Face #" << neighbor_idx << "] b1 = " << b1 << std::endl;
     std::cout << "\t[Face #" << neighbor_idx << "] b2 = " << b2 << std::endl;
     std::cout << "---" << std::endl;
 #endif

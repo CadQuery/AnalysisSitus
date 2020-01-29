@@ -189,7 +189,7 @@ public:
     EndHeader();
 
   asiTestEngine_EXPORT THAT
-    StartBody(const asiTestEngine_ReportStyle& style = NULL);
+    StartBody(const asiTestEngine_ReportStyle& style = nullptr);
 
   asiTestEngine_EXPORT THAT
     StartBody(const std::string& className);
@@ -198,7 +198,7 @@ public:
     EndBody();
 
   asiTestEngine_EXPORT THAT
-    StartTable(const asiTestEngine_ReportStyle& style = NULL);
+    StartTable(const asiTestEngine_ReportStyle& style = nullptr);
 
   asiTestEngine_EXPORT THAT
     StartTable(const std::string& className);

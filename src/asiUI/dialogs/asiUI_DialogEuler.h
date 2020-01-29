@@ -53,8 +53,8 @@ public:
 
   asiUI_EXPORT
     asiUI_DialogEuler(const Handle(asiEngine_Model)& model,
-                      ActAPI_ProgressEntry           notifier = NULL,
-                      QWidget*                       parent   = NULL);
+                      ActAPI_ProgressEntry           notifier = nullptr,
+                      QWidget*                       parent   = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_DialogEuler();
@@ -74,14 +74,14 @@ protected:
     asiUI_LineEdit* pGenus; //!< Genus of the solid model.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pCheck (NULL),
-                  pGenus (NULL)
+    t_widgets() : pCheck (nullptr),
+                  pGenus (nullptr)
     {}
 
     void Release()
     {
-      delete pCheck; pCheck = NULL;
-      delete pGenus; pGenus = NULL;
+      delete pCheck; pCheck = nullptr;
+      delete pGenus; pGenus = nullptr;
     }
   };
 

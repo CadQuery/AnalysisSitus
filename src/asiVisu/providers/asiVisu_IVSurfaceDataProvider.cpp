@@ -60,7 +60,7 @@ Handle(Standard_Type) asiVisu_IVSurfaceDataProvider::GetSurfaceType() const
     surface_n = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
   //
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return surface_n->GetSurface()->DynamicType();
 }
@@ -83,7 +83,7 @@ Handle(Geom_Surface)
     surface_n = Handle(asiData_IVSurfaceNode)::DownCast(m_node);
   //
   if ( surface_n.IsNull() || !surface_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get bounds.
   surface_n->GetLimits(uMin, uMax, vMin, vMax);

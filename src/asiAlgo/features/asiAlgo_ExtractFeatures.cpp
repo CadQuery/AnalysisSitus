@@ -179,7 +179,7 @@ bool asiAlgo_ExtractFeatures::PerformForType(const Handle(asiAlgo_AAG)&         
 Standard_GUID asiAlgo_ExtractFeatures::guidByType(const int type) const
 {
   const Standard_GUID* guidPtr = m_types.Seek(type);
-  if ( guidPtr != NULL )
+  if ( guidPtr != nullptr )
     return (*guidPtr);
   else
     m_progress.SendLogMessage(LogWarn(Normal) << "Non-supported feature type.");

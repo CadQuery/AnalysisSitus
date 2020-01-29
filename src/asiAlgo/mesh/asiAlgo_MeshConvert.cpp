@@ -54,7 +54,7 @@ void ElemNodes(const Handle(ActData_Mesh)&             mesh,
 {
   nodes.clear();
   int  numNodes = elem->NbNodes();
-  int* nodeIDs  = NULL;
+  int* nodeIDs  = nullptr;
 
   if ( numNodes == 3 )
   {
@@ -369,7 +369,7 @@ vtkIdType
   vtkPoints* points    = polyData->GetPoints();
   vtkIdType* resPidPtr = nodeRepo.ChangeSeek(nodeID);
 
-  if ( resPidPtr == NULL )
+  if ( resPidPtr == nullptr )
   {
     // Access mesh node
     const gp_Pnt& aPnt = source->Nodes().Value(nodeID);

@@ -31,7 +31,7 @@
 #ifndef asiEngine_h
 #define asiEngine_h
 
-#define asiEngine_NotUsed(x) x
+#define asiEngine_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiEngine_EXPORTS

@@ -82,7 +82,7 @@ void RemoveCoincidentPoints(const double                                        
     {
       ip = jp;
 
-      if ( jp >= IntListNC.size() )
+      if ( jp >= int( IntListNC.size() ) )
         break;
 
       p_next = IntListNC[jp++];
@@ -94,7 +94,7 @@ void RemoveCoincidentPoints(const double                                        
     keptIndices.Add(p_best_idx);
     purifiedList.push_back(p_best);
   }
-  while ( ip < IntListNC.size() );
+  while ( ip < int( IntListNC.size() ) );
 
   // Override the passed list
   IntListNC = purifiedList;

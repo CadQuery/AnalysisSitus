@@ -38,6 +38,9 @@
 #include <QSpinBox>
 #pragma warning(pop)
 
+// Standard includes
+#include <float.h>
+
 //-----------------------------------------------------------------------------
 
 //! Constructor.
@@ -53,7 +56,7 @@ QWidget*
                                              const QStyleOptionViewItem& /*option*/,
                                              const QModelIndex&          index) const
 {
-  QWidget* wEditor = NULL;
+  QWidget* wEditor = nullptr;
   //
   if ( !index.column() )
     return wEditor;

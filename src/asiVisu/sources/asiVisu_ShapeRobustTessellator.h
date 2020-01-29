@@ -166,17 +166,17 @@ public:
     Initialize(const Handle(asiAlgo_AAG)&              aag,
                const double                            linearDeflection = 0,
                const double                            angularDeflection_deg = 0,
-               const Handle(asiVisu_ShapeColorSource)& colorSource = NULL,
-               ActAPI_ProgressEntry                    progress = NULL,
-               ActAPI_PlotterEntry                     plotter  = NULL);
+               const Handle(asiVisu_ShapeColorSource)& colorSource = nullptr,
+               ActAPI_ProgressEntry                    progress = nullptr,
+               ActAPI_PlotterEntry                     plotter  = nullptr);
 
   asiVisu_EXPORT void
     Initialize(const TopoDS_Shape&                     shape,
                const double                            linearDeflection = 0,
                const double                            angularDeflection_deg = 0,
-               const Handle(asiVisu_ShapeColorSource)& colorSource = NULL,
-               ActAPI_ProgressEntry                    progress = NULL,
-               ActAPI_PlotterEntry                     plotter  = NULL);
+               const Handle(asiVisu_ShapeColorSource)& colorSource = nullptr,
+               ActAPI_ProgressEntry                    progress = nullptr,
+               ActAPI_PlotterEntry                     plotter  = nullptr);
 
 public:
 

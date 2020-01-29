@@ -130,9 +130,13 @@
 #include <TopTools_MapOfShape.hxx>
 
 // Eigen includes
+#ifdef _WIN32
 #pragma warning(disable : 4701 4702)
+#endif
 #include <Eigen/Dense>
+#ifdef _WIN32
 #pragma warning(default : 4701 4702)
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -154,7 +158,7 @@
 
 // Microsoft's *_s functions are unportable, so we adapt here.
 #ifdef __unix
-#define fopen_s(pFile, filename, mode) ((*(pFile))=fopen((filename), (mode)))==NULL
+#define fopen_s(pFile, filename, mode) ((*(pFile))=fopen((filename), (mode)))
 #endif
 
 //-----------------------------------------------------------------------------
@@ -282,7 +286,7 @@ bool IsASCII(const TCollection_AsciiString& filename)
   FILE* FILE;
   fopen_s(&FILE, filename.ToCString(), "rb");
   //
-  if ( FILE == NULL )
+  if ( FILE == nullptr )
     return false;
 
   bool isAscii = true;
@@ -1352,7 +1356,7 @@ bool asiAlgo_Utils::ReadObj(const TCollection_AsciiString& filename,
   asiAlgo_NotUsed(filename);
   asiAlgo_NotUsed(mesh);
 
-  progress.SendLogMessage(LogErr(Normal) << "PLY reader is unavailable.");
+  progress.SendLogMessage(LogErr(Normal) << "OBJ reader is unavailable.");
 
   return false;
 #endif
@@ -1620,7 +1624,7 @@ bool asiAlgo_Utils::InterpolatePoints(const std::vector<gp_XYZ>& points,
 
   // Calculate total chord length
   double chordTotal = 0.0;
-  for ( size_t k = 1; k < numPoles; ++k )
+  for ( int k = 1; k < numPoles; ++k )
     chordTotal += Sqrt( ( points[k] - points[k-1] ).Modulus() );
 
   //-------------------------------------------------------------------------
@@ -2336,9 +2340,9 @@ Handle(Geom_BSplineCurve) asiAlgo_Utils::PolylineAsSpline(const std::vector<gp_X
   // Initialize properties for spline trajectories
   TColgp_Array1OfPnt poles( 1, (int) trace.size() );
   //
-  for ( int k = 0; k < trace.size(); ++k )
+  for ( size_t k = 0; k < trace.size(); ++k )
   {
-    poles(k + 1) = gp_Pnt( trace[k] );
+    poles( int(k + 1) ) = gp_Pnt( trace[k] );
   }
 
   const int n = poles.Upper() - 1;
@@ -2374,7 +2378,7 @@ Handle(Geom2d_BSplineCurve) asiAlgo_Utils::PolylineAsSpline(const std::vector<gp
   // Initialize properties for spline trajectories
   TColgp_Array1OfPnt2d poles( 1, (int) trace.size() );
   //
-  for ( int k = 0; k < trace.size(); ++k )
+  for ( int k = 0; k < int( trace.size() ); ++k )
   {
     poles(k + 1) = gp_Pnt2d( trace[k] );
   }
@@ -3342,7 +3346,7 @@ bool asiAlgo_Utils::JoinCurves(Handle(Geom_BSplineCurve)& curve1,
 
   progress.SendLogMessage(LogErr(Normal) << "This function is not available.");
   return false;
-#endif;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3383,7 +3387,7 @@ bool asiAlgo_Utils::JoinCurves(std::vector<Handle(Geom_BSplineCurve)>& curves,
 
   progress.SendLogMessage(LogErr(Normal) << "This function is not available.");
   return false;
-#endif;
+#endif
 }
 
 //-----------------------------------------------------------------------------

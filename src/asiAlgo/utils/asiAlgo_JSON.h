@@ -32,7 +32,7 @@
 #define asiAlgo_JSON_HeaderFile
 
 // asiAlgo includes
-#include <asiAlgo.h>
+#include <asiAlgo_Utils.h>
 
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>

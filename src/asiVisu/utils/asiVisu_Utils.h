@@ -230,6 +230,9 @@ public:
   asiVisu_EXPORT static vtkSmartPointer<vtkStringArray>
     InitStringArray(const char* theArrName);
 
+  asiVisu_EXPORT static vtkSmartPointer<vtkProperty>
+    DefaultBackfaceProp();
+
   asiVisu_EXPORT static void
     DefaultPickingColor(double& fR,
                         double& fG,
@@ -256,6 +259,13 @@ public:
     InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
                     const int                            lastUnusedScalar);
 
+  asiVisu_EXPORT static vtkSmartPointer<vtkLookupTable>
+    InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
+                    const int                            lastUnusedScalar,
+                    const double                         ref_r,
+                    const double                         ref_g,
+                    const double                         ref_b);
+
   asiVisu_EXPORT static void
     InitShapeMapper(vtkMapper* mapper);
 
@@ -264,6 +274,20 @@ public:
 
   asiVisu_EXPORT static void
     InitShapeMapper(vtkMapper*                           mapper,
+                    const NCollection_DataMap<int, int>& customScalarMap,
+                    const int                            lastUnusedScalar);
+
+  asiVisu_EXPORT static void
+    InitShapeMapper(vtkMapper*                           mapper,
+                    vtkActor*                            actor,
+                    const NCollection_DataMap<int, int>& customScalarMap,
+                    const int                            lastUnusedScalar);
+
+  asiVisu_EXPORT static void
+    InitShapeMapper(vtkMapper*                           mapper,
+                    const double                         ref_r,
+                    const double                         ref_g,
+                    const double                         ref_b,
                     const NCollection_DataMap<int, int>& customScalarMap,
                     const int                            lastUnusedScalar);
 
@@ -392,9 +416,9 @@ public:
   //! \return converted value.
   static int ColorToInt(double rgb[3])
   {
-    unsigned char red   = unsigned char( floor(rgb[0] >= 1.0 ? 255 : rgb[0] * 256.0) );
-    unsigned char green = unsigned char( floor(rgb[1] >= 1.0 ? 255 : rgb[1] * 256.0) );
-    unsigned char blue  = unsigned char( floor(rgb[2] >= 1.0 ? 255 : rgb[2] * 256.0) );
+    unsigned char red   = (unsigned char) ( floor(rgb[0] >= 1.0 ? 255 : rgb[0] * 256.0) );
+    unsigned char green = (unsigned char) ( floor(rgb[1] >= 1.0 ? 255 : rgb[1] * 256.0) );
+    unsigned char blue  = (unsigned char) ( floor(rgb[2] >= 1.0 ? 255 : rgb[2] * 256.0) );
     //
     return red << 16 | green << 8 | blue;
   }

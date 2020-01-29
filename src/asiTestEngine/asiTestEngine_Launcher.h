@@ -218,7 +218,7 @@ public:
     operator<<(const Handle(asiTestEngine_CaseLauncherAPI)& CaseLauncher);
 
   asiTestEngine_EXPORT bool
-    Launch(std::ostream* out = NULL) const;
+    Launch(std::ostream* out = nullptr) const;
 
 protected:
 

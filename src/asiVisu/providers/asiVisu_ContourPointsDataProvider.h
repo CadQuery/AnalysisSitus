@@ -59,7 +59,7 @@ public:
 
   virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
   {
-    return NULL;
+    return nullptr;
   }
 
 private:

@@ -79,6 +79,7 @@ REGISTER_NODE_TYPE(asiData_TolerantRangeNode)
 REGISTER_NODE_TYPE(asiData_MetadataNode)
 REGISTER_NODE_TYPE(asiData_ElemMetadataNode)
 REGISTER_NODE_TYPE(asiData_DeviationNode)
+REGISTER_NODE_TYPE(asiData_OctreeNode)
 //
 REGISTER_NODE_TYPE(asiData_TriangulationNode)
 REGISTER_NODE_TYPE(asiData_TessNode)
@@ -170,7 +171,7 @@ void asiEngine_Model::Clear()
     asiEngine_Curve(this).Clean_All( this->GetPartNode()->GetCurveRepresentation() );
 
     // Delete all tolerant ranges.
-    asiEngine_TolerantShapes(this, NULL).Clean_All();
+    asiEngine_TolerantShapes(this, nullptr).Clean_All();
 
     // Delete all Nodes serving imperative visualization
     asiEngine_IV(this).Clean_All();
@@ -186,7 +187,7 @@ void asiEngine_Model::Clear()
 
 //-----------------------------------------------------------------------------
 
-//! \return single Geometry Part Node.
+//! \return sole Part Node.
 Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
 {
   for ( ActData_BasePartition::Iterator it( this->GetPartPartition() ); it.More(); it.Next() )
@@ -196,7 +197,20 @@ Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return sole Octree Node.
+Handle(asiData_OctreeNode) asiEngine_Model::GetOctreeNode() const
+{
+  Handle(asiData_PartNode) part = this->GetPartNode();
+  //
+  if ( part.IsNull() || !part->IsWellFormed() )
+    return nullptr;
+
+  return part->GetOctree();
 }
 
 //-----------------------------------------------------------------------------
@@ -211,7 +225,7 @@ Handle(asiData_MetadataNode) asiEngine_Model::GetMetadataNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -226,7 +240,7 @@ Handle(asiData_TriangulationNode) asiEngine_Model::GetTriangulationNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
 }
 
 
@@ -242,7 +256,7 @@ Handle(asiData_TessNode) asiEngine_Model::GetTessellationNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -257,7 +271,7 @@ Handle(asiData_IVNode) asiEngine_Model::GetIVNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -272,7 +286,7 @@ Handle(asiData_ReTopoNode) asiEngine_Model::GetReTopoNode() const
     if ( !N.IsNull() && N->IsWellFormed() )
       return N;
   }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -298,6 +312,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantShapesNode>, Partition_TolerantShapes);
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
   REGISTER_PARTITION(asiData_Partition<asiData_DeviationNode>,      Partition_Deviation);
+  REGISTER_PARTITION(asiData_Partition<asiData_OctreeNode>,         Partition_Octree);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,           Partition_Tessellation);
@@ -374,7 +389,7 @@ Handle(ActAPI_IPartition)
     default:
       break;
   }
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -384,7 +399,7 @@ Handle(ActAPI_IPartition)
 Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
 {
   asiData_Partition<asiData_RootNode>::Iterator anIt( this->GetRootPartition() );
-  return ( anIt.More() ? anIt.Value() : NULL );
+  return ( anIt.More() ? anIt.Value() : nullptr );
 }
 
 //-----------------------------------------------------------------------------
@@ -393,12 +408,9 @@ Handle(ActAPI_INode) asiEngine_Model::getRootNode() const
 //! in Copy/Paste operation.
 //! \param[in,out] FuncGUIDs Function GUIDs to pass.
 //! \param[in,out] Refs      Reference Parameters to pass.
-void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         FuncGUIDs,
-                                        ActAPI_ParameterLocatorStream& Refs) const
-{
-  asiEngine_NotUsed(FuncGUIDs);
-  asiEngine_NotUsed(Refs);
-}
+void asiEngine_Model::invariantCopyRefs(ActAPI_FuncGUIDStream&         asiEngine_NotUsed(FuncGUIDs),
+                                        ActAPI_ParameterLocatorStream& asiEngine_NotUsed(Refs)) const
+{}
 
 //-----------------------------------------------------------------------------
 
@@ -417,7 +429,7 @@ int asiEngine_Model::actualVersionApp()
 //! \return properly initialized CAF converter.
 Handle(ActData_CAFConverter) asiEngine_Model::converterApp()
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

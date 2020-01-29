@@ -44,7 +44,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-vtkStandardNewMacro(asiVisu_ShapeRobustSource);
+vtkStandardNewMacro(asiVisu_ShapeRobustSource)
 
 //-----------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ asiVisu_ShapeRobustTessellator::t_colorScalarGenerator*
   asiVisu_ShapeRobustSource::GetScalarGenerator() const
 {
   if ( !m_tessellator.Get() )
-    return NULL;
+    return nullptr;
 
   return m_tessellator->GetScalarGenerator();
 }

@@ -170,7 +170,7 @@ namespace asiAlgo_Utils
       (is >> result) ? result : default_value;
       return result;
     }
-  };
+  } // Str namespace.
 
   //! Functions for working with environment.
   namespace Env
@@ -186,7 +186,7 @@ namespace asiAlgo_Utils
 
     asiAlgo_EXPORT
       std::string GetVariable(const char* varName);
-  }
+  } // ENv namespace.
 
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
@@ -1158,6 +1158,6 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT TopoDS_Wire
     OuterWire(const TopoDS_Face& face);
 
-};
+} // asiAlgo_Utils namespace.
 
 #endif

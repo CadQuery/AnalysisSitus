@@ -48,7 +48,7 @@ namespace asiAlgo_EulerPoincare
   asiAlgo_EXPORT bool
     Check(const TopoDS_Shape&  shape,
           const int            genus,
-          ActAPI_ProgressEntry progress = NULL);
+          ActAPI_ProgressEntry progress = nullptr);
 };
 
 #endif

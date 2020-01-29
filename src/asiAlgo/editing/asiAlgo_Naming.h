@@ -55,7 +55,7 @@ public:
   //! \param[in] progress progress notifier.
   asiAlgo_EXPORT
     asiAlgo_Naming(const Handle(asiAlgo_History)& history,
-                   ActAPI_ProgressEntry           progress = NULL);
+                   ActAPI_ProgressEntry           progress = nullptr);
 
   //! \brief Constructs naming tool from topology graph.
   //! \param[in] topograph topology graph which allows for a more formal
@@ -64,14 +64,14 @@ public:
   //! \param[in] progress  progress notifier.
   asiAlgo_EXPORT
     asiAlgo_Naming(const Handle(asiAlgo_TopoGraph)& topograph,
-                   ActAPI_ProgressEntry             progress = NULL);
+                   ActAPI_ProgressEntry             progress = nullptr);
 
   //! \brief Constructs naming tool from B-Rep shape.
   //! \param[in] shape    master CAD shape to build topology graph from.
   //! \param[in] progress progress notifier.
   asiAlgo_EXPORT
     asiAlgo_Naming(const TopoDS_Shape&  shape,
-                   ActAPI_ProgressEntry progress = NULL);
+                   ActAPI_ProgressEntry progress = nullptr);
 
 public:
 
@@ -137,7 +137,7 @@ public:
   TopoDS_Shape GetShape(const TCollection_AsciiString& name) const
   {
     const TopoDS_Shape* shapePtr = m_namedAliveShapes.Seek(name);
-    if ( shapePtr == NULL )
+    if ( shapePtr == nullptr )
       return TopoDS_Shape();
 
     return *shapePtr;

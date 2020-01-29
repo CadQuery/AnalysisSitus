@@ -36,8 +36,8 @@
 
 //-----------------------------------------------------------------------------
 
-Handle(asiEngine_Model)        cmdRE::model = NULL;
-Handle(asiUI_CommonFacilities) cmdRE::cf    = NULL;
+Handle(asiEngine_Model)        cmdRE::model = nullptr;
+Handle(asiUI_CommonFacilities) cmdRE::cf    = nullptr;
 
 //-----------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ void cmdRE::Factory(const Handle(asiTcl_Interp)&      interp,
     passedCF = Handle(asiUI_CommonFacilities)::DownCast(data);
   //
   if ( passedCF.IsNull() )
-    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdRE] No UI facilities are available. GUI will not be updated!");
+    interp->GetProgress().SendLogMessage(LogWarn(Normal) << "[cmdRE] UI facilities are not available. GUI may not be updated.");
   else
     cf = passedCF;
 
@@ -92,7 +92,7 @@ void cmdRE::Factory(const Handle(asiTcl_Interp)&      interp,
   //
   if ( model.IsNull() )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdRE] Data Model instance is NULL or not of asiEngine_Model kind.");
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "[cmdRE] Data Model instance is null or not of asiEngine_Model kind.");
     return;
   }
 

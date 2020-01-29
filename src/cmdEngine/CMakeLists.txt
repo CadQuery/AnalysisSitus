@@ -55,7 +55,8 @@ set (cmdEngine_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};")
 #
 set (cmdEngine_include_dir ${cmdEngine_include_dir_loc} PARENT_SCOPE)
 
-include_directories ( ${cmdEngine_include_dir_loc}
+include_directories ( SYSTEM
+                      ${cmdEngine_include_dir_loc}
                       ${asiTcl_include_dir}
                       ${asiAlgo_include_dir}
                       ${asiData_include_dir}
@@ -65,11 +66,10 @@ include_directories ( ${cmdEngine_include_dir_loc}
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
-                      ${3RDPARTY_vtk_INCLUDE_DIR}
-                      ${3RDPARTY_tbb_INCLUDE_DIR} )
+                      ${3RDPARTY_vtk_INCLUDE_DIR} )
 
 if (USE_MOBIUS)
-  include_directories(${3RDPARTY_mobius_INCLUDE_DIR})
+  include_directories(SYSTEM ${3RDPARTY_mobius_INCLUDE_DIR})
 endif()
 
 #------------------------------------------------------------------------------
@@ -114,21 +114,21 @@ install (TARGETS cmdEngine RUNTIME DESTINATION bin LIBRARY DESTINATION bin COMPO
 #------------------------------------------------------------------------------
 
 install (TARGETS cmdEngine
-         RUNTIME DESTINATION framework/bin COMPONENT Runtime
          CONFIGURATIONS Release
-         ARCHIVE DESTINATION framework/lib LIBRARY DESTINATION framework/lib COMPONENT Library
-         CONFIGURATIONS Release)
+         RUNTIME DESTINATION framework/bin COMPONENT Runtime
+         ARCHIVE DESTINATION framework/lib COMPONENT Library
+         LIBRARY DESTINATION framework/lib COMPONENT Library)
 
 install (TARGETS cmdEngine
-         RUNTIME DESTINATION framework/bini COMPONENT Runtime
          CONFIGURATIONS RelWithDebInfo
-         ARCHIVE DESTINATION framework/libi LIBRARY DESTINATION framework/libi COMPONENT Library
-         CONFIGURATIONS RelWithDebInfo)
+         RUNTIME DESTINATION framework/bini COMPONENT Runtime
+         ARCHIVE DESTINATION framework/libi COMPONENT Library
+         LIBRARY DESTINATION framework/libi COMPONENT Library)
 
 install (TARGETS cmdEngine
-         RUNTIME DESTINATION framework/bind COMPONENT Runtime
          CONFIGURATIONS Debug
-         ARCHIVE DESTINATION framework/libd LIBRARY DESTINATION framework/libd COMPONENT Library
-         CONFIGURATIONS Debug)
+         RUNTIME DESTINATION framework/bind COMPONENT Runtime
+         ARCHIVE DESTINATION framework/libd COMPONENT Library
+         LIBRARY DESTINATION framework/libd COMPONENT Library)
 
 install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/cmdEngine.pdb DESTINATION framework/bind CONFIGURATIONS Debug)

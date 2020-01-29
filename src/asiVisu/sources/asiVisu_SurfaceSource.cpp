@@ -52,7 +52,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_SurfaceSource);
+vtkStandardNewMacro(asiVisu_SurfaceSource)
 
 //! Default constructor.
 asiVisu_SurfaceSource::asiVisu_SurfaceSource()
@@ -147,7 +147,7 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
 {
   if ( m_surf.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL surface" );
+    vtkErrorMacro( << "Invalid domain: nullptr surface" );
     return 0;
   }
 

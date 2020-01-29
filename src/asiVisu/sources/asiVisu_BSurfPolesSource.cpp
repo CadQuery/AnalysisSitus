@@ -47,7 +47,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BSurfPolesSource);
+vtkStandardNewMacro(asiVisu_BSurfPolesSource)
 
 //! Default constructor.
 asiVisu_BSurfPolesSource::asiVisu_BSurfPolesSource() : vtkPolyDataAlgorithm()

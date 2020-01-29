@@ -59,7 +59,7 @@ public:
   asiUI_DialogFindEdge(const Handle(asiEngine_Model)&             model,
                        const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
                        asiUI_ViewerPart*                          pViewer,
-                       QWidget*                                   parent = NULL);
+                       QWidget*                                   parent = nullptr);
 
   virtual ~asiUI_DialogFindEdge();
 
@@ -81,18 +81,18 @@ protected:
     asiUI_LineEdit* pAddress;    //!< Edge address.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pFind       (NULL),
-                  pUseAddress (NULL),
-                  pIndex      (NULL),
-                  pAddress    (NULL)
+    t_widgets() : pFind       (nullptr),
+                  pUseAddress (nullptr),
+                  pIndex      (nullptr),
+                  pAddress    (nullptr)
     {}
 
     void Release()
     {
-      delete pFind;       pFind       = NULL;
-      delete pUseAddress; pUseAddress = NULL;
-      delete pIndex;      pIndex      = NULL;
-      delete pAddress;    pAddress    = NULL;
+      delete pFind;       pFind       = nullptr;
+      delete pUseAddress; pUseAddress = nullptr;
+      delete pIndex;      pIndex      = nullptr;
+      delete pAddress;    pAddress    = nullptr;
     }
   };
 

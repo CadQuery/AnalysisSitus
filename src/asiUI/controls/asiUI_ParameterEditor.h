@@ -75,7 +75,7 @@ public:
   //! \param[in] factory factory for datums.
   //! \param[in] parent  parent widget for this editor.
   asiUI_ParameterEditor(const Handle(asiUI_WidgetFactory)& factory,
-                        QWidget*                           parent = NULL);
+                        QWidget*                           parent = nullptr);
 
 public:
 

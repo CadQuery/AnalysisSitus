@@ -64,9 +64,9 @@ public:
     asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
                      const bool                     enableInteraction,
                      const bool                     isOffscreen,
-                     ActAPI_ProgressEntry           progress = NULL,
-                     ActAPI_PlotterEntry            plotter  = NULL,
-                     QWidget*                       parent   = NULL);
+                     ActAPI_ProgressEntry           progress = nullptr,
+                     ActAPI_PlotterEntry            plotter  = nullptr,
+                     QWidget*                       parent   = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerPart();

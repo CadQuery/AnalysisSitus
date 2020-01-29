@@ -77,7 +77,7 @@ public:
                    const Mode                      mode,
                    ActAPI_ProgressEntry            notifier,
                    ActAPI_PlotterEntry             plotter,
-                   QWidget*                        parent = NULL);
+                   QWidget*                        parent = nullptr);
 
   virtual ~asiUI_DialogSTEP();
 
@@ -106,14 +106,14 @@ private:
     QTableWidget* pOptions; //!< Data exchange options.
     QPushButton*  pProceed; //!< Button to proceed.
 
-    t_widgets() : pOptions (NULL),
-                  pProceed (NULL)
+    t_widgets() : pOptions (nullptr),
+                  pProceed (nullptr)
     {}
 
     void Release()
     {
-      delete pOptions; pOptions = NULL;
-      delete pProceed; pProceed = NULL;
+      delete pOptions; pOptions = nullptr;
+      delete pProceed; pProceed = nullptr;
     }
   };
 

@@ -70,7 +70,7 @@ public:
                            asiUI_ViewerPart*              pPartViewer,
                            ActAPI_ProgressEntry           notifier,
                            ActAPI_PlotterEntry            plotter,
-                           QWidget*                       parent = NULL);
+                           QWidget*                       parent = nullptr);
 
 public slots:
 
@@ -94,10 +94,10 @@ private:
   {
     struct t_edit
     {
-      t_edit() : pDeleteFaces    (NULL),
-                 pSuppressFaces  (NULL),
-                 pDefeatureFaces (NULL),
-                 pDetachFaces    (NULL)
+      t_edit() : pDeleteFaces    (nullptr),
+                 pSuppressFaces  (nullptr),
+                 pDefeatureFaces (nullptr),
+                 pDetachFaces    (nullptr)
       {}
 
       QPushButton* pDeleteFaces;    //!< Deletes selected faces (only).
@@ -108,11 +108,11 @@ private:
 
     struct t_healing
     {
-      t_healing() : pSew            (NULL),
-                    pAutoRepair     (NULL),
-                    pMaximizeFaces  (NULL),
-                    pHealSmallEdges (NULL),
-                    pFillGap        (NULL)
+      t_healing() : pSew            (nullptr),
+                    pAutoRepair     (nullptr),
+                    pMaximizeFaces  (nullptr),
+                    pHealSmallEdges (nullptr),
+                    pFillGap        (nullptr)
       {}
 
       QPushButton* pSew;            //!< Sewing.

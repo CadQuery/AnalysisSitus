@@ -70,7 +70,7 @@ Handle(ActAPI_INode) asiData_RePatchNode::Instance()
 void asiData_RePatchNode::Init()
 {
   // Set default values.
-  this->SetSurface       (NULL);
+  this->SetSurface       (nullptr);
   this->SetMinNumKnots   (2);
   this->SetApproxNodes   (false);
   this->SetApproxLambda  (1e-3);
@@ -114,7 +114,7 @@ Handle(Geom_Surface) asiData_RePatchNode::GetSurface() const
   TopoDS_Shape sh = ActParamTool::AsShape( this->Parameter(PID_Surface) )->GetShape();
   //
   if ( sh.IsNull() || sh.ShapeType() != TopAbs_FACE )
-    return NULL;
+    return nullptr;
 
   // Extract face and its host geometry
   const TopoDS_Face& F = TopoDS::Face(sh);

@@ -325,10 +325,8 @@ void asiUI_DatumPathEdit::Editor::onOpenDialog()
 
 //! Notify about text changing in the line edit.
 //! \param theStr [in] current text in the line edit widget.
-void asiUI_DatumPathEdit::Editor::onTextChanged(const QString& theStr)
+void asiUI_DatumPathEdit::Editor::onTextChanged(const QString& asiUI_NotUsed(theStr))
 {
-  asiUI_NotUsed(theStr);
-
   invalidateCache();
 
   onParamChanged();

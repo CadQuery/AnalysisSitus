@@ -150,7 +150,7 @@ void asiVisu_GeomCurvePrs::afterInitPipelines()
   double f, l;
   const int          E_idx = DP->GetEdgeIndexAmongEdges();
   TopoDS_Edge        E     = DP->ExtractEdge();
-  Handle(Geom_Curve) C     = E.IsNull() ? NULL : BRep_Tool::Curve(E, f, l);
+  Handle(Geom_Curve) C     = E.IsNull() ? nullptr : BRep_Tool::Curve(E, f, l);
 
   // Prepare main title
   TCollection_AsciiString TITLE("Edge (#");
@@ -222,47 +222,33 @@ void asiVisu_GeomCurvePrs::afterUpdatePipelines() const
 {}
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomCurvePrs::highlight(vtkRenderer*                        theRenderer,
-                                     const Handle(asiVisu_PickerResult)& thePickRes,
-                                     const asiVisu_SelectionNature       theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomCurvePrs::highlight(vtkRenderer*,
+                                     const Handle(asiVisu_PickerResult)&,
+                                     const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*                  theRenderer,
-                                       const asiVisu_SelectionNature theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomCurvePrs::unHighlight(vtkRenderer*,
+                                       const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomCurvePrs::renderPipelines(vtkRenderer* theRenderer) const
+//! \param[in] renderer renderer.
+void asiVisu_GeomCurvePrs::renderPipelines(vtkRenderer* renderer) const
 {
   // Annotation
   if ( !m_textWidget->GetCurrentRenderer() )
   {
-    m_textWidget->SetInteractor      ( theRenderer->GetRenderWindow()->GetInteractor() );
-    m_textWidget->SetDefaultRenderer ( theRenderer );
-    m_textWidget->SetCurrentRenderer ( theRenderer );
+    m_textWidget->SetInteractor      ( renderer->GetRenderWindow()->GetInteractor() );
+    m_textWidget->SetDefaultRenderer ( renderer );
+    m_textWidget->SetCurrentRenderer ( renderer );
     m_textWidget->On                 ( );
     m_textWidget->ReleaseFocus       ( );
   }
 }
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomCurvePrs::deRenderPipelines(vtkRenderer* theRenderer) const
+void asiVisu_GeomCurvePrs::deRenderPipelines(vtkRenderer*) const
 {
-  asiVisu_NotUsed(theRenderer);
-
   m_textWidget->Off();
 }

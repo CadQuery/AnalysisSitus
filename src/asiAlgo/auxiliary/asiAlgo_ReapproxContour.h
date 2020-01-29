@@ -97,8 +97,8 @@ public:
     asiAlgo_ReapproxContour(const TopoDS_Shape&  contour,
                             const double         precision,
                             const double         barrierAngleDeg = 5.0,
-                            ActAPI_ProgressEntry progress        = NULL,
-                            ActAPI_PlotterEntry  plotter         = NULL);
+                            ActAPI_ProgressEntry progress        = nullptr,
+                            ActAPI_PlotterEntry  plotter         = nullptr);
 
 public:
 

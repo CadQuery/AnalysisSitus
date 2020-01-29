@@ -50,7 +50,7 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_ContourPolesDataProvider::GetPoints() 
     contour_n = Handle(asiData_ContourNode)::DownCast(m_node);
   //
   if ( contour_n.IsNull() || !contour_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Get indices of poles.
   Handle(TColStd_HPackedMapOfInteger) hPoleIds = contour_n->GetPoleIndices();

@@ -29,7 +29,7 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 
 // Active Data includes
 #include <ActData_ParameterFactory.h>
@@ -91,7 +91,7 @@ Handle(asiData_ReEdgeNode) asiData_ReCoedgeNode::GetEdge() const
       !dc->IsWellFormed() ||
       !dc->IsInstance( STANDARD_TYPE(asiData_ReEdgeNode) ) )
     //
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReEdgeNode)::DownCast(dc);
 }
@@ -166,5 +166,5 @@ Handle(asiData_ReCoedgeNode) asiData_ReCoedgeNode::GetOpposite() const
       return refNode;
   }
 
-  return NULL;
+  return nullptr;
 }

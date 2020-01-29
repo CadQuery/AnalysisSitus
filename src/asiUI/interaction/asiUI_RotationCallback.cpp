@@ -40,6 +40,7 @@
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkCamera.h>
+#include <vtkMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
@@ -95,7 +96,7 @@ void asiUI_RotationCenterProvider::Init(const double x,
 //! \return instance of the callback class.
 asiUI_RotationCallback* asiUI_RotationCallback::New()
 {
-  return new asiUI_RotationCallback(NULL);
+  return new asiUI_RotationCallback(nullptr);
 }
 
 //! Instantiation routine accepting viewer.
@@ -126,13 +127,10 @@ asiUI_RotationCallback::~asiUI_RotationCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_RotationCallback::Execute(vtkObject*    pCaller,
+void asiUI_RotationCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
                                      unsigned long eventId,
-                                     void*         pCallData)
+                                     void*         asiVisu_NotUsed(pCallData))
 {
-  asiVisu_NotUsed(pCaller);
-  asiVisu_NotUsed(pCallData);
-
   /* =======================================
    *  Check if the calling context is valid
    * ======================================= */
@@ -190,17 +188,14 @@ void asiUI_RotationCallback::Execute(vtkObject*    pCaller,
 //! Sets visualization properties for rotation anchor ball.
 void asiUI_RotationCallback::setVisualProps()
 {
-  // Apply lighting rules
-  m_pl->Actor()->GetProperty()->SetAmbient(0.3);
-  m_pl->Actor()->GetProperty()->SetDiffuse(0.9);
-  m_pl->Actor()->GetProperty()->SetSpecular(0.9);
-  m_pl->Actor()->GetProperty()->SetSpecularPower(20);
+  // Apply lighting rules.
+  asiVisu_Utils::ApplyLightingRules( m_pl->Actor() );
 
-  // Apply color
+  // Apply color.
+  m_pl->Mapper()->ScalarVisibilityOff();
   m_pl->Actor()->GetProperty()->SetColor(1.0, 0.0, 0.0);
   m_pl->Actor()->GetProperty()->SetInterpolationToGouraud();
 }
-
 
 //! Returns size for rotation marker.
 //! \param pRenderer [in] renderer instance.

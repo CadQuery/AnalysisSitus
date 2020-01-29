@@ -471,10 +471,10 @@ public:
                                            const Standard_GUID& guid) const
   {
     if ( !m_arc_attributes.IsBound(arc) )
-      return NULL;
+      return nullptr;
 
     if ( !m_arc_attributes(arc).Contains(guid) )
-      return NULL;
+      return nullptr;
 
     return m_arc_attributes(arc)(guid);
   }
@@ -487,10 +487,10 @@ public:
                                             const Standard_GUID& guid) const
   {
     if ( !m_node_attributes.IsBound(node) )
-      return NULL;
+      return nullptr;
 
     if ( !m_node_attributes(node).Contains(guid) )
-      return NULL;
+      return nullptr;
 
     return m_node_attributes(node)(guid);
   }

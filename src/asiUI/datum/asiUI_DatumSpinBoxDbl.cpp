@@ -204,7 +204,7 @@ void asiUI_DatumSpinBoxDbl::SpinBoxImpl::onChanged()
 //! Default constructor.
 asiUI_DatumSpinBoxDbl::SpinBoxWidget::SpinBoxWidget(QWidget* theParent)
 : QtxDoubleSpinBox(theParent),
-  m_pValidator(NULL)
+  m_pValidator(nullptr)
 {
   setPrecision(-ASI_DATUM_DOUBLE_PRECISION);
   setDecimals(DBL_MAX_10_EXP);
@@ -219,7 +219,7 @@ asiUI_DatumSpinBoxDbl::SpinBoxWidget::SpinBoxWidget(QWidget* theParent)
 //! \param theInput [in] the input string.
 void asiUI_DatumSpinBoxDbl::SpinBoxWidget::fixup(QString& theInput) const
 {
-  if ( m_pValidator != NULL )
+  if ( m_pValidator != nullptr )
   {
     m_pValidator->fixup(theInput);
     return;
@@ -235,7 +235,7 @@ void asiUI_DatumSpinBoxDbl::SpinBoxWidget::fixup(QString& theInput) const
 //! \return validation status.
 QValidator::State asiUI_DatumSpinBoxDbl::SpinBoxWidget::validate(QString& theInput, int& thePos) const
 {
-  if ( m_pValidator != NULL )
+  if ( m_pValidator != nullptr )
   {
     return m_pValidator->validate(theInput, thePos);
   }
@@ -262,7 +262,7 @@ QString asiUI_DatumSpinBoxDbl::SpinBoxWidget::textFromValue(double theValue) con
 {
   QString aText = QDoubleSpinBox::textFromValue(theValue);
 
-  if ( m_pValidator != NULL )
+  if ( m_pValidator != nullptr )
   {
     m_pValidator->fixup(aText);
   }

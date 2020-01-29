@@ -55,8 +55,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiEngine_EXPORT
     asiEngine_PatchJointAdaptor(const Handle(asiEngine_Model)& model,
-                                ActAPI_ProgressEntry           progress = NULL,
-                                ActAPI_PlotterEntry            plotter  = NULL);
+                                ActAPI_ProgressEntry           progress = nullptr,
+                                ActAPI_PlotterEntry            plotter  = nullptr);
 
 public:
 

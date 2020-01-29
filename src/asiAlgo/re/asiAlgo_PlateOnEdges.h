@@ -58,8 +58,8 @@ public:
   //! \param[in] progress progress indicator.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_PlateOnEdges(ActAPI_ProgressEntry progress = NULL,
-                         ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_PlateOnEdges(ActAPI_ProgressEntry progress = nullptr,
+                         ActAPI_PlotterEntry  plotter  = nullptr);
 
   //! Constructs the tool initializing it with AAG.
   //! \param[in] aag      Attributed Adjacency Graph (AAG).
@@ -67,8 +67,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_PlateOnEdges(const Handle(asiAlgo_AAG)& aag,
-                         ActAPI_ProgressEntry       progress = NULL,
-                         ActAPI_PlotterEntry        plotter  = NULL);
+                         ActAPI_ProgressEntry       progress = nullptr,
+                         ActAPI_PlotterEntry        plotter  = nullptr);
 
   //! Constructs the tool initializing it with the B-Rep shape in question.
   //! \param[in] shape    shape in question.
@@ -76,8 +76,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_PlateOnEdges(const TopoDS_Shape&  shape,
-                         ActAPI_ProgressEntry progress = NULL,
-                         ActAPI_PlotterEntry  plotter  = NULL);
+                         ActAPI_ProgressEntry progress = nullptr,
+                         ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 

@@ -116,7 +116,7 @@ Handle(asiData_ElemMetadataNode)
   asiEngine_STEPWriterInput::elemByShape(const TopoDS_Shape& shape) const
 {
   if ( m_metaElems.IsNull() )
-    return NULL;
+    return nullptr;
 
   for ( ActAPI_HNodeList::Iterator nit(*m_metaElems); nit.More(); nit.Next() )
   {
@@ -127,5 +127,5 @@ Handle(asiData_ElemMetadataNode)
       return metaNode;
   }
 
-  return NULL;
+  return nullptr;
 }

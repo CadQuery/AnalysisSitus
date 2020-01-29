@@ -46,10 +46,10 @@ asiVisu_Pipeline::asiVisu_Pipeline(const vtkSmartPointer<vtkMapper>& mapper,
                                    const vtkSmartPointer<vtkActor>&  actor)
 //
   : m_dummyFilter  ( vtkSmartPointer<vtkPassThroughFilter>::New() ),
-    m_mapper       ( mapper ),
-    m_actor        ( actor ),
     m_bInitialized ( false ),
-    m_bBuilt       ( false )
+    m_bBuilt       ( false ),
+    m_mapper       ( mapper ),
+    m_actor        ( actor )
 {}
 
 //! Sets input data set for the pipeline.
@@ -91,7 +91,7 @@ void asiVisu_Pipeline::Build()
   if ( m_bBuilt )
     return; // Already built
 
-  if ( m_mapper.GetPointer() == NULL || m_actor.GetPointer() == NULL )
+  if ( m_mapper.GetPointer() == nullptr || m_actor.GetPointer() == nullptr )
     return; // Pipeline cannot be built due to incorrect initialization
 
   // Let external precedent filters to be the source

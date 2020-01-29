@@ -32,7 +32,7 @@
 #define asiData_ReTopoNode_h
 
 // asiData includes
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 #include <asiData_RePatchNode.h>
 #include <asiData_ReVertexNode.h>
 

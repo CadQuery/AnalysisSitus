@@ -163,7 +163,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
       m_pCommonFacilities->Progress.SendLogMessage( LogErr(Normal) << "Invalid dictionary ID '%1'."
                                                                    << QStr2AsciiStr(theDataDicID) );
 
-    return NULL;
+    return nullptr;
   }
 
   // get value type and widget type

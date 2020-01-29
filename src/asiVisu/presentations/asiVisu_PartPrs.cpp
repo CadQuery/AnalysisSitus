@@ -32,8 +32,6 @@
 #include <asiVisu_PartPrs.h>
 
 // asiVisu includes
-#include <asiVisu_OctreeDataProvider.h>
-#include <asiVisu_OctreePipeline.h>
 #include <asiVisu_PartDataProvider.h>
 #include <asiVisu_PartEdgesPipeline.h>
 #include <asiVisu_PartPipeline.h>
@@ -80,14 +78,9 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // Set point size and line width.
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
 
   // Colorize backface so that inverted faces are immediately visible.
-  vtkSmartPointer<vtkProperty> propBackface = vtkSmartPointer<vtkProperty>::New();
-  propBackface->DeepCopy( pl->Actor()->GetProperty() );
-  propBackface->SetColor(1.0, 0.0, 0.0);
-  pl->Actor()->SetBackfaceProperty(propBackface);
+  pl->Actor()->SetBackfaceProperty( asiVisu_Utils::DefaultBackfaceProp() );
 
   /* ====================
    *  Pipeline for edges.
@@ -101,35 +94,14 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetOpacity(0.65);
-  contour_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-  contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(true);
-  contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(true);
+  contour_pl->Actor()->GetProperty()->SetOpacity(1.); // Do not set opacity to avoid Qt-VTK artifacts.
+  contour_pl->Actor()->GetProperty()->SetLineWidth(0.9f);
   contour_pl->Actor()->SetPickable(0);
   contour_pl->Actor()->GetProperty()->LightingOff();
+  contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
-
-  /* =====================
-   *  Pipeline for octree.
-   * ===================== */
-
-  Handle(asiData_OctreeParameter)
-    octreeParam = Handle(asiData_OctreeParameter)::DownCast( partNode->Parameter(asiData_PartNode::PID_Octree) );
-
-  // Create data provider.
-  Handle(asiVisu_OctreeDataProvider)
-    octree_dp = new asiVisu_OctreeDataProvider(octreeParam);
-
-  // Create pipeline for octrees.
-  Handle(asiVisu_OctreePipeline)
-    octree_pl = new asiVisu_OctreePipeline;
-  //
-  this->addPipeline        ( Pipeline_Octree, octree_pl );
-  this->assignDataProvider ( Pipeline_Octree, octree_dp );
-
-  octree_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 }
 
 //-----------------------------------------------------------------------------
@@ -261,10 +233,8 @@ void asiVisu_PartPrs::WireframeOn() const
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& picker) const
+void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& asiVisu_NotUsed(renderer)) const
 {
-  asiVisu_NotUsed(picker);
-
   //picker->RemoveAllLocators();
 
   //// Set octee locators to speed up cell picking
@@ -352,12 +322,10 @@ void asiVisu_PartPrs::afterUpdatePipelines() const
 //! \param[in] renderer  renderer.
 //! \param[in] pickRes   picking results.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_PartPrs::highlight(vtkRenderer*                        renderer,
+void asiVisu_PartPrs::highlight(vtkRenderer*                        asiVisu_NotUsed(renderer),
                                 const Handle(asiVisu_PickerResult)& pickRes,
                                 const asiVisu_SelectionNature       selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Can react on cell picking only.
   Handle(asiVisu_CellPickerResult)
     cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
@@ -398,11 +366,9 @@ void asiVisu_PartPrs::highlight(vtkRenderer*                        renderer,
 //! Callback for highlighting reset.
 //! \param[in] renderer  renderer.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_PartPrs::unHighlight(vtkRenderer*                  renderer,
+void asiVisu_PartPrs::unHighlight(vtkRenderer*                  asiVisu_NotUsed(renderer),
                                   const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   Handle(asiVisu_PartPipeline)
     mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
   Handle(asiVisu_PartEdgesPipeline)
@@ -416,10 +382,8 @@ void asiVisu_PartPrs::unHighlight(vtkRenderer*                  renderer,
 
 //! Callback for rendering.
 //! \param[in] renderer renderer.
-void asiVisu_PartPrs::renderPipelines(vtkRenderer* renderer) const
+void asiVisu_PartPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Do nothing...
 }
 
@@ -427,9 +391,7 @@ void asiVisu_PartPrs::renderPipelines(vtkRenderer* renderer) const
 
 //! Callback for de-rendering.
 //! \param[in] renderer renderer.
-void asiVisu_PartPrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_PartPrs::deRenderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Do nothing...
 }

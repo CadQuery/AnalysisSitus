@@ -60,7 +60,7 @@
 //! \return instance of the callback class.
 asiUI_PickContourCallback* asiUI_PickContourCallback::New()
 {
-  return new asiUI_PickContourCallback(NULL);
+  return new asiUI_PickContourCallback(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,12 +84,10 @@ asiUI_PickContourCallback::~asiUI_PickContourCallback()
 //! \param[in] pCaller   caller instance.
 //! \param[in] eventId   ID of the event triggered this listener.
 //! \param[in] pCallData data passed from the caller.
-void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
+void asiUI_PickContourCallback::Execute(vtkObject*    asiUI_NotUsed(pCaller),
                                         unsigned long eventId,
                                         void*         pCallData)
 {
-  asiUI_NotUsed(pCaller);
-
   // Prepare RE Topology Node.
   Handle(asiData_ReTopoNode) topoNode = m_model->GetReTopoNode();
   //
@@ -106,7 +104,7 @@ void asiUI_PickContourCallback::Execute(vtkObject*    pCaller,
   Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
   Handle(asiData_ReCoedgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
   Handle(asiData_ReVertexNode) lastVertexNode = topoNode->GetLastVertex();
-  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
+  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? nullptr : prevCoedgeNode->GetEdge();
 
   // Existing vertex was selected again.
   if ( eventId == EVENT_SELECT_CELL )
@@ -351,7 +349,7 @@ bool
   Handle(asiData_ReTopoNode)   topoNode        = m_model->GetReTopoNode();
   Handle(asiData_RePatchNode)  patchNode       = topoNode->GetCurrentPatch();
   Handle(asiData_ReCoedgeNode) coedgeNode      = topoNode->GetCurrentCoEdge();
-  Handle(asiData_ReEdgeNode)   lastEdgeNode    = coedgeNode.IsNull() ? NULL : coedgeNode->GetEdge();
+  Handle(asiData_ReEdgeNode)   lastEdgeNode    = coedgeNode.IsNull() ? nullptr : coedgeNode->GetEdge();
   Handle(asiData_ReVertexNode) firstVertexNode = topoNode->GetFirstVertex();
   //
   const bool isCurrentSameSense = ( coedgeNode.IsNull() ? true : coedgeNode->IsSameSense() );
@@ -441,9 +439,9 @@ bool
   }
 
   // Reset current references.
-  topoNode->SetCurrentPatch(NULL);
-  topoNode->SetCurrentCoEdge(NULL);
-  topoNode->SetLastVertex(NULL);
+  topoNode->SetCurrentPatch(nullptr);
+  topoNode->SetCurrentCoEdge(nullptr);
+  topoNode->SetLastVertex(nullptr);
 
   // Update scene.
   this->GetViewer()->PrsMgr()->Actualize(lastEdgeNode);
@@ -463,7 +461,7 @@ Handle(asiData_ReEdgeNode)
                                                 bool&                               samesense)
 {
   if ( v1.IsNull() || v2.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Business logic of reconstruction.
   asiEngine_RE reApi(m_model, m_notifier, m_plotter);
@@ -472,7 +470,7 @@ Handle(asiData_ReEdgeNode)
   Handle(asiData_ReEdgesNode) edgesNode = reApi.Get_Edges();
   //
   if ( edgesNode.IsNull() || !edgesNode->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Iterate over the existing edges trying to find the one with 
   for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
@@ -505,7 +503,7 @@ Handle(asiData_ReEdgeNode)
     return edgeNode;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -649,7 +647,7 @@ Handle(asiData_ReCoedgeNode)
     iter++;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -722,14 +720,14 @@ Handle(asiData_ReVertexNode)
   asiVisu_NodeInfo* pNodeInfo = asiVisu_NodeInfo::Retrieve( pPickRes->GetPickedActor() );
   //
   if ( !pNodeInfo )
-    return false;
+    return nullptr;
 
   // Get Vertex Node.
   Handle(ActAPI_INode) node = m_model->FindNode( pNodeInfo->GetNodeId() );
   //
   if ( !node->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) )
     || !node->IsWellFormed() )
-    return false;
+    return nullptr;
 
   Handle(asiData_ReVertexNode)
     vertexNode = Handle(asiData_ReVertexNode)::DownCast(node);
@@ -767,7 +765,7 @@ Handle(asiData_ReCoedgeNode)
   Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
   Handle(asiData_RePatchNode)  patchNode      = topoNode->GetCurrentPatch();
   Handle(asiData_ReCoedgeNode) prevCoedgeNode = topoNode->GetCurrentCoEdge();
-  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? NULL : prevCoedgeNode->GetEdge();
+  Handle(asiData_ReEdgeNode)   prevEdgeNode   = prevCoedgeNode.IsNull() ? nullptr : prevCoedgeNode->GetEdge();
 
   // Business logic of reconstruction.
   asiEngine_RE reApi(m_model, m_notifier, m_plotter);
@@ -811,7 +809,7 @@ Handle(asiData_ReCoedgeNode)
       {
         m_notifier.SendLogMessage(LogErr(Normal) << "Previous vertex is undefined.");
         m_model->AbortCommand();
-        return false;
+        return nullptr;
       }
       //
       const gp_XYZ prevPt = prevVertex->GetPoint();
@@ -823,7 +821,7 @@ Handle(asiData_ReCoedgeNode)
       if ( !this->projectLine(prevPt, target->GetPoint(), projPts, projInds) )
       {
         m_model->AbortCommand();
-        return false;
+        return nullptr;
       }
       //
       if ( projPts.size() > 2 )
@@ -850,12 +848,9 @@ Handle(asiData_ReCoedgeNode)
 //-----------------------------------------------------------------------------
 
 Handle(asiData_ReCoedgeNode)
-  asiUI_PickContourCallback::buildNewCoEdge(const Handle(asiData_ReEdgeNode)& edge,
-                                            const bool                        samesense)
+  asiUI_PickContourCallback::buildNewCoEdge(const Handle(asiData_ReEdgeNode)& asiUI_NotUsed(edge),
+                                            const bool                        asiUI_NotUsed(samesense))
 {
-  asiUI_NotUsed(edge);
-  asiUI_NotUsed(samesense);
-
   //// Get Topology Node and the currently composed entities.
   //Handle(asiData_ReTopoNode)   topoNode       = m_model->GetReTopoNode();
   //Handle(asiData_ReCoedgeNode) currCoedgeNode = topoNode->GetCurrentCoEdge();
@@ -914,5 +909,5 @@ Handle(asiData_ReCoedgeNode)
   //}
 
   //return coedgeNode;
-  return NULL;
+  return nullptr;
 }

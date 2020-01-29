@@ -58,7 +58,7 @@
 #include <asiData_MetadataNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 #include <asiData_ReEdgeNode.h>
 #include <asiData_ReEdgesNode.h>
 #include <asiData_ReTopoNode.h>
@@ -113,6 +113,9 @@ public:
 
   asiEngine_EXPORT Handle(asiData_PartNode)
     GetPartNode() const;
+
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    GetOctreeNode() const;
 
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     GetMetadataNode() const;
@@ -270,6 +273,13 @@ public:
   Handle(asiData_Partition<asiData_DeviationNode>) GetDeviationPartition() const
   {
     return Handle(asiData_Partition<asiData_DeviationNode>)::DownCast( this->Partition(Partition_Deviation) );
+  }
+
+  //! Accessor for a Partition instance dedicated to Octree Nodes.
+  //! \return requested Partition.
+  Handle(asiData_Partition<asiData_OctreeNode>) GetOctreePartition() const
+  {
+    return Handle(asiData_Partition<asiData_OctreeNode>)::DownCast( this->Partition(Partition_Octree) );
   }
 
 //-----------------------------------------------------------------------------
@@ -532,6 +542,7 @@ protected:
     Partition_TolerantShapes,
     Partition_TolerantRange,
     Partition_Deviation,
+    Partition_Octree,
   //---------------------------------------------------------------------------
     Partition_Triangulation,
     Partition_Tessellation,

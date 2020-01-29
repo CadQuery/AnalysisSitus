@@ -54,13 +54,14 @@
 #include <vtkObject.h>
 #include <vtkPointPicker.h>
 #include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkWorldPointPicker.h>
 #pragma warning(pop)
 
 // QVTK includes
 #pragma warning(push, 0)
-#include <QVTKWidget.h>
+#include <QVTKOpenGLNativeWidget.h>
 #pragma warning(pop)
 
 // OCCT includes
@@ -151,7 +152,7 @@ public:
       return;
 
     // Actualize each Node from the list individually
-    for ( HColType::Iterator nit( *nodeCol.operator->() ); nit.More(); nit.Next() )
+    for ( typename HColType::Iterator nit(*nodeCol); nit.More(); nit.Next() )
     {
       const Handle(ActAPI_INode)& node = nit.Value();
       //
@@ -203,7 +204,7 @@ public:
 
     // Update view window
     if ( withRepaint && m_widget )
-      m_widget->repaint();
+      m_widget->GetRenderWindow()->Render();
   }
 
 //-----------------------------------------------------------------------------
@@ -380,9 +381,6 @@ public:
                const bool isOffscreen = false);
 
   asiVisu_EXPORT void
-    InitializeRenderWindow(const int aams);
-
-  asiVisu_EXPORT void
     InitializePickers(const Handle(ActAPI_INode)& node);
 
 //-----------------------------------------------------------------------------
@@ -409,7 +407,7 @@ public:
       return;
 
     // Actualize each Node from the list individually
-    for ( HColType::Iterator nit( *nodeCol.operator->() ); nit.More(); nit.Next() )
+    for ( typename HColType::Iterator nit(*nodeCol); nit.More(); nit.Next() )
     {
       const Handle(ActAPI_INode)& node = nit.Value();
       //
@@ -424,7 +422,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  asiVisu_EXPORT QVTKWidget*
+  asiVisu_EXPORT QVTKOpenGLNativeWidget*
     GetQVTKWidget() const;
 
   asiVisu_EXPORT const vtkSmartPointer<asiVisu_InteractorStylePick>&
@@ -454,6 +452,9 @@ public:
   //! \param[in] mode interaction mode to set.
   void SetInteractionMode(const InteractionMode mode)
   {
+    if ( !m_renderWindowInteractor.Get() )
+      return;
+
     if ( mode == InteractionMode_3D )
       m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleTrackball);
     if ( mode == InteractionMode_2D )
@@ -473,9 +474,6 @@ public:
 
 // Auxiliary methods:
 protected:
-
-  asiVisu_EXPORT void
-    init();
 
   asiVisu_EXPORT bool
     cellPickerResult(const asiVisu_SelectionNature           selNature,
@@ -528,7 +526,7 @@ private:
 private:
 
   //! QVTK widget.
-  QVTKWidget* m_widget;
+  QVTKOpenGLNativeWidget* m_widget;
 
   //! Active renderer.
   vtkSmartPointer<vtkRenderer> m_renderer;

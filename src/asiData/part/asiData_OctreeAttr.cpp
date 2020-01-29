@@ -105,10 +105,8 @@ void asiData_OctreeAttr::Restore(const Handle(TDF_Attribute)& mainAttr)
 //! \param[in] into       where to paste.
 //! \param[in] relocTable relocation table.
 void asiData_OctreeAttr::Paste(const Handle(TDF_Attribute)&       into,
-                               const Handle(TDF_RelocationTable)& relocTable) const
+                               const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
 {
-  asiData_NotUsed(relocTable);
-
   Handle(asiData_OctreeAttr) intoCasted = Handle(asiData_OctreeAttr)::DownCast(into);
   intoCasted->SetOctree(m_pOctree);
 }

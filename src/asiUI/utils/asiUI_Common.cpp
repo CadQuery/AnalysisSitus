@@ -41,8 +41,7 @@
 //! \return selected filename.
 QString asiUI_Common::selectGraphicsFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "Graphics (*.svg)";
+  QString filter = "Graphics (*.svg)";
   //
   return selectFile(filter, "Select graphics file", "Save graphics file", action);
 }
@@ -52,8 +51,7 @@ QString asiUI_Common::selectGraphicsFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectBRepFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "BREP (*.brep; *.bin; *.binbrep)";
+  QString filter = "BREP (*.brep *.bin *.binbrep)";
   //
   return selectFile(filter, "Select BREP file", "Save BREP file", action);
 }
@@ -63,8 +61,7 @@ QString asiUI_Common::selectBRepFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectIGESFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "IGES (*.igs)";
+  QString filter = "IGES (*.igs)";
   //
   return selectFile(filter, "Select IGES file", "Save IGES file", action);
 }
@@ -74,8 +71,7 @@ QString asiUI_Common::selectIGESFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectSTEPFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "STEP (*.stp; *.step)";
+  QString filter = "STEP (*.stp *.step)";
   //
   return selectFile(filter, "Select STEP file", "Save STEP file", action);
 }
@@ -85,8 +81,7 @@ QString asiUI_Common::selectSTEPFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectPLYFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "PLY (*.ply)";
+  QString filter = "PLY (*.ply)";
   //
   return selectFile(filter, "Select PLY file", "Save PLY file", action);
 }
@@ -96,8 +91,7 @@ QString asiUI_Common::selectPLYFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectXBFFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "XBF (*.xbf)";
+  QString filter = "XBF (*.xbf)";
   //
   return selectFile(filter, "Select XBF file", "Save XBF file", action);
 }
@@ -107,8 +101,7 @@ QString asiUI_Common::selectXBFFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectXYZFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "XYZ point cloud (*.xyz)";
+  QString filter = "XYZ point cloud (*.xyz)";
   //
   return selectFile(filter, "Select XYZ file", "Save XYZ file", action);
 }
@@ -118,8 +111,7 @@ QString asiUI_Common::selectXYZFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectOBJFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "OBJ mesh (*.obj)";
+  QString filter = "OBJ mesh (*.obj)";
   //
   return selectFile(filter, "Select OBJ file", "Save OBJ file", action);
 }
@@ -129,8 +121,7 @@ QString asiUI_Common::selectOBJFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectSTLFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "STL mesh (*.stl)";
+  QString filter = "STL mesh (*.stl)";
   //
   return selectFile(filter, "Select STL file", "Save STL file", action);
 }
@@ -140,8 +131,7 @@ QString asiUI_Common::selectSTLFile(const OpenSaveAction action)
 //! \return selected filename.
 QString asiUI_Common::selectDOTFile(const OpenSaveAction action)
 {
-  QStringList filter;
-  filter << "DOT graph (*.dot)";
+  QString filter = "DOT graph (*.dot)";
   //
   return selectFile(filter, "Select DOT file", "Save DOT file", action);
 }
@@ -152,7 +142,7 @@ QString asiUI_Common::selectDOTFile(const OpenSaveAction action)
 //! \param saveTitle [in] title for save dialog.
 //! \param action    [in] open/save action.
 //! \return filename selected by user.
-QString asiUI_Common::selectFile(const QStringList&   filter,
+QString asiUI_Common::selectFile(const QString&       filter,
                                  const QString&       openTitle,
                                  const QString&       saveTitle,
                                  const OpenSaveAction action)
@@ -162,9 +152,9 @@ QString asiUI_Common::selectFile(const QStringList&   filter,
 
   // Open or save
   if ( action == OpenSaveAction_Open )
-    filename = QFileDialog::getOpenFileName(NULL, openTitle, dir, filter.join(";;"), NULL);
+    filename = QFileDialog::getOpenFileName(nullptr, openTitle, dir, filter, nullptr);
   else
-    filename = QFileDialog::getSaveFileName(NULL, saveTitle, dir, filter.join(";;"), NULL);
+    filename = QFileDialog::getSaveFileName(nullptr, saveTitle, dir, filter, nullptr);
 
   return filename;
 }

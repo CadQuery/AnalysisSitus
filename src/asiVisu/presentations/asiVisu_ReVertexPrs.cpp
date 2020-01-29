@@ -79,14 +79,10 @@ Handle(asiVisu_Prs) asiVisu_ReVertexPrs::Instance(const Handle(ActAPI_INode)& N)
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ReVertexPrs::highlight(vtkRenderer*                        renderer,
-                                    const Handle(asiVisu_PickerResult)& pickRes,
-                                    const asiVisu_SelectionNature       selNature) const
+void asiVisu_ReVertexPrs::highlight(vtkRenderer*,
+                                    const Handle(asiVisu_PickerResult)&,
+                                    const asiVisu_SelectionNature) const
 {
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(pickRes);
-  asiVisu_NotUsed(selNature);
-
   this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(m_hiliColor.r,
                                                                      m_hiliColor.g,
                                                                      m_hiliColor.b);
@@ -94,12 +90,9 @@ void asiVisu_ReVertexPrs::highlight(vtkRenderer*                        renderer
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_ReVertexPrs::unHighlight(vtkRenderer*                  renderer,
-                                      const asiVisu_SelectionNature selNature) const
+void asiVisu_ReVertexPrs::unHighlight(vtkRenderer*,
+                                      const asiVisu_SelectionNature) const
 {
-  asiVisu_NotUsed(renderer);
-  asiVisu_NotUsed(selNature);
-
   this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetColor(m_color.r,
                                                                      m_color.g,
                                                                      m_color.b);

@@ -71,7 +71,7 @@ public:
                        asiUI_ViewerPart*              pPartViewer,
                        ActAPI_ProgressEntry           notifier,
                        ActAPI_PlotterEntry            plotter,
-                       QWidget*                       parent = NULL);
+                       QWidget*                       parent = nullptr);
 
 public slots:
 
@@ -108,7 +108,7 @@ private:
   {
     struct t_load
     {
-      t_load() : pSTEP(NULL), pBRep(NULL), pBRepAppend(NULL) {} //!< Ctor.
+      t_load() : pSTEP(nullptr), pBRep(nullptr), pBRepAppend(nullptr) {} //!< Ctor.
 
       QPushButton* pSTEP;       //!< Button for STEP loading.
       QPushButton* pBRep;       //!< Button for BREP loading.
@@ -117,7 +117,7 @@ private:
 
     struct t_save
     {
-      t_save() : pSTEP(NULL), pBRep(NULL) {} //!< Ctor.
+      t_save() : pSTEP(nullptr), pBRep(nullptr) {} //!< Ctor.
 
       QPushButton* pSTEP; //!< Save shape to STEP.
       QPushButton* pBRep; //!< Save shape to BREP.
@@ -125,7 +125,7 @@ private:
 
     struct t_select
     {
-      t_select() : pFaces(NULL), pEdges(NULL), pVertices(NULL) {} //!< Ctor.
+      t_select() : pFaces(nullptr), pEdges(nullptr), pVertices(nullptr) {} //!< Ctor.
 
       QPushButton* pFaces;    //!< Enables selection by faces.
       QPushButton* pEdges;    //!< Enables selection by edges.

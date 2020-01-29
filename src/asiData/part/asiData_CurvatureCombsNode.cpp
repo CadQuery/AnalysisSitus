@@ -75,11 +75,11 @@ void asiData_CurvatureCombsNode::Init()
   this->InitParameter(PID_ScaleFactor,    "Scale factor");
 
   // Initialize arrays
-  ActParamTool::AsRealArray( this->Parameter(PID_Points) )         ->SetArray(NULL);
-  ActParamTool::AsBoolArray( this->Parameter(PID_PointsStatuses) ) ->SetArray(NULL);
-  ActParamTool::AsRealArray( this->Parameter(PID_Parameters) )     ->SetArray(NULL);
-  ActParamTool::AsRealArray( this->Parameter(PID_Curvatures) )     ->SetArray(NULL);
-  ActParamTool::AsRealArray( this->Parameter(PID_Combs) )          ->SetArray(NULL);
+  ActParamTool::AsRealArray( this->Parameter(PID_Points) )         ->SetArray(nullptr);
+  ActParamTool::AsBoolArray( this->Parameter(PID_PointsStatuses) ) ->SetArray(nullptr);
+  ActParamTool::AsRealArray( this->Parameter(PID_Parameters) )     ->SetArray(nullptr);
+  ActParamTool::AsRealArray( this->Parameter(PID_Curvatures) )     ->SetArray(nullptr);
+  ActParamTool::AsRealArray( this->Parameter(PID_Combs) )          ->SetArray(nullptr);
 
   // Set default values
   this->SetScaleFactor(1.0);

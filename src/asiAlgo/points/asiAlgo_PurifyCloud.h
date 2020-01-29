@@ -41,6 +41,7 @@
 // OCCT includes
 #include <gp_XYZ.hxx>
 #include <NCollection_CellFilter.hxx>
+#include <Precision.hxx>
 
 //-----------------------------------------------------------------------------
 // Two-dimensional inspector for cloud purification
@@ -258,8 +259,8 @@ public:
   //! Ctor accepting progress notifier and imperative plotter.
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
-  asiAlgo_PurifyCloud(ActAPI_ProgressEntry progress = NULL,
-                      ActAPI_PlotterEntry  plotter  = NULL)
+  asiAlgo_PurifyCloud(ActAPI_ProgressEntry progress = nullptr,
+                      ActAPI_PlotterEntry  plotter  = nullptr)
   : ActAPI_IAlgorithm(progress, plotter) {}
 
 public:
@@ -296,7 +297,7 @@ public:
     //
     for ( int p_idx = 0; p_idx < source_size; ++p_idx )
     {
-      InspectorType::Point P = source->GetElement(p_idx);
+      auto P = source->GetElement(p_idx);
       CellFilter.Add(p_idx, P);
       //
       allIndices.Add(p_idx);
@@ -317,11 +318,11 @@ public:
       // Classify next point of the source cloud. Notice that Shift() is always
       // done at Precision::Confusion() value in order for the cell filter
       // to work properly.
-      InspectorType::Point P = source->GetElement(next_idx);
+      auto P = source->GetElement(next_idx);
       //
       Inspector.SetCurrent(next_idx, P);
-      InspectorType::Point P_min = Inspector.Shift( P, -Precision::Confusion() );
-      InspectorType::Point P_max = Inspector.Shift( P,  Precision::Confusion() );
+      auto P_min = Inspector.Shift( P, -Precision::Confusion() );
+      auto P_max = Inspector.Shift( P,  Precision::Confusion() );
       //
       CellFilter.Inspect(P_min, P_max, Inspector);
 

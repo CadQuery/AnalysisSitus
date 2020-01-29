@@ -70,13 +70,13 @@ public:
                         precision      (0.0),
                         step           (0.0),
                         is_adaptive    (false),
-                        pFunc          (NULL)
+                        pFunc          (nullptr)
     {}
   };
 
 public:
 
-  asiAlgo_GradientDescent() {}
+  asiAlgo_GradientDescent() = default;
 
   asiAlgo_GradientDescent(const t_search_params& params) : m_params(params) {}
 
@@ -115,7 +115,8 @@ public:
 
     // Prepare Armijo rule
     asiAlgo_ArmijoRule<t_coord> Armijo;
-    asiAlgo_ArmijoRule<t_coord>::t_search_params Armijo_params;
+    typename asiAlgo_ArmijoRule<t_coord>::t_search_params Armijo_params;
+    //
     Armijo_params.max_alpha      = m_params.step;
     Armijo_params.num_iterations = 100;
     Armijo_params.pFunc          = m_params.pFunc;

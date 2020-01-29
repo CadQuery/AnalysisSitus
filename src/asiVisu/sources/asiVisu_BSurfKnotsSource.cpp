@@ -48,7 +48,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BSurfKnotsSource);
+vtkStandardNewMacro(asiVisu_BSurfKnotsSource)
 
 //-----------------------------------------------------------------------------
 

@@ -45,7 +45,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(asiVisu_MeshEVectorFilter);
+vtkStandardNewMacro(asiVisu_MeshEVectorFilter)
 
 //! Default constructor.
 asiVisu_MeshEVectorFilter::asiVisu_MeshEVectorFilter()

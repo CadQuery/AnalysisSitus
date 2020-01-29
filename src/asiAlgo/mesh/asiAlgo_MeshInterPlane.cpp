@@ -82,24 +82,6 @@ bool asiAlgo_MeshInterPlane::Perform(const Handle(Geom_Plane)& plane,
    *  Stage 2: intersect by VTK cutter
    * ================================== */
 
-  double minBound[3];
-  minBound[0] = meshVtk->GetBounds()[0];
-  minBound[1] = meshVtk->GetBounds()[2];
-  minBound[2] = meshVtk->GetBounds()[4];
-
-  double maxBound[3];
-  maxBound[0] = meshVtk->GetBounds()[1];
-  maxBound[1] = meshVtk->GetBounds()[3];
-  maxBound[2] = meshVtk->GetBounds()[5];
-
-  double center[3];
-  center[0] = meshVtk->GetCenter()[0];
-  center[1] = meshVtk->GetCenter()[1];
-  center[2] = meshVtk->GetCenter()[2];
-
-  //const double distanceMin = sqrt( vtkMath::Distance2BetweenPoints(minBound, center) );
-  //const double distanceMax = sqrt( vtkMath::Distance2BetweenPoints(maxBound, center) );
-
   const gp_Ax3& origin = plane->Position();
 
   // Prepare plane to cut.

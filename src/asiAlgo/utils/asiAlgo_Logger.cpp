@@ -42,68 +42,99 @@
 
 //-----------------------------------------------------------------------------
 
-#if defined COUT_DEBUG
-
-template<typename T>
-TCollection_AsciiString toString(const Handle(Standard_Transient)& theValue)
+namespace
 {
-  Handle(T) aValue = Handle(T)::DownCast(theValue);
-  if (aValue.IsNull())
-    return "";
-
-  TCollection_AsciiString anAsciiString(aValue->Value);
-  return anAsciiString;
-}
-
-//-----------------------------------------------------------------------------
-
-TCollection_AsciiString getString(const Handle(Standard_Transient)& theValue)
-{
-  TCollection_AsciiString aStandInteger = toString<ActAPI_VariableInt>(theValue);
-  if (!aStandInteger.IsEmpty())
-    return aStandInteger;
-
-  TCollection_AsciiString aStandReal = toString<ActAPI_VariableReal>(theValue);
-  if (!aStandReal.IsEmpty())
-    return aStandReal;
-
-  TCollection_AsciiString aStandString = toString<ActAPI_VariableString>(theValue);
-  if (!aStandString.IsEmpty())
-    return aStandString;
-
-  return "<empty arg>";
-}
-
-//-----------------------------------------------------------------------------
-
-TCollection_AsciiString getFormatted(const TCollection_AsciiString& message,
-                                     const ActAPI_LogArguments&     arguments)
-{
-  // Try to treat the passed message as a key
-  TCollection_AsciiString formatted = message;
-
-  for ( int i = 1; i <= arguments.Length(); ++i )
+  template<typename T>
+  TCollection_AsciiString toString(const Handle(Standard_Transient)& theValue)
   {
-    TCollection_AsciiString iarg = "%"; iarg += i;
-    const int parg = formatted.Search(iarg);
-    TCollection_AsciiString sarg = getString(arguments.Value(i));
+    Handle(T) aValue = Handle(T)::DownCast(theValue);
+    if (aValue.IsNull())
+      return "";
 
-    if ( parg != -1 )
-    {
-      formatted.Remove(parg, iarg.Length());
-      formatted.Insert(parg, sarg);
-    }
-    else
-    {
-      formatted += " ";
-      formatted += sarg;
-    }
+    TCollection_AsciiString anAsciiString(aValue->Value);
+    return anAsciiString;
   }
 
-  return formatted;
-}
+  TCollection_AsciiString getString(const Handle(Standard_Transient)& theValue)
+  {
+    TCollection_AsciiString aStandInteger = toString<ActAPI_VariableInt>(theValue);
+    if (!aStandInteger.IsEmpty())
+      return aStandInteger;
 
-#endif
+    TCollection_AsciiString aStandReal = toString<ActAPI_VariableReal>(theValue);
+    if (!aStandReal.IsEmpty())
+      return aStandReal;
+
+    TCollection_AsciiString aStandString = toString<ActAPI_VariableString>(theValue);
+    if (!aStandString.IsEmpty())
+      return aStandString;
+
+    return "<empty arg>";
+  }
+
+  TCollection_AsciiString getFormatted(const TCollection_AsciiString& message,
+                                       const ActAPI_LogArguments&     arguments)
+  {
+    // Try to treat the passed message as a key
+    TCollection_AsciiString formatted = message;
+
+    for ( int i = 1; i <= arguments.Length(); ++i )
+    {
+      TCollection_AsciiString iarg = "%"; iarg += i;
+      const int parg = formatted.Search(iarg);
+      TCollection_AsciiString sarg = getString(arguments.Value(i));
+
+      if ( parg != -1 )
+      {
+        formatted.Remove(parg, iarg.Length());
+        formatted.Insert(parg, sarg);
+      }
+      else
+      {
+        formatted += " ";
+        formatted += sarg;
+      }
+    }
+
+    return formatted;
+  }
+
+  TCollection_AsciiString
+    formatMessage(const TCollection_AsciiString&  message,
+                  const ActAPI_LogMessageSeverity severity,
+                  const ActAPI_LogMessagePriority,
+                  const ActAPI_LogArguments& arguments,
+                  const Handle(Standard_Transient)&)
+  {
+    if ( message.IsEmpty() )
+      return "";
+
+    // Apply arguments.
+    TCollection_AsciiString msg = getFormatted(message, arguments);
+
+    // Generate severity-dependent prefix,
+    TCollection_AsciiString prefix;
+    //
+    if ( severity == Severity_Information )
+    {
+      prefix = "[INFO] ";
+    }
+    else if ( severity == Severity_Notice )
+    {
+      prefix = "[NOTICE] ";
+    }
+    else if ( severity == Severity_Warning )
+    {
+      prefix = "[WARNING] ";
+    }
+    else if ( severity == Severity_Error )
+    {
+      prefix = "[ERROR] ";
+    }
+
+    return prefix + msg;
+  }
+}
 
 //-----------------------------------------------------------------------------
 // THREAD-UNSAFE methods
@@ -174,7 +205,7 @@ void asiAlgo_Logger::Clear()
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
-//!                          is used in case of NULL value passed.
+//!                          is used in case of nullptr value passed.
 void asiAlgo_Logger::Info(const TCollection_AsciiString&    theMessage,
                           const ActAPI_LogMessagePriority   thePriority,
                           const ActAPI_LogArguments&        theArguments,
@@ -192,7 +223,7 @@ void asiAlgo_Logger::Info(const TCollection_AsciiString&    theMessage,
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
-//!                          is used in case of NULL value passed.
+//!                          is used in case of nullptr value passed.
 void asiAlgo_Logger::Notice(const TCollection_AsciiString&    theMessage,
                             const ActAPI_LogMessagePriority   thePriority,
                             const ActAPI_LogArguments&        theArguments,
@@ -210,7 +241,7 @@ void asiAlgo_Logger::Notice(const TCollection_AsciiString&    theMessage,
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
-//!                          is used in case of NULL value passed.
+//!                          is used in case of nullptr value passed.
 void asiAlgo_Logger::Warn(const TCollection_AsciiString&    theMessage,
                           const ActAPI_LogMessagePriority   thePriority,
                           const ActAPI_LogArguments&        theArguments,
@@ -228,7 +259,7 @@ void asiAlgo_Logger::Warn(const TCollection_AsciiString&    theMessage,
 //! \param thePriority  [in] priority of the message.
 //! \param theArguments [in] message arguments.
 //! \param theTimeStamp [in] application-specific timestamp. Current timestamp
-//!                          is used in case of NULL value passed.
+//!                          is used in case of nullptr value passed.
 void asiAlgo_Logger::Error(const TCollection_AsciiString&    theMessage,
                            const ActAPI_LogMessagePriority   thePriority,
                            const ActAPI_LogArguments&        theArguments,
@@ -262,4 +293,19 @@ void asiAlgo_Logger::appendMessage(const TCollection_AsciiString&    theMessage,
                                          theMessage,
                                          theArguments,
                                          theTimeStamp) );
+
+  if ( !m_appenders.IsEmpty() )
+  {
+    TCollection_AsciiString msg = formatMessage(theMessage,
+                                                theSeverity,
+                                                thePriority,
+                                                theArguments,
+                                                theTimeStamp);
+    // Put in all appender streams.
+    for ( int k = 0; k < m_appenders.Length(); ++k )
+    {
+
+      *m_appenders[k] << msg.ToCString() << "\n";
+    }
+  }
 }

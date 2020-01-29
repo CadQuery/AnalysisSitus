@@ -60,13 +60,13 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
   TopoDS_Face face = this->GetFace();
   //
   if ( face.IsNull() )
-    return NULL;
+    return nullptr;
 
   if ( !asiAlgo_Utils::CalculateFaceNormals(face,
                                             this->GetSampleRate(),
                                             m_points,
                                             m_vectors) )
-    return NULL;
+    return nullptr;
 
   // Return
   return m_points;

@@ -86,7 +86,7 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
 
   // Make `c` curves compatible.
   {
-    geom_UnifyBCurves unifyCurves(NULL, NULL);
+    geom_UnifyBCurves unifyCurves(nullptr, nullptr);
     //
     unifyCurves.AddCurve(c0);
     unifyCurves.AddCurve(c1);
@@ -104,7 +104,7 @@ bool asiAlgo_BuildCoonsSurf::performBilinear()
 
   // Make `b` curves compatible.
   {
-    geom_UnifyBCurves unifyCurves(NULL, NULL);
+    geom_UnifyBCurves unifyCurves(nullptr, nullptr);
     //
     unifyCurves.AddCurve(b0);
     unifyCurves.AddCurve(b1);

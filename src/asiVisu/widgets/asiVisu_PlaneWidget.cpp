@@ -168,7 +168,7 @@ asiVisu_PlaneWidget::asiVisu_PlaneWidget() : vtkPolyDataSourceWidget()
   this->PlanePicker->AddPickList(this->LineActor2);
   this->PlanePicker->PickFromListOn();
 
-  this->CurrentHandle = NULL;
+  this->CurrentHandle = nullptr;
 
   this->LastPickValid = 0;
   this->HandleSizeFactor = 1.25;
@@ -290,7 +290,7 @@ void asiVisu_PlaneWidget::SetEnabled(int enabling)
       this->SetCurrentRenderer(this->Interactor->FindPokedRenderer(
         this->Interactor->GetLastEventPosition()[0],
         this->Interactor->GetLastEventPosition()[1]));
-      if (this->CurrentRenderer == NULL)
+      if (this->CurrentRenderer == nullptr)
       {
         return;
       }
@@ -343,7 +343,7 @@ void asiVisu_PlaneWidget::SetEnabled(int enabling)
     this->ConeActor2->SetProperty(this->HandleProperty);
 
     this->SelectRepresentation();
-    this->InvokeEvent(vtkCommand::EnableEvent,NULL);
+    this->InvokeEvent(vtkCommand::EnableEvent,nullptr);
   }
 
   else //disabling----------------------------------------------------------
@@ -375,9 +375,9 @@ void asiVisu_PlaneWidget::SetEnabled(int enabling)
     this->CurrentRenderer->RemoveActor(this->LineActor2);
     this->CurrentRenderer->RemoveActor(this->ConeActor2);
 
-    this->CurrentHandle = NULL;
-    this->InvokeEvent(vtkCommand::DisableEvent,NULL);
-    this->SetCurrentRenderer(NULL);
+    this->CurrentHandle = nullptr;
+    this->InvokeEvent(vtkCommand::DisableEvent,nullptr);
+    this->SetCurrentRenderer(nullptr);
   }
 
   this->Interactor->Render();
@@ -641,12 +641,12 @@ void asiVisu_PlaneWidget::OnStartPinch()
   // Okay, we can process this. try to pick the plane.
   vtkAssemblyPath* path = this->GetAssemblyPath(X, Y, 0., this->PlanePicker);
 
-  if ( path != NULL )
+  if ( path != nullptr )
   {
     this->State = asiVisu_PlaneWidget::Pinching;
     this->HighlightPlane(1);
     this->StartInteraction();
-    this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
+    this->InvokeEvent(vtkCommand::StartInteractionEvent,nullptr);
   }
 }
 
@@ -684,7 +684,7 @@ void asiVisu_PlaneWidget::OnPinch()
   this->PositionHandles();
 
   this->EventCallbackCommand->SetAbortFlag(1);
-  this->InvokeEvent(vtkCommand::InteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::InteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -696,14 +696,14 @@ void asiVisu_PlaneWidget::OnEndPinch()
   }
 
   this->State = asiVisu_PlaneWidget::Start;
-  this->HighlightHandle(NULL);
+  this->HighlightHandle(nullptr);
   this->HighlightPlane(0);
   this->HighlightNormal(0);
   this->SizeHandles();
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->EndInteraction();
-  this->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::EndInteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -723,7 +723,7 @@ void asiVisu_PlaneWidget::OnLeftButtonDown()
   // if no handles picked, then try to pick the plane.
   vtkAssemblyPath* path = this->GetAssemblyPath(X, Y, 0., this->HandlePicker);
 
-  if ( path != NULL )
+  if ( path != nullptr )
   {
     this->State = asiVisu_PlaneWidget::Moving;
     this->HighlightHandle(path->GetFirstNode()->GetViewProp());
@@ -732,7 +732,7 @@ void asiVisu_PlaneWidget::OnLeftButtonDown()
   {
     path = this->GetAssemblyPath(X, Y, 0., this->PlanePicker);
 
-    if ( path != NULL )
+    if ( path != nullptr )
     {
       vtkProp *prop = path->GetFirstNode()->GetViewProp();
       if ( prop == this->ConeActor || prop == this->LineActor ||
@@ -755,14 +755,14 @@ void asiVisu_PlaneWidget::OnLeftButtonDown()
     else
     {
       this->State = asiVisu_PlaneWidget::Outside;
-      this->HighlightHandle(NULL);
+      this->HighlightHandle(nullptr);
       return;
     }
   }
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
-  this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::StartInteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -775,14 +775,14 @@ void asiVisu_PlaneWidget::OnLeftButtonUp()
   }
 
   this->State = asiVisu_PlaneWidget::Start;
-  this->HighlightHandle(NULL);
+  this->HighlightHandle(nullptr);
   this->HighlightPlane(0);
   this->HighlightNormal(0);
   this->SizeHandles();
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->EndInteraction();
-  this->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::EndInteractionEvent,nullptr);
   this->Interactor->Render();
 
   this->UpdateSurfaceNode();
@@ -804,7 +804,7 @@ void asiVisu_PlaneWidget::OnMiddleButtonDown()
   // can start pushing the plane.
   vtkAssemblyPath* path = this->GetAssemblyPath(X, Y, 0., this->HandlePicker);
 
-  if ( path != NULL )
+  if ( path != nullptr )
   {
     this->State = asiVisu_PlaneWidget::Pushing;
     this->HighlightPlane(1);
@@ -815,7 +815,7 @@ void asiVisu_PlaneWidget::OnMiddleButtonDown()
   {
     path = this->GetAssemblyPath(X, Y, 0., this->PlanePicker);
 
-    if ( path == NULL ) //nothing picked
+    if ( path == nullptr ) //nothing picked
     {
       this->State = asiVisu_PlaneWidget::Outside;
       return;
@@ -830,7 +830,7 @@ void asiVisu_PlaneWidget::OnMiddleButtonDown()
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
-  this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::StartInteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -845,12 +845,12 @@ void asiVisu_PlaneWidget::OnMiddleButtonUp()
   this->State = asiVisu_PlaneWidget::Start;
   this->HighlightPlane(0);
   this->HighlightNormal(0);
-  this->HighlightHandle(NULL);
+  this->HighlightHandle(nullptr);
   this->SizeHandles();
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->EndInteraction();
-  this->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::EndInteractionEvent,nullptr);
   this->Interactor->Render();
 
   this->UpdateSurfaceNode();
@@ -872,7 +872,7 @@ void asiVisu_PlaneWidget::OnRightButtonDown()
   // if no handles picked, then pick the bounding box.
   vtkAssemblyPath* path = this->GetAssemblyPath(X, Y, 0., this->HandlePicker);
 
-  if ( path != NULL )
+  if ( path != nullptr )
   {
     this->State = asiVisu_PlaneWidget::Scaling;
     this->HighlightPlane(1);
@@ -882,7 +882,7 @@ void asiVisu_PlaneWidget::OnRightButtonDown()
   {
     path = this->GetAssemblyPath(X, Y, 0., this->PlanePicker);
 
-    if ( path == NULL )
+    if ( path == nullptr )
     {
       this->State = asiVisu_PlaneWidget::Outside;
       return;
@@ -896,7 +896,7 @@ void asiVisu_PlaneWidget::OnRightButtonDown()
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->StartInteraction();
-  this->InvokeEvent(vtkCommand::StartInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::StartInteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -914,7 +914,7 @@ void asiVisu_PlaneWidget::OnRightButtonUp()
 
   this->EventCallbackCommand->SetAbortFlag(1);
   this->EndInteraction();
-  this->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::EndInteractionEvent,nullptr);
   this->Interactor->Render();
 }
 
@@ -1001,7 +1001,7 @@ void asiVisu_PlaneWidget::OnMouseMove()
 
   // Interact, if desired
   this->EventCallbackCommand->SetAbortFlag(1);
-  this->InvokeEvent(vtkCommand::InteractionEvent,NULL);
+  this->InvokeEvent(vtkCommand::InteractionEvent,nullptr);
 
   this->Interactor->Render();
 }
@@ -1719,7 +1719,7 @@ vtkPolyDataAlgorithm *asiVisu_PlaneWidget::GetPolyDataAlgorithm()
 
 void asiVisu_PlaneWidget::GetPlane(vtkPlane *plane)
 {
-  if ( plane == NULL )
+  if ( plane == nullptr )
   {
     return;
   }

@@ -59,16 +59,11 @@ void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&      
 //! \param prsMgr   [in]  presentation manager.
 //! \param edges    [out] result collection.
 //! \param face     [out] base face.
-void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&            partNode,
-                                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                                           TopTools_IndexedMapOfShape&                edges,
-                                           TopoDS_Face&                               face)
+void asiEngine_Domain::GetHighlightedEdges(const Handle(asiData_PartNode)&            asiEngine_NotUsed(partNode),
+                                           const vtkSmartPointer<asiVisu_PrsManager>& asiEngine_NotUsed(prsMgr),
+                                           TopTools_IndexedMapOfShape&                asiEngine_NotUsed(edges),
+                                           TopoDS_Face&                               asiEngine_NotUsed(face))
 {
-  asiEngine_NotUsed(partNode);
-  asiEngine_NotUsed(prsMgr);
-  asiEngine_NotUsed(edges);
-  asiEngine_NotUsed(face);
-
   //// Get Part shape
   //TopoDS_Shape part = partNode->GetShape();
 

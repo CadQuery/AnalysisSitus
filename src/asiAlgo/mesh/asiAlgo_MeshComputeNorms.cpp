@@ -41,7 +41,7 @@
 asiAlgo_MeshComputeNorms::asiAlgo_MeshComputeNorms(const Handle(ActData_Mesh)& mesh,
                                                    ActAPI_ProgressEntry        progress,
                                                    ActAPI_PlotterEntry         plotter)
-: m_mesh(mesh), ActAPI_IAlgorithm(progress, plotter)
+: ActAPI_IAlgorithm(progress, plotter), m_mesh(mesh)
 {}
 
 //-----------------------------------------------------------------------------
@@ -116,7 +116,6 @@ gp_Vec asiAlgo_MeshComputeNorms::computeElemNorm(const Handle(ActData_Mesh_Eleme
 
     gp_Vec P0P1 = P1.XYZ() - P0.XYZ();
     gp_Vec P0P2 = P2.XYZ() - P0.XYZ();
-    gp_Vec P1P2 = P2.XYZ() - P1.XYZ();
     //
     res = P0P1.Crossed(P0P2);
     //
@@ -135,9 +134,6 @@ gp_Vec asiAlgo_MeshComputeNorms::computeElemNorm(const Handle(ActData_Mesh_Eleme
     gp_Vec P0P1 = P1.XYZ() - P0.XYZ();
     gp_Vec P0P2 = P2.XYZ() - P0.XYZ();
     gp_Vec P0P3 = P3.XYZ() - P0.XYZ();
-    gp_Vec P1P2 = P2.XYZ() - P1.XYZ();
-    gp_Vec P2P3 = P3.XYZ() - P2.XYZ();
-    gp_Vec P1P3 = P3.XYZ() - P1.XYZ();
 
     gp_Vec QuadNorm1 = P0P1.Crossed(P0P2);
     gp_Vec QuadNorm2 = P0P2.Crossed(P0P3);
@@ -156,7 +152,7 @@ void asiAlgo_MeshComputeNorms::elementNodes(const Handle(ActData_Mesh_Element)& 
 {
   nodes.clear();
   int  numNodes = elem->NbNodes();
-  int* nodeIDs  = NULL;
+  int* nodeIDs  = nullptr;
 
   if ( numNodes == 3 )
   {

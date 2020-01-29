@@ -44,7 +44,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_CurvatureCombsSource);
+vtkStandardNewMacro(asiVisu_CurvatureCombsSource)
 
 //-----------------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ int asiVisu_CurvatureCombsSource::RequestData(vtkInformation*        request,
 {
   if ( m_curve.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL curve" );
+    vtkErrorMacro( << "Invalid domain: nullptr curve" );
     return 0;
   }
 

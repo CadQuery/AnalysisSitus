@@ -63,7 +63,7 @@ Handle(asiData_TessNormsNode)
   Handle(ActData_Mesh) mesh = tessNode->GetMesh();
   //
   if ( mesh.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Compute normal vectors.
   asiAlgo_MeshComputeNorms algo(mesh, m_progress, m_plotter);

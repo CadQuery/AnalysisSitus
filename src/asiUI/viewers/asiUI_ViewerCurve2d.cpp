@@ -74,8 +74,8 @@ asiUI_ViewerCurve2d::asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& pr
   m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout* pBaseLayout = new QVBoxLayout();
+  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout*            pBaseLayout = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);

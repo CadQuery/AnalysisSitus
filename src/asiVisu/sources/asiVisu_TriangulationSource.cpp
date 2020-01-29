@@ -51,7 +51,7 @@
 
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_TriangulationSource);
+vtkStandardNewMacro(asiVisu_TriangulationSource)
 
 //-----------------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ int asiVisu_TriangulationSource::RequestData(vtkInformation*        request,
 {
   if ( m_triangulation.IsNull() )
   {
-    vtkErrorMacro( << "Invalid input: NULL triangulation" );
+    vtkErrorMacro( << "Invalid input: nullptr triangulation" );
     return 0;
   }
 

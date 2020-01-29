@@ -103,10 +103,8 @@ void asiData_BVHAttr::Restore(const Handle(TDF_Attribute)& mainAttr)
 //! \param[in] into       where to paste.
 //! \param[in] relocTable relocation table.
 void asiData_BVHAttr::Paste(const Handle(TDF_Attribute)&       into,
-                            const Handle(TDF_RelocationTable)& relocTable) const
+                            const Handle(TDF_RelocationTable)& asiData_NotUsed(relocTable)) const
 {
-  asiData_NotUsed(relocTable);
-
   Handle(asiData_BVHAttr) intoCasted = Handle(asiData_BVHAttr)::DownCast(into);
   intoCasted->SetBVH(m_BVH);
 }

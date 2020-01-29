@@ -55,22 +55,22 @@ public:
 
   //! Creates an empty Modifier.
   asiAlgo_EXPORT
-    asiAlgo_BRepNormalizer(ActAPI_ProgressEntry progress = NULL,
-                           ActAPI_PlotterEntry  plotter = NULL);
+    asiAlgo_BRepNormalizer(ActAPI_ProgressEntry progress = nullptr,
+                           ActAPI_PlotterEntry  plotter = nullptr);
 
   //! Creates a modifier on the shape <S>.
   asiAlgo_EXPORT
     asiAlgo_BRepNormalizer(const TopoDS_Shape&  S,
-                           ActAPI_ProgressEntry progress = NULL,
-                           ActAPI_PlotterEntry  plotter  = NULL);
+                           ActAPI_ProgressEntry progress = nullptr,
+                           ActAPI_PlotterEntry  plotter  = nullptr);
 
   //! Creates a modifier on  the shape <S>, and performs
   //! the modifications described by <M>.
   asiAlgo_EXPORT
     asiAlgo_BRepNormalizer(const TopoDS_Shape&                      S,
                            const Handle(asiAlgo_BRepNormalization)& M,
-                           ActAPI_ProgressEntry                     progress = NULL,
-                           ActAPI_PlotterEntry                      plotter  = NULL);
+                           ActAPI_ProgressEntry                     progress = nullptr,
+                           ActAPI_PlotterEntry                      plotter  = nullptr);
 
 public:
 

@@ -288,12 +288,10 @@ void asiVisu_TriangulationPrs::afterUpdatePipelines() const
 //! \param[in] renderer  renderer.
 //! \param[in] pickRes   picking results.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        renderer,
+void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        asiVisu_NotUsed(renderer),
                                          const Handle(asiVisu_PickerResult)& pickRes,
                                          const asiVisu_SelectionNature       selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Can react on cell picking only.
   Handle(asiVisu_CellPickerResult)
     cellPickRes = Handle(asiVisu_CellPickerResult)::DownCast(pickRes);
@@ -373,11 +371,9 @@ void asiVisu_TriangulationPrs::highlight(vtkRenderer*                        ren
 //! Callback for highlighting reset.
 //! \param[in] renderer  renderer.
 //! \param[in] selNature selection nature (picking or detecting).
-void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  renderer,
+void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  asiVisu_NotUsed(renderer),
                                            const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   Handle(asiVisu_TriangulationPipeline)
     mainPl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
   //
@@ -396,20 +392,15 @@ void asiVisu_TriangulationPrs::unHighlight(vtkRenderer*                  rendere
 
 //! Callback for rendering.
 //! \param[in] renderer renderer.
-void asiVisu_TriangulationPrs::renderPipelines(vtkRenderer* renderer) const
+void asiVisu_TriangulationPrs::renderPipelines(vtkRenderer* asiVisu_NotUsed(renderer)) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Do nothing...
 }
 
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param[in] renderer renderer.
-void asiVisu_TriangulationPrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_TriangulationPrs::deRenderPipelines(vtkRenderer*) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Do nothing...
 }

@@ -66,10 +66,10 @@ public:
     QWidget* pWidget; //!< Widget used to handle the data.
 
     //! Default constructor.
-    t_view() : pWidget(NULL) {}
+    t_view() : pWidget(nullptr) {}
 
     //! \return true if the View has not been initialized.
-    bool IsNull() const { return pWidget == NULL; }
+    bool IsNull() const { return pWidget == nullptr; }
 
     //! Assignment operator.
     //! \param OtherView [in] another View to copy into this.
@@ -100,7 +100,7 @@ public:
 public:
 
   asiUI_PrimDataView(const Handle(asiEngine_Model)& model,
-                     QObject*                       parent = NULL)
+                     QObject*                       parent = nullptr)
   //
   : QObject(parent), m_model(model), m_streamChunk(Chunk_Data) {}
 
@@ -109,7 +109,7 @@ public:
 public:
 
   virtual bool
-    ViewToData(QWidget* pView = NULL);
+    ViewToData(QWidget* pView = nullptr);
 
   virtual bool
     DataToView();

@@ -44,7 +44,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(asiVisu_MeshENScalarFilter);
+vtkStandardNewMacro(asiVisu_MeshENScalarFilter)
 
 //! Default constructor.
 asiVisu_MeshENScalarFilter::asiVisu_MeshENScalarFilter()
@@ -150,12 +150,6 @@ int asiVisu_MeshENScalarFilter::RequestData(vtkInformation*,
 
     // Create new points for this cell
     aNewPointIds->Reset();
-
-    bool isTriangle;
-    if ( aNbCellPoints == 3 )
-      isTriangle = true;
-    else
-      isTriangle = false;
 
     double aCellScalars[] = {0.0, 0.0, 0.0, 0.0};
 

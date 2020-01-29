@@ -34,11 +34,10 @@
 //-----------------------------------------------------------------------------
 
 //! Constructor accepting all necessary facilities.
-asiUI_ControlsModelingListener::asiUI_ControlsModelingListener(asiUI_ControlsModeling*               wControls,
-                                                               const Handle(asiUI_CommonFacilities)& cf)
+//! \param[in] wControls listened control.
+asiUI_ControlsModelingListener::asiUI_ControlsModelingListener(asiUI_ControlsModeling* wControls)
 : QObject     (),
-  m_wControls (wControls),
-  m_cf        (cf)
+  m_wControls (wControls)
 {}
 
 //-----------------------------------------------------------------------------

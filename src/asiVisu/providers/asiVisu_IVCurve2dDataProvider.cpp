@@ -66,7 +66,7 @@ Handle(Geom2d_Curve) asiVisu_IVCurve2dDataProvider::GetCurve2d(double& f, double
     curve_n = Handle(asiData_IVCurve2dNode)::DownCast(m_node);
   //
   if ( curve_n.IsNull() || !curve_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   Handle(Geom_Surface) surf;
   return curve_n->GetCONS(surf, f, l);
@@ -75,7 +75,7 @@ Handle(Geom2d_Curve) asiVisu_IVCurve2dDataProvider::GetCurve2d(double& f, double
 //! Not used.
 Handle(Geom_Curve) asiVisu_IVCurve2dDataProvider::GetCurve(double&, double&) const
 {
-  return NULL;
+  return nullptr;
 }
 
 //! Returns ID of the Data Node which is being sourced by the visualization

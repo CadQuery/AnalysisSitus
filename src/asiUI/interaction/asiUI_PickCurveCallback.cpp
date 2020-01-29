@@ -44,7 +44,7 @@
 
 asiUI_PickCurveCallback* asiUI_PickCurveCallback::New()
 {
-  return new asiUI_PickCurveCallback(NULL);
+  return new asiUI_PickCurveCallback(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,12 +61,10 @@ asiUI_PickCurveCallback::~asiUI_PickCurveCallback()
 
 //-----------------------------------------------------------------------------
 
-void asiUI_PickCurveCallback::Execute(vtkObject*    pCaller,
+void asiUI_PickCurveCallback::Execute(vtkObject*    asiUI_NotUsed(pCaller),
                                       unsigned long eventId,
                                       void*         pCallData)
 {
-  asiUI_NotUsed(pCaller);
-
   asiEngine_IV IV(m_model, m_notifier, m_plotter);
   gp_XYZ       pos, norm;
 

@@ -420,7 +420,7 @@ QStandardItem* asiUI_DatumViewModel::HeaderItem(const Qt::Orientation theHeader,
 {
   if ( !theIndex.IsValid() )
   {
-    return NULL;
+    return nullptr;
   }
 
   if ( theIndex.IsSection() )
@@ -441,7 +441,7 @@ QStandardItem* asiUI_DatumViewModel::HeaderItem(const Qt::Orientation theHeader,
         ? m_horSectionIndexMap
         : m_verSectionIndexMap;
     
-    return aSectionItemMap.value(theIndex, NULL);
+    return aSectionItemMap.value(theIndex, nullptr);
   }
 
   if ( theIndex.IsBand() )
@@ -454,7 +454,7 @@ QStandardItem* asiUI_DatumViewModel::HeaderItem(const Qt::Orientation theHeader,
     return aBandItemModel->item( theIndex.GetBandLine(), theIndex.GetSection() );
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! Adds new header group definition. Raises program error if the group is
@@ -609,17 +609,15 @@ void asiUI_DatumViewModel::ResetBandHeader(const Qt::Orientation theHeader)
 //! \param theParent [in] the parent index to insert at.
 //! \param theFirst [in] the first row.
 //! \param theLast [in] the last row.
-void asiUI_DatumViewModel::OnRowsInserted(const QModelIndex& theParent, int theFirst, int theLast)
+void asiUI_DatumViewModel::OnRowsInserted(const QModelIndex& asiUI_NotUsed(theParent), int theFirst, int theLast)
 {
-  asiUI_NotUsed(theParent);
-
   m_verBandModel->insertColumns(theFirst, theLast - theFirst + 1);
 
   QStandardItem* aAppendItem = m_verSectionModel->invisibleRootItem();
 
   if ( theFirst != 0 )
   {
-    QStandardItem* anItem = m_verSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(theFirst), NULL );
+    QStandardItem* anItem = m_verSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(theFirst), nullptr );
 
     if ( anItem && anItem->parent() )
     {
@@ -641,17 +639,15 @@ void asiUI_DatumViewModel::OnRowsInserted(const QModelIndex& theParent, int theF
 //! \param theParent [in] the parent index to insert at.
 //! \param theFirst [in] the first row.
 //! \param theLast [in] the last row.
-void asiUI_DatumViewModel::OnRowsRemoved(const QModelIndex& theParent, int theFirst, int theLast)
+void asiUI_DatumViewModel::OnRowsRemoved(const QModelIndex& asiUI_NotUsed(theParent), int theFirst, int theLast)
 {
-  asiUI_NotUsed(theParent);
-
   m_verBandModel->removeRows(theFirst, theLast - theFirst + 1);
 
   QList<QStandardItem*> anItems;
 
   for ( int it = theFirst; it <= theLast; ++it )
   {
-    anItems.append( m_verSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(it), NULL ) );
+    anItems.append( m_verSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(it), nullptr ) );
   }
 
   QList<QStandardItem*>::iterator anIt = anItems.begin();
@@ -687,17 +683,15 @@ void asiUI_DatumViewModel::OnRowsRemoved(const QModelIndex& theParent, int theFi
 //! \param theParent [in] the parent index to insert at.
 //! \param theFirst [in] the first row.
 //! \param theLast [in] the last row.
-void asiUI_DatumViewModel::OnColumnsInserted(const QModelIndex& theParent, int theFirst, int theLast)
+void asiUI_DatumViewModel::OnColumnsInserted(const QModelIndex& asiUI_NotUsed(theParent), int theFirst, int theLast)
 {
-  asiUI_NotUsed(theParent);
-
   m_horBandModel->insertColumns(theFirst, theLast - theFirst + 1);
 
   QStandardItem* aAppendItem = m_horSectionModel->invisibleRootItem();
 
   if ( theFirst != 0 )
   {
-    QStandardItem* anItem = m_horSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(theFirst), NULL );
+    QStandardItem* anItem = m_horSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(theFirst), nullptr );
 
     if ( anItem && anItem->parent() )
     {
@@ -719,17 +713,15 @@ void asiUI_DatumViewModel::OnColumnsInserted(const QModelIndex& theParent, int t
 //! \param theParent [in] the parent index to insert at.
 //! \param theFirst [in] the first row.
 //! \param theLast [in] the last row.
-void asiUI_DatumViewModel::OnColumnsRemoved(const QModelIndex& theParent, int theFirst, int theLast)
+void asiUI_DatumViewModel::OnColumnsRemoved(const QModelIndex& asiUI_NotUsed(theParent), int theFirst, int theLast)
 {
-  asiUI_NotUsed(theParent);
-
   m_horBandModel->removeRows(theFirst, theLast - theFirst + 1);
 
   QList<QStandardItem*> anItems;
 
   for ( int it = theFirst; it <= theLast; ++it )
   {
-    anItems.append( m_horSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(it), NULL ) );
+    anItems.append( m_horSectionIndexMap.value( asiUI_HeaderIndex::UnitarySection(it), nullptr ) );
   }
 
   QList<QStandardItem*>::iterator anIt = anItems.begin();

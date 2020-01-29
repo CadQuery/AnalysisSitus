@@ -62,7 +62,6 @@ public:
   {
     Pipeline_Main = 1,
     Pipeline_Contour,
-	Pipeline_Octree
   };
 
 public:
@@ -111,12 +110,12 @@ public:
 
   vtkActor* MainActor() const
   {
-    return this->GetPipeline(Pipeline_Main).IsNull() ? NULL : this->GetPipeline(Pipeline_Main)->Actor();
+    return this->GetPipeline(Pipeline_Main).IsNull() ? nullptr : this->GetPipeline(Pipeline_Main)->Actor();
   }
 
   vtkActor* ContourActor() const
   {
-    return this->GetPipeline(Pipeline_Contour).IsNull() ? NULL : this->GetPipeline(Pipeline_Contour)->Actor();
+    return this->GetPipeline(Pipeline_Contour).IsNull() ? nullptr : this->GetPipeline(Pipeline_Contour)->Actor();
   }
 
 private:

@@ -242,7 +242,7 @@ asiUI_DatumPathItem::PathEditImpl::PathEditImpl(const QString& theDictId,
                                                  QWidget* theParent,
                                                  const int theFlags)
 : asiUI_Datum::DatumImpl<QDS_Datum>(theDictId, theParent, theFlags),
-  m_PathCompleter(NULL)
+  m_PathCompleter(nullptr)
 {
   //
 }
@@ -285,10 +285,8 @@ void asiUI_DatumPathItem::PathEditImpl::SetPathCompleter(QCompleter* theComplete
 
 //! Notify about text changing in the line edit.
 //! \param theStr [in] current text in the line edit widget.
-void asiUI_DatumPathItem::PathEditImpl::onTextChanged(const QString& theStr)
+void asiUI_DatumPathItem::PathEditImpl::onTextChanged(const QString& asiUI_NotUsed(theStr))
 {
-  asiUI_NotUsed(theStr);
-
   invalidateCache();
 
   onParamChanged();

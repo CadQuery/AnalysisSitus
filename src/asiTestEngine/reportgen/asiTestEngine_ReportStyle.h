@@ -104,7 +104,7 @@ public:
     asiTestEngine_ReportStyle();
 
   asiTestEngine_EXPORT
-    asiTestEngine_ReportStyle(int);
+    asiTestEngine_ReportStyle(std::nullptr_t);
 
   asiTestEngine_EXPORT
     asiTestEngine_ReportStyle(const asiTestEngine_ReportStyle& copy);
@@ -188,32 +188,32 @@ private:
   //! Style descriptor.
   struct TProps
   {
-    bool IsBorder()     const { return (pPxBorder   != NULL); }
-    bool IsBgColor()    const { return (pBgColor    != NULL); }
-    bool IsColor()      const { return (pColor      != NULL); }
-    bool IsFontFamily() const { return (pFontFamily != NULL); }
-    bool IsFontSize()   const { return (pPxFont     != NULL); }
-    bool IsFontWeight() const { return (pFontWeight != NULL); }
-    bool IsFontStyle()  const { return (pFontStyle  != NULL); }
-    bool IsTextAlign()  const { return (pTextAlign  != NULL); }
-    bool IsVertAlign()  const { return (pVertAlign  != NULL); }
-    bool IsPadding()    const { return (pPxPadding  != NULL); }
-    bool IsWidth()      const { return (pWidth      != NULL); }
+    bool IsBorder()     const { return (pPxBorder   != nullptr); }
+    bool IsBgColor()    const { return (pBgColor    != nullptr); }
+    bool IsColor()      const { return (pColor      != nullptr); }
+    bool IsFontFamily() const { return (pFontFamily != nullptr); }
+    bool IsFontSize()   const { return (pPxFont     != nullptr); }
+    bool IsFontWeight() const { return (pFontWeight != nullptr); }
+    bool IsFontStyle()  const { return (pFontStyle  != nullptr); }
+    bool IsTextAlign()  const { return (pTextAlign  != nullptr); }
+    bool IsVertAlign()  const { return (pVertAlign  != nullptr); }
+    bool IsPadding()    const { return (pPxPadding  != nullptr); }
+    bool IsWidth()      const { return (pWidth      != nullptr); }
 
     //! Default constructor.
-    TProps() : pPxBorder(NULL),
-               pPxPadding(NULL),
-               pPxFont(NULL),
-               pBgColor(NULL),
-               pColor(NULL),
-               pFontFamily(NULL),
-               pFontWeight(NULL),
-               pFontStyle(NULL),
-               pTextAlign(NULL),
-               pVertAlign(NULL),
-               pWidth(NULL) {}
+    TProps() : pPxBorder(nullptr),
+               pPxPadding(nullptr),
+               pPxFont(nullptr),
+               pBgColor(nullptr),
+               pColor(nullptr),
+               pFontFamily(nullptr),
+               pFontWeight(nullptr),
+               pFontStyle(nullptr),
+               pTextAlign(nullptr),
+               pVertAlign(nullptr),
+               pWidth(nullptr) {}
 
-    //! Returns true if all properties are nulls.
+    //! Returns true if all properties are nullptrs.
     //! \return true/false.
     bool IsNull() const
     {

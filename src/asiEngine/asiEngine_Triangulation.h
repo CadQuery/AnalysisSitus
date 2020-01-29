@@ -52,8 +52,8 @@ public:
   //! \param[in] plotter  imperative plotter.
   asiEngine_Triangulation(const Handle(asiEngine_Model)&             model,
                           const vtkSmartPointer<asiVisu_PrsManager>& prsMgr,
-                          ActAPI_ProgressEntry                       progress = NULL,
-                          ActAPI_PlotterEntry                        plotter  = NULL)
+                          ActAPI_ProgressEntry                       progress = nullptr,
+                          ActAPI_PlotterEntry                        plotter  = nullptr)
   //
   : asiEngine_Base (model, progress, plotter),
     m_prsMgr       (prsMgr)
@@ -64,11 +64,11 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiEngine_Triangulation(const Handle(asiEngine_Model)& model,
-                          ActAPI_ProgressEntry           progress = NULL,
-                          ActAPI_PlotterEntry            plotter  = NULL)
+                          ActAPI_ProgressEntry           progress = nullptr,
+                          ActAPI_PlotterEntry            plotter  = nullptr)
   //
   : asiEngine_Base (model, progress, plotter),
-    m_prsMgr       (NULL)
+    m_prsMgr       (nullptr)
   {}
 
 public:

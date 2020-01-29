@@ -50,7 +50,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BCurveKnotsSource);
+vtkStandardNewMacro(asiVisu_BCurveKnotsSource)
 
 //! Default constructor.
 asiVisu_BCurveKnotsSource::asiVisu_BCurveKnotsSource() : vtkPolyDataAlgorithm()

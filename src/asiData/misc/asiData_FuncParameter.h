@@ -52,11 +52,6 @@ class asiData_FuncDTO : public ActData_ParameterDTO
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_FuncDTO, ActData_ParameterDTO)
-
-public:
-
   //! Constructor accepting GID.
   //! \param GID [in] GID.
   asiData_FuncDTO(const ActAPI_ParameterGID& GID) : ActData_ParameterDTO(GID, Parameter_UNDEFINED) {}
@@ -75,11 +70,6 @@ public:
 template <typename T_VARIABLE>
 class asiData_FuncParameter : public ActData_UserParameter
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_FuncParameter, ActData_UserParameter)
-
 public:
 
   //! Ensures correct construction of the Parameter object, e.g. prevents
@@ -135,7 +125,7 @@ public:
     dataLab.FindAttribute(asiData_FuncAttr<T_VARIABLE>::GUID(), attr);
     //
     if ( attr.IsNull() )
-      return NULL;
+      return nullptr;
 
     return attr->GetFunction();
   }

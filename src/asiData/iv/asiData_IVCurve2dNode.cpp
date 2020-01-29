@@ -66,7 +66,7 @@ void asiData_IVCurve2dNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
   //
-  this->SetCONS(NULL, NULL, 0.0, 0.0);
+  this->SetCONS(nullptr, nullptr, 0.0, 0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,13 +105,13 @@ Handle(Geom2d_Curve)
   TopoDS_Shape curveSh = ActParamTool::AsShape( this->Parameter(PID_Curve) )->GetShape();
   //
   if ( curveSh.IsNull() || curveSh.ShapeType() != TopAbs_EDGE )
-    return NULL;
+    return nullptr;
 
   // Get stored host surface
   TopoDS_Shape surfSh = ActParamTool::AsShape( this->Parameter(PID_Surface) )->GetShape();
   //
   if ( surfSh.IsNull() || surfSh.ShapeType() != TopAbs_FACE )
-    return NULL;
+    return nullptr;
 
   // Extract host surface
   const TopoDS_Face& F = TopoDS::Face(surfSh);

@@ -46,7 +46,7 @@ class asiVisu_PartEdgesPipeline : public asiVisu_PartPipelineBase
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartEdgesPipeline, asiVisu_Pipeline)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_PartEdgesPipeline, asiVisu_PartPipelineBase)
 
 public:
 

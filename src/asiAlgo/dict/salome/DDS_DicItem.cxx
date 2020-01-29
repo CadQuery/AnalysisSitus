@@ -744,26 +744,26 @@ void DDS_DicItem::FillDataMap( TCollection_AsciiString theID, const LDOM_Element
         aDefV.RemoveAll( ' ' );
         LDOM_Element foundListItem;
         for ( LDOM_Element aListItem = theCompElement.GetChildByTagName( DDS_Dictionary::KeyWord( "VALUE_LIST" ) );
-              aListItem != NULL && foundListItem == NULL; aListItem = aListItem.GetSiblingByTagName() )
+              aListItem != nullptr && foundListItem == nullptr; aListItem = aListItem.GetSiblingByTagName() )
         {
           if ( aListItem.getAttribute( DDS_Dictionary::KeyWord( "VALUE_LIST_ID" ) ).equals( aListId ) )
             foundListItem = aListItem;
 
         }
         for ( LDOM_Element aLstItem = theDocElement.GetChildByTagName( DDS_Dictionary::KeyWord( "VALUE_LIST" ) );
-              aLstItem != NULL && foundListItem == NULL; aLstItem = aLstItem.GetSiblingByTagName() )
+              aLstItem != nullptr && foundListItem == nullptr; aLstItem = aLstItem.GetSiblingByTagName() )
         {
           if ( aLstItem.getAttribute( DDS_Dictionary::KeyWord( "VALUE_LIST_ID" ) ).equals( aListId ) )
             foundListItem = aLstItem;
         }
 
-        if ( foundListItem != NULL )
+        if ( foundListItem != nullptr )
         {
           //  The appropriate list of values is found: store the list name
           aListName = foundListItem.getAttribute( DDS_Dictionary::KeyWord( "VALUE_LIST_NAME" ) );
           //  Iteration through the list of values
           LDOM_Element aListItemValue = foundListItem.GetChildByTagName( DDS_Dictionary::KeyWord( "VALUE_LIST_VALUE" ) );
-          while ( aListItemValue != NULL )
+          while ( aListItemValue != nullptr )
           {
             // read value ID
             TCollection_AsciiString aListValueID = aListItemValue.getAttribute( DDS_Dictionary::KeyWord( "VALUE_LIST_VALUEID" ) );

@@ -89,14 +89,14 @@ Handle(asiAlgo_BVHFacets) asiData_BVHParameter::GetBVH()
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_BVH, false);
   //
   if ( dataLab.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get BVH attribute
   Handle(asiData_BVHAttr) attr;
   dataLab.FindAttribute(asiData_BVHAttr::GUID(), attr);
   //
   if ( attr.IsNull() )
-    return NULL;
+    return nullptr;
 
   return attr->GetBVH();
 }

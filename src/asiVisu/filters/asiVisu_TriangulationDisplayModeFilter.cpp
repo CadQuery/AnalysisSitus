@@ -166,7 +166,7 @@ int asiVisu_TriangulationDisplayModeFilter::RequestData(vtkInformation*        p
   {
     vtkDataArray* pInArr  = pInputCellData->GetArray(i);
 
-    if ( !_strcmpi( pInArr->GetName(), ARRNAME_MESH_ELEM_IDS ) )
+    if ( !strcasecmp( pInArr->GetName(), ARRNAME_MESH_ELEM_IDS ) )
       continue;
 
     vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );

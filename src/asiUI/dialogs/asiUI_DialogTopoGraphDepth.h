@@ -58,7 +58,7 @@ public:
                              const TopoDS_Shape&            partShape,
                              asiUI_ViewerPart*              partViewer,
                              ActAPI_ProgressEntry           progress,
-                             QWidget*                       parent = NULL);
+                             QWidget*                       parent = nullptr);
 
   virtual ~asiUI_DialogTopoGraphDepth();
 
@@ -79,16 +79,16 @@ protected:
     QCheckBox*   pColorizeLocations; //!< Whether to colorize locations.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pOpen              (NULL),
-                  pDepth             (NULL),
-                  pColorizeLocations (NULL)
+    t_widgets() : pOpen              (nullptr),
+                  pDepth             (nullptr),
+                  pColorizeLocations (nullptr)
     {}
 
     void Release()
     {
-      delete pOpen;              pOpen              = NULL;
-      delete pDepth;             pDepth             = NULL;
-      delete pColorizeLocations; pColorizeLocations = NULL;
+      delete pOpen;              pOpen              = nullptr;
+      delete pDepth;             pDepth             = nullptr;
+      delete pColorizeLocations; pColorizeLocations = nullptr;
     }
   };
 

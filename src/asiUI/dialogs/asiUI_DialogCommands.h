@@ -56,7 +56,7 @@ public:
 
   asiUI_DialogCommands(const Handle(asiTcl_Interp)& interp,
                        ActAPI_ProgressEntry         notifier,
-                       QWidget*                     parent = NULL);
+                       QWidget*                     parent = nullptr);
 
   virtual ~asiUI_DialogCommands();
 
@@ -73,11 +73,11 @@ private:
   {
     QTableWidget* pCommands; //!< Table with commands.
 
-    t_widgets() : pCommands(NULL) {}
+    t_widgets() : pCommands(nullptr) {}
 
     void Release()
     {
-      delete pCommands; pCommands = NULL;
+      delete pCommands; pCommands = nullptr;
     }
   };
 

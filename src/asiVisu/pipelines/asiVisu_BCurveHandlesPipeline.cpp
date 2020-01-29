@@ -101,10 +101,12 @@ void asiVisu_BCurveHandlesPipeline::SetInput(const Handle(asiVisu_DataProvider)&
 
       // Set active handle ID if any.
       if ( m_bAllowSelection )
+      {
         if ( m_iForcedActiveHandle != -1 )
           bHandlesSrc->SetActiveHandle( m_iForcedActiveHandle );
         else
           bHandlesSrc->SetActiveHandle( dp->GetActiveHandle() );
+      }
 
       // Connect data source to the pipeline.
       this->SetInputConnection( bHandlesSrc->GetOutputPort() );

@@ -28,8 +28,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-// Windows includes
-#include <windows.h>
+#ifdef _WIN32
+  // Windows includes
+  #include <windows.h>
+#endif
 
 // Own include
 #include <asiTestEngine_Launcher.h>
@@ -302,14 +304,16 @@ bool asiTestEngine_Launcher::generateReport(std::ostream* out) const
   std::string
     fullDirName = asiAlgo_Utils::Str::Slashed( asiAlgo_Utils::Env::AsiTestDumping() ) + dirName;
 
+#ifdef _WIN32
   // TODO: for Windows only (!!!)
   // Create directory
-  if ( !CreateDirectory(fullDirName.c_str(), NULL) )
+  if ( !CreateDirectory(fullDirName.c_str(), nullptr) )
   {
     if ( out )
       *out << "\tFailed to create directory: " << fullDirName.c_str() << "\n";
     return false;
   }
+#endif
 
   // Filename for HTML report
   std::string

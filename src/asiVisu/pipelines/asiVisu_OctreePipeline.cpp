@@ -86,7 +86,8 @@ void asiVisu_OctreePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
   {
     m_source = vtkSmartPointer<asiVisu_OctreeSource>::New();
     //
-    m_source->SetInputOctree(pOctree);
+    m_source->SetInputOctree      ( pOctree );
+    m_source->SetZeroCrossingOnly ( provider->IsZeroCrossingOnly() );
 
     // Initialize pipeline
     this->SetInputConnection( m_source->GetOutputPort() );

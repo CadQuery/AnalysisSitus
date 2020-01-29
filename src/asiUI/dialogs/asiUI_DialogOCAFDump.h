@@ -54,7 +54,7 @@ public:
   asiUI_EXPORT
     asiUI_DialogOCAFDump(const Handle(ActAPI_IModel)& model,
                          ActAPI_ProgressEntry         progress,
-                         QWidget*                     parent = NULL);
+                         QWidget*                     parent = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_DialogOCAFDump();
@@ -77,14 +77,14 @@ protected:
     QTextEdit*    pEditor; //!< Text editor.
     QPushButton*  pClose;  //!< Close button.
 
-    t_base_widgets() : pEditor (NULL),
-                       pClose  (NULL)
+    t_base_widgets() : pEditor (nullptr),
+                       pClose  (nullptr)
     {}
 
     void Release()
     {
-      delete pEditor; pEditor = NULL;
-      delete pClose;  pClose = NULL;
+      delete pEditor; pEditor = nullptr;
+      delete pClose;  pClose = nullptr;
     }
   };
 

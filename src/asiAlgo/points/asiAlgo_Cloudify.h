@@ -50,8 +50,8 @@ public:
 
   asiAlgo_EXPORT
     asiAlgo_Cloudify(const double         uv_step  = 1.0,
-                     ActAPI_ProgressEntry progress = NULL,
-                     ActAPI_PlotterEntry  plotter  = NULL);
+                     ActAPI_ProgressEntry progress = nullptr,
+                     ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 

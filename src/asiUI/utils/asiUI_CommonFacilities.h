@@ -75,9 +75,9 @@ public:
       return;
 
     // Get all presentation managers
-    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
-    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
-    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : nullptr;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : nullptr;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : nullptr;
 
     for ( Handle(ActAPI_IChildIterator) cit = this->Model->GetRootNode()->GetChildIterator(true);
          cit->More(); cit->Next() )
@@ -107,9 +107,9 @@ public:
       return;
 
     // Get all presentation managers
-    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
-    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
-    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : nullptr;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : nullptr;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : nullptr;
 
     if ( partPM && partPM->IsPresented(N) )
       partPM->Actualize(N);
@@ -138,9 +138,9 @@ public:
       return;
 
     // Get all presentation managers.
-    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : NULL;
-    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : NULL;
-    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : NULL;
+    asiVisu_PrsManager* partPM   = this->ViewerPart   ? this->ViewerPart->PrsMgr()   : nullptr;
+    asiVisu_PrsManager* hostPM   = this->ViewerDomain ? this->ViewerDomain->PrsMgr() : nullptr;
+    asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : nullptr;
 
     if ( partPM )
       partPM->ActualizeCol(nodes, false, false, true, true, false);
@@ -166,9 +166,9 @@ public:
                            const bool          repaint)
   {
     // Get all presentation managers
-    asiVisu_PrsManager* partPM   = pViewerPart   ? pViewerPart->PrsMgr()   : NULL;
-    asiVisu_PrsManager* hostPM   = pViewerDomain ? pViewerDomain->PrsMgr() : NULL;
-    asiVisu_PrsManager* domainPM = pViewerHost   ? pViewerHost->PrsMgr()   : NULL;
+    asiVisu_PrsManager* partPM   = pViewerPart   ? pViewerPart->PrsMgr()   : nullptr;
+    asiVisu_PrsManager* hostPM   = pViewerDomain ? pViewerDomain->PrsMgr() : nullptr;
+    asiVisu_PrsManager* domainPM = pViewerHost   ? pViewerHost->PrsMgr()   : nullptr;
 
     // Update viewers
     if ( partPM )   partPM   ->DeleteAllPresentations();

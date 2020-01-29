@@ -62,7 +62,7 @@ struct asiAlgo_PointWithAttr
   asiAlgo_PointWithAttr(const TCoord _coord    = TCoord(),
                         const int    _status   = 0,
                         const size_t _index    = 0,
-                        void*        _data_ptr = NULL) : Coord(_coord), Status(_status), Index(_index), pData(_data_ptr) {}
+                        void*        _data_ptr = nullptr) : Coord(_coord), Status(_status), Index(_index), pData(_data_ptr) {}
 
   bool operator>  (const asiAlgo_PointWithAttr&) const { return false; }
   bool operator== (const asiAlgo_PointWithAttr&) const { return false; }
@@ -97,11 +97,6 @@ struct asiAlgo_PointWithAttr
 template <typename TCoord>
 class asiAlgo_PointWithAttrCloud : public Standard_Transient
 {
-public:
-
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_PointWithAttrCloud<TCoord>, Standard_Transient)
-
 public:
 
   //! Default ctor.

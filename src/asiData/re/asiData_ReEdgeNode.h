@@ -92,8 +92,8 @@ public:
   //! \param[in] vfirst handle of the first vertex of the edge.
   //! \param[in] vlast  handle of the second vertex of the edge.
   asiData_EXPORT void
-    Init(const Handle(asiData_ReVertexNode)& vfirst = NULL,
-         const Handle(asiData_ReVertexNode)& vlast  = NULL);
+    Init(const Handle(asiData_ReVertexNode)& vfirst = nullptr,
+         const Handle(asiData_ReVertexNode)& vlast  = nullptr);
 
 // Generic naming support:
 public:

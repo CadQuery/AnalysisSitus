@@ -43,10 +43,18 @@ message (STATUS "... Mobius Debug Binary  dirs: ${3RDPARTY_mobius_DLL_DIR_DEBUG}
 
 #--------------------------------------------------------------------------
 # Installation
+#--------------------------------------------------------------------------
+
 if (WIN32)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusCore.dll DESTINATION bin)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusBSpl.dll DESTINATION bin)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusPoly.dll DESTINATION bin)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusGeom.dll DESTINATION bin)
   install (FILES ${3RDPARTY_mobius_DLL_DIR}/mobiusCascade.dll DESTINATION bin)
+else()
+  install (FILES ${3RDPARTY_mobius_LIBRARY_DIR}/libmobiusCore.so DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_LIBRARY_DIR}/libmobiusBSpl.so DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_LIBRARY_DIR}/libmobiusPoly.so DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_LIBRARY_DIR}/libmobiusGeom.so DESTINATION bin)
+  install (FILES ${3RDPARTY_mobius_LIBRARY_DIR}/libmobiusCascade.so DESTINATION bin)
 endif()

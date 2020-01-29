@@ -40,8 +40,10 @@
 // Active Data includes
 #include <ActAPI_IProgressNotifier.h>
 
-// TBB includes
-#include <atomic.h>
+#ifdef USE_TBB
+  // TBB includes
+  #include <atomic.h>
+#endif
 
 // QT includes
 #pragma warning(push, 0)

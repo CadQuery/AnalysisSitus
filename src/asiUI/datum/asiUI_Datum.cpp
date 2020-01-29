@@ -181,7 +181,7 @@ QString asiUI_Datum::GetDisplayedString(const bool theLongFmt) const
 {
   DatumImplInterface* aFmwkImpl = dynamic_cast<DatumImplInterface*>( getDatum() );
 
-  return (aFmwkImpl != NULL)
+  return (aFmwkImpl != nullptr)
     ? aFmwkImpl->GetFormatted(theLongFmt)
     : getDatum()->getString();
 }
@@ -584,7 +584,7 @@ asiUI_Datum::DatumImpl<base_t>::DatumImpl(const QString& theDictId,
 template <typename base_t>
 void asiUI_Datum::DatumImpl<base_t>::ColorizeText(const QColor& theColor)
 {
-  QWidget* aControl = controlWidget();
+  QWidget* aControl = base_t::controlWidget();
   if ( !aControl )
     return;
 
@@ -599,10 +599,10 @@ void asiUI_Datum::DatumImpl<base_t>::ColorizeText(const QColor& theColor)
 template <typename base_t>
 QString asiUI_Datum::DatumImpl<base_t>::GetFormatted(const bool theLongFmt)
 {
-  QString aValue = getString();
-  if ( m_Fmt && !(flags() & NotFormat) )
+  QString aValue = base_t::getString();
+  if ( m_Fmt && !(base_t::flags() & NotFormat) )
   {
-    switch ( type() )
+    switch ( base_t::type() )
     {
       case DDS_DicItem::Integer: return m_Fmt->Format(aValue.toInt(),    theLongFmt);
       case DDS_DicItem::Float:   return m_Fmt->Format(aValue.toDouble(), theLongFmt);
@@ -622,23 +622,23 @@ QString asiUI_Datum::DatumImpl<base_t>::GetFormatted(const bool theLongFmt)
 template <typename base_t>
 QValidator* asiUI_Datum::DatumImpl<base_t>::validator(const bool theLimits) const
 {
-  if ( type() == DDS_DicItem::Float )
+  if ( base_t::type() == DDS_DicItem::Float )
   {
-    asiUI_Datum::DoubleValidator* aDoubleVal = 
-      new asiUI_Datum::DoubleValidator( filter(), false, (QObject*)this );
+    asiUI_Datum::DoubleValidator* aDoubleVal =
+      new asiUI_Datum::DoubleValidator( base_t::filter(), false, (QObject*)this );
 
     bool isOk;
     double aLimit;
 
-    aLimit = minValue().toDouble(&isOk);
+    aLimit = base_t::minValue().toDouble(&isOk);
     if (isOk && theLimits)
       aDoubleVal->setBottom(aLimit);
 
-    aLimit = maxValue().toDouble(&isOk);
+    aLimit = base_t::maxValue().toDouble(&isOk);
     if (isOk && theLimits)
       aDoubleVal->setTop(aLimit);
 
-    Handle(DDS_DicItem) anItem = dicItem();
+    Handle(DDS_DicItem) anItem = base_t::dicItem();
     if ( !anItem.IsNull() ) 
     {
       aDoubleVal->SetFixupFormat( m_Fmt, isLongFmt() );
@@ -675,24 +675,24 @@ bool asiUI_Datum::DatumImpl<base_t>::validate(const QString& theString) const
 template <typename base_t>
 QString asiUI_Datum::DatumImpl<base_t>::formatValue(const int theValue) const
 {
-  if ( m_Fmt == NULL || flags() & QDS_Datum::NotFormat )
+  if ( m_Fmt == nullptr || base_t::flags() & QDS_Datum::NotFormat )
   {
-    switch ( type() )
+    switch ( base_t::type() )
     {
       case DDS_DicItem::Float:
-        return QString::number((double)theValue, 'g', 16);
+        return QString::number( (double) theValue, 'g', 16 );
 
       default:
         return QString::number(theValue);
     }
   }
 
-  switch ( type() )
+  switch ( base_t::type() )
   {
     case DDS_DicItem::Integer:
     case DDS_DicItem::Float:
     case DDS_DicItem::String:
-      return m_Fmt->Format( (double)theValue, isLongFmt() );
+      return m_Fmt->Format( (double) theValue, isLongFmt() );
 
     default:
       return QString::number(theValue);
@@ -705,20 +705,20 @@ QString asiUI_Datum::DatumImpl<base_t>::formatValue(const int theValue) const
 template <typename base_t>
 QString asiUI_Datum::DatumImpl<base_t>::formatValue(const double theValue) const
 {
-  if ( m_Fmt == NULL || flags() & QDS_Datum::NotFormat )
+  if ( m_Fmt == nullptr || base_t::flags() & QDS_Datum::NotFormat )
   {
-    switch ( type() )
+    switch ( base_t::type() )
     {
       case DDS_DicItem::List:
       case DDS_DicItem::Integer:
-        return QString::number((int)theValue);
+        return QString::number( (int) theValue );
 
       default:
         return QString::number(theValue, 'g', 16);
     }
   }
 
-  switch ( type() )
+  switch ( base_t::type() )
   {
     case DDS_DicItem::Float:
     case DDS_DicItem::Integer:
@@ -726,7 +726,7 @@ QString asiUI_Datum::DatumImpl<base_t>::formatValue(const double theValue) const
       return m_Fmt->Format( theValue, isLongFmt() );
 
     case DDS_DicItem::List:
-      return QString::number((int)theValue);
+      return QString::number( (int) theValue );
 
     default:
       return QString::number(theValue, 'g', 16);
@@ -739,12 +739,12 @@ QString asiUI_Datum::DatumImpl<base_t>::formatValue(const double theValue) const
 template <typename base_t>
 QString asiUI_Datum::DatumImpl<base_t>::formatValue(const QString& theValue) const
 {
-  if ( m_Fmt == NULL || flags() & QDS_Datum::NotFormat )
+  if ( m_Fmt == nullptr || base_t::flags() & QDS_Datum::NotFormat )
   {
     return theValue;
   }
 
-  int aType = type();
+  int aType = base_t::type();
   switch (aType)
   {
     case DDS_DicItem::Float:
@@ -756,7 +756,7 @@ QString asiUI_Datum::DatumImpl<base_t>::formatValue(const QString& theValue) con
         return "";
 
       bool isDouble = (aType == DDS_DicItem::Float);
-      if (m_Fmt != NULL) 
+      if (m_Fmt != nullptr) 
         return m_Fmt->Format( aValue, isLongFmt() );
 
       return isDouble
@@ -876,7 +876,7 @@ void asiUI_Datum::DoubleValidator::fixup(QString& theInput) const
     return;
 
   m_fixupCache.StrBefore = theInput;
-  m_fixupCache.StrFixup  = (m_fixupFmt != NULL)
+  m_fixupCache.StrFixup  = (m_fixupFmt != nullptr)
     ? m_fixupFmt->Format(aDoubleValue, m_bLongFmt)
     : theInput;
 
@@ -923,7 +923,7 @@ asiUI_Datum::FormattedLineEdit::FormattedLineEdit(const asiUI_DatumFormatPtr& th
 //! \param theEvent [in] the paint event to be processed.
 void asiUI_Datum::FormattedLineEdit::paintEvent(QPaintEvent* theEvent)
 {
-  if (m_fmt == NULL || hasSelectedText() || hasFocus())
+  if (m_fmt == nullptr || hasSelectedText() || hasFocus())
   {
     return QDS_LineEdit::Editor::paintEvent(theEvent);
   }
@@ -955,8 +955,8 @@ void asiUI_Datum::FormattedLineEdit::paintEvent(QPaintEvent* theEvent)
 //                 Common template declaration
 // ============================================================================
 
-template asiUI_Datum::DatumImpl<QDS_Datum>;
-template asiUI_Datum::DatumImpl<QDS_LineEdit>;
-template asiUI_Datum::DatumImpl<QDS_CheckBox>;
-template asiUI_Datum::DatumImpl<QDS_SpinBox>;
-template asiUI_Datum::DatumImpl<QDS_SpinBoxDbl>;
+template class asiUI_Datum::DatumImpl<QDS_Datum>;
+template class asiUI_Datum::DatumImpl<QDS_LineEdit>;
+template class asiUI_Datum::DatumImpl<QDS_CheckBox>;
+template class asiUI_Datum::DatumImpl<QDS_SpinBox>;
+template class asiUI_Datum::DatumImpl<QDS_SpinBoxDbl>;

@@ -61,8 +61,8 @@ void asiData_IVPointSetNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
   //
-  this->SetPoints(NULL);
-  this->SetFilter(NULL);
+  this->SetPoints(nullptr);
+  this->SetFilter(nullptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ void asiData_IVPointSetNode::SetPoints(const Handle(asiAlgo_BaseCloud<double>)& 
 {
   Handle(TColStd_HArray1OfReal) arr = asiAlgo_PointCloudUtils::AsRealArray(points);
   //
-  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? NULL : arr );
+  ActParamTool::AsRealArray( this->Parameter(PID_Geometry) )->SetArray( points.IsNull() ? nullptr : arr );
 }
 
 //! \return persistent filter.

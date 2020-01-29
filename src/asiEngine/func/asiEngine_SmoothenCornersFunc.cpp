@@ -110,11 +110,9 @@ bool asiEngine_SmoothenCornersFunc::MustExecuteIntact(const Handle(ActAPI_HParam
 //-----------------------------------------------------------------------------
 
 int asiEngine_SmoothenCornersFunc::execute(const Handle(ActAPI_HParameterList)& inputs,
-                                           const Handle(ActAPI_HParameterList)& outputs,
+                                           const Handle(ActAPI_HParameterList)& asiEngine_NotUsed(outputs), // All the job is done by service API.
                                            const Handle(Standard_Transient)&    userData) const
 {
-  asiEngine_NotUsed(outputs); // All the job is done by service API.
-
   // Get Data Model.
   Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast(userData);
 
@@ -150,9 +148,8 @@ ActAPI_ParameterTypeStream
 
 //-----------------------------------------------------------------------------
 
-bool asiEngine_SmoothenCornersFunc::validateOutput(const Handle(ActAPI_HParameterList)& outputs) const
+bool asiEngine_SmoothenCornersFunc::validateOutput(const Handle(ActAPI_HParameterList)& asiEngine_NotUsed(outputs)) const
 {
-  asiEngine_NotUsed(outputs);
   return true;
 }
 

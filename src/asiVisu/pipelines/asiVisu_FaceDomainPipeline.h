@@ -93,8 +93,8 @@ private:
 private:
 
   bool                                 m_bDefaultColorScheme; //!< Indicates whether to use a default color scheme.
-  bool                                 m_bForced;             //!< Forced update.
   bool                                 m_bMapperColorsSet;    //!< Boolean flag indicating whether lookup table is set.
+  bool                                 m_bForced;             //!< Forced update.
   vtkSmartPointer<vtkIdTypeArray>      m_selected;            //!< Poles selected for visualization.
   vtkSmartPointer<vtkSelectionNode>    m_selectionNode;       //!< VTK selection node.
   vtkSmartPointer<vtkSelection>        m_selection;           //!< VTK selection.

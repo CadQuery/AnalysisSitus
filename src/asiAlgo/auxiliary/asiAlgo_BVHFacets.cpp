@@ -59,10 +59,10 @@ asiAlgo_BVHFacets::asiAlgo_BVHFacets(const TopoDS_Shape&  model,
                                      const BuilderType    builderType,
                                      ActAPI_ProgressEntry progress,
                                      ActAPI_PlotterEntry  plotter)
-: BVH_PrimitiveSet<double, 4> (),
+: BVH_PrimitiveSet<double, 3> (),
+  m_fBoundingDiag             (0.0),
   m_progress                  (progress),
-  m_plotter                   (plotter),
-  m_fBoundingDiag             (0.0)
+  m_plotter                   (plotter)
 {
   this->init(model, builderType);
   this->MarkDirty();
@@ -79,10 +79,10 @@ asiAlgo_BVHFacets::asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
                                      const BuilderType                 builderType,
                                      ActAPI_ProgressEntry              progress,
                                      ActAPI_PlotterEntry               plotter)
-: BVH_PrimitiveSet<double, 4> (),
+: BVH_PrimitiveSet<double, 3> (),
+m_fBoundingDiag               (0.0),
   m_progress                  (progress),
-  m_plotter                   (plotter),
-  m_fBoundingDiag             (0.0)
+  m_plotter                   (plotter)
 {
   this->init(mesh, builderType);
   this->MarkDirty();
@@ -101,9 +101,9 @@ int asiAlgo_BVHFacets::Size() const
 //! Builds an elementary box for a facet with the given index.
 //! \param[in] index index of the facet of interest.
 //! \return AABB for the facet of interest.
-BVH_Box<double, 4> asiAlgo_BVHFacets::Box(const int index) const
+BVH_Box<double, 3> asiAlgo_BVHFacets::Box(const int index) const
 {
-  BVH_Box<double, 4> box;
+  BVH_Box<double, 3> box;
   const t_facet& facet = m_facets[index];
 
   box.Add(facet.P0);
@@ -146,9 +146,9 @@ void asiAlgo_BVHFacets::Swap(const int index1, const int index2)
 
 //! Returns vertices for a facet with the given 0-based index.
 inline void asiAlgo_BVHFacets::GetVertices(const int  index,
-                                           BVH_Vec4d& vertex1,
-                                           BVH_Vec4d& vertex2,
-                                           BVH_Vec4d& vertex3) const
+                                           BVH_Vec3d& vertex1,
+                                           BVH_Vec3d& vertex2,
+                                           BVH_Vec3d& vertex3) const
 {
   const t_facet& facet = m_facets[index];
 
@@ -172,7 +172,7 @@ double asiAlgo_BVHFacets::GetBoundingDiag() const
 void asiAlgo_BVHFacets::Dump(ActAPI_PlotterEntry IV)
 {
   // Access (build) hierarchy of boxes
-  const opencascade::handle<BVH_Tree<double, 4>>& bvh = this->BVH();
+  const opencascade::handle<BVH_Tree<double, 3>>& bvh = this->BVH();
   //
   if ( bvh.IsNull() )
   {
@@ -193,10 +193,10 @@ void asiAlgo_BVHFacets::Dump(ActAPI_PlotterEntry IV)
 
     if ( !it.IsLeaf() )
     {
-      const BVH_Vec4d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
-      const BVH_Vec4d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
-      const BVH_Vec4d& minCorner_Right = bvh->MinPoint( nodeData.z() );
-      const BVH_Vec4d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
+      const BVH_Vec3d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
+      const BVH_Vec3d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
+      const BVH_Vec3d& minCorner_Right = bvh->MinPoint( nodeData.z() );
+      const BVH_Vec3d& maxCorner_Right = bvh->MaxPoint( nodeData.z() );
 
       // Left box
       {
@@ -317,9 +317,9 @@ bool asiAlgo_BVHFacets::init(const TopoDS_Shape& model,
 
   // Prepare builder
   if ( builderType == Builder_Binned )
-    myBuilder = new BVH_BinnedBuilder<double, 4, 32>(5, 32);
+    myBuilder = new BVH_BinnedBuilder<double, 3, 32>(5, 32);
   else
-    myBuilder = new BVH_LinearBuilder<double, 4>(5, 32);
+    myBuilder = new BVH_LinearBuilder<double, 3>(5, 32);
 
   // Explode shape on faces to get face indices
   TopTools_IndexedMapOfShape faces;
@@ -354,9 +354,9 @@ bool asiAlgo_BVHFacets::init(const Handle(Poly_Triangulation)& mesh,
 {
   // Prepare builder
   if ( builderType == Builder_Binned )
-    myBuilder = new BVH_BinnedBuilder<double, 4, 32>(5, 32);
+    myBuilder = new BVH_BinnedBuilder<double, 3, 32>(5, 32);
   else
-    myBuilder = new BVH_LinearBuilder<double, 4>(5, 32);
+    myBuilder = new BVH_LinearBuilder<double, 3>(5, 32);
 
   // Initialize with the passed facets
   if ( !this->addTriangulation(mesh, TopLoc_Location(), -1) )
@@ -427,9 +427,9 @@ bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& trian
     t_facet facet(face_idx == -1 ? elemId : face_idx);
 
     // Initialize nodes
-    facet.P0 = BVH_Vec4d(P0.X(), P0.Y(), P0.Z(), 0.0);
-    facet.P1 = BVH_Vec4d(P1.X(), P1.Y(), P1.Z(), 0.0);
-    facet.P2 = BVH_Vec4d(P2.X(), P2.Y(), P2.Z(), 0.0);
+    facet.P0 = BVH_Vec3d( P0.X(), P0.Y(), P0.Z() );
+    facet.P1 = BVH_Vec3d( P1.X(), P1.Y(), P1.Z() );
+    facet.P2 = BVH_Vec3d( P2.X(), P2.Y(), P2.Z() );
 
     // Initialize normal
     gp_Vec V1(P0, P1); V1.Normalize();

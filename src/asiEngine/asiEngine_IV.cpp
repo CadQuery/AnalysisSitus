@@ -224,9 +224,9 @@ void asiEngine_IV::Clean(const TCollection_AsciiString& name)
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVPointSet2dNode)
   asiEngine_IV::Find_PointSet2d(const TCollection_AsciiString& name)
 {
@@ -244,7 +244,7 @@ Handle(asiData_IVPointSet2dNode)
       return Handle(asiData_IVPointSet2dNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -320,9 +320,9 @@ void asiEngine_IV::Clean_Points2d()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVPointSetNode)
   asiEngine_IV::Find_PointSet(const TCollection_AsciiString& name)
 {
@@ -340,7 +340,7 @@ Handle(asiData_IVPointSetNode)
       return Handle(asiData_IVPointSetNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -414,9 +414,9 @@ Handle(asiData_IVCurveNode) asiEngine_IV::Get_LastCurve()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVCurveNode)
   asiEngine_IV::Find_Curve(const TCollection_AsciiString& name)
 {
@@ -435,7 +435,7 @@ Handle(asiData_IVCurveNode)
       return Handle(asiData_IVCurveNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -455,7 +455,7 @@ Handle(asiData_IVCurveNode)
                              const bool                     useAutoNaming)
 {
   if ( curve.IsNull() )
-    return NULL;
+    return nullptr;
 
   Handle(asiData_IVCurveNode)
     item_n = this->Create_Curve(name, useAutoNaming);
@@ -636,9 +636,9 @@ void asiEngine_IV::ActivateCurveRepers(const bool          on,
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVCurve2dNode)
   asiEngine_IV::Find_Curve2d(const TCollection_AsciiString& name)
 {
@@ -656,7 +656,7 @@ Handle(asiData_IVCurve2dNode)
       return Handle(asiData_IVCurve2dNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -676,7 +676,7 @@ Handle(asiData_IVCurve2dNode)
                                const bool                     useAutoNaming)
 {
   if ( curve.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Access Model and parent Node
   Handle(asiData_IVCurves2dNode) IV_Parent = m_model->GetIVNode()->Curves2d();
@@ -755,9 +755,9 @@ void asiEngine_IV::Clean_Curves2d()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVSurfaceNode)
   asiEngine_IV::Find_Surface(const TCollection_AsciiString& name)
 {
@@ -775,7 +775,7 @@ Handle(asiData_IVSurfaceNode)
       return Handle(asiData_IVSurfaceNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -799,7 +799,7 @@ Handle(asiData_IVSurfaceNode)
                                const bool                     useAutoNaming)
 {
   if ( surface.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Access Model and parent Node
   Handle(asiData_IVSurfacesNode) IV_Parent = m_model->GetIVNode()->Surfaces();
@@ -835,7 +835,7 @@ Handle(asiData_SurfDeviationNode)
                                         const Handle(asiData_IVSurfaceNode)& parent)
 {
   if ( parent.IsNull() || !parent->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Add new Node to the corresponding Partition.
   Handle(asiData_SurfDeviationNode)
@@ -907,9 +907,9 @@ void asiEngine_IV::Clean_Surfaces()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVTopoItemNode)
   asiEngine_IV::Find_TopoItem(const TCollection_AsciiString& name)
 {
@@ -927,7 +927,7 @@ Handle(asiData_IVTopoItemNode)
       return Handle(asiData_IVTopoItemNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -993,9 +993,9 @@ void asiEngine_IV::Clean_Topo()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVTessItemNode)
   asiEngine_IV::Find_TessItem(const TCollection_AsciiString& name)
 {
@@ -1013,7 +1013,7 @@ Handle(asiData_IVTessItemNode)
       return Handle(asiData_IVTessItemNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1084,9 +1084,9 @@ void asiEngine_IV::Clean_Tess()
 
 //-----------------------------------------------------------------------------
 
-//! Finds Node with the given name. Returns null if nothing is found.
+//! Finds Node with the given name. Returns nullptr if nothing is found.
 //! \param name [in] target name.
-//! \return found Node (the first one if several exist) or null.
+//! \return found Node (the first one if several exist) or nullptr.
 Handle(asiData_IVTextItemNode)
   asiEngine_IV::Find_TextItem(const TCollection_AsciiString& name)
 {
@@ -1104,7 +1104,7 @@ Handle(asiData_IVTextItemNode)
       return Handle(asiData_IVTextItemNode)::DownCast(node);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------

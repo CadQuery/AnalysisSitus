@@ -87,8 +87,8 @@ bool asiEngine_PatchJointAdaptor::Init(const Handle(asiData_ReEdgeNode)& edgeNod
 
   // Initialize base class.
   asiAlgo_PatchJointAdaptor::Init( m_edge->GetCurve(),
-                                   m_patchLeft.IsNull()  ? NULL : Handle(Geom_BSplineSurface)::DownCast( m_patchLeft->GetSurface() ),
-                                   m_patchRight.IsNull() ? NULL : Handle(Geom_BSplineSurface)::DownCast( m_patchRight->GetSurface() ) );
+                                   m_patchLeft.IsNull()  ? nullptr : Handle(Geom_BSplineSurface)::DownCast( m_patchLeft->GetSurface() ),
+                                   m_patchRight.IsNull() ? nullptr : Handle(Geom_BSplineSurface)::DownCast( m_patchRight->GetSurface() ) );
 
   if ( m_patchLeft.IsNull() || m_patchRight.IsNull() )
   {
@@ -254,11 +254,6 @@ bool
 
   return true; // Success.
 #else
-  asiAlgo_NotUsed(curveLeft);
-  asiAlgo_NotUsed(sameSenseLeft);
-  asiAlgo_NotUsed(curveRight);
-  asiAlgo_NotUsed(sameSenseRight);
-
   m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return false;
 #endif
@@ -287,7 +282,7 @@ Handle(Geom_Curve)
   if ( !this->AnalyzeJoint(edgeNode->GetCurve(), surf,
                            isSurfGoesU, isLeftBound,
                            uMin, uMax, vMin, vMax) )
-    return NULL;
+    return nullptr;
 
   // Apply small shift to have a nice margin for graphical representation.
   const double uDelta = (uMax - uMin)*0.1;

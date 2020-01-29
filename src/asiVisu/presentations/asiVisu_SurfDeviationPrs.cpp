@@ -118,10 +118,7 @@ void asiVisu_SurfDeviationPrs::renderPipelines(vtkRenderer* renderer) const
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param[in] renderer renderer.
-void asiVisu_SurfDeviationPrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_SurfDeviationPrs::deRenderPipelines(vtkRenderer*)  const
 {
-  asiVisu_NotUsed(renderer);
-
   m_scalarBarWidget->Off();
 }

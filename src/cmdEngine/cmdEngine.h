@@ -32,7 +32,7 @@
 #ifndef cmdEngine_h
 #define cmdEngine_h
 
-#define cmdEngine_NotUsed(x) x
+#define cmdEngine_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef cmdEngine_EXPORTS

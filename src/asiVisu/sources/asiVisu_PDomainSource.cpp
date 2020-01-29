@@ -50,7 +50,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_PDomainSource);
+vtkStandardNewMacro(asiVisu_PDomainSource)
 
 //! Default constructor.
 asiVisu_PDomainSource::asiVisu_PDomainSource()
@@ -116,7 +116,7 @@ int asiVisu_PDomainSource::RequestData(vtkInformation*        request,
 {
   if ( m_face.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: NULL face" );
+    vtkErrorMacro( << "Invalid domain: nullptr face" );
     return 0;
   }
 

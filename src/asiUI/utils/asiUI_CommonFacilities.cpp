@@ -39,13 +39,13 @@
 asiUI_CommonFacilities::asiUI_CommonFacilities()
 //
 : Standard_Transient (),
-  MainWindow         (NULL),
-  ObjectBrowser      (NULL),
-  ViewerPart         (NULL),
-  ViewerDomain       (NULL),
-  ViewerHost         (NULL),
-  UnitManager        (NULL),
-  ParamEditor        (NULL)
+  MainWindow         (nullptr),
+  ObjectBrowser      (nullptr),
+  ViewerPart         (nullptr),
+  ViewerDomain       (nullptr),
+  ViewerHost         (nullptr),
+  UnitManager        (nullptr),
+  ParamEditor        (nullptr)
 //
 {
   WidgetFactory = new asiUI_WidgetFactory(this);

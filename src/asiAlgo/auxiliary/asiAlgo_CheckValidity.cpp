@@ -328,7 +328,7 @@ namespace CheckShapeAux
                       const TopoDS_Shape&       shape)
   {
     if ( progress.Access().IsNull() )
-      return; // Cannot dump to NULL Logger
+      return; // Cannot dump to null Logger
 
     progress.SendLogMessage(LogErr(Normal) << "Shape is invalid.");
 
@@ -599,7 +599,7 @@ namespace CheckShapeAux
     }
   }
 
-};
+} // CheckShapeAux namespace.
 
 //-----------------------------------------------------------------------------
 

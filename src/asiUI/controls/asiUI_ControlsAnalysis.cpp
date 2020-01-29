@@ -1175,7 +1175,7 @@ void asiUI_ControlsAnalysis::classifyDihAngle(const TopoDS_Face&          F,
   // Check angle between the two faces.
   TopTools_IndexedMapOfShape commonEdges;
   asiAlgo_CheckDihedralAngle dihAngle(m_notifier,
-                                      verboseOutput ? m_plotter : NULL);
+                                      verboseOutput ? m_plotter : nullptr);
   //
   double angRad = 0.0;
 

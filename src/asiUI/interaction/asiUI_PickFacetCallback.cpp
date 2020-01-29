@@ -49,7 +49,7 @@
 //! \return instance of the callback class.
 asiUI_PickFacetCallback* asiUI_PickFacetCallback::New()
 {
-  return new asiUI_PickFacetCallback(NULL, NULL);
+  return new asiUI_PickFacetCallback(nullptr, nullptr);
 }
 
 //! Constructor accepting owning viewer as a parameter.

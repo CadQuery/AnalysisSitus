@@ -48,7 +48,7 @@ Handle(Standard_Type) asiVisu_ReEdgeCurveDataProvider::GetCurveType() const
   Handle(Geom_Curve) curve = m_node->GetCurve();
   //
   if ( curve.IsNull() )
-    return NULL;
+    return nullptr;
 
   return curve->DynamicType();
 }

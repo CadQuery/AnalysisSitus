@@ -139,7 +139,7 @@ protected:
 
   //! Host viewer. Notice that lifetime of a Callback instance can be longer
   //! that the lifetime of the viewer because user may close that window. In
-  //! that case make sure that SetWindow(NULL) is called in order to keep the
+  //! that case make sure that SetWindow(nullptr) is called in order to keep the
   //! callbacks in a consistent (not initialized however) states.
   asiUI_Viewer* m_pViewer;
 

@@ -89,14 +89,14 @@ Handle(asiAlgo_Naming) asiData_NamingParameter::GetNaming()
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_Naming, false);
   //
   if ( dataLab.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get Naming attribute
   Handle(asiData_NamingAttr) attr;
   dataLab.FindAttribute(asiData_NamingAttr::GUID(), attr);
   //
   if ( attr.IsNull() )
-    return NULL;
+    return nullptr;
 
   return attr->GetNaming();
 }

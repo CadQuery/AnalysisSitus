@@ -162,7 +162,7 @@ QToolButton* asiUI_DatumCustomSelector::Editor::GetButton() const
 //! \return value string.
 QString asiUI_DatumCustomSelector::Editor::getString() const
 {
-  return (GetValueView() == NULL) ? QString() : GetValueView()->text();
+  return (GetValueView() == nullptr) ? QString() : GetValueView()->text();
 }
 
 //! Set value string.

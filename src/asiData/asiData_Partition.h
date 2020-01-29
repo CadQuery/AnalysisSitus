@@ -43,11 +43,6 @@ class asiData_Partition : public ActData_BasePartition
 {
 public:
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_Partition, ActData_BasePartition)
-
-public:
-
   //! Instantiation routine.
   //! \return instance of Mesh Partition.
   static Handle(asiData_Partition<TNodeType>) Instance()

@@ -57,7 +57,7 @@ void asiData_IVPointSet2dNode::Init()
   // Initialize name Parameter
   this->InitParameter(PID_Name, "Name");
   //
-  this->SetPoints(NULL);
+  this->SetPoints(nullptr);
 }
 
 //-----------------------------------------------------------------------------

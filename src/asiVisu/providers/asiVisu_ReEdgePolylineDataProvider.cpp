@@ -49,7 +49,7 @@ Handle(asiAlgo_BaseCloud<double>)
     edge_n = Handle(asiData_ReEdgeNode)::DownCast(m_node);
   //
   if ( edge_n.IsNull() || !edge_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Prepare result.
   Handle(asiAlgo_BaseCloud<double>) res = new asiAlgo_BaseCloud<double>;

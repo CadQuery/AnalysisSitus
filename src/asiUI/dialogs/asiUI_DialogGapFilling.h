@@ -62,7 +62,7 @@ public:
                          asiUI_ViewerPart*                          pViewer,
                          ActAPI_ProgressEntry                       progress,
                          ActAPI_PlotterEntry                        plotter,
-                         QWidget*                                   parent = NULL);
+                         QWidget*                                   parent = nullptr);
 
   virtual ~asiUI_DialogGapFilling();
 
@@ -82,16 +82,16 @@ protected:
     QCheckBox*   pAutoComplete; //!< Indicates whether to complete edge loop.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pPerform      (NULL),
-                  pOrder        (NULL),
-                  pAutoComplete (NULL)
+    t_widgets() : pPerform      (nullptr),
+                  pOrder        (nullptr),
+                  pAutoComplete (nullptr)
     {}
 
     void Release()
     {
-      delete pPerform;      pPerform      = NULL;
-      delete pOrder;        pOrder        = NULL;
-      delete pAutoComplete; pAutoComplete = NULL;
+      delete pPerform;      pPerform      = nullptr;
+      delete pOrder;        pOrder        = nullptr;
+      delete pAutoComplete; pAutoComplete = nullptr;
     }
   };
 

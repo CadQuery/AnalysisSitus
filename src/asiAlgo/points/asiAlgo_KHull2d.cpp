@@ -55,6 +55,21 @@
 template class asiAlgo_KHull2d<gp_XY>;
 
 //-----------------------------------------------------------------------------
+// Custom data associated with each point in a cloud
+//-----------------------------------------------------------------------------
+
+//! Custom data associated with each point.
+struct t_point_data
+{
+  t_point_data() : Dist(0.0), Idx(0) {}
+  t_point_data(const double _d, const int _i) : Dist(_d), Idx(_i) {}
+
+  double Dist; //!< Distance.
+  double Ang;  //!< Angle.
+  int    Idx;  //!< Zero-based index of point in the initial cloud.
+};
+
+//-----------------------------------------------------------------------------
 
 //! Comparator for points by their associated distances.
 template <typename TPoint>
@@ -105,21 +120,6 @@ public:
 
   const std::vector< asiAlgo_PointWithAttr<TPoint> >& m_points; //!< Collection of points.
 
-};
-
-//-----------------------------------------------------------------------------
-// Custom data associated with each point in a cloud
-//-----------------------------------------------------------------------------
-
-//! Custom data associated with each point.
-struct t_point_data
-{
-  t_point_data() : Dist(0.0), Idx(0) {}
-  t_point_data(const double _d, const int _i) : Dist(_d), Idx(_i) {}
-
-  double Dist; //!< Distance.
-  double Ang;  //!< Angle.
-  int    Idx;  //!< Zero-based index of point in the initial cloud.
 };
 
 //-----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ Handle(asiAlgo_PointWithAttrCloud<TPoint>)
   {
     asiAlgo_PointWithAttr<TPoint> P( cloud->GetElement(idx) );
     P.Status = 0;
-    P.pData  = NULL;
+    P.pData  = nullptr;
 
     // Add to result.
     res->AddElement(P);
@@ -333,7 +333,7 @@ bool asiAlgo_KHull2d<TPoint>::perform(Handle(asiAlgo_PointWithAttrCloud<TPoint>)
     int  i            = 0;
     int  cPoint_index = 0;
 
-    while ( its && ( i < cPoints_indices.size() ) )
+    while ( its && ( i < int( cPoints_indices.size() ) ) )
     {
       cPoint_index = cPoints_indices.at(i++);
       const asiAlgo_PointWithAttr<TPoint>& cPoint = dataset->GetElement(cPoint_index);
@@ -521,7 +521,7 @@ std::vector<int>
   for ( int idx = 0; idx < cloud->GetNumberOfElements(); ++idx )
   {
     asiAlgo_PointWithAttr<TPoint>& P = cloud->ChangeElement(idx);
-    delete P.pData; P.pData = NULL;
+    delete P.pData; P.pData = nullptr;
   }
 
   return res;
@@ -659,20 +659,12 @@ std::vector<int>
   std::vector< asiAlgo_PointWithAttr<TPoint> > PointRefs;
 
   // Loop over the candidate links.
-  for ( int i = 0; i < point_indices.size(); ++i )
+  for ( int i = 0; i < int( point_indices.size() ); ++i )
   {
     // Next candidate link.
     const int                      next_idx = point_indices.at(i);
     asiAlgo_PointWithAttr<TPoint>& P        = dataset->ChangeElement(next_idx);
     gp_Dir2d                       PNext    = P.Coord - PLast;
-
-//#if defined DRAW_DEBUG
-//    if ( m_iIterNum == 171 )
-//    {
-//      DRAW_INITGROUP(sample)
-//      DRAW_POINT(gp_Pnt2d(P.Coord), sample, Draw_vert, Draw_Losange)
-//    }
-//#endif
 
     // Check angle.
     double ang = gp_Vec2d(PNext).Angle(seedDir);
@@ -702,7 +694,7 @@ std::vector<int>
   std::sort( PointRefs.begin(), PointRefs.end(), AngleComparator<TPoint>(PointRefs) );
 
   std::vector<int> res;
-  for ( int i = 0; i < PointRefs.size(); ++i ) // TODO: the order depends on orientation (!)
+  for ( int i = 0; i < int( PointRefs.size() ); ++i ) // TODO: the order depends on orientation (!)
   {
     const int idx = (*( (t_point_data*) (PointRefs[i].pData) )).Idx;
     res.push_back( (int) idx );
@@ -713,10 +705,10 @@ std::vector<int>
    * ====================== */
 
   // Release allocated heap memory.
-  for ( int idx = 0; idx < point_indices.size(); ++idx )
+  for ( int idx = 0; idx < int( point_indices.size() ); ++idx )
   {
     asiAlgo_PointWithAttr<TPoint>& P = dataset->ChangeElement(idx);
-    delete P.pData; P.pData = NULL;
+    delete P.pData; P.pData = nullptr;
   }
 
   return res;

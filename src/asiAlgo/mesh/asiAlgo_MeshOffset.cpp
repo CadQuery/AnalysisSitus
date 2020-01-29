@@ -42,7 +42,7 @@
 asiAlgo_MeshOffset::asiAlgo_MeshOffset(const Handle(ActData_Mesh)& mesh,
                                        ActAPI_ProgressEntry        progress,
                                        ActAPI_PlotterEntry         plotter)
-: m_input(mesh), ActAPI_IAlgorithm(progress, plotter)
+: ActAPI_IAlgorithm(progress, plotter), m_input(mesh)
 {}
 
 //-----------------------------------------------------------------------------

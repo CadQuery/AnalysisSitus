@@ -89,20 +89,19 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
   m_prs_mgr->Initialize(this);
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_2D);
   m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
-  m_prs_mgr->GetCellPicker()->SetTolerance(0.005);
+  //
+  if ( m_prs_mgr->GetCellPicker().Get() )
+    m_prs_mgr->GetCellPicker()->SetTolerance(0.005);
 
   // Widgets and layouts
-  QVTKWidget*  pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout* pBaseLayout = new QHBoxLayout();
+  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout*            pBaseLayout = new QHBoxLayout(this);
+
+  pBaseLayout->addWidget(pViewer);
 
   // Configure layout
   pBaseLayout->setSpacing(0);
-  pBaseLayout->addWidget(pViewer);
-  pBaseLayout->setAlignment(Qt::AlignTop);
   pBaseLayout->setContentsMargins(0, 0, 0, 0);
-
-  // Set central widget
-  this->setLayout(pBaseLayout);
 
   /* ===================================
    *  Setting up picking infrastructure
@@ -164,11 +163,14 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
   textActor->GetTextProperty()->SetVerticalJustificationToTop();
 
   // Enable context menu
-  pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
-           this,    SLOT   ( onContextMenu(const QPoint&) ) );
+  if ( pViewer )
+  {
+    pViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect( pViewer, SIGNAL ( customContextMenuRequested(const QPoint&) ),
+             this,    SLOT   ( onContextMenu(const QPoint&) ) );
 
-  this->onResetView();
+    this->onResetView();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -197,7 +199,7 @@ QSize asiUI_ViewerDomain::sizeHint() const
 //! Updates viewer.
 void asiUI_ViewerDomain::Repaint()
 {
-  m_prs_mgr->GetQVTKWidget()->repaint();
+  m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -425,8 +427,8 @@ void asiUI_ViewerDomain::onJoinEdges()
 
 void asiUI_ViewerDomain::onContextMenu(const QPoint& pos)
 {
-  QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
-  QPoint      globalPos = pViewer->mapToGlobal(pos);
+  QVTKOpenGLNativeWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint                  globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
 }

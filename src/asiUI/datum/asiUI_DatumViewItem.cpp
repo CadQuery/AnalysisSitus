@@ -575,14 +575,14 @@ Handle(asiAlgo_DictionaryItem) asiUI_DatumViewItem::dictionaryItem() const
   
   if ( !aModel )
   {
-    return NULL;
+    return nullptr;
   }
 
   asiUI_DatumViewBaseInterface* aViewBaseApi = dynamic_cast<asiUI_DatumViewBaseInterface*>( aModel->parent() );
   
   if ( !aViewBaseApi )
   {
-    return NULL;
+    return nullptr;
   }
 
   QString aDatumId;
@@ -607,7 +607,7 @@ Handle(asiAlgo_DictionaryItem) asiUI_DatumViewItem::dictionaryItem() const
 
   if ( aDatumId.isEmpty() )
   {
-    return NULL;
+    return nullptr;
   }
 
   Handle(asiAlgo_DictionaryItem) aDictItem = asiAlgo_Dictionary::GetDictionaryItem( QStr2AsciiStr(aDatumId) );

@@ -46,7 +46,7 @@ class asiVisu_FaceDataProvider : public asiVisu_SurfaceDataProvider
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceDataProvider, asiVisu_SurfaceDataProvider)
 
 public:
 

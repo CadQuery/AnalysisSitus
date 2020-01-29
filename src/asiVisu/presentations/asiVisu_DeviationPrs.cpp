@@ -38,8 +38,10 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -110,10 +112,7 @@ void asiVisu_DeviationPrs::renderPipelines(vtkRenderer* renderer) const
 //-----------------------------------------------------------------------------
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_DeviationPrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_DeviationPrs::deRenderPipelines(vtkRenderer*) const
 {
-  asiVisu_NotUsed(renderer);
-
   m_scalarBarWidget->Off();
 }

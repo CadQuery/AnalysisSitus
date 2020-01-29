@@ -56,9 +56,8 @@ public:
   //! face is accepted.
   //! \param[in] attr AAG node attribute to check.
   //! \return true to accepts, false -- to deny.
-  virtual bool operator()(const Handle(asiAlgo_FeatureAttrFace)& attr) const
+  virtual bool operator()(const Handle(asiAlgo_FeatureAttrFace)& asiAlgo_NotUsed(attr)) const
   {
-    asiAlgo_NotUsed(attr);
     return true;
   }
 
@@ -130,11 +129,11 @@ public:
   asiAlgo_EXPORT bool
     Perform(const Handle(asiAlgo_AAG)&                   aag,
             Handle(asiAlgo_ExtractFeaturesResult)&       result,
-            const Handle(asiAlgo_ExtractFeaturesFilter)& filter = NULL) const;
+            const Handle(asiAlgo_ExtractFeaturesFilter)& filter = nullptr) const;
 
   //! \brief Performs extraction for the given feature type only.
   //!
-  //! If the passed <result> is not NULL, the algorithm will add features
+  //! If the passed <result> is not nullptr, the algorithm will add features
   //! to this result without cleaning.
   //!
   //! \param[in]      aag    AAG to extract features from.
@@ -147,7 +146,7 @@ public:
     PerformForType(const Handle(asiAlgo_AAG)&                   aag,
                    const int                                    type,
                    Handle(asiAlgo_ExtractFeaturesResult)&       result,
-                   const Handle(asiAlgo_ExtractFeaturesFilter)& filter = NULL) const;
+                   const Handle(asiAlgo_ExtractFeaturesFilter)& filter = nullptr) const;
 
 protected:
 

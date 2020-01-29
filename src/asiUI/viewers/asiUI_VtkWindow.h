@@ -36,18 +36,18 @@
 
 // QVTK includes
 #pragma warning(push, 0)
-#include <QVTKWidget.h>
+#include <QVTKOpenGLNativeWidget.h>
 #pragma warning(pop)
 
-//! Sub-class for QVTKWidget to override its closeEvent().
-class asiUI_VtkWindow : public QVTKWidget
+//! Sub-class for QVTKOpenGLNativeWidget to override its behavior.
+class asiUI_VtkWindow : public QVTKOpenGLNativeWidget
 {
   Q_OBJECT
 
 public:
 
   asiUI_EXPORT
-    asiUI_VtkWindow(QWidget* parent = NULL, Qt::WindowFlags f = 0);
+    asiUI_VtkWindow(QWidget* parent = nullptr, Qt::WindowFlags f = 0);
 
   asiUI_EXPORT virtual
     ~asiUI_VtkWindow();

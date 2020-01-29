@@ -45,7 +45,7 @@ asiAlgo_QuickHull2d<TPoint>::asiAlgo_QuickHull2d(const Handle(asiAlgo_PointWithA
 : ActAPI_IAlgorithm(progress, plotter)
 {
   m_cloud = cloud;
-  m_P_up = m_P_down = m_P_left = m_P_right = NULL;
+  m_P_up = m_P_down = m_P_left = m_P_right = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -289,7 +289,7 @@ void asiAlgo_QuickHull2d<TPoint>::releaseNode(PNode* node)
     this->releaseNode(node->right);
 
   delete node;
-  node = NULL;
+  node = nullptr;
 }
 
 //-----------------------------------------------------------------------------

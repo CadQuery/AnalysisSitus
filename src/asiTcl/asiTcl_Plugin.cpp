@@ -41,23 +41,31 @@ bool asiTcl_Plugin::Load(const Handle(asiTcl_Interp)&      interp,
                          const Handle(Standard_Transient)& data,
                          const TCollection_AsciiString&    pluginName)
 {
-  OSD_SharedLibrary SharedLibrary( pluginName.ToCString() );
+  TCollection_AsciiString libFilename;
+
+#ifdef _WIN32
+  libFilename = pluginName;
+#else
+  libFilename = "lib"; libFilename += pluginName; libFilename += ".so";
+#endif
+
+  OSD_SharedLibrary SharedLibrary( libFilename.ToCString() );
 
   if ( !SharedLibrary.DlOpen(OSD_RTLD_LAZY) )
   {
-    std::cout << "Error: cannot load " << pluginName.ToCString() << std::endl;
+    std::cout << "Error: cannot load " << libFilename.ToCString() << std::endl;
     return false;
   }
 
   OSD_Function f = SharedLibrary.DlSymb("PLUGINFACTORY");
-  if ( f == NULL )
+  if ( f == nullptr )
   {
-    std::cout << "Error: cannot find factory (function PLUGINFACTORY) in " << pluginName.ToCString() << std::endl;
+    std::cout << "Error: cannot find factory (function PLUGINFACTORY) in " << libFilename.ToCString() << std::endl;
     return false;
   }
 
   // Cast
-  void (*fp) (const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)& ) = NULL;
+  void (*fp) (const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)& ) = nullptr;
   fp = (void (*)(const Handle(asiTcl_Interp)&, const Handle(Standard_Transient)&)) f;
 
   // Let interpreter store all loaded plugins

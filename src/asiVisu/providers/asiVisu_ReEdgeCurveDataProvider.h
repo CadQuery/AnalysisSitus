@@ -62,11 +62,10 @@ public:
   }
 
   //! Unused.
-  virtual Handle(Geom2d_Curve) GetCurve2d(double& f, double& l) const
+  virtual Handle(Geom2d_Curve) GetCurve2d(double& asiVisu_NotUsed(f),
+                                          double& asiVisu_NotUsed(l)) const
   {
-    asiVisu_NotUsed(f);
-    asiVisu_NotUsed(l);
-    return NULL;
+    return nullptr;
   }
 
 public:

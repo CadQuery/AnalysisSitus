@@ -76,8 +76,8 @@ protected:
                 gp_XYZ&          hitPoint) const;
 
   bool isOut(const gp_Lin&    ray,
-             const BVH_Vec4d& boxMin,
-             const BVH_Vec4d& boxMax,
+             const BVH_Vec3d& boxMin,
+             const BVH_Vec3d& boxMax,
              const double     prec) const;
 
   bool isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,

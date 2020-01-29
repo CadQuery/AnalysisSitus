@@ -62,7 +62,7 @@ public:
 
     t_search_params() : max_alpha      (0.0),
                         num_iterations (0),
-                        pFunc          (NULL)
+                        pFunc          (nullptr)
     {}
   };
 

@@ -32,8 +32,9 @@
 #define asiUI_ControlsPartListener_h
 
 // asiUI includes
-#include <asiUI_CommonFacilities.h>
 #include <asiUI_ControlsPart.h>
+#include <asiUI_ViewerDomain.h>
+#include <asiUI_ViewerHost.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -51,8 +52,14 @@ class asiUI_EXPORT asiUI_ControlsPartListener : public QObject
 
 public:
 
-  asiUI_ControlsPartListener(asiUI_ControlsPart*                   wControls,
-                             const Handle(asiUI_CommonFacilities)& cf);
+  asiUI_ControlsPartListener(asiUI_ControlsPart*            wControls,
+                             const Handle(asiEngine_Model)& model,
+                             asiUI_ViewerPart*              pPartViewer,
+                             asiUI_ViewerHost*              pHostViewer,
+                             asiUI_ViewerDomain*            pViewerDomain,
+                             asiUI_ObjectBrowser*           pBrowser,
+                             QMainWindow*                   pMainWindow,
+                             ActAPI_ProgressEntry           notifier);
 
   virtual
     ~asiUI_ControlsPartListener();
@@ -82,8 +89,14 @@ protected:
 
 protected:
 
-  asiUI_ControlsPart*            m_wControls; //!< Controls.
-  Handle(asiUI_CommonFacilities) m_cf;        //!< Common facilities.
+  asiUI_ControlsPart*     m_wControls;    //!< Controls.
+  Handle(asiEngine_Model) m_model;        //!< Data Model instance.
+  asiUI_ViewerPart*       m_partViewer;   //!< Part viewer.
+  asiUI_ViewerHost*       m_hostViewer;   //!< Host viewer.
+  asiUI_ViewerDomain*     m_domainViewer; //!< Domain viewer.
+  asiUI_ObjectBrowser*    m_browser;      //!< Object browser.
+  QMainWindow*            m_mainWindow;   //!< Main Qt window.
+  ActAPI_ProgressEntry    m_progress;     //!< Progress notifier.
 
 };
 

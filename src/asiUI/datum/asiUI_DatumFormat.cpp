@@ -78,10 +78,8 @@ public:
   //! \param theValue [in] the value.
   //! \param theLongFmt [in] if long formatting style should be used.
   //! \return formatted string.
-  QString Format(const QString& theValue, const bool theLongFmt) const
+  QString Format(const QString& theValue, const bool asiUI_NotUsed(theLongFmt)) const
   {
-    asiUI_NotUsed(theLongFmt);
-
     QString str;
     const char* strPtr = m_Format.toStdString().c_str();
 #pragma warning (push)
@@ -95,10 +93,8 @@ public:
   //! \param theValue [in] the value.
   //! \param theLongFmt [in] if long formatting style should be used.
   //! \return formatted string.
-  QString Format(const double theValue, const bool theLongFmt) const
+  QString Format(const double theValue, const bool asiUI_NotUsed(theLongFmt)) const
   {
-    asiUI_NotUsed(theLongFmt);
-
     return QString().sprintf(m_Format.toStdString().c_str(), theValue);
   }
 
@@ -106,10 +102,8 @@ public:
   //! \param theValue [in] the value.
   //! \param theLongFmt [in] if long formatting style should be used.
   //! \return formatted string.
-  QString Format(const int theValue, const bool theLongFmt) const
+  QString Format(const int theValue, const bool asiUI_NotUsed(theLongFmt)) const
   {
-    asiUI_NotUsed(theLongFmt);
-
     return QString().sprintf(m_Format.toStdString().c_str(), theValue);
   }
 

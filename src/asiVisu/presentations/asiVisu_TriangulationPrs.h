@@ -101,17 +101,17 @@ public:
 
   vtkActor* MainActor() const
   {
-    return this->GetPipeline(Pipeline_Triangulation).IsNull() ? NULL : this->GetPipeline(Pipeline_Triangulation)->Actor();
+    return this->GetPipeline(Pipeline_Triangulation).IsNull() ? nullptr : this->GetPipeline(Pipeline_Triangulation)->Actor();
   }
 
   vtkActor* ContourActor() const
   {
-    return this->GetPipeline(Pipeline_TriangulationLinks).IsNull() ? NULL : this->GetPipeline(Pipeline_TriangulationLinks)->Actor();
+    return this->GetPipeline(Pipeline_TriangulationLinks).IsNull() ? nullptr : this->GetPipeline(Pipeline_TriangulationLinks)->Actor();
   }
 
   vtkActor* NodesActor() const
   {
-    return this->GetPipeline(Pipeline_TriangulationNodes).IsNull() ? NULL : this->GetPipeline(Pipeline_TriangulationNodes)->Actor();
+    return this->GetPipeline(Pipeline_TriangulationNodes).IsNull() ? nullptr : this->GetPipeline(Pipeline_TriangulationNodes)->Actor();
   }
 
 private:

@@ -130,7 +130,7 @@ int asiVisu_Utils::ComputeVisiblePropBounds(vtkRenderer*       theRenderer,
     double* aBounds = aProp->GetBounds();
     static double MAX_DISTANCE = 0.9 * VTK_FLOAT_MAX;
 
-    if ( aBounds != NULL &&
+    if ( aBounds != nullptr &&
          aBounds[0] > -MAX_DISTANCE && aBounds[1] < MAX_DISTANCE &&
          aBounds[2] > -MAX_DISTANCE && aBounds[3] < MAX_DISTANCE &&
          aBounds[4] > -MAX_DISTANCE && aBounds[5] < MAX_DISTANCE )
@@ -588,6 +588,19 @@ vtkSmartPointer<vtkStringArray>
 
 //-----------------------------------------------------------------------------
 
+vtkSmartPointer<vtkProperty> asiVisu_Utils::DefaultBackfaceProp()
+{
+  vtkSmartPointer<vtkProperty> backFaces = vtkSmartPointer<vtkProperty>::New();
+  backFaces->SetSpecular(0.0);
+  backFaces->SetDiffuse(0.0);
+  backFaces->SetAmbient(1.0);
+  backFaces->SetAmbientColor(1.0000, 0.3882, 0.2784);
+
+  return backFaces;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Returns default color for picking.
 //! \param[out] fR red component [0;1].
 //! \param[out] fG green component [0;1].
@@ -649,18 +662,33 @@ vtkSmartPointer<vtkLookupTable> asiVisu_Utils::InitLookupTable()
 
   return InitLookupTable(customScalarMap, lastUnusedScalar);
 }
-
 //-----------------------------------------------------------------------------
 
 vtkSmartPointer<vtkLookupTable>
   asiVisu_Utils::InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
                                  const int                            lastUnusedScalar)
 {
+  const double ref_r = 0.9;
+  const double ref_g = 0.9;
+  const double ref_b = 0.9;
+
+  return InitLookupTable(customScalarMap, lastUnusedScalar, ref_r, ref_g, ref_b);
+}
+//-----------------------------------------------------------------------------
+
+vtkSmartPointer<vtkLookupTable>
+  asiVisu_Utils::InitLookupTable(const NCollection_DataMap<int, int>& customScalarMap,
+                                 const int                            lastUnusedScalar,
+                                 const double                         ref_r,
+                                 const double                         ref_g,
+                                 const double                         ref_b)
+{
   vtkSmartPointer<vtkLookupTable>
     colorTable = vtkSmartPointer<vtkLookupTable>::New();
 
   // Set colors table for 3D shapes
-  double range[2] = {ShapePrimitive_Undefined, lastUnusedScalar - 1};
+  const double range[2] = { double(ShapePrimitive_Undefined),
+                            double(lastUnusedScalar - 1) };
   //
   colorTable->SetRange(range);
   colorTable->SetNumberOfColors(lastUnusedScalar);
@@ -677,7 +705,7 @@ vtkSmartPointer<vtkLookupTable>
   colorTable->SetTableValue(ShapePrimitive_ManifoldEdge,    0.1,  0.1, 0.1);
   colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 1.0,  1.0, 0.0);
   //
-  colorTable->SetTableValue(ShapePrimitive_Facet,           0.9, 0.9, 0.9);
+  colorTable->SetTableValue(ShapePrimitive_Facet,           ref_r, ref_g, ref_b);
   colorTable->SetTableValue(ShapePrimitive_Isoline,         0.9, 0.0, 0.0);
   //
   colorTable->SetTableValue(ShapePrimitive_Detected,        0.0, 1.0, 1.0);
@@ -730,6 +758,37 @@ void asiVisu_Utils::InitShapeMapper(vtkMapper*                           mapper,
                                     const int                            lastUnusedScalar)
 {
   InitShapeMapper( mapper, InitLookupTable(customScalarMap, lastUnusedScalar) );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_Utils::InitShapeMapper(vtkMapper*                           mapper,
+                                    vtkActor*                            actor,
+                                    const NCollection_DataMap<int, int>& customScalarMap,
+                                    const int                            lastUnusedScalar)
+{
+  double ref_r, ref_g, ref_b;
+  actor->GetProperty()->GetColor(ref_r, ref_g, ref_b);
+
+  vtkSmartPointer<vtkLookupTable>
+    lookup = InitLookupTable(customScalarMap, lastUnusedScalar, ref_r, ref_g, ref_b);
+
+  InitShapeMapper(mapper, lookup);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_Utils::InitShapeMapper(vtkMapper*                           mapper,
+                                    const double                         ref_r,
+                                    const double                         ref_g,
+                                    const double                         ref_b,
+                                    const NCollection_DataMap<int, int>& customScalarMap,
+                                    const int                            lastUnusedScalar)
+{
+  vtkSmartPointer<vtkLookupTable>
+    lookup = InitLookupTable(customScalarMap, lastUnusedScalar, ref_r, ref_g, ref_b);
+
+  InitShapeMapper(mapper, lookup);
 }
 
 //-----------------------------------------------------------------------------

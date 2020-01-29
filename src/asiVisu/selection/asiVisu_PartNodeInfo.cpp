@@ -37,7 +37,7 @@
 #include <vtkInformationObjectBaseKey.h>
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(asiVisu_PartNodeInfo);
+vtkStandardNewMacro(asiVisu_PartNodeInfo)
 
 //! Default constructor.
 asiVisu_PartNodeInfo::asiVisu_PartNodeInfo()
@@ -52,19 +52,19 @@ asiVisu_PartNodeInfo::~asiVisu_PartNodeInfo()
 //! \return information key.
 vtkInformationObjectBaseKey* asiVisu_PartNodeInfo::GetKey()
 {
-  if ( m_key.GetPointer() == NULL )
+  if ( m_key.GetPointer() == nullptr )
     m_key = new vtkInformationObjectBaseKey("NodeInformation", "asiVisu_PartNodeInfo::m_key");
   return m_key;
 }
 
 //! Retrieves Information properties from the passed actor attempting to
 //! access NodeInformation reference. If such reference is not bound, returns
-//! NULL pointer.
+//! nullptr pointer.
 //! \param actor [in] actor to access information from.
-//! \return requested NodeInformation reference or NULL.
+//! \return requested NodeInformation reference or nullptr.
 asiVisu_PartNodeInfo* asiVisu_PartNodeInfo::Retrieve(vtkActor* actor)
 {
-  asiVisu_PartNodeInfo* result = NULL;
+  asiVisu_PartNodeInfo* result = nullptr;
   //
   if ( !actor )
     return result;

@@ -53,8 +53,8 @@ public:
     asiAlgo_ClassifyPointFace(const TopoDS_Face&   F,
                               const double         inaccuracy,
                               const double         precision,
-                              ActAPI_ProgressEntry progress = NULL,
-                              ActAPI_PlotterEntry  plotter = NULL);
+                              ActAPI_ProgressEntry progress = nullptr,
+                              ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 
@@ -73,8 +73,8 @@ public:
 protected:
 
   TopoDS_Face       m_F;           //!< Working face.
-  double            m_fPrecision;  //!< Precision of optimization method.
   double            m_fInaccuracy; //!< Inaccuracy in the input geometry.
+  double            m_fPrecision;  //!< Precision of optimization method.
   IntTools_FClass2d m_fclass;      //!< Internal classifier.
   double            m_fUmin;       //!< U min parametric boundary of the face.
   double            m_fUmax;       //!< U max parametric boundary of the face.

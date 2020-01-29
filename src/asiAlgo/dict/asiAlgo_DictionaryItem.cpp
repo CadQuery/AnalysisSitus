@@ -171,6 +171,7 @@ void asiAlgo_DictionaryItem::FillDataMap(TCollection_AsciiString theID,
 
       case DDS_DicItem::List:
       case DDS_DicItem::String:
+      case DDS_DicItem::Unknown:
         SetDefaultValue(aDefault);
     }
   }
@@ -188,12 +189,13 @@ void asiAlgo_DictionaryItem::FillDataMap(TCollection_AsciiString theID,
     theDatumElt.GetChildByTagName(DDS_Dictionary::KeyWord( "DATUM_DIMENSION" ));
   if ( !aDimensionSection.isNull() )
   {
-    LDOM_NodeList aDimensionList = 
+    LDOM_NodeList aDimensionList =
       aDimensionSection.getElementsByTagName(DDS_Dictionary::KeyWord( "DIMENSION" ));
 
     for ( int anIdx = 0; anIdx < aDimensionList.getLength(); anIdx++ )
     {
-      LDOM_Element aDimension((const LDOM_Element&)aDimensionList.item(anIdx));
+      LDOM_Node           dimNode    = aDimensionList.item(anIdx);
+      const LDOM_Element& aDimension = (const LDOM_Element&) dimNode;
 
       // read dimension identifier
       TCollection_AsciiString aDimensionName = 
@@ -627,7 +629,11 @@ TCollection_AsciiString
       aUnitStr += aUnit->GetName();
       if ( aPower[anIdx2] != 1 )
       {
+#ifdef _WIN32
         sprintf_s(aTmp, 200, "^%d", aPower[anIdx2]);
+#else
+        snprintf(aTmp, 200, "^%d", aPower[anIdx2]);
+#endif
         aUnitStr += aTmp;
       }
     }
@@ -635,7 +641,7 @@ TCollection_AsciiString
 
   if ( aUnitPos.Length() && ( aUnitNeg.Length() || aExtra.Length() ) )
     aUnitPos += TCollection_AsciiString(".");
-  
+
   if ( aUnitNeg.Length() && aExtra.Length() )
     aUnitNeg += TCollection_AsciiString(".");
 
@@ -719,7 +725,8 @@ void asiAlgo_DictionaryItem::parseWidgetParams(const LDOM_Element& theUI)
   // iterate over subtags to collect widget parameters
   for ( int anIt = 0; anIt < aSubTags.getLength(); anIt++ )
   {
-    LDOM_Element aParamTag( (const LDOM_Element&)aSubTags.item(anIt) );
+    LDOM_Node           paramTagNode = aSubTags.item(anIt);
+    const LDOM_Element& aParamTag    = (const LDOM_Element&) paramTagNode;
 
     // read id
     const TCollection_AsciiString aID = aParamTag.getAttribute(aParamIdKey);
@@ -727,7 +734,8 @@ void asiAlgo_DictionaryItem::parseWidgetParams(const LDOM_Element& theUI)
       continue;
 
     // read value
-    const LDOM_Text& aValue = (const LDOM_Text&) aParamTag.getFirstChild();
+    LDOM_Node        valueNode = aParamTag.getFirstChild();
+    const LDOM_Text& aValue    = (const LDOM_Text&) valueNode;
     if ( aValue.isNull() )
       continue;
 

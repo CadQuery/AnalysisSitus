@@ -103,7 +103,7 @@ QWidget* asiUI_DatumDelegate::createEditor(QWidget* theParent,
 {
   if ( isCustomSelector(theIndex) || isBoolItem(theIndex) )
   {
-    return NULL;
+    return nullptr;
   }
 
   asiUI_DatumItemEditor* anEditor = createDatum(theParent, theIndex);

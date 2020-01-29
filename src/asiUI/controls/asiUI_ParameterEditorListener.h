@@ -129,16 +129,11 @@ protected:
   //!                            class is Ok that the base class continues
   //!                            its job.
   virtual void
-    beforeParameterChanged(const Handle(ActAPI_INode)& N,
-                           const int                   pid,
-                           const QVariant&             value,
-                           bool&                       proceedDefault)
-  {
-    asiUI_NotUsed(N);
-    asiUI_NotUsed(pid);
-    asiUI_NotUsed(value);
-    asiUI_NotUsed(proceedDefault);
-  }
+    beforeParameterChanged(const Handle(ActAPI_INode)& asiUI_NotUsed(N),
+                           const int                   asiUI_NotUsed(pid),
+                           const QVariant&             asiUI_NotUsed(value),
+                           bool&                       asiUI_NotUsed(proceedDefault))
+  {}
 
   //! Callback invoked by the base class of listener once the Data Model
   //! is modified. The derived classes can override this method to provide
@@ -147,12 +142,9 @@ protected:
   //! \param[in] N   Data Node which has been modified.
   //! \param[in] pid local ID of a Parameter which has been modified.
   virtual void
-    afterParameterChanged(const Handle(ActAPI_INode)& N,
-                          const int                   pid)
-  {
-    asiUI_NotUsed(N);
-    asiUI_NotUsed(pid);
-  }
+    afterParameterChanged(const Handle(ActAPI_INode)& asiUI_NotUsed(N),
+                          const int                   asiUI_NotUsed(pid))
+  {}
 
 protected:
 

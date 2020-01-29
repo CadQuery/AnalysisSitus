@@ -31,7 +31,7 @@
 #ifndef asiVisu_h
 #define asiVisu_h
 
-#define asiVisu_NotUsed(x) x
+#define asiVisu_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiVisu_EXPORTS

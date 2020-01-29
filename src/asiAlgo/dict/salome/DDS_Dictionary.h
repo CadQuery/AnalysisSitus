@@ -37,7 +37,7 @@ class DDS_Dictionary : public Standard_Transient
 public:
   Standard_EXPORT static Handle(DDS_Dictionary)  Get();
 
-  // Return instance of data dictionary. Create instance if it is NULL.
+  // Return instance of data dictionary. Create instance if it is null.
 
   Standard_EXPORT void                           GetKeys( const TCollection_AsciiString&, TColStd_SequenceOfAsciiString& ) const;
 

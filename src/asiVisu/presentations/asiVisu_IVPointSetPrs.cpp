@@ -97,12 +97,10 @@ Handle(asiVisu_Prs)
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        renderer,
+void asiVisu_IVPointSetPrs::highlight(vtkRenderer*,
                                       const Handle(asiVisu_PickerResult)& pickRes,
                                       const asiVisu_SelectionNature       selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   // Check picked actor.
   vtkActor* pPickedActor = pickRes->GetPickedActor();
   //
@@ -183,11 +181,9 @@ void asiVisu_IVPointSetPrs::highlight(vtkRenderer*                        render
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
+void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  asiVisu_NotUsed(renderer),
                                         const asiVisu_SelectionNature selNature) const
 {
-  asiVisu_NotUsed(renderer);
-
   if ( selNature == SelectionNature_Detection )
   {
     Handle(asiVisu_HPipelineList) pls = this->GetDetectionPipelineList();
@@ -206,7 +202,7 @@ void asiVisu_IVPointSetPrs::unHighlight(vtkRenderer*                  renderer,
       Handle(asiData_IVPointSetNode)
         pointsNode = Handle(asiData_IVPointSetNode)::DownCast(m_node);
 
-      pointsNode->SetFilter(NULL);
+      pointsNode->SetFilter(nullptr);
     }
     m_model->CommitCommand();
 

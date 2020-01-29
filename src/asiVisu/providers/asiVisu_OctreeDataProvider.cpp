@@ -33,16 +33,23 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_OctreeDataProvider::asiVisu_OctreeDataProvider(const Handle(asiData_OctreeParameter)& param)
+asiVisu_OctreeDataProvider::asiVisu_OctreeDataProvider(const Handle(asiData_OctreeNode)& N)
 : asiVisu_DataProvider (),
-  m_param              (param)
+  m_node               (N)
 {}
 
 //-----------------------------------------------------------------------------
 
 void* asiVisu_OctreeDataProvider::GetOctree() const
 {
-  return m_param->GetOctree();
+  return m_node->GetOctree();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiVisu_OctreeDataProvider::IsZeroCrossingOnly() const
+{
+  return m_node->IsBoundary();
 }
 
 //-----------------------------------------------------------------------------
@@ -51,7 +58,8 @@ Handle(ActAPI_HParameterList)
   asiVisu_OctreeDataProvider::translationSources() const
 {
   ActAPI_ParameterStream out;
-  out << m_param;
+  out << m_node->Parameter(asiData_OctreeNode::PID_Octree)
+      << m_node->Parameter(asiData_OctreeNode::PID_IsBoundary);
 
   return out.List;
 }

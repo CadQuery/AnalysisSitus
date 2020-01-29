@@ -41,7 +41,7 @@
 //! \return instance of the callback class.
 asiUI_PDomainCallback* asiUI_PDomainCallback::New()
 {
-  return new asiUI_PDomainCallback(NULL);
+  return new asiUI_PDomainCallback(nullptr);
 }
 
 //! Instantiation routine accepting viewer.
@@ -68,15 +68,10 @@ asiUI_PDomainCallback::~asiUI_PDomainCallback()
 //! \param pCaller   [in] caller instance.
 //! \param eventId   [in] ID of the event triggered this listener.
 //! \param pCallData [in] invocation context.
-void asiUI_PDomainCallback::Execute(vtkObject*    pCaller,
+void asiUI_PDomainCallback::Execute(vtkObject*    asiVisu_NotUsed(pCaller),
                                     unsigned long eventId,
-                                    void*         pCallData)
+                                    void*         asiVisu_NotUsed(pCallData))
 {
-  asiVisu_NotUsed(pCaller);
-  asiVisu_NotUsed(pCallData);
-
-  vtkSmartPointer<asiVisu_PrsManager> mgr = this->GetViewer()->PrsMgr();
-
   if ( eventId == EVENT_DELETE )
     emit killEdges();
   else if ( eventId == EVENT_JOIN )

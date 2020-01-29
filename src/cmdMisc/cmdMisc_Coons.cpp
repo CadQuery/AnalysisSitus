@@ -60,7 +60,7 @@ Handle(Geom_BSplineCurve) FindBCurve(const TCollection_AsciiString& curveName,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Node '%1' is not a curve."
                                                         << curveName);
-    return NULL;
+    return nullptr;
   }
   //
   Handle(asiData_IVCurveNode)
@@ -74,7 +74,7 @@ Handle(Geom_BSplineCurve) FindBCurve(const TCollection_AsciiString& curveName,
   if ( occtBCurve.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "The curve in question is not a B-spline curve.");
-    return NULL;
+    return nullptr;
   }
 
   return occtBCurve;
@@ -140,10 +140,8 @@ int MISC_BuildCoonsLinear(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdMisc::Commands_Coons(const Handle(asiTcl_Interp)&      interp,
-                             const Handle(Standard_Transient)& data)
+                             const Handle(Standard_Transient)& cmdMisc_NotUsed(data))
 {
-  cmdMisc_NotUsed(data);
-
   static const char* group = "cmdMisc";
 
 #if defined USE_MOBIUS

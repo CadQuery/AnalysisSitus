@@ -52,7 +52,7 @@ public:
   asiUI_EXPORT
     asiUI_ViewerFuncUnivariate(ActAPI_ProgressEntry progress,
                                ActAPI_PlotterEntry  plotter,
-                               QWidget*             parent = NULL);
+                               QWidget*             parent = nullptr);
 
   asiUI_EXPORT virtual
     ~asiUI_ViewerFuncUnivariate();

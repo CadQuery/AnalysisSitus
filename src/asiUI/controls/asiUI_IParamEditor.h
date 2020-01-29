@@ -54,7 +54,7 @@ public:
 
   //! Sets the list of parameters to handle.
   virtual void
-    SetParameters(const Handle(ActAPI_HSparseParameterList)& params) = 0;
+    SetParameters(const Handle(ActAPI_HIndexedParameterMap)& params) = 0;
 
   //! Updates and redisplays values of the handled parameters.
   virtual void

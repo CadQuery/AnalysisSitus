@@ -53,7 +53,7 @@ public:
 
   asiUI_DialogSewing(const Handle(asiEngine_Model)& model,
                      ActAPI_ProgressEntry           progress,
-                     QWidget*                       parent = NULL);
+                     QWidget*                       parent = nullptr);
 
   virtual ~asiUI_DialogSewing();
 
@@ -80,14 +80,14 @@ protected:
     asiUI_LineEdit* pTolerance; //!< Sewing tolerance.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pPerform   (NULL),
-                  pTolerance (NULL)
+    t_widgets() : pPerform   (nullptr),
+                  pTolerance (nullptr)
     {}
 
     void Release()
     {
-      delete pPerform;   pPerform    = NULL;
-      delete pTolerance; pTolerance  = NULL;
+      delete pPerform;   pPerform    = nullptr;
+      delete pTolerance; pTolerance  = nullptr;
     }
   };
 

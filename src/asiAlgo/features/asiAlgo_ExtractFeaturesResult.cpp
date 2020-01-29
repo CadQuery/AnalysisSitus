@@ -49,13 +49,13 @@ TColStd_PackedMapOfInteger&
 {
   // Check if the type of interest is already settled. If not, do it now
   t_features* featuresPtr = m_data.ChangeSeek(type);
-  if ( featuresPtr == NULL )
+  if ( featuresPtr == nullptr )
     featuresPtr = m_data.Bound( type, t_features() );
 
   TColStd_PackedMapOfInteger* mapPtr = (*featuresPtr).ChangeSeek(featId);
 
   // Check if the feature id of interest is already settled. If not, do it now
-  if ( mapPtr == NULL )
+  if ( mapPtr == nullptr )
     mapPtr = (*featuresPtr).Bound( featId, TColStd_PackedMapOfInteger() );
   //
   return (*mapPtr);
@@ -75,7 +75,7 @@ bool asiAlgo_ExtractFeaturesResult::ContainsFeature(const int type,
 {
   const t_features* featuresPtr = m_data.Seek(type);
 
-  if ( featuresPtr == NULL )
+  if ( featuresPtr == nullptr )
     return false;
 
   return (*featuresPtr).IsBound(featId);

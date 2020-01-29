@@ -41,7 +41,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_FuncUnivariateSource);
+vtkStandardNewMacro(asiVisu_FuncUnivariateSource)
 
 //! Default constructor.
 asiVisu_FuncUnivariateSource::asiVisu_FuncUnivariateSource() : asiVisu_CurveSource()
@@ -64,7 +64,7 @@ void asiVisu_FuncUnivariateSource::SetFunc(const Handle(asiAlgo_FuncUnivariate)&
 {
   if ( func.IsNull() )
   {
-    vtkErrorMacro( << "Invalid domain: function is NULL" );
+    vtkErrorMacro( << "Invalid domain: function is null" );
     return;
   }
 

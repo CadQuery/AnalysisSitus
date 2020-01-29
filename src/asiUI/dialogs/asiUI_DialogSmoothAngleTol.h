@@ -48,7 +48,7 @@ class asiUI_DialogSmoothAngleTol : public QDialog
 
 public:
 
-  asiUI_DialogSmoothAngleTol(QWidget* parent = NULL);
+  asiUI_DialogSmoothAngleTol(QWidget* parent = nullptr);
 
   virtual ~asiUI_DialogSmoothAngleTol();
 
@@ -79,14 +79,14 @@ protected:
     asiUI_LineEdit* pTolerance; //!< Sewing tolerance.
   //---------------------------------------------------------------------------
 
-    t_widgets() : pPerform   (NULL),
-                  pTolerance (NULL)
+    t_widgets() : pPerform   (nullptr),
+                  pTolerance (nullptr)
     {}
 
     void Release()
     {
-      delete pPerform;   pPerform    = NULL;
-      delete pTolerance; pTolerance  = NULL;
+      delete pPerform;   pPerform    = nullptr;
+      delete pTolerance; pTolerance  = nullptr;
     }
   };
 

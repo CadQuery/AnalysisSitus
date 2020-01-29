@@ -30,16 +30,29 @@ mark_as_advanced (Qt5_DIR)
 
 #--------------------------------------------------------------------------
 # Installation
-if (WIN32)
-  message (STATUS "... Qt binaries: ${3RDPARTY_QT_DIR}")
+#--------------------------------------------------------------------------
 
-  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Core.dll            DESTINATION bin)
-  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Gui.dll             DESTINATION bin)
-  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Widgets.dll         DESTINATION bin)
-  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Svg.dll             DESTINATION bin)
+if (WIN32)
+  message (STATUS "... Qt libraries: ${3RDPARTY_QT_DIR}")
+
+  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Core.dll    DESTINATION bin)
+  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Gui.dll     DESTINATION bin)
+  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Widgets.dll DESTINATION bin)
+  install (FILES ${3RDPARTY_QT_DIR}/bin/Qt5Svg.dll     DESTINATION bin)
 
   install (DIRECTORY ${3RDPARTY_QT_DIR}/plugins/imageformats/   DESTINATION bin/imageformats/)
   install (DIRECTORY ${3RDPARTY_QT_DIR}/plugins/platforms/      DESTINATION bin/platforms/)
   install (DIRECTORY ${3RDPARTY_QT_DIR}/qml/Qt/                 DESTINATION bin/Qt/)
   install (DIRECTORY ${3RDPARTY_QT_DIR}/qml/QtGraphicalEffects/ DESTINATION bin/QtGraphicalEffects/)
+else()
+  message (STATUS "... Qt libraries: ${Qt5_DIR}")
+
+  install (FILES ${Qt5_DIR}/../../libQt5Core.so.5.9.5    DESTINATION bin)
+  install (FILES ${Qt5_DIR}/../../libQt5Gui.so.5.9.5     DESTINATION bin)
+  install (FILES ${Qt5_DIR}/../../libQt5Widgets.so.5.9.5 DESTINATION bin)
+  install (FILES ${Qt5_DIR}/../../libQt5Svg.so.5.9.5     DESTINATION bin)
+
+  install (DIRECTORY ${Qt5_DIR}/../../qt5/plugins/imageformats   DESTINATION bin/imageformats/)
+  install (DIRECTORY ${Qt5_DIR}/../../qt5/plugins/platforms      DESTINATION bin/platforms/)
+  install (DIRECTORY ${Qt5_DIR}/../../qt5/qml/QtGraphicalEffects DESTINATION bin/QtGraphicalEffects/)
 endif()

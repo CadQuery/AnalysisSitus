@@ -98,17 +98,17 @@ private:
     PNode* parent; //!< Pointer to parent node.
 
     //! Default constructor.
-    PNode() : idx(-1), left(NULL), right(NULL), parent(NULL) {}
+    PNode() : idx(-1), left(nullptr), right(nullptr), parent(nullptr) {}
 
     //! Constructor accepting point index.
     //! \param index [in] 0-based point index.
-    PNode(const int index) : idx(index), left(NULL), right(NULL), parent(NULL) {}
+    PNode(const int index) : idx(index), left(nullptr), right(nullptr), parent(nullptr) {}
 
     //! Constructor accepting point index and parent node.
     //! \param index [in] 0-based point index.
     //! \param node  [in] parent node.
     PNode(const int index,
-          PNode* node) : idx(index), left(NULL), right(NULL), parent(node) {}
+          PNode* node) : idx(index), left(nullptr), right(nullptr), parent(node) {}
   };
 
 private:

@@ -105,7 +105,7 @@ Handle(asiData_RePatchNode) asiData_ReTopoNode::GetCurrentPatch() const
       !dc->IsWellFormed() ||
       !dc->IsInstance( STANDARD_TYPE(asiData_RePatchNode) ) )
     //
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_RePatchNode)::DownCast(dc);
 }
@@ -130,7 +130,7 @@ Handle(asiData_ReCoedgeNode) asiData_ReTopoNode::GetCurrentCoEdge() const
       !dc->IsWellFormed() ||
       !dc->IsInstance( STANDARD_TYPE(asiData_ReCoedgeNode) ) )
     //
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReCoedgeNode)::DownCast(dc);
 }
@@ -155,7 +155,7 @@ Handle(asiData_ReVertexNode) asiData_ReTopoNode::GetFirstVertex() const
       !dc->IsWellFormed() ||
       !dc->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) ) )
     //
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReVertexNode)::DownCast(dc);
 }
@@ -180,7 +180,7 @@ Handle(asiData_ReVertexNode) asiData_ReTopoNode::GetLastVertex() const
       !dc->IsWellFormed() ||
       !dc->IsInstance( STANDARD_TYPE(asiData_ReVertexNode) ) )
     //
-    return NULL;
+    return nullptr;
 
   return Handle(asiData_ReVertexNode)::DownCast(dc);
 }

@@ -31,7 +31,7 @@
 #ifndef asiAlgo_h
 #define asiAlgo_h
 
-#define asiAlgo_NotUsed(x) x
+#define asiAlgo_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef asiAlgo_EXPORTS

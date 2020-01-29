@@ -683,7 +683,7 @@ int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
   }
 
   asiEngine_Part partApi( cmdEngine::model,
-                          (cmdEngine::cf && cmdEngine::cf->ViewerPart) ? cmdEngine::cf->ViewerPart->PrsMgr() : NULL );
+                          (cmdEngine::cf && cmdEngine::cf->ViewerPart) ? cmdEngine::cf->ViewerPart->PrsMgr() : nullptr );
 
   // If the face ID is not passed, get the selected face.
   TColStd_PackedMapOfInteger fids;
@@ -837,10 +837,8 @@ int ENGINE_DumpExecutionGraphDot(const Handle(asiTcl_Interp)& interp,
 //-----------------------------------------------------------------------------
 
 void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
-                              const Handle(Standard_Transient)& data)
+                              const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
-  cmdEngine_NotUsed(data);
-  //
   static const char* group = "cmdEngine";
 
   //-------------------------------------------------------------------------//

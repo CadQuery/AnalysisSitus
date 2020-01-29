@@ -86,7 +86,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
 
   SetReadOnly(false);
 
-  //setStyle( new asiUI_ViewStyleProxy(NULL) );
+  //setStyle( new asiUI_ViewStyleProxy(nullptr) );
   setIndentation(12);
   setColumnCount(3);
   header()->setSectionResizeMode(Column_Computed, QHeaderView::Fixed);
@@ -343,13 +343,13 @@ void asiUI_ParameterEditorView::SetComboValues( const int theParameterId,
   }
 
   asiUI_ParameterEditorItem* anItem = GetItem(theParameterId);
-  if (anItem == NULL)
+  if (anItem == nullptr)
   {
     Standard_ProgramError::Raise("The parameter is not defined.");
   }
 
   asiUI_DatumComboBox* aCombo = qobject_cast<asiUI_DatumComboBox*>( anItem->GetDatum() );
-  if (aCombo == NULL)
+  if (aCombo == nullptr)
   {
     Standard_ProgramError::Raise("The parameter is not combo box.");
   }
@@ -387,7 +387,7 @@ asiUI_ParameterEditorItem*
                                                  theParameterId, 1, Qt::MatchRecursive );
   return !aFindIndexes.isEmpty() 
     ? GetItem( aFindIndexes.first() )
-    : NULL;
+    : nullptr;
 }
 
 //! Close all opened editors and revert model cache.

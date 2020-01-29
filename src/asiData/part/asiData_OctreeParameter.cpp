@@ -89,14 +89,14 @@ void* asiData_OctreeParameter::GetOctree()
   TDF_Label dataLab = ActData_Utils::ChooseLabelByTag(m_label, DS_Octree, false);
   //
   if ( dataLab.IsNull() )
-    return NULL;
+    return nullptr;
 
   // Get octree attribute
   Handle(asiData_OctreeAttr) attr;
   dataLab.FindAttribute(asiData_OctreeAttr::GUID(), attr);
   //
   if ( attr.IsNull() )
-    return NULL;
+    return nullptr;
 
   return attr->GetOctree();
 }

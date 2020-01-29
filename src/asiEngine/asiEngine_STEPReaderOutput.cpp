@@ -50,7 +50,7 @@ void asiEngine_STEPReaderOutput::SetShape(const TopoDS_Shape& shape)
 {
   asiEngine_Part partApi(m_model);
   //
-  partApi.Update( shape, NULL, !m_model->GetPartNode()->IsKeepTessParams() );
+  partApi.Update( shape, nullptr, !m_model->GetPartNode()->IsKeepTessParams() );
 }
 
 //-----------------------------------------------------------------------------

@@ -92,15 +92,15 @@ template <typename ParentItemViewClass>
 asiUI_Datum* asiUI_DatumViewBase<ParentItemViewClass>::AccessViewDatum(const QModelIndex& theIndex)
 {
   if ( !theIndex.isValid() )
-    return NULL;
+    return nullptr;
 
   actualizeDatum(theIndex);
 
   QString aDatumId = m_ActualDatumMap.value( theIndex, QString() );
   if ( aDatumId.isNull() )
-    return NULL;
+    return nullptr;
 
-  return m_DatumEntityMap.value(aDatumId, NULL);
+  return m_DatumEntityMap.value(aDatumId, nullptr);
 }
 
 //! Return datum dictionary identification string assigned
@@ -188,7 +188,7 @@ void asiUI_DatumViewBase<ParentItemViewClass>::NotifyUnitsChanged()
 template <typename ParentItemViewClass>
 bool asiUI_DatumViewBase<ParentItemViewClass>::IsProxyModel() const
 {
-  if ( qobject_cast<QAbstractProxyModel*>( model() ) )
+  if ( qobject_cast<QAbstractProxyModel*>( ParentItemViewClass::model() ) )
   {
     return true;
   }
@@ -218,7 +218,7 @@ asiUI_DatumViewItem* asiUI_DatumViewBase<ParentItemViewClass>::accessItem(
 {
   asiUI_DatumViewModel* aModel = itemModel();
   QStandardItem* anItem = aModel->itemFromIndex(theIndex);
-  if ( theIndex.isValid() && anItem == NULL )
+  if ( theIndex.isValid() && anItem == nullptr )
   {
     aModel->setData( theIndex, QVariant() ); // init item internally
     anItem = aModel->itemFromIndex(theIndex);
@@ -232,7 +232,7 @@ asiUI_DatumViewItem* asiUI_DatumViewBase<ParentItemViewClass>::accessItem(
 template <typename ParentItemViewClass>
 asiUI_DatumViewModel* asiUI_DatumViewBase<ParentItemViewClass>::itemModel() const
 {
-  return itemModel( model() );
+  return itemModel( ParentItemViewClass::model() );
 }
 
 //! Access item model wrapped by the given proxy model.
@@ -253,7 +253,7 @@ asiUI_DatumViewModel* asiUI_DatumViewBase<ParentItemViewClass>::itemModel(QAbstr
     return qobject_cast<asiUI_DatumViewModel*>( aQtModernProxy->sourceModel() );
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //! Returns source index from the proxy model.
@@ -267,12 +267,12 @@ QModelIndex asiUI_DatumViewBase<ParentItemViewClass>::sourceIndex(const QModelIn
     return theProxy;
   }
 
-  if ( theProxy.model() != model() )
+  if ( theProxy.model() != ParentItemViewClass::model() )
   {
     return theProxy;
   }
 
-  QAbstractProxyModel* aQtModernProxy = qobject_cast<QAbstractProxyModel*>( model() );
+  QAbstractProxyModel* aQtModernProxy = qobject_cast<QAbstractProxyModel*>( ParentItemViewClass::model() );
   if ( aQtModernProxy )
   {
     return aQtModernProxy->mapToSource(theProxy);
@@ -296,18 +296,18 @@ void asiUI_DatumViewBase<ParentItemViewClass>::init(const Handle(asiUI_WidgetFac
   m_pWidgetFactory = theCreator;
   m_pEventHandler = new asiUI_DatumViewEventHandler(this);
 
-  setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-  setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+  ParentItemViewClass::setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+  ParentItemViewClass::setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-  setSelectionBehavior(QAbstractItemView::SelectItems);
-  setSelectionMode(QAbstractItemView::ExtendedSelection);
+  ParentItemViewClass::setSelectionBehavior(QAbstractItemView::SelectItems);
+  ParentItemViewClass::setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  setTabKeyNavigation(true);
-  setStyle( new asiUI_ViewStyleProxy(NULL) );
+  ParentItemViewClass::setTabKeyNavigation(true);
+  ParentItemViewClass::setStyle( new asiUI_ViewStyleProxy(nullptr) );
 
-  setEditTriggers(QAbstractItemView::EditKeyPressed |
-                  QAbstractItemView::DoubleClicked  |
-                  QAbstractItemView::AnyKeyPressed);
+  ParentItemViewClass::setEditTriggers(QAbstractItemView::EditKeyPressed |
+                                       QAbstractItemView::DoubleClicked  |
+                                       QAbstractItemView::AnyKeyPressed);
 
   SetEditByClick(false);
 
@@ -320,7 +320,7 @@ void asiUI_DatumViewBase<ParentItemViewClass>::init(const Handle(asiUI_WidgetFac
   if ( theDelegate )
   {
     theDelegate->setParent(this);
-    setItemDelegate(theDelegate);
+    ParentItemViewClass::setItemDelegate(theDelegate);
   }
 
   if ( thePrototype )
@@ -336,13 +336,14 @@ void asiUI_DatumViewBase<ParentItemViewClass>::setModel(QAbstractItemModel* theM
 {
   ParentItemViewClass::setModel(theModel);
 
-  asiUI_DatumViewSelectionModel* aSelectionModel = new asiUI_DatumViewSelectionModel( model() );
+  asiUI_DatumViewSelectionModel*
+    aSelectionModel = new asiUI_DatumViewSelectionModel( ParentItemViewClass::model() );
 
   aSelectionModel->setParent(this);
 
-  connect( model(), SIGNAL( destroyed() ), aSelectionModel, SLOT( deleteLater() ) );
+  ParentItemViewClass::connect( ParentItemViewClass::model(), SIGNAL( destroyed() ), aSelectionModel, SLOT( deleteLater() ) );
 
-  setSelectionModel(aSelectionModel);
+  ParentItemViewClass::setSelectionModel(aSelectionModel);
 }
 
 //! Get value for datum view item's index.
@@ -670,7 +671,7 @@ void asiUI_DatumViewBase<ParentItemViewClass>::keyPressEvent(QKeyEvent *theEvent
   {
     case Qt::Key_Backspace :
     {
-      if ( edit( currentIndex(), AnyKeyPressed, theEvent ) )
+      if ( ParentItemViewClass::edit( ParentItemViewClass::currentIndex(), QAbstractItemView::AnyKeyPressed, theEvent ) )
         theEvent->ignore();
       else
         theEvent->accept();
@@ -680,12 +681,12 @@ void asiUI_DatumViewBase<ParentItemViewClass>::keyPressEvent(QKeyEvent *theEvent
     case Qt::Key_Enter :
     case Qt::Key_Return :
     {
-      if ( state() != EditingState )
+      if ( ParentItemViewClass::state() != QAbstractItemView::EditingState )
       {
         if ( theEvent->modifiers() == Qt::ShiftModifier )
-          setCurrentIndex( moveCursor( QAbstractItemView::MovePrevious, Qt::NoModifier) );
+          ParentItemViewClass::setCurrentIndex( ParentItemViewClass::moveCursor( QAbstractItemView::MovePrevious, Qt::NoModifier) );
         else
-          setCurrentIndex( moveCursor( QAbstractItemView::MoveNext, Qt::NoModifier) );
+          ParentItemViewClass::setCurrentIndex( ParentItemViewClass::moveCursor( QAbstractItemView::MoveNext, Qt::NoModifier) );
       }
       break;
     }
@@ -709,10 +710,8 @@ void asiUI_DatumViewBase<ParentItemViewClass>::showStatusTip(const QModelIndex& 
 //! Triggered when modification finishes on any cell of datum view.
 //! \param theIndex [in] the index of triggered item.
 template <typename ParentItemViewClass>
-void asiUI_DatumViewBase<ParentItemViewClass>::hideStatusTip(const QModelIndex& theIndex)
+void asiUI_DatumViewBase<ParentItemViewClass>::hideStatusTip(const QModelIndex& asiUI_NotUsed(theIndex))
 {
-  asiUI_NotUsed(theIndex);
-
   QString aTip = QString::null;
   QStatusTipEvent aTipEvent(aTip);
   QApplication::sendEvent(this->parent(), &aTipEvent);
@@ -912,5 +911,5 @@ void asiUI_DatumViewEventHandler::onItemActivated(const QModelIndex& theIndex)
 //                 Common template declaration
 // ============================================================================
 
-template asiUI_DatumViewBase<QTableView>;
-template asiUI_DatumViewBase<QTreeView>;
+template class asiUI_DatumViewBase<QTableView>;
+template class asiUI_DatumViewBase<QTreeView>;

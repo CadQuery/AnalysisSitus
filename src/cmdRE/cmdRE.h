@@ -31,7 +31,7 @@
 #ifndef cmdRE_h
 #define cmdRE_h
 
-#define cmdRE_NotUsed(x) x
+#define cmdRE_NotUsed(x)
 
 #ifdef _WIN32
   #ifdef cmdRE_EXPORTS

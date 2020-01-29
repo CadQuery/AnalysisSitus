@@ -43,7 +43,7 @@
 #include <asiData_FaceNormsNode.h>
 #include <asiData_MetadataNode.h>
 #include <asiData_NamingParameter.h>
-#include <asiData_OctreeParameter.h>
+#include <asiData_OctreeNode.h>
 #include <asiData_SurfNode.h>
 #include <asiData_TolerantShapesNode.h>
 #include <asiData_VertexNode.h>
@@ -82,7 +82,6 @@ public:
     PID_AutoAAG,          //!< Whether to build AAG automatically.
     PID_AAG,              //!< AAG structure.
     PID_BVH,              //!< BVH structure.
-    PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_Naming,           //!< Topology naming service.
   //----------------------//
   // Transformation       //
@@ -149,9 +148,6 @@ public:
 
   asiData_EXPORT Handle(asiAlgo_BVHFacets)
     GetBVH() const;
-
-  asiData_EXPORT void*
-    GetOctree() const;
 
   asiData_EXPORT Handle(asiAlgo_Naming)
     GetNaming() const;
@@ -286,6 +282,9 @@ public:
   asiData_EXPORT Handle(asiData_MetadataNode)
     GetMetadata() const;
 
+  asiData_EXPORT Handle(asiData_OctreeNode)
+    GetOctree() const;
+
 // Initialization:
 public:
 
@@ -301,7 +300,7 @@ protected:
 protected:
 
   //! We prohibit to set shape from external code as such update should
-  //! normally include update of AAG, and, optionally, BVH, octree, etc.
+  //! normally include update of AAG, and, optionally, BVH, etc.
   //! Therefore, there should be "smart update" logic defined at the upper
   //! level of software architecture, while simply substituting the B-rep
   //! shape is not enough.
@@ -315,10 +314,6 @@ protected:
   //! See comment for setShape() method.
   asiData_EXPORT void
     setBVH(const Handle(asiAlgo_BVHFacets)&);
-
-  //! See comment for setShape() method.
-  asiData_EXPORT void
-    setOctree(void*);
 
   //! See comment for setShape() method.
   asiData_EXPORT void

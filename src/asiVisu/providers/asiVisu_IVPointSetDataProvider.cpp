@@ -48,21 +48,21 @@ Handle(asiAlgo_BaseCloud<double>) asiVisu_IVPointSetDataProvider::GetPoints() co
     points_n = Handle(asiData_IVPointSetNode)::DownCast(m_node);
   //
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return points_n->GetPoints();
 }
 
 //-----------------------------------------------------------------------------
 
-//! \return NULL filter.
+//! \return nullptr filter.
 Handle(TColStd_HPackedMapOfInteger) asiVisu_IVPointSetDataProvider::GetIndices() const
 {
   Handle(asiData_IVPointSetNode)
     points_n = Handle(asiData_IVPointSetNode)::DownCast(m_node);
   //
   if ( points_n.IsNull() || !points_n->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return points_n->GetFilter();
 }

@@ -948,10 +948,6 @@ bool asiEngine_RE::FillPatchCoons(const std::vector<Handle(asiData_ReCoedgeNode)
   surf = cascade::GetOpenCascadeBSurface(mobSurf);
   return true;
 #else
-  asiEngine_NotUsed(coedges);
-  asiEngine_NotUsed(minNumKnots);
-  asiEngine_NotUsed(surf);
-
   m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return false;
 #endif
@@ -1136,7 +1132,7 @@ Handle(asiData_ReCoedgeNode)
     patch = Handle(asiData_RePatchNode)::DownCast( current->GetParentNode() );
   //
   if ( patch.IsNull() || !patch->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Collect all children into a vector.
   Handle(ActAPI_HNodeList) children;
@@ -1156,7 +1152,7 @@ Handle(asiData_ReCoedgeNode)
     }
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1169,7 +1165,7 @@ Handle(asiData_ReCoedgeNode)
     patch = Handle(asiData_RePatchNode)::DownCast( current->GetParentNode() );
   //
   if ( patch.IsNull() || !patch->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   // Collect all children into a vector.
   Handle(ActAPI_HNodeList) children;
@@ -1191,7 +1187,7 @@ Handle(asiData_ReCoedgeNode)
     prev = next;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1204,7 +1200,7 @@ Handle(Geom_Surface)
     patch = Handle(asiData_RePatchNode)::DownCast( coedge->GetParentNode() );
   //
   if ( patch.IsNull() || !patch->IsWellFormed() )
-    return NULL;
+    return nullptr;
 
   return patch->GetSurface();
 }

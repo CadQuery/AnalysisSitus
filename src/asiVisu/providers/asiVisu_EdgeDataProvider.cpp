@@ -137,7 +137,7 @@ Handle(Standard_Type) asiVisu_EdgeDataProvider::GetCurveType() const
   Handle(Geom_Curve) c3d = this->GetCurve(f, l);
   //
   if ( c3d.IsNull() )
-    return NULL;
+    return nullptr;
 
   return c3d->DynamicType();
 }
@@ -147,7 +147,7 @@ Handle(Standard_Type) asiVisu_EdgeDataProvider::GetCurveType() const
 //! Not used.
 Handle(Geom2d_Curve) asiVisu_EdgeDataProvider::GetCurve2d(double&, double&) const
 {
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -161,7 +161,7 @@ Handle(Geom_Curve) asiVisu_EdgeDataProvider::GetCurve(double& f, double& l) cons
   TopoDS_Edge E = this->ExtractEdge();
   //
   if ( E.IsNull() )
-    return NULL;
+    return nullptr;
 
   return BRep_Tool::Curve(E, f, l);
 }
@@ -188,7 +188,7 @@ Handle(asiVisu_EdgeDataProvider) asiVisu_EdgeDataProvider::Clone() const
     return new asiVisu_EdgeDataProvider(curveNode);
   }
 
-  return NULL;
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -217,7 +217,7 @@ Handle(ActAPI_HParameterList) asiVisu_EdgeDataProvider::translationSources() con
     PID = asiData_CurveNode::PID_SelectedEdge;
 
   if ( PID == -1 )
-    return NULL;
+    return nullptr;
 
   return ActParamStream() << m_node->Parameter(PID); // Parameter for edge index
 }

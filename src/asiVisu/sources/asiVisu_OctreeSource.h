@@ -66,6 +66,11 @@ public:
   asiVisu_EXPORT void*
     GetInputOctree() const;
 
+  //! Sets boundary mode on/off.
+  //! \param[in] isOn true/false.
+  asiVisu_EXPORT void
+    SetZeroCrossingOnly(const bool isOn);
+
 public:
 
   //! Initializes source with diagnostic tools: progress notifier and
@@ -185,6 +190,9 @@ private:
 
   //! Max scalar.
   double m_fMaxScalar;
+
+  //! Enables visualization of zero-crossing voxels alone.
+  bool m_bZeroCrossingOnly;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

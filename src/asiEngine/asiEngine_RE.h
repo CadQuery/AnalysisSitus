@@ -35,7 +35,7 @@
 #include <asiEngine_Base.h>
 
 // asiData includes
-#include <asiData_ReCoedgeNode.h>
+#include <asiData_ReCoEdgeNode.h>
 
 //! API for the data model operations related to reverse engineering.
 class asiEngine_RE : public asiEngine_Base
@@ -47,8 +47,8 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiEngine_RE(const Handle(asiEngine_Model)& model,
-               ActAPI_ProgressEntry           progress = NULL,
-               ActAPI_PlotterEntry            plotter  = NULL)
+               ActAPI_ProgressEntry           progress = nullptr,
+               ActAPI_PlotterEntry            plotter  = nullptr)
   //
   : asiEngine_Base(model, progress, plotter) {}
 
@@ -109,8 +109,8 @@ public:
   //! \param[in] vlast  handle of the second vertex of the edge.
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReEdgeNode)
-    Create_Edge(const Handle(asiData_ReVertexNode)& vfirst = NULL,
-                const Handle(asiData_ReVertexNode)& vlast  = NULL);
+    Create_Edge(const Handle(asiData_ReVertexNode)& vfirst = nullptr,
+                const Handle(asiData_ReVertexNode)& vlast  = nullptr);
 
   //! Creates an Edge Node under the single Edges Node available in the
   //! project.
@@ -120,8 +120,8 @@ public:
   //! \return newly created Node.
   asiEngine_EXPORT Handle(asiData_ReEdgeNode)
     Create_Edge(const TCollection_ExtendedString&   name,
-                const Handle(asiData_ReVertexNode)& vfirst = NULL,
-                const Handle(asiData_ReVertexNode)& vlast  = NULL);
+                const Handle(asiData_ReVertexNode)& vfirst = nullptr,
+                const Handle(asiData_ReVertexNode)& vlast  = nullptr);
 
   //! Creates a CoEdge Node under the passed Patch Node.
   //! \param[in] patch     owning patch.

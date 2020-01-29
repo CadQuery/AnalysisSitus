@@ -53,6 +53,6 @@ namespace asiAlgo_PointCloudUtils
 
   asiAlgo_EXPORT Handle(asiAlgo_BaseCloud<double>)
     CloudfAsCloudd(const Handle(asiAlgo_BaseCloud<float>)& pointCloud);
-};
+}
 
 #endif

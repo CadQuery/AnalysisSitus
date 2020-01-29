@@ -1543,9 +1543,9 @@ Qtx::Localizer::~Localizer()
 */
 void* Qtx::getDisplay()
 {
-  static Display* pDisplay = NULL;
+  static Display* pDisplay = nullptr;
   if ( !pDisplay )
-    pDisplay = XOpenDisplay( NULL );
+    pDisplay = XOpenDisplay( nullptr );
   return pDisplay;
 }
 
@@ -1557,7 +1557,7 @@ void* Qtx::getDisplay()
 */
 Qt::HANDLE Qtx::getVisual()
 {
-  Qt::HANDLE res = (Qt::HANDLE)NULL;
+  Qt::HANDLE res = (Qt::HANDLE)nullptr;
 
   Display* pDisplay = (Display*)getDisplay();
   if ( !pDisplay )
@@ -1582,10 +1582,10 @@ Qt::HANDLE Qtx::getVisual()
   };
 
   // Try for the double-bufferd visual first
-  XVisualInfo *visualInfo = NULL;
+  XVisualInfo *visualInfo = nullptr;
   visualInfo = glXChooseVisual( pDisplay, DefaultScreen(pDisplay), doubleBufferVisual );
 
-  if( visualInfo == NULL ){
+  if( visualInfo == nullptr ){
     qCritical( "Could not find matching glx visual" );
     return res;
   }

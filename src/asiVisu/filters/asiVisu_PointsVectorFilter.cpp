@@ -45,7 +45,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
-vtkStandardNewMacro(asiVisu_PointsVectorFilter);
+vtkStandardNewMacro(asiVisu_PointsVectorFilter)
 
 //! Default constructor.
 asiVisu_PointsVectorFilter::asiVisu_PointsVectorFilter()

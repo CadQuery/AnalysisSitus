@@ -56,11 +56,11 @@ asiAlgo_ClassifyPointFace::asiAlgo_ClassifyPointFace(const TopoDS_Face&   F,
                                                      const double         precision,
                                                      ActAPI_ProgressEntry progress,
                                                      ActAPI_PlotterEntry  plotter)
-: m_F(F),
-  m_fInaccuracy(inaccuracy),
-  m_fPrecision(precision),
-  m_progress(progress),
-  m_plotter(plotter)
+: m_F           (F),
+  m_fInaccuracy (inaccuracy),
+  m_fPrecision  (precision),
+  m_progress    (progress),
+  m_plotter     (plotter)
 {
   m_fclass.Init(m_F, precision);
 

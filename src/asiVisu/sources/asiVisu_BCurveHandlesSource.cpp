@@ -47,7 +47,7 @@
 // Construction
 //-----------------------------------------------------------------------------
 
-vtkStandardNewMacro(asiVisu_BCurveHandlesSource);
+vtkStandardNewMacro(asiVisu_BCurveHandlesSource)
 
 //-----------------------------------------------------------------------------
 

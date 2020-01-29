@@ -127,37 +127,20 @@ void asiVisu_GeomFaceNormsPrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-//! \param theRenderer  [in] renderer.
-//! \param thePickRes   [in] picking results.
-//! \param theSelNature [in] selection nature (picking or detecting).
-void asiVisu_GeomFaceNormsPrs::highlight(vtkRenderer*                        theRenderer,
-                                         const Handle(asiVisu_PickerResult)& thePickRes,
-                                         const asiVisu_SelectionNature       theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(thePickRes);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomFaceNormsPrs::highlight(vtkRenderer*,
+                                         const Handle(asiVisu_PickerResult)&,
+                                         const asiVisu_SelectionNature) const
+{}
 
 //! Callback for highlighting reset.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFaceNormsPrs::unHighlight(vtkRenderer*                  theRenderer,
-                                           const asiVisu_SelectionNature theSelNature) const
-{
-  asiVisu_NotUsed(theRenderer);
-  asiVisu_NotUsed(theSelNature);
-}
+void asiVisu_GeomFaceNormsPrs::unHighlight(vtkRenderer*,
+                                           const asiVisu_SelectionNature) const
+{}
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFaceNormsPrs::renderPipelines(vtkRenderer* theRenderer) const
-{
-  asiVisu_NotUsed(theRenderer);
-}
+void asiVisu_GeomFaceNormsPrs::renderPipelines(vtkRenderer*) const
+{}
 
 //! Callback for de-rendering.
-//! \param theRenderer [in] renderer.
-void asiVisu_GeomFaceNormsPrs::deRenderPipelines(vtkRenderer* theRenderer) const
-{
-  asiVisu_NotUsed(theRenderer);
-}
+void asiVisu_GeomFaceNormsPrs::deRenderPipelines(vtkRenderer*) const
+{}

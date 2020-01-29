@@ -130,7 +130,7 @@ void asiData_DeviationNode::SetMeshWithScalars(const asiAlgo_Mesh& mesh)
   else
   {
     // Nullify arrays.
-    ActParamTool::AsIntArray( this->Parameter(PID_DistanceFieldIds) )->SetArray(NULL);
-    ActParamTool::AsRealArray( this->Parameter(PID_DistanceFieldValues) )->SetArray(NULL);
+    ActParamTool::AsIntArray( this->Parameter(PID_DistanceFieldIds) )->SetArray(nullptr);
+    ActParamTool::AsRealArray( this->Parameter(PID_DistanceFieldValues) )->SetArray(nullptr);
   }
 }

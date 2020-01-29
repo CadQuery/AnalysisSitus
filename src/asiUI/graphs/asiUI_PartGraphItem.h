@@ -90,7 +90,7 @@ class asiUI_PartGraphItem : public QObject,
 public:
 
   static asiUI_PartGraphItem* New();
-  vtkTypeMacro(asiUI_PartGraphItem, vtkGraphItem);
+  vtkTypeMacro(asiUI_PartGraphItem, vtkGraphItem)
 
   virtual ~asiUI_PartGraphItem();
 

@@ -90,15 +90,15 @@ public:
     asiAlgo_PatchJointAdaptor(const Handle(Geom_Curve)&          curve,
                               const Handle(Geom_BSplineSurface)& surfLeft,
                               const Handle(Geom_BSplineSurface)& surfRight,
-                              ActAPI_ProgressEntry               progress = NULL,
-                              ActAPI_PlotterEntry                plotter  = NULL);
+                              ActAPI_ProgressEntry               progress = nullptr,
+                              ActAPI_PlotterEntry                plotter  = nullptr);
 
   //! Default ctor.
   //! \param[in] progress  progress notifier.
   //! \param[in] plotter   imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_PatchJointAdaptor(ActAPI_ProgressEntry progress = NULL,
-                              ActAPI_PlotterEntry  plotter  = NULL);
+    asiAlgo_PatchJointAdaptor(ActAPI_ProgressEntry progress = nullptr,
+                              ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
 

@@ -88,7 +88,7 @@ Handle(asiData_IVPoints2dNode) asiData_IVNode::Points2d()
   if ( !points_n.IsNull() && points_n->IsWellFormed() )
     return points_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying points.
@@ -100,7 +100,7 @@ Handle(asiData_IVPointsNode) asiData_IVNode::Points()
   if ( !points_n.IsNull() && points_n->IsWellFormed() )
     return points_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying curves 2D Node.
@@ -112,7 +112,7 @@ Handle(asiData_IVCurves2dNode) asiData_IVNode::Curves2d()
   if ( !curves2d_n.IsNull() && curves2d_n->IsWellFormed() )
     return curves2d_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying curves.
@@ -124,7 +124,7 @@ Handle(asiData_IVCurvesNode) asiData_IVNode::Curves()
   if ( !curves_n.IsNull() && curves_n->IsWellFormed() )
     return curves_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying surfaces.
@@ -136,7 +136,7 @@ Handle(asiData_IVSurfacesNode) asiData_IVNode::Surfaces()
   if ( !surf_n.IsNull() && surf_n->IsWellFormed() )
     return surf_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying topologies.
@@ -148,7 +148,7 @@ Handle(asiData_IVTopoNode) asiData_IVNode::Topology()
   if ( !topo_n.IsNull() && topo_n->IsWellFormed() )
     return topo_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying tessellations.
@@ -160,7 +160,7 @@ Handle(asiData_IVTessNode) asiData_IVNode::Tessellation()
   if ( !tess_n.IsNull() && tess_n->IsWellFormed() )
     return tess_n;
   //
-  return NULL;
+  return nullptr;
 }
 
 //! \return underlying text container.
@@ -172,5 +172,5 @@ Handle(asiData_IVTextNode) asiData_IVNode::Text()
   if ( !text_n.IsNull() && text_n->IsWellFormed() )
     return text_n;
   //
-  return NULL;
+  return nullptr;
 }

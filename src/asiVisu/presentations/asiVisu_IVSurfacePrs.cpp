@@ -40,8 +40,10 @@
 #include <asiVisu_Utils.h>
 
 // VTK includes
+#pragma warning(push, 0)
 #include <vtkMapper.h>
 #include <vtkProperty.h>
+#pragma warning(pop)
 
 //-----------------------------------------------------------------------------
 
@@ -59,10 +61,15 @@ asiVisu_IVSurfacePrs::asiVisu_IVSurfacePrs(const Handle(ActAPI_INode)& N)
   /* Main pipeline */
 
   // Pipeline for shaded surface
-  this->addPipeline        ( Pipeline_Main, new asiVisu_IVSurfacePipeline );
+  Handle(asiVisu_IVSurfacePipeline) mainPl = new asiVisu_IVSurfacePipeline;
+  //
+  this->addPipeline        ( Pipeline_Main, mainPl );
   this->assignDataProvider ( Pipeline_Main, DP );
   //
   this->GetPipeline(Pipeline_Main)->Actor()->SetVisibility( ivNode->GetSurfaceType() == asiData_IVSurfaceNode::SurfaceType_Plane ? 0 : 1 );
+
+  // Colorize backface so that inverted faces are immediately visible.
+  mainPl->Actor()->SetBackfaceProperty( asiVisu_Utils::DefaultBackfaceProp() );
 
   /* Control network for B-surfaces */
 

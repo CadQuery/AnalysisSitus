@@ -55,7 +55,7 @@ public:
 
   asiUI_EXPORT static asiUI_PickContourCallback* New();
   //
-  vtkTypeMacro(asiUI_PickContourCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PickContourCallback, asiUI_ViewerCallback)
 
 public:
 

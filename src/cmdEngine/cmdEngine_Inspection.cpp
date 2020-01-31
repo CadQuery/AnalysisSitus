@@ -2495,7 +2495,7 @@ int ENGINE_RecognizeBlends(const Handle(asiTcl_Interp)& interp,
   // Get the detected faces.
   TColStd_PackedMapOfInteger resIndices;
   //
-  if ( !isEbf && !isVbf || isEbf && isVbf )
+  if ( (!isEbf && !isVbf) || (isEbf && isVbf) )
   {
     resIndices = recognizer.GetResultIndices();
   }

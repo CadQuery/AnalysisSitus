@@ -125,7 +125,7 @@ public:
   asiUI_EXPORT static asiUI_RotationCallback*
     New(asiUI_Viewer* viewer);
 
-  vtkTypeMacro(asiUI_RotationCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_RotationCallback, asiUI_ViewerCallback)
 
 public:
 

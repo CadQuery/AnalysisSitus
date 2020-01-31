@@ -420,8 +420,7 @@ void asiVisu_PrsManager::DeRenderAllPresentations()
    this->DeRenderPresentation( it.Key() );
 
   // Update view window to have it cleared for user
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -445,8 +444,7 @@ void asiVisu_PrsManager::GarbageCollect()
       this->DeRenderPresentation(nodeId);
   }
 
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -623,8 +621,7 @@ void asiVisu_PrsManager::SetSelectionMode(const int mode)
   m_currentSelection.PopAll(m_renderer, SelectionNature_Persistent);
   m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -748,8 +745,7 @@ bool
   m_currentSelection.PushToRender(prs3D, m_renderer, selNature);
 
   // Update view window.
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 
   return true;
 }
@@ -864,8 +860,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_HNodeList)& nodeList)
   }
 
   // Update view window
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -938,8 +933,7 @@ void asiVisu_PrsManager::Highlight(const Handle(ActAPI_INode)&       node,
   m_currentSelection.PushToRender(prs3D, m_renderer, SelectionNature_Persistent);
 
   // Update view window
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -950,8 +944,7 @@ void asiVisu_PrsManager::CleanDetection()
   m_currentSelection.PopAll(m_renderer, SelectionNature_Detection);
 
   // Update view window
-  if ( m_widget )
-    m_widget->GetRenderWindow()->Render();
+  m_renderWindow->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -1024,11 +1017,6 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 
 //-----------------------------------------------------------------------------
 
-#include <QApplication>
-#include <QHBoxLayout>
-#include <QDockWidget>
-#include <vtkSphereSource.h>
-
 //! Initializes rendering process for the input QVTK widget
 //! and VTK render window handled by Presentation Manager.
 //!
@@ -1057,7 +1045,7 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
     m_renderer->TwoSidedLightingOff();
     m_renderer->SetBackground(0.15, 0.15, 0.15);
     //
-    m_widget->GetRenderWindow()->AddRenderer(m_renderer);
+    m_renderWindow->AddRenderer(m_renderer);
 
     // Initialize Interactor Style instance for normal operation mode.
     m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
@@ -1069,19 +1057,11 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
     m_renderWindowInteractor = m_renderWindow->GetInteractor();
     m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
 
-   /* =========
-    *  Pickers.
-    * ========= */
-
     // Initialize employed pickers.
     this->InitializePickers( Handle(ActAPI_INode)() );
 
     // Set default selection mode.
     m_currentSelection.SetSelectionModes(SelectionMode_None);
-
-   /* ===========
-    *  Trihedron.
-    * =========== */
 
     // Initialize trihedron.
     m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
@@ -1093,13 +1073,24 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
   {
     m_widget = nullptr; // No widgets.
 
-    // A renderer and render window.
+    // Renderer.
     m_renderer = vtkSmartPointer<vtkRenderer>::New();
-    //
-    m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    //
+    m_renderer->GetActiveCamera()->ParallelProjectionOn();
+    m_renderer->LightFollowCameraOn();
+    m_renderer->TwoSidedLightingOff();
+    m_renderer->SetBackground(1, 1, 1);
+
+    // Render window.
+    m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
     m_renderWindow->SetOffScreenRendering(1);
+    m_renderWindow->SetMultiSamples(16);
+    m_renderWindow->SetLineSmoothing(true);
+    m_renderWindow->SetPolygonSmoothing(false);
+    //
     m_renderWindow->AddRenderer(m_renderer);
+    m_renderWindow->Render();
+
+    asiVisu_Utils::ResetCamera( m_renderer, this->PropsByTrihedron() );
   }
 }
 
@@ -1284,7 +1275,7 @@ bool
 #if defined COUT_DEBUG
     std::cout << "No picked actor" << std::endl;
 #endif
-    m_widget->GetRenderWindow()->Render();
+    m_renderWindow->Render();
     return false; // Nothing has been picked.
   }
 
@@ -1350,7 +1341,7 @@ bool
   //
   if ( !pickedActor )
   {
-    m_widget->GetRenderWindow()->Render();
+    m_renderWindow->Render();
     return false; // Nothing has been picked.
   }
 

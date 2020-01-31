@@ -66,8 +66,7 @@ void asiUI_IV::FIT3D()
     asiVisu_Utils::AdjustCamera( m_prsMgr3d->GetRenderer(),
                                  m_prsMgr3d->PropsByTrihedron() );
     //
-    if ( m_prsMgr3d->GetQVTKWidget() )
-      m_prsMgr3d->GetQVTKWidget()->GetRenderWindow()->Render();
+    m_prsMgr3d->GetRenderWindow()->Render();
   }
 }
 
@@ -907,8 +906,8 @@ void asiUI_IV::REPAINT_ON()
 {
   m_bRepaintOn = true;
 
-  this->prsManager(false)->GetQVTKWidget()->GetRenderWindow()->Render();
-  this->prsManager(true)->GetQVTKWidget()->GetRenderWindow()->Render();
+  this->prsManager(false)->GetRenderWindow()->Render();
+  this->prsManager(true)->GetRenderWindow()->Render();
 }
 
 //---------------------------------------------------------------------------//

@@ -57,7 +57,7 @@ class asiUI_ViewerCallback : public vtkCommand
 {
 public:
 
-  vtkTypeMacro(asiUI_ViewerCallback, vtkCommand);
+  vtkTypeMacro(asiUI_ViewerCallback, vtkCommand)
 
 public:
 

@@ -45,7 +45,7 @@ public:
   //! \return instance of the callback class.
   asiUI_EXPORT static asiUI_AddCurveHandleCallback* New();
   //
-  vtkTypeMacro(asiUI_AddCurveHandleCallback, asiUI_BaseCurveCallback);
+  vtkTypeMacro(asiUI_AddCurveHandleCallback, asiUI_BaseCurveCallback)
 
 public:
 

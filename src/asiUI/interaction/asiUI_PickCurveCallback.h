@@ -46,7 +46,7 @@ public:
   //! \return instance of the callback class.
   asiUI_EXPORT static asiUI_PickCurveCallback* New();
   //
-  vtkTypeMacro(asiUI_PickCurveCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PickCurveCallback, asiUI_ViewerCallback)
 
 public:
 

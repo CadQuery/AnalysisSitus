@@ -59,7 +59,7 @@ public:
   asiUI_EXPORT static asiUI_PDomainCallback*
     New(asiUI_Viewer* pViewer);
 
-  vtkTypeMacro(asiUI_PDomainCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PDomainCallback, asiUI_ViewerCallback)
 
 public:
 

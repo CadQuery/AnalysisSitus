@@ -76,7 +76,7 @@ public:
     New(const Handle(asiEngine_Model)& model,
         asiUI_Viewer*                  pViewer);
 
-  vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PickCallback, asiUI_ViewerCallback)
 
 public:
 

@@ -54,7 +54,7 @@ public:
   asiUI_EXPORT static asiUI_PickFacetCallback*
     New();
 
-  vtkTypeMacro(asiUI_PickFacetCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PickFacetCallback, asiUI_ViewerCallback)
 
 public:
 

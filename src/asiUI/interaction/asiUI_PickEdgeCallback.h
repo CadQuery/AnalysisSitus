@@ -51,7 +51,7 @@ public:
   asiUI_EXPORT static asiUI_PickEdgeCallback*
     New();
 
-  vtkTypeMacro(asiUI_PickEdgeCallback, asiUI_ViewerCallback);
+  vtkTypeMacro(asiUI_PickEdgeCallback, asiUI_ViewerCallback)
 
 public:
 

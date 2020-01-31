@@ -196,15 +196,15 @@ public:
     // Re-initialize all pickers (otherwise picking gives strange results...)
     this->InitializePickers<HColType>(nodeCol);
 
-    if ( doAdjustTrih )
+    if ( doAdjustTrih && m_trihedron->Get() )
       asiVisu_Utils::AdjustTrihedron( m_renderer, m_trihedron, this->PropsByTrihedron() );
 
     if ( doFitContents )
       asiVisu_Utils::AdjustCamera( m_renderer, this->PropsByTrihedron() );
 
     // Update view window
-    if ( withRepaint && m_widget )
-      m_widget->GetRenderWindow()->Render();
+    if ( withRepaint )
+      m_renderWindow->Render();
   }
 
 //-----------------------------------------------------------------------------

@@ -196,7 +196,7 @@ public:
     // Re-initialize all pickers (otherwise picking gives strange results...)
     this->InitializePickers<HColType>(nodeCol);
 
-    if ( doAdjustTrih && m_trihedron->Get() )
+    if ( doAdjustTrih && m_trihedron.Get() )
       asiVisu_Utils::AdjustTrihedron( m_renderer, m_trihedron, this->PropsByTrihedron() );
 
     if ( doFitContents )

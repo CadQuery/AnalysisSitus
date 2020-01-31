@@ -66,7 +66,8 @@ void asiUI_IV::FIT3D()
     asiVisu_Utils::AdjustCamera( m_prsMgr3d->GetRenderer(),
                                  m_prsMgr3d->PropsByTrihedron() );
     //
-    m_prsMgr3d->GetQVTKWidget()->GetRenderWindow()->Render();
+    if ( m_prsMgr3d->GetQVTKWidget() )
+      m_prsMgr3d->GetQVTKWidget()->GetRenderWindow()->Render();
   }
 }
 

@@ -1036,63 +1036,71 @@ vtkRenderWindow* asiVisu_PrsManager::GetRenderWindow() const
 //! \param[in] isOffscreen off-screen rendering mode.
 void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
 {
-  // Initialize widget.
-  m_widget = new QVTKOpenGLNativeWidget(pWidget);
+  if ( !isOffscreen )
+  {
+    // Initialize widget.
+    m_widget = new QVTKOpenGLNativeWidget(pWidget);
 
-  // Initialize render window.
-  m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-  //
-  m_renderWindow->SetMultiSamples(16);
-  m_renderWindow->SetLineSmoothing(true);
-  m_renderWindow->SetPolygonSmoothing(false);
-  //
-  m_widget->SetRenderWindow(m_renderWindow);
+    // Initialize render window.
+    m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    //
+    m_renderWindow->SetMultiSamples(16);
+    m_renderWindow->SetLineSmoothing(true);
+    m_renderWindow->SetPolygonSmoothing(false);
+    //
+    m_widget->SetRenderWindow(m_renderWindow);
 
-  // Initialize renderer.
-  m_renderer = vtkSmartPointer<vtkRenderer>::New();
-  m_renderer->GetActiveCamera()->ParallelProjectionOn();
-  m_renderer->LightFollowCameraOn();
-  m_renderer->TwoSidedLightingOff();
-  m_renderer->SetBackground(0.15, 0.15, 0.15);
-  //
-  m_widget->GetRenderWindow()->AddRenderer(m_renderer);
+    // Initialize renderer.
+    m_renderer = vtkSmartPointer<vtkRenderer>::New();
+    m_renderer->GetActiveCamera()->ParallelProjectionOn();
+    m_renderer->LightFollowCameraOn();
+    m_renderer->TwoSidedLightingOff();
+    m_renderer->SetBackground(0.15, 0.15, 0.15);
+    //
+    m_widget->GetRenderWindow()->AddRenderer(m_renderer);
 
-  // Initialize Interactor Style instance for normal operation mode.
-  m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
+    // Initialize Interactor Style instance for normal operation mode.
+    m_interactorStyleTrackball = vtkSmartPointer<asiVisu_InteractorStylePick>::New();
 
-  // Initialize Interactor Style instance for 2D scenes.
-  m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
+    // Initialize Interactor Style instance for 2D scenes.
+    m_interactorStyleImage = vtkSmartPointer<asiVisu_InteractorStylePick2d>::New();
 
-  // Initialize Render Window Interactor.
-  m_renderWindowInteractor = m_renderWindow->GetInteractor();
-  m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
+    // Initialize Render Window Interactor.
+    m_renderWindowInteractor = m_renderWindow->GetInteractor();
+    m_renderWindowInteractor->SetInteractorStyle(m_interactorStyleImage);
 
-  /* =========
-   *  Pickers.
-   * ========= */
+   /* =========
+    *  Pickers.
+    * ========= */
 
-  // Initialize employed pickers.
-  this->InitializePickers( Handle(ActAPI_INode)() );
+    // Initialize employed pickers.
+    this->InitializePickers( Handle(ActAPI_INode)() );
 
-  // Set default selection mode.
-  m_currentSelection.SetSelectionModes(SelectionMode_None);
+    // Set default selection mode.
+    m_currentSelection.SetSelectionModes(SelectionMode_None);
 
-  /* ===========
-   *  Trihedron.
-   * =========== */
+   /* ===========
+    *  Trihedron.
+    * =========== */
 
-  // Initialize trihedron.
-  m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
-  m_trihedron->SetAxisLabels(0);
-  m_trihedron->SetConeRadius(0);
-  m_renderer->AddActor(m_trihedron);
+    // Initialize trihedron.
+    m_trihedron = vtkSmartPointer<vtkAxesActor>::New();
+    m_trihedron->SetAxisLabels(0);
+    m_trihedron->SetConeRadius(0);
+    m_renderer->AddActor(m_trihedron);
+  }
+  else // Offscreen rendering.
+  {
+    m_widget = nullptr; // No widgets.
 
-  /* ==========
-   *  Finalize.
-   * ========== */
-
-  if ( isOffscreen )
+    // A renderer and render window.
+    m_renderer = vtkSmartPointer<vtkRenderer>::New();
+    //
+    m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    //
     m_renderWindow->SetOffScreenRendering(1);
+    m_renderWindow->AddRenderer(m_renderer);
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -265,7 +265,7 @@ int main(int argc, char** argv)
 
     // Auto-recognize file format.
     asiAlgo_FileFormat
-      format = asiAlgo_FileFormatTool(ASI_FILE_EXT).FormatFromFileContent(arg1Str);
+     format = asiAlgo_FileFormatTool(ASI_FILE_EXT).FormatFromFileContent(arg1Str);
     //
     if ( format == FileFormat_Unknown )
     {
@@ -311,74 +311,64 @@ int main(int argc, char** argv)
 
 #else
 
-#include <QVTKOpenGLNativeWidget.h>
-#include <vtkNew.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-
-#include <QApplication>
-#include <QBoxLayout>
-#include <QSurfaceFormat>
-#include <QWidget>
-
-
 // VTK init
 #include <vtkAutoInit.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkWindowToImageFilter.h>
+#include <vtkPNGWriter.h>
 
-// OCCT includes
-#include <OSD_Environment.hxx>
+VTK_MODULE_INIT(vtkRenderingOpenGL2); // VTK was built with vtkRenderingOpenGL2
+VTK_MODULE_INIT(vtkInteractionStyle);
 
-// Qt includes
-#pragma warning(push, 0)
-#include <QDir>
-#include <QTextStream>
-#pragma warning(pop)
-
-// Activate object factories
-VTK_MODULE_INIT(vtkRenderingContextOpenGL2)
-VTK_MODULE_INIT(vtkRenderingOpenGL2)
-VTK_MODULE_INIT(vtkInteractionStyle)
-VTK_MODULE_INIT(vtkRenderingFreeType)
-VTK_MODULE_INIT(vtkIOExportOpenGL2)
-VTK_MODULE_INIT(vtkRenderingGL2PSOpenGL2)
-
-int main(int argc, char* argv[])
+int main(int, char *[])
 {
-  QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
-  QApplication app(argc, argv);
+  std::cout << "Hello, offscreen rendering!" << std::endl;
 
-  // Set up frame with two horizontally stacked panels,
-  // Each containing a QVTKOpenGLNativeWidget
-  QWidget frame;
-  QHBoxLayout *layout = new QHBoxLayout(&frame);
+   // Create a sphere
+   vtkSmartPointer<vtkSphereSource> sphereSource = 
+     vtkSmartPointer<vtkSphereSource>::New();
 
-  QWidget *leftPanel = new QWidget(&frame);
-  QVBoxLayout *leftLayout = new QVBoxLayout(leftPanel);
-  QVTKOpenGLNativeWidget* leftVTKWidget = new QVTKOpenGLNativeWidget(leftPanel);
-  vtkSmartPointer<vtkRenderer> leftRenderer = vtkSmartPointer<vtkRenderer>::New();
-  leftRenderer->SetBackground(1, 0, 0);
-  leftVTKWidget->GetRenderWindow()->AddRenderer(leftRenderer);
-  leftLayout->addWidget(leftVTKWidget);
+  // Create a mapper and actor
+  vtkSmartPointer<vtkPolyDataMapper> mapper = 
+    vtkSmartPointer<vtkPolyDataMapper>::New();
+  mapper->SetInputConnection(sphereSource->GetOutputPort());
 
-  QWidget *rightPanel = new QWidget(&frame);
-  QVBoxLayout *rightLayout = new QVBoxLayout(rightPanel);
-  QVTKOpenGLNativeWidget* rightVTKWidget = new QVTKOpenGLNativeWidget(rightPanel);
-  vtkSmartPointer<vtkRenderer> rightRenderer = vtkSmartPointer<vtkRenderer>::New();
-  rightRenderer->SetBackground(0, 1, 0);
-  rightVTKWidget->GetRenderWindow()->AddRenderer(rightRenderer);
-  rightLayout->addWidget(rightVTKWidget);
+  vtkSmartPointer<vtkActor> actor = 
+    vtkSmartPointer<vtkActor>::New();
+  actor->SetMapper(mapper);
 
-  layout->addWidget(leftPanel);
-  layout->addWidget(rightPanel);
+  // A renderer and render window
+  vtkSmartPointer<vtkRenderer> renderer = 
+    vtkSmartPointer<vtkRenderer>::New();
+  vtkSmartPointer<vtkRenderWindow> renderWindow = 
+    vtkSmartPointer<vtkRenderWindow>::New();
+  renderWindow->SetOffScreenRendering( 1 ); 
+  renderWindow->AddRenderer(renderer);
 
-  // Show stuff and process events
-  frame.show();
-  leftVTKWidget->GetRenderWindow()->Render();
-  rightVTKWidget->GetRenderWindow()->Render();
-  app.processEvents();
+  // Add the actors to the scene
+  renderer->AddActor(actor);
+  renderer->SetBackground(1,1,1); // Background color white
 
-  return app.exec();
+  renderWindow->Render();
+
+  vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter = 
+    vtkSmartPointer<vtkWindowToImageFilter>::New();
+  windowToImageFilter->SetInput(renderWindow);
+  windowToImageFilter->Update();
+
+  vtkSmartPointer<vtkPNGWriter> writer = 
+    vtkSmartPointer<vtkPNGWriter>::New();
+  writer->SetFileName("screenshot.png");
+  writer->SetInputConnection(windowToImageFilter->GetOutputPort());
+  writer->Write();
+
+  return 0;
 }
 
 #endif

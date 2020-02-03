@@ -44,10 +44,12 @@ enum asiVisu_ShapeDisplayMode
 {
   ShapeDisplayMode_Undefined            = 0x0000, //!< Undefined display mode.
   ShapeDisplayMode_Shaded               = 0x0001, //!< Shaded.
-  ShapeDisplayMode_Wireframe            = 0x0002, //!< Wireframe.
-  ShapeDisplayMode_Vertices             = 0x0004, //!< Vertices.
-  ShapeDisplayMode_WireframeAndVertices = 0x0008, //!< Wireframe with vertices.
-  ShapeDisplayMode_ShadedAndWireframe   = 0x0010  //!< Shaded and wireframe.
+  ShapeDisplayMode_ShadedFacets         = 0x0002, //!< Shaded with facets only.
+  ShapeDisplayMode_Wireframe            = 0x0004, //!< Wireframe.
+  ShapeDisplayMode_Vertices             = 0x0008, //!< Vertices.
+  ShapeDisplayMode_WireframeAndVertices = 0x0010, //!< Wireframe with vertices.
+  ShapeDisplayMode_ShadedAndWireframe   = 0x0020  //!< Shaded and wireframe.
+  
 };
 
 //-----------------------------------------------------------------------------
@@ -67,6 +69,17 @@ public:
 
     // Add isolines for bad faces
     mode.Add(ShapePrimitive_Isoline);
+
+    return mode;
+  }
+
+  //! \return collection of shape primitives employed in SHADED FACETS mode.
+  static TColStd_PackedMapOfInteger SHADED_FACETS()
+  {
+    TColStd_PackedMapOfInteger mode;
+
+    // Add facets
+    mode.Add(ShapePrimitive_Facet);
 
     return mode;
   }
@@ -130,6 +143,7 @@ public:
     switch ( mode )
     {
       case ShapeDisplayMode_Shaded:               return SHADED();
+      case ShapeDisplayMode_ShadedFacets:         return SHADED_FACETS();
       case ShapeDisplayMode_Wireframe:            return WIREFRAME();
       case ShapeDisplayMode_Vertices:             return VERTICES();
       case ShapeDisplayMode_WireframeAndVertices: return WIREFRAME_AND_VERTICES();

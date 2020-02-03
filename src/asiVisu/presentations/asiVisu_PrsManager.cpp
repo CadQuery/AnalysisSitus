@@ -1035,6 +1035,7 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
     m_renderWindow->SetMultiSamples(16);
     m_renderWindow->SetLineSmoothing(true);
     m_renderWindow->SetPolygonSmoothing(false);
+    m_renderWindow->SetPointSmoothing(false);
     //
     m_widget->SetRenderWindow(m_renderWindow);
 

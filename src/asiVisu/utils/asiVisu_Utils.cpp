@@ -706,7 +706,7 @@ vtkSmartPointer<vtkLookupTable>
   colorTable->SetTableValue(ShapePrimitive_NonManifoldEdge, 1.0,  1.0, 0.0);
   //
   colorTable->SetTableValue(ShapePrimitive_Facet,           ref_r, ref_g, ref_b);
-  colorTable->SetTableValue(ShapePrimitive_Isoline,         0.9, 0.0, 0.0);
+  colorTable->SetTableValue(ShapePrimitive_Isoline,         1.0, 0.0, 0.0);
   //
   colorTable->SetTableValue(ShapePrimitive_Detected,        0.0, 1.0, 1.0);
   colorTable->SetTableValue(ShapePrimitive_Selected,        1.0, 1.0, 0.0);

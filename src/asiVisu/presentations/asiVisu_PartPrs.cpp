@@ -79,8 +79,22 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
 
-  // Colorize backface so that inverted faces are immediately visible.
-  pl->Actor()->SetBackfaceProperty( asiVisu_Utils::DefaultBackfaceProp() );
+  /* =================================
+   *  Pipeline for back side of shape.
+   * ================================= */
+
+  // Create pipeline for the backside.
+  Handle(asiVisu_PartPipeline)
+    backside_pl = new asiVisu_PartPipeline( pl->GetSource(), ShapeDisplayMode_ShadedFacets );
+  //
+  this->addPipeline        ( Pipeline_Backside, backside_pl );
+  this->assignDataProvider ( Pipeline_Backside, dp );
+
+  // Adjust properties.
+  backside_pl->SetScalarsOn(false);
+  backside_pl->Actor()->GetProperty()->FrontfaceCullingOn();
+  backside_pl->Actor()->SetPickable(0);
+  backside_pl->Actor()->GetProperty()->SetColor(0.25, 0.25, 0.25);
 
   /* ====================
    *  Pipeline for edges.
@@ -94,10 +108,11 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetOpacity(1.); // Do not set opacity to avoid Qt-VTK artifacts.
-  contour_pl->Actor()->GetProperty()->SetLineWidth(0.9f);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.f);
   contour_pl->Actor()->SetPickable(0);
+  contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOff();
   contour_pl->Actor()->GetProperty()->LightingOff();
+  //
   contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );

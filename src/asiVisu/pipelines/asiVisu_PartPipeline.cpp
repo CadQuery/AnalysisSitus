@@ -51,11 +51,12 @@
 
 //-----------------------------------------------------------------------------
 
-asiVisu_PartPipeline::asiVisu_PartPipeline()
+asiVisu_PartPipeline::asiVisu_PartPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source,
+                                           const asiVisu_ShapeDisplayMode                    dm)
 //
-: asiVisu_PartPipelineBase(nullptr), m_fPartRed(0.), m_fPartGreen(0.), m_fPartBlue(0.)
+: asiVisu_PartPipelineBase(source), m_fPartRed(0.), m_fPartGreen(0.), m_fPartBlue(0.)
 {
-  m_dmFilter->SetDisplayMode(ShapeDisplayMode_Shaded);
+  m_dmFilter->SetDisplayMode(dm);
   m_dmFilter->SetAllowExtraScalars(true);
 
   // Apply lightning rules.
@@ -137,6 +138,9 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
 void asiVisu_PartPipeline::updateColors()
 {
+  if ( !m_bScalarsOn )
+    return;
+
   Handle(asiVisu_ShapeColorSource) colorSource = m_source->GetColorSource();
   //
   if ( colorSource.IsNull() )
@@ -211,24 +215,27 @@ void asiVisu_PartPipeline::updateColors()
 //! Callback for Update() routine.
 void asiVisu_PartPipeline::callback_update()
 {
-  this->updateColors();
+  if ( m_bScalarsOn )
+  {
+    this->updateColors();
 
-  // Get extra scalars.
-  NCollection_DataMap<int, int> extraScalars;
-  m_source->GetExtraColorsScalars(extraScalars);
-  //
-  const int lastUnusedScalar = m_source->GetLastUnusedScalar();
+    // Get extra scalars.
+    NCollection_DataMap<int, int> extraScalars;
+    m_source->GetExtraColorsScalars(extraScalars);
+    //
+    const int lastUnusedScalar = m_source->GetLastUnusedScalar();
 
-  // Initialize mapper and a lookup table to have not only the default
-  // colors for boundary elements, but also the custom colors. The part
-  // color is passed as the reference one for choosing scalar colors.
-  asiVisu_Utils::InitShapeMapper(m_mapper.Get(),
-                                 m_fPartRed,
-                                 m_fPartGreen,
-                                 m_fPartBlue,
-                                 extraScalars,
-                                 lastUnusedScalar);
+    // Initialize mapper and a lookup table to have not only the default
+    // colors for boundary elements, but also the custom colors. The part
+    // color is passed as the reference one for choosing scalar colors.
+    asiVisu_Utils::InitShapeMapper(m_mapper.Get(),
+                                   m_fPartRed,
+                                   m_fPartGreen,
+                                   m_fPartBlue,
+                                   extraScalars,
+                                   lastUnusedScalar);
 
-  if ( !m_bMapperColorsSet )
-    m_bMapperColorsSet = true;
+    if ( !m_bMapperColorsSet )
+      m_bMapperColorsSet = true;
+  }
 }

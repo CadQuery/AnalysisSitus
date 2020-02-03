@@ -74,7 +74,10 @@ public:
     AddElement(const TCoordType x, const TCoordType y, const TCoordType z);
 
   asiAlgo_EXPORT void
-    AddElement(const gp_XYZ xyz);
+    AddElement(const gp_XYZ& xyz);
+
+  asiAlgo_EXPORT void
+    AddElement(const gp_Pnt& xyz);
 
   asiAlgo_EXPORT void
     SetElement(const int elemIndex, const TCoordType x, const TCoordType y, const TCoordType z);

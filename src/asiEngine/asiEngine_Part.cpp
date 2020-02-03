@@ -634,7 +634,7 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 
   // Build BVH for facets
   Handle(asiAlgo_BVHFacets)
-    bvh = new asiAlgo_BVHFacets(part_n->GetShape(),
+    bvh = new asiAlgo_BVHFacets(part_n->GetShape(true),
                                 asiAlgo_BVHFacets::Builder_Binned,
                                 m_progress,
                                 m_plotter);

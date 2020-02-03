@@ -115,7 +115,15 @@ void asiAlgo_BaseCloud<TCoordType>::AddElement(const TCoordType x,
 //-----------------------------------------------------------------------------
 
 template <typename TCoordType>
-void asiAlgo_BaseCloud<TCoordType>::AddElement(const gp_XYZ xyz)
+void asiAlgo_BaseCloud<TCoordType>::AddElement(const gp_XYZ& xyz)
+{
+  this->AddElement( TCoordType( xyz.X() ), TCoordType( xyz.Y() ), TCoordType( xyz.Z() ) );
+}
+
+//-----------------------------------------------------------------------------
+
+template <typename TCoordType>
+void asiAlgo_BaseCloud<TCoordType>::AddElement(const gp_Pnt& xyz)
 {
   this->AddElement( TCoordType( xyz.X() ), TCoordType( xyz.Y() ), TCoordType( xyz.Z() ) );
 }

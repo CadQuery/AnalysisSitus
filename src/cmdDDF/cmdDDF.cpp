@@ -39,6 +39,7 @@
 #include <asiVisu_OctreePrs.h>
 
 // asiAlgo includes
+#include <asiAlgo_ProjectPointOnMesh.h>
 #ifdef USE_MOBIUS
   #include <asiAlgo_MeshDistanceFunc.h>
 #endif
@@ -426,12 +427,19 @@ int DDF_SampleSVOPoints(const Handle(asiTcl_Interp)& interp,
                         const char**                 argv)
 {
 #if defined USE_MOBIUS
-  if ( argc != 2 && argc != 3 )
+  if ( argc != 2 && argc != 3 && argc != 4 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
   const bool isBoundarySampling = interp->HasKeyword(argc, argv, "boundary");
+  const bool isBoundaryProj     = interp->HasKeyword(argc, argv, "project");
+  //
+  if ( isBoundaryProj && !isBoundarySampling )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Projection is only allowed in '-boundary' mode.");
+    return TCL_ERROR;
+  }
 
   Handle(asiEngine_Model)
     M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
@@ -448,12 +456,43 @@ int DDF_SampleSVOPoints(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get center points in a point cloud.
-  Handle(asiAlgo_BaseCloud<double>) centers = new asiAlgo_BaseCloud<double>;
+  Handle(asiAlgo_BaseCloud<double>) points = new asiAlgo_BaseCloud<double>;
   //
-  getCentersOfVoxels(pOctree, isBoundarySampling, centers);
+  getCentersOfVoxels(pOctree, isBoundarySampling, points);
+
+  // Project points.
+  if ( isBoundaryProj )
+  {
+    // Get BVH from the Part Node.
+    Handle(asiAlgo_BVHFacets) bvh = M->GetPartNode()->GetBVH();
+
+    TIMER_NEW
+    TIMER_GO
+
+    // Prepare the projection tool.
+    asiAlgo_ProjectPointOnMesh projection( bvh,
+                                           interp->GetProgress(),
+                                           interp->GetPlotter() );
+
+    // Project each point separately.
+    Handle(asiAlgo_BaseCloud<double>) projected = new asiAlgo_BaseCloud<double>;
+    //
+    for ( int pp = 0; pp < points->GetNumberOfElements(); ++pp )
+    {
+      gp_Pnt P_center = points->GetElement(pp);
+      gp_Pnt P_proj   = projection.Perform(P_center);
+      //
+      projected->AddElement(P_proj);
+    }
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Project points on mesh")
+
+    points = projected;
+  }
 
   // Draw.
-  interp->GetPlotter().REDRAW_POINTS(argv[1], centers->GetCoordsArray(),
+  interp->GetPlotter().REDRAW_POINTS(argv[1], points->GetCoordsArray(),
                                      isBoundarySampling ? Color_Green : Color_White);
 
   return TCL_OK;
@@ -796,10 +835,12 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("ddf-sample-svo-points",
     //
-    "ddf-sample-svo-points <resName> [-boundary]\n"
+    "ddf-sample-svo-points <resName> [-boundary [-project]]\n"
     "\t Samples points in the cells of the active SVO. The result is set\n"
     "\t as a point cloud with name <resName>. If the '-boundary' key is\n"
-    "\t passed, only the zero-crossing voxels will be sampled.",
+    "\t passed, only the zero-crossing voxels will be sampled. If the\n"
+    "\t '-boundary' key is followed with the '-project' key, the boundary\n"
+    "\t points will be precised by projection to the initial facets.",
     //
     __FILE__, group, DDF_SampleSVOPoints);
 

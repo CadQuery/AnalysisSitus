@@ -116,30 +116,33 @@ int ENGINE_Show(const Handle(asiTcl_Interp)& interp,
                 int                          argc,
                 const char**                 argv)
 {
-  if ( argc < 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
+  if ( !cmdEngine::cf || !cmdEngine::cf->ViewerPart )
+    return TCL_OK;
 
-  for ( int k = 1; k < argc; ++k )
+  if ( argc > 1 )
   {
-    // Find Node
-    Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
-    //
-    if ( node.IsNull() )
+    for ( int k = 1; k < argc; ++k )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
-      continue;
-    }
+      // Find Node
+      Handle(ActAPI_INode) node = cmdEngine::model->FindNodeByName(argv[k]);
+      //
+      if ( node.IsNull() )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find object with name %1." << argv[k]);
+        continue;
+      }
 
-    // Display
-    if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
-    {
-      cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+      // Display
+      if ( cmdEngine::cf->ViewerPart->PrsMgr()->IsPresented(node) )
+      {
+        cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation(node);
+      }
+      else
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
     }
-    else
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "There is no presentable object with name %1." << argv[k]);
   }
+  else
+    cmdEngine::cf->ViewerPart->PrsMgr()->RenderPresentation( cmdEngine::model->GetPartNode() );
 
   // Repaint
   cmdEngine::cf->ViewerPart->Repaint();

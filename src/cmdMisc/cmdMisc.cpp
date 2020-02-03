@@ -3173,22 +3173,20 @@ int MISC_DumpBVH(const Handle(asiTcl_Interp)& interp,
   // Get BVH from Part Node.
   Handle(asiAlgo_BVHFacets) bvh = M->GetPartNode()->GetBVH();
   //
-  if ( bvh.IsNull() )
+  if ( bvh.IsNull() && !doBuild )
   {
-    if ( !doBuild )
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "BVH is not initialized.");
+    return TCL_ERROR;
+  }
+
+  if ( doBuild )
+  {
+    // Construct BVH right here.
+    M->OpenCommand();
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "BVH is not initialized.");
-      return TCL_ERROR;
+      bvh = asiEngine_Part(M).BuildBVH();
     }
-    else
-    {
-      // Construct BVH right here.
-      M->OpenCommand();
-      {
-        bvh = asiEngine_Part(M).BuildBVH();
-      }
-      M->CommitCommand();
-    }
+    M->CommitCommand();
   }
 
   // Dump.

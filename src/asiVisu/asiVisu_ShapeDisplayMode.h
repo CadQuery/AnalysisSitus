@@ -68,6 +68,10 @@ public:
     // Add isolines for bad faces
     mode.Add(ShapePrimitive_Isoline);
 
+    ///
+    mode.Add(ShapePrimitive_ManifoldEdge);
+    ///
+
     return mode;
   }
 

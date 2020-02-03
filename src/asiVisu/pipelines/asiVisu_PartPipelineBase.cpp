@@ -56,6 +56,7 @@
 asiVisu_PartPipelineBase::asiVisu_PartPipelineBase(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source)
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
+  m_bScalarsOn       ( true ),
   m_bMapperColorsSet ( false )
 {
   /* ========================
@@ -253,7 +254,7 @@ void asiVisu_PartPipelineBase::callback_remove_from_renderer(vtkRenderer*)
 //! Callback for Update() routine.
 void asiVisu_PartPipelineBase::callback_update()
 {
-  if ( !m_bMapperColorsSet )
+  if ( m_bScalarsOn && !m_bMapperColorsSet )
   {
     asiVisu_Utils::InitShapeMapper(m_mapper);
 

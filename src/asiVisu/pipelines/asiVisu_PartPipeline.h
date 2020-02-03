@@ -54,7 +54,7 @@ public:
 public:
 
   asiVisu_EXPORT
-    asiVisu_PartPipeline();
+    asiVisu_PartPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source = nullptr);
 
 public:
 

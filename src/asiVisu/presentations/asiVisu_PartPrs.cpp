@@ -75,33 +75,29 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   this->addPipeline        ( Pipeline_Main, pl );
   this->assignDataProvider ( Pipeline_Main, dp );
 
-  // Set point size and line width.
+  // Adjust properties.
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
-  pl->Actor()->GetProperty()->SetLineWidth(1.5f);
-
-  // Colorize backface so that inverted faces are immediately visible.
-  pl->Actor()->SetBackfaceProperty( asiVisu_Utils::DefaultBackfaceProp() );
-
-  /* ====================
-   *  Pipeline for edges.
-   * ==================== */
-
-  // Create pipeline for edges.
-  Handle(asiVisu_PartEdgesPipeline)
-    contour_pl = new asiVisu_PartEdgesPipeline( pl->GetSource() );
-
-  // Adjust props. Notice that for the edges we disable lightning as we
-  // do not want to allow color blending (colors are too meaningful to be
-  // changed).
-  contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetOpacity(1.); // Do not set opacity to avoid Qt-VTK artifacts.
-  contour_pl->Actor()->GetProperty()->SetLineWidth(0.9f);
-  contour_pl->Actor()->SetPickable(0);
-  contour_pl->Actor()->GetProperty()->LightingOff();
-  contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
+  pl->Actor()->GetProperty()->SetLineWidth(1.0f);
+  pl->Actor()->GetProperty()->BackfaceCullingOn();
   //
-  this->addPipeline        ( Pipeline_Contour, contour_pl );
-  this->assignDataProvider ( Pipeline_Contour, dp );
+  pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
+
+  /* =================================
+   *  Pipeline for back side of shape.
+   * ================================= */
+
+  // Create pipeline for the backside.
+  Handle(asiVisu_PartPipeline)
+    backside_pl = new asiVisu_PartPipeline( pl->GetSource() );
+  //
+  this->addPipeline        ( Pipeline_Backside, backside_pl );
+  this->assignDataProvider ( Pipeline_Backside, dp );
+
+  // Adjust properties.
+  backside_pl->SetScalarsOn(false);
+  backside_pl->Actor()->GetProperty()->FrontfaceCullingOn();
+  backside_pl->Actor()->SetPickable(0);
+  backside_pl->Actor()->GetProperty()->SetColor(0.25, 0.25, 0.25);
 }
 
 //-----------------------------------------------------------------------------
@@ -147,14 +143,14 @@ void asiVisu_PartPrs::SetDiagnosticTools(ActAPI_ProgressEntry progress,
 //! Enables visualization of vertices.
 void asiVisu_PartPrs::VerticesOn() const
 {
-  Handle(asiVisu_PartEdgesPipeline)
-    pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+  Handle(asiVisu_PartPipeline)
+    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   if ( pl.IsNull() )
     return;
 
   // Configure display mode
-  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
+  //pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
 }
 
 //-----------------------------------------------------------------------------
@@ -162,14 +158,14 @@ void asiVisu_PartPrs::VerticesOn() const
 //! Disables visualization of vertices.
 void asiVisu_PartPrs::VerticesOff() const
 {
-  Handle(asiVisu_PartEdgesPipeline)
-    pl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
+  Handle(asiVisu_PartPipeline)
+    pl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
   if ( pl.IsNull() )
     return;
 
   // Configure display mode
-  pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
+  //pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
 }
 
 //-----------------------------------------------------------------------------
@@ -198,17 +194,13 @@ void asiVisu_PartPrs::ShadingOn() const
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  Handle(asiVisu_PartEdgesPipeline)
-    plContour = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
-
-  if ( plMain.IsNull() || plContour.IsNull() )
+  if ( plMain.IsNull() )
     return;
 
   // Configure display mode.
   plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Shaded);
   //
   plMain->Actor()->SetPickable(1);
-  plContour->Actor()->SetVisibility(1);
 }
 //-----------------------------------------------------------------------------
 
@@ -218,17 +210,13 @@ void asiVisu_PartPrs::WireframeOn() const
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
-  Handle(asiVisu_PartEdgesPipeline)
-    plContour = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
-
-  if ( plMain.IsNull() || plContour.IsNull() )
+  if ( plMain.IsNull() )
     return;
 
   // Configure display mode.
   plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
   //
   plMain->Actor()->SetPickable(0);
-  plContour->Actor()->SetVisibility(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -333,8 +321,6 @@ void asiVisu_PartPrs::highlight(vtkRenderer*                        asiVisu_NotU
   if ( cellPickRes.IsNull() )
     return;
 
-  // #################################################
-  // FACE selection
   if ( cellPickRes->GetPickedActor() == this->MainActor() )
   {
 #if defined COUT_DEBUG
@@ -345,19 +331,6 @@ void asiVisu_PartPrs::highlight(vtkRenderer*                        asiVisu_NotU
       mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
 
     mainPl->SetPickedElements(cellPickRes->GetPickedElementIds(), selNature);
-  }
-  // #################################################
-  // EDGE selection
-  else if ( cellPickRes->GetPickedActor() == this->ContourActor() )
-  {
-#if defined COUT_DEBUG
-    std::cout << "Picked CONTOUR actor" << std::endl;
-#endif
-
-    Handle(asiVisu_PartEdgesPipeline)
-      contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
-
-    contourPl->SetPickedElements(cellPickRes->GetPickedElementIds(), selNature);
   }
 }
 
@@ -371,11 +344,8 @@ void asiVisu_PartPrs::unHighlight(vtkRenderer*                  asiVisu_NotUsed(
 {
   Handle(asiVisu_PartPipeline)
     mainPl = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
-  Handle(asiVisu_PartEdgesPipeline)
-    contourPl = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
 
   mainPl->ResetPickedElements(selNature);
-  contourPl->ResetPickedElements(selNature);
 }
 
 //-----------------------------------------------------------------------------

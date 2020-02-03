@@ -442,7 +442,7 @@ void asiUI_ObjectBrowser::onHidePartEdges()
       Handle(asiVisu_PartPrs)
         prs = Handle(asiVisu_PartPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
 
-      prs->ContourActor()->SetVisibility(0);
+      //prs->ContourActor()->SetVisibility(0);
 
       m_viewers[k]->Repaint();
     }
@@ -464,7 +464,7 @@ void asiUI_ObjectBrowser::onShowPartEdges()
       Handle(asiVisu_PartPrs)
         prs = Handle(asiVisu_PartPrs)::DownCast( m_viewers[k]->PrsMgr()->GetPresentation(selected_n) );
 
-      prs->ContourActor()->SetVisibility(1);
+      //prs->ContourActor()->SetVisibility(1);
 
       m_viewers[k]->Repaint();
     }

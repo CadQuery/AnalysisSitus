@@ -899,10 +899,8 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
   const int prevMode = m_prsMgr->GetCurrentSelection().GetSelectionModes();
   {
     // Highlight
-    if ( selMode == SelectionMode_Face )
+    if ( selMode == SelectionMode_Face || selMode == SelectionMode_Edge )
       m_prsMgr->Highlight(N, prs->MainActor(), subShapeIndices, selMode);
-    else if ( selMode == SelectionMode_Edge )
-      m_prsMgr->Highlight(N, prs->ContourActor(), subShapeIndices, selMode);
   }
   m_prsMgr->ChangeCurrentSelection().SetSelectionModes(prevMode);
 }

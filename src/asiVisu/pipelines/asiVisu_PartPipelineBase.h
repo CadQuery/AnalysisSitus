@@ -92,6 +92,19 @@ public:
     return m_dmFilter;
   }
 
+  //! Enables/disables scalars for the mapper.
+  //! \param[in] on Boolean value to set.
+  void SetScalarsOn(const bool on)
+  {
+    m_bScalarsOn = on;
+  }
+
+  //! \return Boolean flag indicating whether scalars are enabled for mapper.
+  bool GetScalarsOn()
+  {
+    return m_bScalarsOn;
+  }
+
 private:
 
   virtual void callback_add_to_renderer      (vtkRenderer* renderer);
@@ -116,6 +129,9 @@ protected:
   }
 
 protected:
+
+  //! Indicates whether scalars are enabled or not.
+  bool m_bScalarsOn;
 
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.

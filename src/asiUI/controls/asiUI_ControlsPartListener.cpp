@@ -170,7 +170,6 @@ void asiUI_ControlsPartListener::onSelectionFacesOn()
     prs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
   prs->MainActor()->SetPickable(1);
-  prs->ContourActor()->SetPickable(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -197,8 +196,7 @@ void asiUI_ControlsPartListener::onSelectionEdgesOn()
   Handle(asiVisu_PartPrs)
     prs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
-  prs->MainActor()->SetPickable(0);
-  prs->ContourActor()->SetPickable(1);
+  prs->MainActor()->SetPickable(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -225,8 +223,7 @@ void asiUI_ControlsPartListener::onSelectionVerticesOn()
   Handle(asiVisu_PartPrs)
     prs = Handle(asiVisu_PartPrs)::DownCast(m_partViewer->PrsMgr()->GetPresentation( m_model->GetPartNode() ) );
 
-  prs->MainActor()->SetPickable(0);
-  prs->ContourActor()->SetPickable(1); // Vertices are visualized with contour actor
+  prs->MainActor()->SetPickable(1);
 }
 
 //-----------------------------------------------------------------------------

@@ -379,7 +379,6 @@ void asiUI_ControlsAnalysis::onFindOpenEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges.
   m_partViewer->PrsMgr()->Actualize(BN);
@@ -433,7 +432,6 @@ void asiUI_ControlsAnalysis::onFindNonManifoldEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges.
   m_partViewer->PrsMgr()->Actualize(BN);
@@ -693,7 +691,6 @@ void asiUI_ControlsAnalysis::onCheckDihAngles()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
 
   // Actualize presentation of edges.
   m_partViewer->PrsMgr()->Actualize(BN);
@@ -833,8 +830,6 @@ void asiUI_ControlsAnalysis::onFindSmoothEdges()
   }
   //
   NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
-  //
-  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
   //
   m_partViewer->PrsMgr()->Actualize( BN.get() );
 }

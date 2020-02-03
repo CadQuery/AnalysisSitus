@@ -61,7 +61,9 @@ public:
   enum PipelineId
   {
     Pipeline_Main = 1,
-    Pipeline_Contour,
+    Pipeline_Backside // Use separate actor for backface as VTK's backface mode
+                      // does not work for mappers with enabled scalars (at least
+                      // for VTK 8.2).
   };
 
 public:
@@ -111,11 +113,6 @@ public:
   vtkActor* MainActor() const
   {
     return this->GetPipeline(Pipeline_Main).IsNull() ? nullptr : this->GetPipeline(Pipeline_Main)->Actor();
-  }
-
-  vtkActor* ContourActor() const
-  {
-    return this->GetPipeline(Pipeline_Contour).IsNull() ? nullptr : this->GetPipeline(Pipeline_Contour)->Actor();
   }
 
 private:

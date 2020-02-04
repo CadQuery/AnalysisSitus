@@ -415,10 +415,12 @@ void getCentersOfVoxels(poly_SVO*                                pNode,
     }
   }
   else
+  {
     for ( size_t k = 0; k < 8; ++k )
     {
       getCentersOfVoxels(pNode->GetChild(k), isBoundarySampling, pts);
     }
+  }
 }
 #endif
 

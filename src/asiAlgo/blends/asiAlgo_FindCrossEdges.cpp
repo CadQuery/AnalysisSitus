@@ -128,7 +128,7 @@ bool asiAlgo_FindCrossEdges::PerformForFace(const int                         fa
 
     if ( Abs(k) > 1.0e-5 )
     {
-      const double actualRadius = 1 / k;
+      const double actualRadius = Abs(1. / k);
       //
       if ( Abs(candidateRadius - actualRadius) < 1.0e-5 )
         m_result.edges.Add(edge);

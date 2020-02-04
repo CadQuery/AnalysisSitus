@@ -80,7 +80,7 @@ asiAlgo_BVHFacets::asiAlgo_BVHFacets(const Handle(Poly_Triangulation)& mesh,
                                      ActAPI_ProgressEntry              progress,
                                      ActAPI_PlotterEntry               plotter)
 : BVH_PrimitiveSet<double, 3> (),
-m_fBoundingDiag               (0.0),
+  m_fBoundingDiag             (0.0),
   m_progress                  (progress),
   m_plotter                   (plotter)
 {

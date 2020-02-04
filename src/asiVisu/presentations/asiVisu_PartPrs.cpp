@@ -108,7 +108,7 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetLineWidth(1.f);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(.9f);
   contour_pl->Actor()->SetPickable(0);
   contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOff();
   contour_pl->Actor()->GetProperty()->LightingOff();

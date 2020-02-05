@@ -179,8 +179,6 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
     PD->SetScalars(curvature);
   }
 
-  //---------------------------------------------------------------------------
-
   double uMin, uMax, vMin, vMax;
   m_surf->Bounds(uMin, uMax, vMin, vMax);
   //
@@ -290,8 +288,6 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
   if ( this->HasScalars() )
     if ( Abs(m_fMaxScalar - m_fMinScalar) < 1.0e-6 )
       m_fMinScalar = m_fMaxScalar; // Good for visualization
-
-  //---------------------------------------------------------------------------
 
   return Superclass::RequestData(request, inputVector, outputVector);
 }

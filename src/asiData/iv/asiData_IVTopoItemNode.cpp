@@ -44,6 +44,9 @@ asiData_IVTopoItemNode::asiData_IVTopoItemNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group, PID_GroupTess);
   REGISTER_PARAMETER(Real,  PID_TessLinDefl);
   REGISTER_PARAMETER(Real,  PID_TessAngDefl);
+  REGISTER_PARAMETER(Group, PID_GroupPrs);
+  REGISTER_PARAMETER(Bool,  PID_HasColor);
+  REGISTER_PARAMETER(Int,   PID_Color);
 }
 
 //-----------------------------------------------------------------------------
@@ -65,12 +68,18 @@ void asiData_IVTopoItemNode::Init()
   this->SetShape             ( TopoDS_Shape() );
   this->SetLinearDeflection  ( 0.0 );
   this->SetAngularDeflection ( 0.0 );
+  this->SetHasColor          (false);
+  this->SetColor             (2500134); // Sort of dark color.
 
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_GroupTess,   "Tessellation",       "", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_TessLinDefl, "Linear deflection",  "", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_TessAngDefl, "Angular deflection", "", ParameterFlag_IsVisible, true);
+  //
+  this->InitParameter(PID_GroupPrs, "Presentation", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasColor, "Colorized",    "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,    "Color",        "PrsCustomColor", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -140,4 +149,42 @@ void asiData_IVTopoItemNode::SetAngularDeflection(const double defl)
 double asiData_IVTopoItemNode::GetAngularDeflection() const
 {
   return ActParamTool::AsReal( this->Parameter(PID_TessAngDefl) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets the Boolean value indicating whether the color Parameter of this
+//! Data Node is in force.
+//! \param[in] hasColor value to set.
+void asiData_IVTopoItemNode::SetHasColor(const bool hasColor)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! Color Parameter of this Data Node is in force.
+//! \return true/false.
+bool asiData_IVTopoItemNode::HasColor() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets color.
+//! \param[in] color color to set.
+void asiData_IVTopoItemNode::SetColor(const int color)
+{
+  ActParamTool::AsInt( this->Parameter(PID_Color) )->SetValue(color);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Accessor for the stored color value.
+//! \return color value.
+int asiData_IVTopoItemNode::GetColor() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_Color) )->GetValue();
 }

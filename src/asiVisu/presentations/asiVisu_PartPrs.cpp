@@ -248,7 +248,7 @@ void asiVisu_PartPrs::WireframeOn() const
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& asiVisu_NotUsed(renderer)) const
+void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& asiVisu_NotUsed(picker)) const
 {
   //picker->RemoveAllLocators();
 
@@ -265,8 +265,8 @@ void asiVisu_PartPrs::InitializePicker(const vtkSmartPointer<vtkCellPicker>& asi
   //  picker->AddLocator(facetLocator);
   //}
 
-  // NOTICE: we do not apply cell locator for selection of edges as it seems
-  //         to work weird (at least for vtkCellTreeLocator)
+  // NOTICE: we do not apply cell locator as it seems
+  //         to work weird for isolines (broken faces).
 }
 
 //-----------------------------------------------------------------------------

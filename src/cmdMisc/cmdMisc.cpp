@@ -3181,12 +3181,18 @@ int MISC_DumpBVH(const Handle(asiTcl_Interp)& interp,
 
   if ( doBuild )
   {
+    TIMER_NEW
+    TIMER_GO
+
     // Construct BVH right here.
     M->OpenCommand();
     {
       bvh = asiEngine_Part(M).BuildBVH();
     }
     M->CommitCommand();
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build BVH")
   }
 
   // Dump.

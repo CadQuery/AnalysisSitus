@@ -61,6 +61,17 @@ public:
   asiVisu_EXPORT static Handle(asiVisu_Prs)
     Instance(const Handle(ActAPI_INode)& theNode);
 
+public:
+
+  asiVisu_EXPORT void
+    Colorize(const QColor& color) const;
+
+
+protected:
+
+  virtual void
+    afterUpdatePipelines() const;
+
 private:
 
   //! Allocation is allowed only via Instance() method.

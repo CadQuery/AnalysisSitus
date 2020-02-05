@@ -91,7 +91,7 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
     contour_pl = new asiVisu_TriangulationLinksPipeline( pl->GetSource() );
 
   // Adjust props
-  contour_pl->Actor()->GetProperty()->SetOpacity(0.5);
+  contour_pl->Actor()->GetProperty()->SetOpacity(1.0);
   contour_pl->Actor()->GetProperty()->SetLineWidth(1.0f);
   contour_pl->Actor()->SetPickable(0);
   //

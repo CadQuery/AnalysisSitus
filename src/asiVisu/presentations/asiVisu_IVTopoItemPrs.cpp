@@ -40,6 +40,8 @@
 #include <vtkMapper.h>
 #include <vtkProperty.h>
 
+//-----------------------------------------------------------------------------
+
 //! Creates a Presentation object for the passed Node.
 //! \param[in] N Node to create a Presentation for.
 asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& N)
@@ -67,10 +69,49 @@ asiVisu_IVTopoItemPrs::asiVisu_IVTopoItemPrs(const Handle(ActAPI_INode)& N)
   pl->Actor()->GetProperty()->RenderLinesAsTubesOn();
 }
 
+//-----------------------------------------------------------------------------
+
 //! Factory method for Presentation.
 //! \param[in] N Node to create a Presentation for.
 //! \return new Presentation instance.
 Handle(asiVisu_Prs) asiVisu_IVTopoItemPrs::Instance(const Handle(ActAPI_INode)& N)
 {
   return new asiVisu_IVTopoItemPrs(N);
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets custom color.
+//! \param[in] color color to set.
+void asiVisu_IVTopoItemPrs::Colorize(const QColor& color) const
+{
+  if ( !color.isValid() )
+    return;
+
+  Handle(asiVisu_ShapePipeline)
+    pl = Handle(asiVisu_ShapePipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+
+  pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                        color.greenF(),
+                                        color.blueF() );
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for updating of Presentation pipelines invoked after the
+//! kernel update routine completes.
+void asiVisu_IVTopoItemPrs::afterUpdatePipelines() const
+{
+  Handle(asiData_IVTopoItemNode)
+    N = Handle(asiData_IVTopoItemNode)::DownCast( this->GetNode() );
+
+  /* Actualize color */
+
+  if ( N->HasColor() )
+  {
+    QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
+    this->Colorize(color);
+  }
+  else
+    this->Colorize(Qt::white);
 }

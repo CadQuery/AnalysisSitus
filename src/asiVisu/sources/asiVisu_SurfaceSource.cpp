@@ -273,7 +273,7 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
         const vtkIdType n2 = UV_ids[i]    [j - 1];
         const vtkIdType n3 = UV_ids[i - 1][j];
         //
-        this->registerTriangle(n1, n2, n3, polyOutput);
+        this->registerTriangle(n3, n2, n1, polyOutput);
       }
 
       // Opposite triangle
@@ -282,7 +282,7 @@ int asiVisu_SurfaceSource::RequestData(vtkInformation*        request,
         const vtkIdType n2 = UV_ids[i - 1][j - 1];
         const vtkIdType n3 = UV_ids[i - 1][j];
         //
-        this->registerTriangle(n1, n2, n3, polyOutput);
+        this->registerTriangle(n3, n2, n1, polyOutput);
       }
     }
   }

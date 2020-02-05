@@ -174,9 +174,9 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   poly_SVO* pRoot = pDDF->GetRoot();
 
   // Measure SVO.
-  int                      numSVONodes;
-  const unsigned long long memBytes  = pRoot->GetMemoryInBytes(numSVONodes);
-  const double             memMBytes = memBytes / (1024.*1024.);
+  int                      numSVONodes = 0;
+  const unsigned long long memBytes    = pRoot->GetMemoryInBytes(numSVONodes);
+  const double             memMBytes   = memBytes / (1024.*1024.);
   //
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
                                                         << numSVONodes << int(memBytes) << memMBytes );

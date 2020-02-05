@@ -73,6 +73,12 @@ public:
     PID_TessLinDefl,  //!< Linear deflection of visualization tessellation.
     PID_TessAngDefl,  //!< Angular deflection of visualization tessellation.
   //------------------//
+  // Presentation     //
+  //------------------//
+    PID_GroupPrs,     //!< Presentation group.
+    PID_HasColor,     //!< Indicates whether the Color Parameter is active.
+    PID_Color,        //!< Color.
+  //------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -110,6 +116,18 @@ public:
 
   asiData_EXPORT double
     GetAngularDeflection() const;
+
+  asiData_EXPORT void
+    SetHasColor(const bool);
+
+  asiData_EXPORT bool
+    HasColor() const;
+
+  asiData_EXPORT void
+    SetColor(const int);
+
+  asiData_EXPORT int
+    GetColor() const;
 
 // Initialization:
 public:

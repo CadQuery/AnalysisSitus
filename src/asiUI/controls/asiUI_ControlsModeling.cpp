@@ -319,9 +319,17 @@ void asiUI_ControlsModeling::onAutoRepair()
   if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
 
   // Fix shape.
-  ShapeFix_Shape fix( part_n->GetShape() );
-  fix.Perform();
-  TopoDS_Shape result = fix.Shape();
+  TopoDS_Shape result = part;
+  ShapeFix_Shape fix(result);
+  //
+  try
+  {
+    fix.Perform();
+  }
+  catch ( ... )
+  {
+    result = fix.Shape();
+  }
 
   // Update part.
   m_model->OpenCommand(); // tx start

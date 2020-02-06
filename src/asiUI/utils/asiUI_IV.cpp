@@ -157,7 +157,7 @@ void asiUI_IV::DUMP_PNG3D(const char* filename)
 
 //---------------------------------------------------------------------------//
 
-void asiUI_IV::UPDATE_PART()
+void asiUI_IV::ACTUALIZE_PART_PRS()
 {
   if ( m_prsMgr3d )
     m_prsMgr3d->Actualize( m_model->GetPartNode() );

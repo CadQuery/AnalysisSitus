@@ -106,7 +106,7 @@ public:
     DUMP_PNG3D(const char* filename);
 
   asiUI_EXPORT virtual void
-    UPDATE_PART();
+    ACTUALIZE_PART_PRS();
 
 // GEOMETRY:
 public:

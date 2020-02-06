@@ -54,7 +54,7 @@
 asiVisu_PartPipeline::asiVisu_PartPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source,
                                            const asiVisu_ShapeDisplayMode                    dm)
 //
-: asiVisu_PartPipelineBase(source), m_fPartRed(0.), m_fPartGreen(0.), m_fPartBlue(0.)
+: asiVisu_PartPipelineBase(source), m_fPartRed(0.), m_fPartGreen(0.), m_fPartBlue(0.), m_bScalarsOn(false)
 {
   m_dmFilter->SetDisplayMode(dm);
   m_dmFilter->SetAllowExtraScalars(true);
@@ -104,6 +104,9 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
   // Update part-wise colors.
   DP->GetColor(m_fPartRed, m_fPartGreen, m_fPartBlue);
 
+  // Update use of scalars flag.
+  m_bScalarsOn = DP->HasScalars();
+
   // Lazy update.
   if ( DP->MustExecute( this->GetMTime() ) )
   {
@@ -138,7 +141,7 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
 void asiVisu_PartPipeline::updateColors()
 {
-  if ( !m_bScalarsOn )
+  if ( !m_bScalarsAllowed || !m_bScalarsOn )
     return;
 
   Handle(asiVisu_ShapeColorSource) colorSource = m_source->GetColorSource();
@@ -215,7 +218,7 @@ void asiVisu_PartPipeline::updateColors()
 //! Callback for Update() routine.
 void asiVisu_PartPipeline::callback_update()
 {
-  if ( m_bScalarsOn )
+  if ( m_bScalarsAllowed && m_bScalarsOn )
   {
     this->updateColors();
 
@@ -237,5 +240,10 @@ void asiVisu_PartPipeline::callback_update()
 
     if ( !m_bMapperColorsSet )
       m_bMapperColorsSet = true;
+  }
+  else
+  {
+    m_mapper->ScalarVisibilityOff();
+    m_mapper->Update();
   }
 }

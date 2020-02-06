@@ -159,6 +159,13 @@ vtkSmartPointer<vtkTransform> asiVisu_PartDataProvider::GetTransformation() cons
 
 //-----------------------------------------------------------------------------
 
+bool asiVisu_PartDataProvider::HasScalars() const
+{
+  return m_node->GetUseScalars();
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_PartDataProvider::GetColor(double& r, double& g, double& b) const
 {
   const int icolor = m_node->GetColor();

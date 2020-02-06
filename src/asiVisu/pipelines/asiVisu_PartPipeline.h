@@ -79,6 +79,9 @@ protected:
   //! Components of part-wise color.
   double m_fPartRed, m_fPartGreen, m_fPartBlue;
 
+  //! Indicates whether the scalars are enabled or not.
+  bool m_bScalarsOn;
+
 };
 
 #endif

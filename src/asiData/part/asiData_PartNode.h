@@ -106,7 +106,7 @@ public:
   //----------------------//
     PID_GroupPrs,         //!< Presentation group.
     PID_DisplayMode,      //!< Display mode.
-    PID_HasColor,         //!< Indicates whether the Color Parameter is active.
+    PID_UseScalars,       //!< Indicates whether to use scalars for coloring.
     PID_Color,            //!< Color.
     PID_HasVertices,      //!< Indicates whether vertices are active.
   //----------------------//
@@ -224,10 +224,10 @@ public:
     IsKeepTessParams() const;
 
   asiData_EXPORT void
-    SetHasColor(const bool);
+    SetUseScalars(const bool);
 
   asiData_EXPORT bool
-    HasColor() const;
+    GetUseScalars() const;
 
   asiData_EXPORT void
     SetColor(const int);

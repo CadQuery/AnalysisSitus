@@ -90,6 +90,9 @@ public:
   asiVisu_EXPORT vtkSmartPointer<vtkTransform>
     GetTransformation() const;
 
+  asiVisu_EXPORT bool
+    HasScalars() const;
+
   asiVisu_EXPORT void
     GetColor(double& r, double& g, double& b) const;
 

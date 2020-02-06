@@ -63,7 +63,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   //
   REGISTER_PARAMETER(Group,         PID_GroupPrs);
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
-  REGISTER_PARAMETER(Bool,          PID_HasColor);
+  REGISTER_PARAMETER(Bool,          PID_UseScalars);
   REGISTER_PARAMETER(Int,           PID_Color);
   REGISTER_PARAMETER(Bool,          PID_HasVertices);
   REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
@@ -98,7 +98,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetLinearDeflection  (0.0);
   this->SetAngularDeflection (0.0);
   this->SetKeepTessParams    (false);
-  this->SetHasColor          (true);
+  this->SetUseScalars        (true);
   this->SetColor             (220 << 16 | 220 << 8 | 220); // Initial color.
   this->SetDisplayMode       (1);                          // Shading.
   this->SetHasVertices       (false);
@@ -127,7 +127,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   //
   this->InitParameter(PID_GroupPrs,       "Presentation",       "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_DisplayMode,    "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasColor,       "Colorized",          "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_UseScalars,     "Use scalars",        "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_Color,          "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_HasVertices,    "Show vertices",      "",               ParameterFlag_IsVisible, true);
 }
@@ -423,20 +423,20 @@ bool asiData_PartNode::IsKeepTessParams() const
   return ActParamTool::AsBool( this->Parameter(PID_KeepTessParams) )->GetValue();
 }
 
-//! Sets the Boolean value indicating whether the color Parameter of this
-//! Data Node is in force.
-//! \param hasColor [in] value to set.
-void asiData_PartNode::SetHasColor(const bool hasColor)
+//! Sets the Boolean value indicating whether the scalars are to be used for
+//! coloring the Part's Presentation.
+//! \param on [in] value to set.
+void asiData_PartNode::SetUseScalars(const bool on)
 {
-  ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
+  ActParamTool::AsBool( this->Parameter(PID_UseScalars) )->SetValue(on);
 }
 
 //! Accessor for the value of the Boolean Parameter indicating whether the
-//! Color Parameter of this Data Node is in force.
+//! scalars are active.
 //! \return true/false.
-bool asiData_PartNode::HasColor() const
+bool asiData_PartNode::GetUseScalars() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
+  return ActParamTool::AsBool( this->Parameter(PID_UseScalars) )->GetValue();
 }
 
 //! Sets color.

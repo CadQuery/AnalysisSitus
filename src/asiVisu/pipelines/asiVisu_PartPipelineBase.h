@@ -94,15 +94,15 @@ public:
 
   //! Enables/disables scalars for the mapper.
   //! \param[in] on Boolean value to set.
-  void SetScalarsOn(const bool on)
+  void SetScalarsAllowed(const bool on)
   {
-    m_bScalarsOn = on;
+    m_bScalarsAllowed = on;
   }
 
   //! \return Boolean flag indicating whether scalars are enabled for mapper.
-  bool GetScalarsOn()
+  bool GetScalarsAllowed()
   {
-    return m_bScalarsOn;
+    return m_bScalarsAllowed;
   }
 
 private:
@@ -130,8 +130,8 @@ protected:
 
 protected:
 
-  //! Indicates whether scalars are enabled or not.
-  bool m_bScalarsOn;
+  //! Indicates whether scalars are allowed or not.
+  bool m_bScalarsAllowed;
 
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.

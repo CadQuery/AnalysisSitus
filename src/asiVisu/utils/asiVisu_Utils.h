@@ -398,7 +398,7 @@ public:
   //! \param[in] g green component.
   //! \param[in] b blue component.
   //! \return converted value.
-  static int ColorToInt(unsigned r, unsigned g, unsigned b)
+  static int ColorToInt(unsigned int r, unsigned int g, unsigned int b)
   {
     return r << 16 | g << 8 | b;
   }
@@ -406,43 +406,45 @@ public:
   //! Converts RGB color to integer.
   //! \param[in] rgb color.
   //! \return converted value.
-  static int ColorToInt(unsigned rgb[3])
+  static int ColorToInt(unsigned int rgb[3])
   {
     return ColorToInt(rgb[0], rgb[1], rgb[2]);
   }
 
   //! Converts RGB color to integer.
-  //! \param[in] rgb color.
+  //! \param[in] r red component of the color.
+  //! \param[in] g green component of the color.
+  //! \param[in] b blue component of the color.
   //! \return converted value.
-  static int ColorToInt(double rgb[3])
+  static int ColorToInt(const double r, const double g, const double b)
   {
-    unsigned char red   = (unsigned char) ( floor(rgb[0] >= 1.0 ? 255 : rgb[0] * 256.0) );
-    unsigned char green = (unsigned char) ( floor(rgb[1] >= 1.0 ? 255 : rgb[1] * 256.0) );
-    unsigned char blue  = (unsigned char) ( floor(rgb[2] >= 1.0 ? 255 : rgb[2] * 256.0) );
+    unsigned char red   = (unsigned char) ( floor(r >= 1.0 ? 255 : r * 256.0) );
+    unsigned char green = (unsigned char) ( floor(g >= 1.0 ? 255 : g * 256.0) );
+    unsigned char blue  = (unsigned char) ( floor(b >= 1.0 ? 255 : b * 256.0) );
     //
     return red << 16 | green << 8 | blue;
   }
 
   //! Converts color value to an integer representation.
-  //! \param theColor [in] color.
+  //! \param[in] color Qt color.
   //! \return converted value
-  static int ColorToInt(const QColor& theColor)
+  static int ColorToInt(const QColor& color)
   {
-    unsigned char aRed   = (unsigned char) theColor.red();
-    unsigned char aGreen = (unsigned char) theColor.green();
-    unsigned char aBlue  = (unsigned char) theColor.blue();
-    return aRed << 16 | aGreen << 8 | aBlue;
+    unsigned char uRed   = (unsigned char) color.red();
+    unsigned char uGreen = (unsigned char) color.green();
+    unsigned char uBlue  = (unsigned char) color.blue();
+    return uRed << 16 | uGreen << 8 | uBlue;
   }
 
   //! Converts integer value to a color.
-  //! \param theColor [in] integer value.
+  //! \param[in] icolor integer color code.
   //! \return converted value
-  static QColor IntToColor(const int theColor)
+  static QColor IntToColor(const int icolor)
   {
-    unsigned char aRed   = ( theColor >> 16 ) & 0xFF;
-    unsigned char aGreen = ( theColor >>  8 ) & 0xFF;
-    unsigned char aBlue  =   theColor         & 0xFF;
-    return QColor(aRed, aGreen, aBlue);
+    unsigned char uRed   = ( icolor >> 16 ) & 0xFF;
+    unsigned char uGreen = ( icolor >>  8 ) & 0xFF;
+    unsigned char uBlue  =   icolor         & 0xFF;
+    return QColor(uRed, uGreen, uBlue);
   }
 
 private:

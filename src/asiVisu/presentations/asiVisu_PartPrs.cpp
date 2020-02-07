@@ -207,8 +207,9 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
 
 //-----------------------------------------------------------------------------
 
-//! Enables shaded mode for the main pipeline.
-void asiVisu_PartPrs::ShadingOn() const
+//! Enables the passed display mode.
+//! \param[in] dm display mode to enable.
+void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode) const
 {
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -222,38 +223,34 @@ void asiVisu_PartPrs::ShadingOn() const
   if ( plMain.IsNull() || plBackside.IsNull() || plContour.IsNull() )
     return;
 
-  // Configure display mode.
-  plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Shaded);
-  plMain->GetDisplayModeFilter()->SetAllowExtraScalars(true);
-  //
-  plMain->Actor()->SetPickable(1);
-  plBackside->Actor()->SetVisibility(1);
-  plContour->Actor()->SetVisibility(1);
-}
-//-----------------------------------------------------------------------------
+  // Shading.
+  if ( displayMode == ShapeDisplayMode_Shaded ||
+       displayMode == ShapeDisplayMode_ShadedFacets ||
+       displayMode == ShapeDisplayMode_ShadedAndWireframe )
+  {
+    // Configure filter.
+    plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Shaded);
+    plMain->GetDisplayModeFilter()->SetAllowExtraScalars(true);
 
-//! Enables wireframe mode for the main pipeline.
-void asiVisu_PartPrs::WireframeOn() const
-{
-  Handle(asiVisu_PartPipeline)
-    plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
+    // Configure actors.
+    plMain     ->Actor() -> SetPickable(1);
+    plBackside ->Actor() -> SetVisibility(1);
+    plContour  ->Actor() -> SetVisibility(displayMode == ShapeDisplayMode_ShadedAndWireframe);
+  }
 
-  Handle(asiVisu_PartPipeline)
-    plBackside = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Backside) );
+  // Wireframe.
+  if ( displayMode == ShapeDisplayMode_Wireframe ||
+       displayMode == ShapeDisplayMode_WireframeAndVertices )
+  {
+    // Configure filter.
+    plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
+    plMain->GetDisplayModeFilter()->SetAllowExtraScalars(false);
 
-  Handle(asiVisu_PartEdgesPipeline)
-    plContour = Handle(asiVisu_PartEdgesPipeline)::DownCast( this->GetPipeline(Pipeline_Contour) );
-
-  if ( plMain.IsNull() || plBackside.IsNull() || plContour.IsNull() )
-    return;
-
-  // Configure display mode.
-  plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Wireframe);
-  plMain->GetDisplayModeFilter()->SetAllowExtraScalars(false); // Otherwise, shaded facets for metadata elems will appear.
-  //
-  plMain->Actor()->SetPickable(0);
-  plBackside->Actor()->SetVisibility(0);
-  plContour->Actor()->SetVisibility(0);
+    // Configure actors.
+    plMain     ->Actor() -> SetPickable(0);
+    plBackside ->Actor() -> SetVisibility(0);
+    plContour  ->Actor() -> SetVisibility(0);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -306,12 +303,7 @@ void asiVisu_PartPrs::beforeUpdatePipelines() const
 
   /* Actualize display mode */
 
-  const int dm = N->GetDisplayMode();
-  //
-  if ( dm & ShapeDisplayMode_Shaded )
-    this->ShadingOn();
-  else if ( (dm & ShapeDisplayMode_WireframeAndVertices) || (dm & ShapeDisplayMode_Wireframe) )
-    this->WireframeOn();
+  this->SetDisplayMode( (asiVisu_ShapeDisplayMode) N->GetDisplayMode() );
 }
 
 //-----------------------------------------------------------------------------

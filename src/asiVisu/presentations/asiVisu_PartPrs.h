@@ -33,6 +33,7 @@
 
 // asiVisu includes
 #include <asiVisu_Prs.h>
+#include <asiVisu_ShapeDisplayMode.h>
 #include <asiVisu_Utils.h>
 
 // asiData includes
@@ -99,10 +100,7 @@ public:
     Colorize(const QColor& color) const;
 
   asiVisu_EXPORT void
-    ShadingOn() const;
-
-  asiVisu_EXPORT void
-    WireframeOn() const;
+    SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode) const;
 
 public:
 

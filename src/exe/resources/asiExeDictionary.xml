@@ -13,6 +13,7 @@
   <valueList id="List-ShapeDisplayMode" name="Display mode">
     <value id="1">Shading</value>
     <value id="4">Wireframe</value>
+    <value id="32">Shading with edges</value>
   </valueList>
 
   <valueList id="List-MeshDisplayMode" name="Display mode">

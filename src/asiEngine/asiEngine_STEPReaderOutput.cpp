@@ -67,8 +67,7 @@ void asiEngine_STEPReaderOutput::SetColor(const TopoDS_Shape&   subshape,
     return;
 
   // Convert color to a persistent form.
-  double colComponents[3] = { color.Red(), color.Green(), color.Blue() };
-  const int iCol = asiVisu_Utils::ColorToInt(colComponents);
+  const int iCol = asiVisu_Utils::ColorToInt( color.Red(), color.Green(), color.Blue() );
 
   // Store color.
   elemNode->SetColor(iCol);

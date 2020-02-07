@@ -53,7 +53,7 @@ asiVisu_TessellationNormsPrs::asiVisu_TessellationNormsPrs(const Handle(ActAPI_I
   Handle(asiVisu_VectorsPipeline) PL = new asiVisu_VectorsPipeline;
   //
   PL->Mapper()->ScalarVisibilityOff();
-  PL->Actor()->GetProperty()->SetColor(1,0.5, 0);
+  PL->Actor()->GetProperty()->SetColor(1, 0.5, 0);
 
   // Register pipeline.
   this->addPipeline        (Pipeline_Main, PL);

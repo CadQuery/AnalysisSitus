@@ -663,7 +663,7 @@ int ENGINE_SetFaceColor(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get color components.
-  std::vector<int> colorComponents;
+  std::vector<unsigned int> colorComponents;
   std::vector<std::string> colorComponentsStr;
   //
   asiAlgo_Utils::Str::Split(colorStr.ToCString(), "(,)", colorComponentsStr);

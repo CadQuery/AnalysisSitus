@@ -95,6 +95,7 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   backside_pl->Actor()->GetProperty()->FrontfaceCullingOn();
   backside_pl->Actor()->SetPickable(0);
   backside_pl->Actor()->GetProperty()->SetColor(0.25, 0.25, 0.25);
+  backside_pl->Actor()->SetVisibility( partNode->HasBackface() );
 
   /* ====================
    *  Pipeline for edges.
@@ -208,8 +209,11 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
 //-----------------------------------------------------------------------------
 
 //! Enables the passed display mode.
-//! \param[in] dm display mode to enable.
-void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode) const
+//! \param[in] dm           display mode to enable.
+//! \param[in] showBackface indicates whether the backface visualization is
+//!                         requested.
+void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
+                                     const bool                     showBackface) const
 {
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -234,7 +238,7 @@ void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode)
 
     // Configure actors.
     plMain     ->Actor() -> SetPickable(1);
-    plBackside ->Actor() -> SetVisibility(1);
+    plBackside ->Actor() -> SetVisibility(showBackface);
     plContour  ->Actor() -> SetVisibility(displayMode == ShapeDisplayMode_ShadedAndWireframe);
   }
 
@@ -303,7 +307,8 @@ void asiVisu_PartPrs::beforeUpdatePipelines() const
 
   /* Actualize display mode */
 
-  this->SetDisplayMode( (asiVisu_ShapeDisplayMode) N->GetDisplayMode() );
+  this->SetDisplayMode( (asiVisu_ShapeDisplayMode) N->GetDisplayMode(),
+                        N->HasBackface() );
 }
 
 //-----------------------------------------------------------------------------

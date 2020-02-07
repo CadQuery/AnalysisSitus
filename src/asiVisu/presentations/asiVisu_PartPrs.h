@@ -100,7 +100,8 @@ public:
     Colorize(const QColor& color) const;
 
   asiVisu_EXPORT void
-    SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode) const;
+    SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
+                   const bool                     showBackface) const;
 
 public:
 

@@ -109,6 +109,7 @@ public:
     PID_UseScalars,       //!< Indicates whether to use scalars for coloring.
     PID_Color,            //!< Color.
     PID_HasVertices,      //!< Indicates whether vertices are active.
+    PID_HasBackface,      //!< Indicates whether backface coloring is enabled.
   //----------------------//
   // References           //
   //----------------------//
@@ -246,6 +247,12 @@ public:
 
   asiData_EXPORT bool
     HasVertices() const;
+
+  asiData_EXPORT void
+    SetHasBackface(const bool);
+
+  asiData_EXPORT bool
+    HasBackface() const;
 
   //-------------------------------------------------------------------------//
 

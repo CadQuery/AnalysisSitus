@@ -66,6 +66,8 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Bool,          PID_UseScalars);
   REGISTER_PARAMETER(Int,           PID_Color);
   REGISTER_PARAMETER(Bool,          PID_HasVertices);
+  REGISTER_PARAMETER(Bool,          PID_HasBackface);
+  //
   REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
 
   // Register custom Parameters specific to Analysis Situs.
@@ -102,6 +104,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetColor             (220 << 16 | 220 << 8 | 220); // Initial color.
   this->SetDisplayMode       (0x020);                      // Shading with edges.
   this->SetHasVertices       (false);
+  this->SetHasBackface       (false);
 
   // Set identity transformation.
   ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) )->SetArray( new HRealArray(0, 11, 0.) );
@@ -130,6 +133,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->InitParameter(PID_UseScalars,     "Use scalars",        "",               ParameterFlag_IsVisible, true);
   this->InitParameter(PID_Color,          "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_HasVertices,    "Show vertices",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasBackface,    "Show backface",      "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -467,7 +471,7 @@ int asiData_PartNode::GetDisplayMode() const
   return ActParamTool::AsInt( this->Parameter(PID_DisplayMode) )->GetValue();
 }
 
-//! Sets the Boolean value indicating whether the vertices are active
+//! Sets the Boolean value indicating whether the vertices are active.
 //! \param hasVertices [in] value to set.
 void asiData_PartNode::SetHasVertices(const bool hasVertices)
 {
@@ -480,6 +484,21 @@ void asiData_PartNode::SetHasVertices(const bool hasVertices)
 bool asiData_PartNode::HasVertices() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue();
+}
+
+//! Sets the Boolean value indicating whether the backface is active.
+//! \param on [in] value to set.
+void asiData_PartNode::SetHasBackface(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_HasBackface) )->SetValue(on);
+}
+
+//! Accessor for the value of the Boolean Parameter indicating whether the
+//! backface is active.
+//! \return true/false.
+bool asiData_PartNode::HasBackface() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_HasBackface) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

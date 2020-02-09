@@ -246,6 +246,19 @@ public:
     IsKeyword(const TCollection_AsciiString& opt,
               const TCollection_AsciiString& key = "") const;
 
+  //! Variation of IsKeyword() for the standard strings.
+  bool IsKeyword(const std::string& opt,
+                 const std::string& key)
+  {
+    std::string slashedKey = "/"; slashedKey += key;
+    size_t      found      = opt.find(slashedKey);
+    //
+    if ( found == std::string::npos )
+      return false;
+
+    return true;
+  }
+
   //! Checks whether the passed command line arguments contain the given
   //! key.
   //! \param[in] argc number of command line arguments.
@@ -310,6 +323,62 @@ public:
       return false;
 
     value = valueStr.RealValue();
+    return true;
+  }
+
+  //! Variation of GetKeyValue() for standard strings.
+  bool
+    GetKeyValue(const int          argc,
+                char**             argv,
+                const std::string& key,
+                std::string&       value)
+  {
+    for ( int k = 1; k < argc; ++k )
+    {
+      if ( this->IsKeyword(argv[k], key) )
+      {
+        std::vector<std::string> chunks;
+        asiAlgo_Utils::Str::Split(argv[k], "=", chunks);
+
+        if ( chunks.size() != 2 )
+          return false;
+
+        value = chunks[1];
+        return true;
+      }
+    }
+    return false;
+  }
+
+  //! Variation of GetKeyValue() for standard string and any
+  //! primitive type.
+  template <typename T>
+  bool GetKeyValue(const int          argc,
+                   char**             argv,
+                   const std::string& key,
+                   T&                 value)
+  {
+    std::string valueStr;
+    if ( !this->GetKeyValue(argc, argv, key, valueStr) )
+      return false;
+
+    value = asiAlgo_Utils::Str::ToNumber<T>(valueStr);
+    return true;
+  }
+
+  //! Reads value as a hex number.
+  bool GetKeyValueHex(const int          argc,
+                      char**             argv,
+                      const std::string& key,
+                      int&               value)
+  {
+    std::string valueStr;
+    if ( !this->GetKeyValue(argc, argv, key, valueStr) )
+      return false;
+
+    std::stringstream ss;
+    ss << std::hex << valueStr;
+    ss >> value;
     return true;
   }
 

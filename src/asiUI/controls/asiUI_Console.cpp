@@ -59,8 +59,8 @@ static QString DOTS_PROMPT  = "... ";
 asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
                              QWidget*                     parent)
 //
-: m_interp(interp),
-  asiUI_StyledTextEdit(parent)
+: asiUI_StyledTextEdit (parent),
+  m_interp             (interp)
 {
   this->setUndoRedoEnabled( false );
   this->setLineWrapMode( QTextEdit::WidgetWidth );

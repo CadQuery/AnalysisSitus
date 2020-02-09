@@ -250,7 +250,7 @@ public:
   bool IsKeyword(const std::string& opt,
                  const std::string& key)
   {
-    std::string slashedKey = "/"; slashedKey += key;
+    std::string slashedKey = "-"; slashedKey += key;
     size_t      found      = opt.find(slashedKey);
     //
     if ( found == std::string::npos )
@@ -329,21 +329,15 @@ public:
   //! Variation of GetKeyValue() for standard strings.
   bool
     GetKeyValue(const int          argc,
-                char**             argv,
+                const char**       argv,
                 const std::string& key,
                 std::string&       value)
   {
-    for ( int k = 1; k < argc; ++k )
+    for ( int k = 1; k < argc - 1; ++k )
     {
       if ( this->IsKeyword(argv[k], key) )
       {
-        std::vector<std::string> chunks;
-        asiAlgo_Utils::Str::Split(argv[k], "=", chunks);
-
-        if ( chunks.size() != 2 )
-          return false;
-
-        value = chunks[1];
+        value = argv[k+1];
         return true;
       }
     }
@@ -354,7 +348,7 @@ public:
   //! primitive type.
   template <typename T>
   bool GetKeyValue(const int          argc,
-                   char**             argv,
+                   const char**       argv,
                    const std::string& key,
                    T&                 value)
   {
@@ -368,7 +362,7 @@ public:
 
   //! Reads value as a hex number.
   bool GetKeyValueHex(const int          argc,
-                      char**             argv,
+                      const char**       argv,
                       const std::string& key,
                       int&               value)
   {

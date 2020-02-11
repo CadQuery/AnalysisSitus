@@ -502,9 +502,6 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
                                                 const Handle(asiAlgo_History)& history,
                                                 const bool                     doResetTessParams)
 {
-  std::cout << ">>>>>>>>>>>>>>>>>>>>>>> asiEngine_Part::Update << " << std::endl;
-
-
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
@@ -539,6 +536,8 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
   // Build AAG automatically (if not auto-build is not disabled).
   if ( part_n->IsAutoAAG() )
     aagParam->SetAAG( new asiAlgo_AAG(model) );
+  else
+    aagParam->SetAAG( nullptr ); // To avoid AAG async with the shape.
 
   // Reset tessellation parameters if requested.
   if ( doResetTessParams )

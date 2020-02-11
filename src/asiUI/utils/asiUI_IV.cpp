@@ -74,6 +74,10 @@ void asiUI_IV::FIT3D()
 
 void asiUI_IV::ERASE_ALL()
 {
+  /* ============================
+   *  Clean up all presentations.
+   * ============================ */
+
   // Loop over the imperative plotter's objects
   for ( Handle(ActAPI_IChildIterator) cit = m_model->GetIVNode()->GetChildIterator(true);
         cit->More(); cit->Next() )
@@ -102,6 +106,17 @@ void asiUI_IV::ERASE_ALL()
     if ( m_prsMgr3d->IsPresented(partNode) )
       m_prsMgr3d->DeletePresentation(partNode);
   }
+
+  // Derender anything remaining.
+  if ( m_prsMgr3d )
+    m_prsMgr3d->DeRenderAllPresentations();
+  //
+  if ( m_prsMgr2d )
+    m_prsMgr2d->DeRenderAllPresentations();
+
+  /* =====================
+   *  Clean up Data Model.
+   * ===================== */
 
   // Clean up Data Model objects
   bool isTx = false;

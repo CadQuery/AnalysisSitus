@@ -522,25 +522,11 @@ void asiVisu_Utils::WritePNG(const vtkSmartPointer<vtkImageData>& data,
   if ( !data.GetPointer() )
     return;
 
-  //vtkSmartPointer<vtkImageSincInterpolator> interpolator =
-  //  vtkSmartPointer<vtkImageSincInterpolator>::New();
-  //interpolator->UseWindowParameterOn();
-  //interpolator->SetWindowFunction(10);
-  ////
-  //vtkSmartPointer<vtkImageResize> resize =
-  //  vtkSmartPointer<vtkImageResize>::New();
-  //resize->SetInputData(data);
-  //resize->SetInterpolator(interpolator);
-  //resize->SetOutputDimensions(200, 200, 1);
-  //resize->InterpolateOn();
-  ///
-
   vtkSmartPointer<vtkPNGWriter>
     writer = vtkSmartPointer<vtkPNGWriter>::New();
   //
   writer->SetWriteToMemory(0);
   writer->SetFileName(filename);
-  //writer->SetInputConnection(resize->GetOutputPort());
   writer->SetInputData(data);
   writer->Write();
 }

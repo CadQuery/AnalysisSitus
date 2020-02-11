@@ -93,6 +93,16 @@ void asiUI_IV::ERASE_ALL()
     }
   }
 
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = m_model->GetPartNode();
+
+  // Erase Part Presentation.
+  if ( m_prsMgr3d )
+  {
+    if ( m_prsMgr3d->IsPresented(partNode) )
+      m_prsMgr3d->DeletePresentation(partNode);
+  }
+
   // Clean up Data Model objects
   bool isTx = false;
   if ( !m_model->HasOpenCommand() )
@@ -101,7 +111,8 @@ void asiUI_IV::ERASE_ALL()
     isTx = true;
   }
   //
-  asiEngine_IV(m_model).Clean_All();
+  asiEngine_IV(m_model).Clean_All(); // Clean up IV persistent objects.
+  asiEngine_Part(m_model).Clean(); // Clean up Part.
   //
   if ( isTx )
     m_model->CommitCommand();

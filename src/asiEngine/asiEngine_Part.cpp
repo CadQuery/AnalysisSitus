@@ -502,6 +502,9 @@ Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            m
                                                 const Handle(asiAlgo_History)& history,
                                                 const bool                     doResetTessParams)
 {
+  std::cout << ">>>>>>>>>>>>>>>>>>>>>>> asiEngine_Part::Update << " << std::endl;
+
+
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //
@@ -667,6 +670,8 @@ void asiEngine_Part::SetOctree(void* pOctree)
 //! Cleans up Data Model structure related to the Part Node.
 void asiEngine_Part::Clean(const bool cleanMeta)
 {
+  std::cout << ">>>>>>>>>>>>> asiEngine_Part::Clean" << std::endl;
+
   // Get Part Node.
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
   //

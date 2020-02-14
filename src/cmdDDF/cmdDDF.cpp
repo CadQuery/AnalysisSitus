@@ -106,6 +106,10 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   double minSize = 1.0;
   interp->GetKeyValue(argc, argv, "min", minSize);
 
+  // Max cell size.
+  double maxSize = minSize*100.;
+  interp->GetKeyValue(argc, argv, "max", maxSize);
+
   // Precision.
   double prec = 1.0;
   interp->GetKeyValue(argc, argv, "prec", prec);
@@ -159,6 +163,8 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   TIMER_GO
 
   poly_DistanceField* pDDF = new poly_DistanceField();
+  //
+  pDDF->SetMaxCellSize(maxSize);
   //
   if ( !pDDF->Build(minSize, prec, pDistFunc) )
   {
@@ -799,10 +805,13 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("ddf-build-svo",
     //
-    "ddf-build-svo [-min <minSize>] [-prec <precision>] [-cube]\n"
+    "ddf-build-svo [-min <minSize>] [-max <maxSize>] [-prec <precision>] [-cube]\n"
     "\t Builds SVO for the active part. The argument <minSize> controls\n"
-    "\t the voxelization resolution. The argument <precision> controls\n"
-    "\t the accuracy of distance field approximation.",
+    "\t the voxelization resolution. The argument <maxSize> controls the\n"
+    "\t voxelization resolution in the empty space (i.e., inside and outside)\n"
+    "\t the shape. By default, the value of <maxSize> is 100 times the value of\n"
+    "\t <minSize>. The argument <precision> controls the accuracy of the distance\n"
+    "\t field approximation in each voxel.",
     //
     __FILE__, group, DDF_BuildSVO);
 

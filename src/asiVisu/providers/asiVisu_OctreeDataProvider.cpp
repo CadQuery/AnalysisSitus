@@ -36,7 +36,20 @@
 asiVisu_OctreeDataProvider::asiVisu_OctreeDataProvider(const Handle(asiData_OctreeNode)& N)
 : asiVisu_DataProvider (),
   m_node               (N)
-{}
+{
+  // Get parent Part Node.
+  m_partNode = Handle(asiData_PartNode)::DownCast( m_node->GetParentNode() );
+  //
+  if ( m_partNode.IsNull() || !m_partNode->IsWellFormed() )
+    Standard_ProgramError::Raise("Inconsistent data model.");
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_BVHFacets* asiVisu_OctreeDataProvider::GetFacets() const
+{
+  return m_partNode->GetBVH().get();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -47,9 +60,16 @@ void* asiVisu_OctreeDataProvider::GetOctree() const
 
 //-----------------------------------------------------------------------------
 
-bool asiVisu_OctreeDataProvider::IsZeroCrossingOnly() const
+bool asiVisu_OctreeDataProvider::IsPointExtraction() const
 {
-  return m_node->IsBoundary();
+  return m_node->GetExtractPoints();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiVisu_OctreeDataProvider::GetSamplingStrategy() const
+{
+  return m_node->GetSamplingStrategy();
 }
 
 //-----------------------------------------------------------------------------
@@ -58,8 +78,10 @@ Handle(ActAPI_HParameterList)
   asiVisu_OctreeDataProvider::translationSources() const
 {
   ActAPI_ParameterStream out;
-  out << m_node->Parameter(asiData_OctreeNode::PID_Octree)
-      << m_node->Parameter(asiData_OctreeNode::PID_IsBoundary);
+  out << m_partNode ->Parameter(asiData_PartNode::PID_BVH)
+      << m_node     ->Parameter(asiData_OctreeNode::PID_Octree)
+      << m_node     ->Parameter(asiData_OctreeNode::PID_SamplingStrategy)
+      << m_node     ->Parameter(asiData_OctreeNode::PID_ExtractPoints);
 
   return out.List;
 }

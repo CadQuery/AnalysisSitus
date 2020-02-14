@@ -43,7 +43,8 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
 {
   // Register standard Active Data Parameters.
   REGISTER_PARAMETER(Name, PID_Name);
-  REGISTER_PARAMETER(Bool, PID_IsBoundary);
+  REGISTER_PARAMETER(Int,  PID_SamplingStrategy);
+  REGISTER_PARAMETER(Bool, PID_ExtractPoints);
 
   // Register custom Parameters specific to Analysis Situs.
   this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
@@ -63,11 +64,13 @@ void asiData_OctreeNode::Init()
   this->SetOctree(nullptr);
 
   // Set default values to primitive Parameters.
-  this->SetIsBoundary(false);
+  this->SetSamplingStrategy(0x01 | 0x02 | 0x04);
+  this->SetExtractPoints(false);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_Name,       "Name",                 "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_IsBoundary, "Boundary voxels only", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,             "Name",              "",          ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_SamplingStrategy, "Sampling strategy", "Octree_SS", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ExtractPoints,    "Extract points",    "",          ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -100,14 +103,28 @@ void asiData_OctreeNode::SetOctree(void* pOctree)
 
 //-----------------------------------------------------------------------------
 
-bool asiData_OctreeNode::IsBoundary() const
+int asiData_OctreeNode::GetSamplingStrategy() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_IsBoundary) )->GetValue();
+  return ActParamTool::AsInt( this->Parameter(PID_SamplingStrategy) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------
 
-void asiData_OctreeNode::SetIsBoundary(const bool isBoundary)
+void asiData_OctreeNode::SetSamplingStrategy(const int mode)
 {
-  ActParamTool::AsBool( this->Parameter(PID_IsBoundary) )->SetValue(isBoundary);
+  ActParamTool::AsInt( this->Parameter(PID_SamplingStrategy) )->SetValue(mode);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiData_OctreeNode::GetExtractPoints() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_ExtractPoints) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetExtractPoints(const bool toExtract)
+{
+  ActParamTool::AsBool( this->Parameter(PID_ExtractPoints) )->SetValue(toExtract);
 }

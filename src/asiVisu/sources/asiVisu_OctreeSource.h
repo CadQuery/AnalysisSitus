@@ -43,19 +43,49 @@
 #include <vtkType.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 
+//-----------------------------------------------------------------------------
+
+// Forward declarations.
+template <typename T = double>
+class asiAlgo_BaseCloud;
+class asiAlgo_BVHFacets;
+class asiAlgo_ProjectPointOnMesh;
+
 //! Source of unstructured data representing voxels in form of octree.
 class asiVisu_OctreeSource : public vtkUnstructuredGridAlgorithm
 {
+public:
+
+  //! Sampling strategy.
+  enum SamplingStrategy
+  {
+    SS_None    = 0x00,
+    //
+    SS_In      = 0x01,
+    SS_On      = 0x02,
+    SS_Out     = 0x04,
+    //
+    SS_OnIn    = SS_On | SS_In,
+    SS_OnOut   = SS_On | SS_Out,
+    SS_InOut   = SS_In | SS_Out,
+    SS_OnInOut = SS_On | SS_In | SS_Out
+  };
+
 // RTTI and construction:
 public:
 
-  vtkTypeMacro(asiVisu_OctreeSource, vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(asiVisu_OctreeSource, vtkUnstructuredGridAlgorithm)
 
   asiVisu_EXPORT static asiVisu_OctreeSource*
     New();
 
 // Kernel:
 public:
+
+  //! Sets input mesh.
+  //! \param[in] pMesh mesh to set.
+  asiVisu_EXPORT void
+    SetInputFacets(asiAlgo_BVHFacets* pMesh);
 
   //! Sets octree to visualize.
   //! \param[in] octree octree to visualize.
@@ -66,10 +96,15 @@ public:
   asiVisu_EXPORT void*
     GetInputOctree() const;
 
-  //! Sets boundary mode on/off.
+  //! Sets points extraction mode on/off.
   //! \param[in] isOn true/false.
   asiVisu_EXPORT void
-    SetZeroCrossingOnly(const bool isOn);
+    SetExtractPoints(const bool isOn);
+
+  //! Sets sampling strategy.
+  //! \param[in] strategy sampling strategy.
+  asiVisu_EXPORT void
+    SetSamplingStrategy(const int strategy);
 
 public:
 
@@ -112,6 +147,17 @@ protected:
                 vtkInformationVector*  outputVector);
 
 private:
+
+  //! Recursively iterates ADF and gathers the center points of the inner voxels.
+  //! Depending on the sampling strategy, points can be sampled inside,
+  //! outside or on the shape. The points of the zero-crossing voxels are
+  //! projected to the boundary.
+  //! \param[in]     pNode SVO node to start recursive iteration from.
+  //! \param[in]     pProj projection utility.
+  //! \param[in,out] pPts  sampled points.
+  void samplePoints(void*                       pNode,
+                    asiAlgo_ProjectPointOnMesh* pProj,
+                    asiAlgo_BaseCloud<double>*  pPts) const;
 
   //! Recursively adds SVO node (a voxel) to the unstructured grid being
   //! constructed.
@@ -159,6 +205,14 @@ private:
                   const double         sc7,
                   vtkUnstructuredGrid* pData);
 
+  //! Adds vertex cell for the given point.
+  //! \param[in]     point coordinates of the vertex.
+  //! \param[in,out] pData unstructured data set being populated.
+  //! \return ID of the just added VTK cell.
+  vtkIdType
+    registerVertex(const gp_Pnt&        point,
+                   vtkUnstructuredGrid* pData);
+
   //! Adds the passed coordinates as another point to the VTK data set.
   //! \param[in]     coords coordinates of the point to add.
   //! \param[in,out] pData  unstructured grid being constructed.
@@ -182,6 +236,9 @@ private:
 
 private:
 
+  //! BVH representation of mesh.
+  asiAlgo_BVHFacets* m_pFacets;
+
   //! Octree to convert to VTK unstructured data.
   void* m_pOctree;
 
@@ -191,8 +248,11 @@ private:
   //! Max scalar.
   double m_fMaxScalar;
 
-  //! Enables visualization of zero-crossing voxels alone.
-  bool m_bZeroCrossingOnly;
+  //! Whether to extract points instead of voxels.
+  bool m_bExtractPoints;
+
+  //! Sampling strategy.
+  int m_strategy;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

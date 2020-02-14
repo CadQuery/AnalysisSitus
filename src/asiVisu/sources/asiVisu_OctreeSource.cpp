@@ -31,6 +31,10 @@
 // Own include
 #include <asiVisu_OctreeSource.h>
 
+// asiAlgo includes
+#include <asiAlgo_BaseCloud.h>
+#include <asiAlgo_ProjectPointOnMesh.h>
+
 // asiVisu includes
 #include <asiVisu_MeshUtils.h>
 #include <asiVisu_Utils.h>
@@ -59,10 +63,12 @@ vtkStandardNewMacro(asiVisu_OctreeSource)
 
 asiVisu_OctreeSource::asiVisu_OctreeSource()
 : vtkUnstructuredGridAlgorithm ( ),
-  m_pOctree                    ( nullptr ),
-  m_fMinScalar                 ( DBL_MAX ),
-  m_fMaxScalar                 (-DBL_MAX ),
-  m_bZeroCrossingOnly          ( false   )
+  m_pFacets                    ( nullptr    ),
+  m_pOctree                    ( nullptr    ),
+  m_fMinScalar                 ( DBL_MAX    ),
+  m_fMaxScalar                 (-DBL_MAX    ),
+  m_bExtractPoints             ( false      ),
+  m_strategy                   ( SS_OnInOut ) // all
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline.
@@ -72,6 +78,15 @@ asiVisu_OctreeSource::asiVisu_OctreeSource()
 
 asiVisu_OctreeSource::~asiVisu_OctreeSource()
 {}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_OctreeSource::SetInputFacets(asiAlgo_BVHFacets* pFacets)
+{
+  m_pFacets = pFacets;
+  //
+  this->Modified();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -91,9 +106,18 @@ void* asiVisu_OctreeSource::GetInputOctree() const
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_OctreeSource::SetZeroCrossingOnly(const bool isOn)
+void asiVisu_OctreeSource::SetExtractPoints(const bool isOn)
 {
-  m_bZeroCrossingOnly = isOn;
+  m_bExtractPoints = isOn;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_OctreeSource::SetSamplingStrategy(const int strategy)
+{
+  m_strategy = strategy;
   //
   this->Modified();
 }
@@ -119,19 +143,98 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
   pOutputGrid->Allocate();
   pOutputGrid->SetPoints( vtkSmartPointer<vtkPoints>::New() );
 
-  // Prepare array for nodal scalars.
-  vtkPointData*                   pPointData = pOutputGrid->GetPointData();
-  vtkSmartPointer<vtkDoubleArray> scalarsArr = asiVisu_Utils::InitDoubleArray(ARRNAME_VOXEL_N_SCALARS);
-  //
-  pPointData->SetScalars(scalarsArr);
+  /* ================================
+   *  Add cells (vertices or voxels).
+   * ================================ */
 
-  /* ============
-   *  Add voxels.
-   * ============ */
+  if ( m_bExtractPoints )
+  {
+    if ( m_pFacets == nullptr )
+    {
+      vtkErrorMacro( << "Invalid input: nullptr facets." );
+      return 0;
+    }
 
-  this->addVoxels(m_pOctree, pOutputGrid);
+    m_fMinScalar = m_fMaxScalar = 0.;
+
+    // Prepare the projection tool.
+    asiAlgo_ProjectPointOnMesh projection(m_pFacets);
+
+    // Gather points.
+    Handle(asiAlgo_BaseCloud<double>) points = new asiAlgo_BaseCloud<double>;
+    this->samplePoints(m_pOctree, &projection, points.get());
+
+    // Add cells.
+    for ( int e = 0; e < points->GetNumberOfElements(); ++e )
+    {
+      this->registerVertex(points->GetElement(e), pOutputGrid);
+    }
+  }
+  else
+  {
+    // Prepare array for nodal scalars.
+    vtkPointData*                   pPointData = pOutputGrid->GetPointData();
+    vtkSmartPointer<vtkDoubleArray> scalarsArr = asiVisu_Utils::InitDoubleArray(ARRNAME_VOXEL_N_SCALARS);
+    //
+    pPointData->SetScalars(scalarsArr);
+
+    this->addVoxels(m_pOctree, pOutputGrid);
+  }
 
   return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_OctreeSource::samplePoints(void*                       pNode,
+                                        asiAlgo_ProjectPointOnMesh* pProj,
+                                        asiAlgo_BaseCloud<double>*  pPts) const
+{
+  if ( pNode == nullptr || pProj == nullptr )
+    return;
+
+#if defined USE_MOBIUS
+  mobius::poly_SVO* pMobNode = static_cast<mobius::poly_SVO*>(pNode);
+
+  if ( pMobNode->IsLeaf() ) /* Only leaves are sampled */
+  {
+    const bool isOn  = mobius::poly_DistanceField::IsZeroCrossing(pMobNode);
+    const bool isIn  = mobius::poly_DistanceField::IsIn(pMobNode);
+    const bool isOut = mobius::poly_DistanceField::IsOut(pMobNode);
+
+    if ( isOn  && (m_strategy & SS_On) ||
+         isIn  && (m_strategy & SS_In) ||
+         isOut && (m_strategy & SS_Out) )
+    {
+      gp_XYZ
+        point = 0.125 * ( mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP0() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP1() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP2() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP3() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP4() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP5() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP6() )
+                        + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP7() ) );
+
+      if ( isOn )
+      {
+        // Project.
+        point = pProj->Perform(point).XYZ();
+      }
+
+      pPts->AddElement(point);
+    }
+  }
+  else
+  {
+    for ( size_t k = 0; k < 8; ++k )
+    {
+      this->samplePoints(pMobNode->GetChild(k), pProj, pPts);
+    }
+  }
+#else
+  vtkErrorMacro( << "Mobius SVO data structure is not available." );
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -147,8 +250,13 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
 
   if ( pMobNode->IsLeaf() )
   {
-    if ( (  m_bZeroCrossingOnly && mobius::poly_DistanceField::IsZeroCrossing(pMobNode) ) ||
-           !m_bZeroCrossingOnly )
+    const bool isOn  = mobius::poly_DistanceField::IsZeroCrossing(pMobNode);
+    const bool isIn  = mobius::poly_DistanceField::IsIn(pMobNode);
+    const bool isOut = mobius::poly_DistanceField::IsOut(pMobNode);
+
+    if ( isOn  && (m_strategy & SS_On) ||
+         isIn  && (m_strategy & SS_In) ||
+         isOut && (m_strategy & SS_Out) )
     {
       const double sc0 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(0, 0, 0) );
       const double sc1 = pMobNode->GetScalar( mobius::poly_SVO::GetCornerID(1, 0, 0) );
@@ -191,10 +299,12 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
     }
   }
   else
+  {
     for ( size_t k = 0; k < 8; ++k )
     {
       this->addVoxels( pMobNode->GetChild(k), pData );
     }
+  }
 #else
   vtkErrorMacro( << "Mobius SVO data structure is not available." );
 #endif
@@ -249,6 +359,22 @@ vtkIdType
 
   // Register voxel cell.
   vtkIdType cellID = pData->InsertNextCell(VTK_VOXEL, 8, &pids[0]);
+
+  return cellID;
+}
+
+//-----------------------------------------------------------------------------
+
+vtkIdType asiVisu_OctreeSource::registerVertex(const gp_Pnt&        point,
+                                               vtkUnstructuredGrid* pData)
+{
+  std::vector<vtkIdType> pids =
+  {
+    this->addPoint(point, pData),
+  };
+
+  // Register vertex cell.
+  vtkIdType cellID = pData->InsertNextCell(VTK_VERTEX, 1, &pids[0]);
 
   return cellID;
 }

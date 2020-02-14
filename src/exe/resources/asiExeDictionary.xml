@@ -22,6 +22,23 @@
     <value id="4">Shrink</value>
   </valueList>
 
+  <valueList id="List-SVOSamplingStrategy" name="Display mode">
+    <value id="1">In</value>
+    <value id="2">On</value>
+    <value id="3">On | In</value>
+    <value id="4">Out</value>
+    <value id="5">In | Out</value>
+    <value id="6">On | Out</value>
+    <value id="7">In | On | Out</value>
+  </valueList>
+
+  <!-- Sampling strategy for SVO voxels/points -->
+  <datum id="Octree_SS" format="" label="Sampling strategy">
+    <domain type="List" list="List-SVOSamplingStrategy" />
+    <ui widget="ComboBox" />
+    <description>Sampling strategy</description>
+  </datum>
+
   <!-- Display mode for shape presentation -->
   <datum id="PrsDisplayMode" format="" label="Display mode">
     <domain type="List" list="List-ShapeDisplayMode" />

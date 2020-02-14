@@ -80,11 +80,57 @@ bool asiAlgo_MeshDistanceFunc::Init(const Handle(asiAlgo_BVHFacets)& facets,
     const double dx = fabs( Pmax.X() - Pmin.X() );
     const double dy = fabs( Pmax.Y() - Pmin.Y() );
     const double dz = fabs( Pmax.Z() - Pmin.Z() );
-    const double d  = std::max( dx, std::max(dy, dz) );
+    double       d  = 0.;
 
+    bool enlargeDx = false;
+    bool enlargeDy = false;
+    bool enlargeDz = false;
+    //
+    if ( dx > dy )
+    {
+      enlargeDy = true;
+
+      if ( dx > dz )
+      {
+        d         = dx;
+        enlargeDz = true;
+      }
+      else
+      {
+        d         = dz;
+        enlargeDx = true;
+      }
+    }
+    else // dy > dx
+    {
+      enlargeDx = true;
+
+      if ( dy > dz )
+      {
+        d         = dy;
+        enlargeDz = true;
+      }
+      else
+      {
+        d         = dz;
+        enlargeDy = true;
+      }
+    }
+
+    mobius::t_xyz aabbCenter = (Pmax + Pmin)*0.5;
+
+    // Enlarge.
     Pmax.SetX(Pmin.X() + d);
     Pmax.SetY(Pmin.Y() + d);
     Pmax.SetZ(Pmin.Z() + d);
+    //
+    mobius::t_xyz cubeCenter = (Pmax + Pmin)*0.5;
+
+    // Translate the center of the cube to the center of the AABB.
+    mobius::t_xyz ccVec = aabbCenter - cubeCenter;
+    //
+    Pmin += ccVec;
+    Pmax += ccVec;
   }
 
   // Coefficient to enlarge a bit the function domain so that it surely

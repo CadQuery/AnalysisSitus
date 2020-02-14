@@ -36,6 +36,11 @@
 
 // asiData includes
 #include <asiData_OctreeNode.h>
+#include <asiData_PartNode.h>
+
+class asiAlgo_BVHFacets;
+
+//-----------------------------------------------------------------------------
 
 //! Data provider for octree.
 class asiVisu_OctreeDataProvider : public asiVisu_DataProvider
@@ -63,14 +68,22 @@ public:
 
 public:
 
+  //! \return facets in BVH structure.
+  asiVisu_EXPORT virtual asiAlgo_BVHFacets*
+    GetFacets() const;
+
   //! \return root octree node.
   asiVisu_EXPORT virtual void*
     GetOctree() const;
 
-  //! \return Boolean flag indicating whether the zero-crossing voxels
-  //!         should only be visualized.
+  //! \return Boolean flag indicating whether the points extraction mode
+  //!         is activated in the Data Model.
   asiVisu_EXPORT virtual bool
-    IsZeroCrossingOnly() const;
+    IsPointExtraction() const;
+
+  //! \return SVO sampling strategy mode.
+  asiVisu_EXPORT virtual int
+    GetSamplingStrategy() const;
 
 protected:
 
@@ -84,7 +97,8 @@ protected:
 
 protected:
 
-  Handle(asiData_OctreeNode) m_node; //!< Octree Node.
+  Handle(asiData_OctreeNode) m_node;     //!< Octree Node.
+  Handle(asiData_PartNode)   m_partNode; //!< Part Node.
 
 };
 

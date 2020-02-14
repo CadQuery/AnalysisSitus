@@ -60,7 +60,8 @@ public:
   //----------------------//
     PID_Name,             //!< Name of the Node.
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
-    PID_IsBoundary,       //!< Indicates whether to visualize boundary voxels only.
+    PID_SamplingStrategy, //!< Sampling strategy.
+    PID_ExtractPoints,    //!< Whether to extract points instead of voxels.
   //----------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -105,14 +106,23 @@ public:
   asiData_EXPORT void
     SetOctree(void* pOctree);
 
-  //! \return true if the boundary voxelization mode is enabled, false -- otherwise.
-  asiData_EXPORT bool
-    IsBoundary() const;
+  //! \return sampling strategy as integer.
+  asiData_EXPORT int
+    GetSamplingStrategy() const;
 
-  //! Sets boundary voxelization mode.
-  //! \param[in] isBoundary true/false.
+  //! Sets sampling strategy.
+  //! \param[in] mode value to set.
   asiData_EXPORT void
-    SetIsBoundary(const bool isBoundary);
+    SetSamplingStrategy(const int mode);
+
+  //! \return true if the points extraction mode is enabled, false -- otherwise.
+  asiData_EXPORT bool
+    GetExtractPoints() const;
+
+  //! Sets points extraction mode.
+  //! \param[in] toExtract true/false.
+  asiData_EXPORT void
+    SetExtractPoints(const bool toExtract);
 
 protected:
 

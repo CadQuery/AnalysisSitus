@@ -131,18 +131,25 @@ namespace asiAlgo_AAGIterationRule
       m_bBlockingModeOn = false;
     }
 
-    //! For the given face ID, this method decides whether to check its
-    //! neighbors or stop.
-    //! \param[in] fid 1-based ID of the face in question.
+    //! Iteration rule.
+    bool IsBlocking(const int seed)
+    {
+      return this->IsBlocking(seed, seed);
+    }
+
+    //! Iteration rule.
+    //! \param[in] current 1-based ID of the current face.
+    //! \param[in] next    1-based ID of the possible next face.
     //! \return true if the face in question is a gatekeeper for further iteration.
-    bool IsBlocking(const int fid)
+    bool IsBlocking(const int asiAlgo_NotUsed(current),
+                    const int next)
     {
       // If there are some nodal attributes for this face, we check whether
       // it has already been recognized as a blend candidate.
-      if ( m_aag->HasNodeAttributes(fid) )
+      if ( m_aag->HasNodeAttributes(next) )
       {
         Handle(asiAlgo_FeatureAttr)
-          attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+          attr = m_aag->GetNodeAttribute( next, asiAlgo_AttrBlendCandidate::GUID() );
         //
         if ( !attr.IsNull() )
           return false; // Allow further iteration.
@@ -150,7 +157,7 @@ namespace asiAlgo_AAGIterationRule
 
       // If we are here, then the face in question is not attributed. We can now
       // try to recognize it.
-      if ( !m_localReco->Perform(fid, m_fMaxRadius) )
+      if ( !m_localReco->Perform(next, m_fMaxRadius) )
         return m_bBlockingModeOn; // Block further iterations if blocking mode is on.
 
       return false;
@@ -201,15 +208,22 @@ namespace asiAlgo_AAGIterationRule
       m_bBlockingModeOn = false;
     }
 
-    //! For the given face ID, this method decides whether to check its
-    //! neighbors or stop.
-    //! \param[in] fid 1-based ID of the face in question.
+    //! Iteration rule.
+    bool IsBlocking(const int seed)
+    {
+      return this->IsBlocking(seed, seed);
+    }
+
+    //! Iteration rule.
+    //! \param[in] current 1-based ID of the current face.
+    //! \param[in] next    1-based ID of the possible next face.
     //! \return true if the face in question is a gatekeeper for further iteration.
-    bool IsBlocking(const int fid)
+    bool IsBlocking(const int asiAlgo_NotUsed(current),
+                    const int next)
     {
       // Try recognizing the face even if it has been already attributed.
       // At this stage, we can precise EBFs as VBFs.
-      if ( !m_localReco->Perform(fid) )
+      if ( !m_localReco->Perform(next) )
         return m_bBlockingModeOn; // Block further iterations if blocking mode is on.
 
       return false;
@@ -246,15 +260,22 @@ namespace asiAlgo_AAGIterationRule
 
   public:
 
-    //! For the given face ID, this method decides whether to check its
-    //! neighbors or stop.
-    //! \param[in] fid 1-based ID of the face in question.
+    //! Iteration rule.
+    bool IsBlocking(const int seed)
+    {
+      return this->IsBlocking(seed, seed);
+    }
+
+    //! Iteration rule.
+    //! \param[in] current 1-based ID of the current face.
+    //! \param[in] next    1-based ID of the possible next face.
     //! \return true if the face in question is a gatekeeper for further iteration.
-    bool IsBlocking(const int fid)
+    bool IsBlocking(const int asiAlgo_NotUsed(current),
+                    const int next)
     {
       // Get attribute.
       Handle(asiAlgo_AttrBlendCandidate)
-        bc = Handle(asiAlgo_AttrBlendCandidate)::DownCast( m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() ) );
+        bc = Handle(asiAlgo_AttrBlendCandidate)::DownCast( m_aag->GetNodeAttribute( next, asiAlgo_AttrBlendCandidate::GUID() ) );
       //
       if ( bc.IsNull() )
         return false;
@@ -269,7 +290,7 @@ namespace asiAlgo_AAGIterationRule
 
         // Get neighbors of the current face.
         bool isTermConfirmed = true;
-        TColStd_PackedMapOfInteger neighbors = m_aag->GetNeighborsThru(fid, edge);
+        TColStd_PackedMapOfInteger neighbors = m_aag->GetNeighborsThru(next, edge);
         //
         for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
         {

@@ -987,13 +987,11 @@ void asiUI_IV::visualize(const bool                  is2d,
     //
     if ( pl.IsNull() )
     {
-      std::cout << "Pipeline is null" << std::endl;
+      std::cout << "IV error: pipeline is null." << std::endl;
       return;
     }
 
     // Configure shape visualization.
-    TopoDS_Shape shape = Handle(asiData_IVTopoItemNode)::DownCast(node)->GetShape();
-    //
     if ( isWireframe )
     {
       pl->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_WireframeAndVertices);
@@ -1355,6 +1353,12 @@ void asiUI_IV::draw_shape(const TopoDS_Shape&            shape,
       // Update the last created object.
       m_lastObj = shape_n;
     }
+
+    // Update persistent color.
+    Handle(asiData_IVTopoItemNode) topo_n = Handle(asiData_IVTopoItemNode)::DownCast(shape_n);
+    //
+    topo_n->SetHasColor(hasColor);
+    topo_n->SetColor( asiVisu_Utils::ColorToInt( color.Red(), color.Green(), color.Blue() ) );
   }
 
   // Commit transaction.

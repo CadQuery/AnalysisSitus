@@ -202,13 +202,15 @@ namespace asiAlgo_AAGIterationRule
 
   public:
 
-    AllowAny() {} //!< Default ctor.
+    AllowAny() = default; //!< Default ctor.
 
   public:
 
-    bool IsBlocking(const int) { return false; }
+    bool IsBlocking(const int asiAlgo_NotUsed(seed)) { return false; }
+    bool IsBlocking(const int asiAlgo_NotUsed(current),
+                    const int asiAlgo_NotUsed(next)) { return false; }
   };
-};
+}
 
 //! AAG iterator visiting neighbor faces for the given seed in depth-first order.
 //! Seed faces are also traversed by this iterator. Use this iterator to visit
@@ -290,7 +292,7 @@ public:
       m_visited.Add(iNext);
 
       // Check whether the current neighbor should be added for traversal.
-      if ( m_blockRule->IsBlocking(iNext) )
+      if ( m_blockRule->IsBlocking(iCurrent, iNext) )
         continue;
 
       // Set node to iterate.

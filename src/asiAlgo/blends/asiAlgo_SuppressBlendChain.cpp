@@ -88,23 +88,30 @@ namespace asiAlgo_AAGIterationRule
 
   public:
 
-    //! For the given face ID, this method decides whether to check its
-    //! neighbors or stop.
-    //! \param[in] fid 1-based ID of the face in question.
+    //! Iteration rule for the seed face.
+    bool IsBlocking(const int seed)
+    {
+      return this->IsBlocking(seed, seed);
+    }
+
+    //! Iteration rule for the current and the possible next face.
+    //! \param[in] current 1-based ID of the current face.
+    //! \param[in] next    1-based ID of the next face in question.
     //! \return true if the face in question is a gatekeeper for further iteration.
-    bool IsBlocking(const int fid)
+    bool IsBlocking(const int asiAlgo_NotUsed(current),
+                    const int next)
     {
       // If there are some nodal attributes for this face, we check whether
       // it has already been recognized as a blend candidate.
-      if ( m_aag->HasNodeAttributes(fid) )
+      if ( m_aag->HasNodeAttributes(next) )
       {
         // Skip already visited nodes.
-        if ( m_faceInfo->IsBound(fid) )
+        if ( m_faceInfo->IsBound(next) )
           return false;
 
         // Check blend candidates.
         Handle(asiAlgo_FeatureAttr)
-          attr = m_aag->GetNodeAttribute( fid, asiAlgo_AttrBlendCandidate::GUID() );
+          attr = m_aag->GetNodeAttribute( next, asiAlgo_AttrBlendCandidate::GUID() );
         //
         if ( !attr.IsNull() )
         {
@@ -113,7 +120,7 @@ namespace asiAlgo_AAGIterationRule
           //
           if ( bcAttr->Kind == BlendType_Uncertain )
           {
-            m_problematicFaces.Add(fid);
+            m_problematicFaces.Add(next);
             m_bAllInitialized = false;
             return true; // Block further iterations.
           }
@@ -136,7 +143,7 @@ namespace asiAlgo_AAGIterationRule
 
             cond1->Dump(m_plotter);
             //
-            m_faceInfo->Bind(fid, cond1);
+            m_faceInfo->Bind(next, cond1);
 
             return false; // Allow further iteration.
           }
@@ -147,7 +154,7 @@ namespace asiAlgo_AAGIterationRule
 
             cond2->Dump(m_plotter);
             //
-            m_faceInfo->Bind(fid, cond2);
+            m_faceInfo->Bind(next, cond2);
 
             return false; // Allow further iteration.
           }
@@ -158,14 +165,14 @@ namespace asiAlgo_AAGIterationRule
 
             cond3->Dump(m_plotter);
             //
-            m_faceInfo->Bind(fid, cond3);
+            m_faceInfo->Bind(next, cond3);
 
             return false; // Allow further iteration.
           }
           //
           else if ( m_bAllInitialized )
           {
-            m_problematicFaces.Add(fid);
+            m_problematicFaces.Add(next);
             m_bAllInitialized = false;
           }
         }

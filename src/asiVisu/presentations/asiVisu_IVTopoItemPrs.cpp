@@ -112,6 +112,4 @@ void asiVisu_IVTopoItemPrs::afterUpdatePipelines() const
     QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
     this->Colorize(color);
   }
-  else
-    this->Colorize(Qt::white);
 }

@@ -125,7 +125,7 @@ public:
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
 
-  asiEngine_EXPORT void
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
     SetOctree(void* pOctree);
 
   asiEngine_EXPORT void

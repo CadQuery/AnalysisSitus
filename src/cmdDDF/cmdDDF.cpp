@@ -190,7 +190,10 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   // Show voxels.
   M->OpenCommand();
   {
-    partApi.SetOctree(pRoot);
+    Handle(asiData_OctreeNode) octreeNode = partApi.SetOctree(pRoot);
+
+    // Set the number of SVO nodes.
+    octreeNode->SetNumElements(numSVONodes);
   }
   M->CommitCommand();
   //

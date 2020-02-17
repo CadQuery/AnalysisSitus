@@ -34,6 +34,7 @@
 // asiUI includes
 #include <asiUI_DatumColorItem.h>
 #include <asiUI_DatumCheckBox.h>
+#include <asiUI_DatumLabel.h>
 #include <asiUI_DatumPathItem.h>
 #include <asiUI_Common.h>
 
@@ -191,6 +192,12 @@ QString asiUI_ParameterEditorItem::nameString(const QString& theName)
   }
 
   return aName;
+}
+
+//! Checks if text label used for the item.
+bool asiUI_ParameterEditorItem::IsLabel() const
+{
+  return ( qobject_cast<asiUI_DatumLabel*>( m_pDatum ) != 0 );
 }
 
 //! Checks if color editor used for the item.

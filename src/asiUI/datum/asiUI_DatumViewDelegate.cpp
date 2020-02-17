@@ -59,9 +59,9 @@ asiUI_DatumViewDelegate::asiUI_DatumViewDelegate(QWidget* theParentView)
 //! datum editor for the edited model index.
 //! \param theParent [in] parent widget.
 //! \param theIndex [in] model index.
-asiUI_DatumItemEditor* asiUI_DatumViewDelegate::createDatum(
-                                                       QWidget* theParent,
-                                                       const QModelIndex& theIndex) const
+asiUI_DatumItemEditor*
+  asiUI_DatumViewDelegate::createDatum(QWidget* theParent,
+                                       const QModelIndex& theIndex) const
 {
   asiUI_DatumViewBaseInterface* aViewBaseApi =
     dynamic_cast<asiUI_DatumViewBaseInterface*>( parent() );

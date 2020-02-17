@@ -652,7 +652,8 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
 
 //! Sets octree for the part.
 //! \param[in] pOctree octree to set.
-void asiEngine_Part::SetOctree(void* pOctree)
+//! \return Octree Node.
+Handle(asiData_OctreeNode) asiEngine_Part::SetOctree(void* pOctree)
 {
   // Get Octree Node.
   Handle(asiData_OctreeNode) octree_n = this->FindOctree(true);
@@ -660,6 +661,8 @@ void asiEngine_Part::SetOctree(void* pOctree)
   // Store in OCAF.
   if ( !octree_n.IsNull() && octree_n->IsWellFormed() )
     octree_n->SetOctree(pOctree);
+
+  return octree_n;
 }
 
 //-----------------------------------------------------------------------------

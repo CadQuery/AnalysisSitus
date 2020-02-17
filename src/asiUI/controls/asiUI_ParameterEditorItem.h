@@ -163,6 +163,8 @@ public:
 
   virtual void setData(int theColumn, int theRole, const QVariant &theValue);
 
+  bool IsLabel() const;
+
   bool IsColorEditor() const;
 
   bool IsBoolEditor() const;

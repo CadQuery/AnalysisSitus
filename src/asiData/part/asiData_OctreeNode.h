@@ -62,6 +62,7 @@ public:
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_SamplingStrategy, //!< Sampling strategy.
     PID_ExtractPoints,    //!< Whether to extract points instead of voxels.
+    PID_NumElements,      //!< Number of extracted elements (cells or points).
   //----------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
@@ -123,6 +124,15 @@ public:
   //! \param[in] toExtract true/false.
   asiData_EXPORT void
     SetExtractPoints(const bool toExtract);
+
+  //! \return number of elements (points or cells).
+  asiData_EXPORT int
+    GetNumElements() const;
+
+  //! Sets the number of elements.
+  //! \param[in] numElems the number of elements to store.
+  asiData_EXPORT void
+    SetNumElements(const int numElems);
 
 protected:
 

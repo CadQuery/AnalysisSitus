@@ -184,5 +184,8 @@ int asiUI_ParameterEditorDelegate::displayRole(const QModelIndex& theIndex) cons
   if ( !anItem )
     return Qt::DisplayRole;
 
+  if ( anItem->IsLabel() )
+    return Qt::EditRole; // Otherwise, we see some incorrect value [ssv].
+
   return asiUI_ParameterEditorItem::Role_ShortFmtID;
 }

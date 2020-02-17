@@ -39,6 +39,13 @@
     <description>Sampling strategy</description>
   </datum>
 
+  <!-- Number of elements in SVO -->
+  <datum id="Octree_NumElems" format="%5.2x3" label="Num. of elements">
+    <domain type="Integer" min="-1e99" max="1e99"/>
+    <ui widget="Label" />
+    <description>Number of elements</description>
+  </datum>
+
   <!-- Display mode for shape presentation -->
   <datum id="PrsDisplayMode" format="" label="Display mode">
     <domain type="List" list="List-ShapeDisplayMode" />

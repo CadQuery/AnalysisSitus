@@ -75,8 +75,8 @@ QDS_Datum* asiUI_DatumLabel::getDatum() const
 //! \param theParent [in] the parent object for the datum.
 //! \param theFlags [in] the initialization flags.
 asiUI_DatumLabel::Editor::Editor(const QString& theDictId,
-                                  QWidget* theParent,
-                                  const int theFlags)
+                                 QWidget* theParent,
+                                 const int theFlags)
 : asiUI_Datum::DatumImpl<QDS_Datum>(theDictId, theParent, theFlags)
 {
 }

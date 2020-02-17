@@ -45,6 +45,7 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name, PID_Name);
   REGISTER_PARAMETER(Int,  PID_SamplingStrategy);
   REGISTER_PARAMETER(Bool, PID_ExtractPoints);
+  REGISTER_PARAMETER(Int,  PID_NumElements);
 
   // Register custom Parameters specific to Analysis Situs.
   this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
@@ -66,11 +67,13 @@ void asiData_OctreeNode::Init()
   // Set default values to primitive Parameters.
   this->SetSamplingStrategy(0x01 | 0x02 | 0x04);
   this->SetExtractPoints(false);
+  this->SetNumElements(0);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_Name,             "Name",              "",          ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_SamplingStrategy, "Sampling strategy", "Octree_SS", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_ExtractPoints,    "Extract points",    "",          ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,             "Name",              "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_SamplingStrategy, "Sampling strategy", "Octree_SS",       ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ExtractPoints,    "Extract points",    "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_NumElements,      "Num. of elements",  "Octree_NumElems", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -127,4 +130,18 @@ bool asiData_OctreeNode::GetExtractPoints() const
 void asiData_OctreeNode::SetExtractPoints(const bool toExtract)
 {
   ActParamTool::AsBool( this->Parameter(PID_ExtractPoints) )->SetValue(toExtract);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_OctreeNode::GetNumElements() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_NumElements) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetNumElements(const int numElems)
+{
+  ActParamTool::AsInt( this->Parameter(PID_NumElements) )->SetValue(numElems);
 }

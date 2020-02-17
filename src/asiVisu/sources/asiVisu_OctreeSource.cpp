@@ -160,9 +160,11 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
     // Prepare the projection tool.
     asiAlgo_ProjectPointOnMesh projection(m_pFacets);
 
-    // Gather points.
+    // Gather points and normals.
     Handle(asiAlgo_BaseCloud<double>) points = new asiAlgo_BaseCloud<double>;
-    this->samplePoints(m_pOctree, &projection, points.get());
+    Handle(asiAlgo_BaseCloud<double>) norms  = new asiAlgo_BaseCloud<double>;
+    //
+    this->samplePoints( m_pOctree, &projection, points.get(), norms.get() );
 
     // Add cells.
     for ( int e = 0; e < points->GetNumberOfElements(); ++e )
@@ -188,7 +190,8 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
 
 void asiVisu_OctreeSource::samplePoints(void*                       pNode,
                                         asiAlgo_ProjectPointOnMesh* pProj,
-                                        asiAlgo_BaseCloud<double>*  pPts) const
+                                        asiAlgo_BaseCloud<double>*  pPts,
+                                        asiAlgo_BaseCloud<double>*  pNorms) const
 {
   if ( pNode == nullptr || pProj == nullptr )
     return;
@@ -215,21 +218,35 @@ void asiVisu_OctreeSource::samplePoints(void*                       pNode,
                         + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP5() )
                         + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP6() )
                         + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP7() ) );
+      //
+      gp_XYZ norm;
 
       if ( isOn )
       {
         // Project.
         point = pProj->Perform(point).XYZ();
+
+        // Get the norm vector to store with the point.
+        const int facetInd = pProj->GetFacetIds().size() ? pProj->GetFacetIds()[0] : -1;
+        //
+        if ( facetInd != -1 )
+        {
+          const asiAlgo_BVHFacets::t_facet& facet = pProj->GetBVH()->GetFacet(facetInd);
+
+          // Set norm vector to be stored with the point cloud.
+          norm = facet.N.XYZ();
+        }
       }
 
-      pPts->AddElement(point);
+      pPts->AddElement(point); // Add point.
+      pNorms->AddElement(norm); // Add normal vector.
     }
   }
   else
   {
     for ( size_t k = 0; k < 8; ++k )
     {
-      this->samplePoints(pMobNode->GetChild(k), pProj, pPts);
+      this->samplePoints(pMobNode->GetChild(k), pProj, pPts, pNorms);
     }
   }
 #else

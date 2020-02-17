@@ -79,6 +79,14 @@ public:
 
 public:
 
+  //! \return facets BVH structure.
+  const Handle(asiAlgo_BVHFacets)& GetBVH() const
+  {
+    return m_facets;
+  }
+
+public:
+
   //! \brief Projects the given point to a straight segment.
   //! \param[in] P     point to project
   //! \param[in] start leading point of the segment.

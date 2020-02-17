@@ -54,13 +54,16 @@ public:
 
 public:
 
-  //! \brief Returns projection of the given point onto a triangulation
+  //! \brief Returns projection of the given point onto a triangulation.
+  //! \param[in] P point to project.
+  //! \return the projected point.
   asiAlgo_EXPORT gp_Pnt
     Perform(const gp_Pnt& P);
 
 public:
 
-  //! \brief Returns facet id from the last call.
+  //! \return facet IDs from the last call of Perform().
+  //! \sa Perform() method.
   const std::vector<int>& GetFacetIds() const
   {
     return m_facetIds;
@@ -78,7 +81,7 @@ private:
 
 protected:
 
-  //! Index of the triangle with minimal distance for the last Perform call.
+  //! Indices of the triangles that yield minimal distance.
   std::vector<int> m_facetIds;
 
 };

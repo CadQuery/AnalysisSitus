@@ -152,12 +152,14 @@ private:
   //! Depending on the sampling strategy, points can be sampled inside,
   //! outside or on the shape. The points of the zero-crossing voxels are
   //! projected to the boundary.
-  //! \param[in]     pNode SVO node to start recursive iteration from.
-  //! \param[in]     pProj projection utility.
-  //! \param[in,out] pPts  sampled points.
+  //! \param[in]     pNode  SVO node to start recursive iteration from.
+  //! \param[in]     pProj  projection utility.
+  //! \param[in,out] pPts   sampled points.
+  //! \param[in,out] pNorms normal vectors in the sampled points.
   void samplePoints(void*                       pNode,
                     asiAlgo_ProjectPointOnMesh* pProj,
-                    asiAlgo_BaseCloud<double>*  pPts) const;
+                    asiAlgo_BaseCloud<double>*  pPts,
+                    asiAlgo_BaseCloud<double>*  pNorms) const;
 
   //! Recursively adds SVO node (a voxel) to the unstructured grid being
   //! constructed.

@@ -148,53 +148,55 @@ void asiAlgo_ProjectPointOnMesh::IntersectLeaves(const BVH_Vec4i&    leaf,
 
 gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
 {
-  ProjectionInfoMesh aProjected;
+  ProjectionInfoMesh projected;
 
   const opencascade::handle<BVH_Tree<double, 3> >& BVH = m_facets->BVH();
+  //
   if ( BVH.IsNull() )
-    return aProjected.myProjectedPoint;
+    return projected.myProjectedPoint;
 
   // Compute initial approximation of the solution.
-  const int aSize = m_facets->Size();
-  int anIdx[7] = { 0, aSize / 6, aSize / 3, aSize / 2, (aSize * 2) / 3, (aSize * 5) / 6, aSize - 1 };
-  for (int i = 0; i < 7; ++i)
+  const int size = m_facets->Size();
+  int ids[7] = { 0, size / 6, size / 3, size / 2, (size * 2) / 3, (size * 5) / 6, size - 1 };
+  for ( int i = 0; i < 7; ++i )
   {
-    const asiAlgo_BVHFacets::t_facet& aTD = m_facets->GetFacet(anIdx[i]);
+    const asiAlgo_BVHFacets::t_facet& TD = m_facets->GetFacet(ids[i]);
 
     // Calculate projection and minimal distance between point and triangle.
-    projectPntToTriangle(P, aTD, aProjected, anIdx[i]);
+    projectPntToTriangle(P, TD, projected, ids[i]);
   }
 
+  // Perform filtering over BVH.
   for ( asiAlgo_BVHIterator it(BVH); it.More(); it.Next() )
   {
-    const BVH_Vec4i& aNodeData = it.Current();
+    const BVH_Vec4i& nodeData = it.Current();
 
-    if (it.IsLeaf())
+    if ( it.IsLeaf() )
     {
-      // Perform precise test
-      IntersectLeaves(aNodeData, P, aProjected);
+      // Perform precise test.
+      this->IntersectLeaves(nodeData, P, projected);
     }
     else // sub-volume
     {
-      const BVH_Vec3d& aMinPntLft1 = BVH->MinPoint(aNodeData.y());
-      const BVH_Vec3d& aMaxPntLft1 = BVH->MaxPoint(aNodeData.y());
-      const BVH_Vec3d& aMinPntRgh1 = BVH->MinPoint(aNodeData.z());
-      const BVH_Vec3d& aMaxPntRgh1 = BVH->MaxPoint(aNodeData.z());
+      const BVH_Vec3d& minPntLft1 = BVH->MinPoint( nodeData.y() );
+      const BVH_Vec3d& maxPntLft1 = BVH->MaxPoint( nodeData.y() );
+      const BVH_Vec3d& minPntRgh1 = BVH->MinPoint( nodeData.z() );
+      const BVH_Vec3d& maxPntRgh1 = BVH->MaxPoint( nodeData.z() );
 
-      bool anOut1 = isOut(aMinPntLft1, aMaxPntLft1, P, Sqrt(aProjected.mySqDistance));
-      bool anOut2 = isOut(aMinPntRgh1, aMaxPntRgh1, P, Sqrt(aProjected.mySqDistance));
+      const bool out1 = isOut( minPntLft1, maxPntLft1, P, Sqrt(projected.mySqDistance) );
+      const bool out2 = isOut( minPntRgh1, maxPntRgh1, P, Sqrt(projected.mySqDistance) );
 
-      if (anOut1)
+      if ( out1 )
         it.BlockLeft();
 
-      if (anOut2)
+      if ( out2 )
         it.BlockRight();
     }
   }
 
   m_facetIds.clear();
-  for(int i = 0; i <= aProjected.myIdx; ++i)
-    m_facetIds.push_back(aProjected.myTriIdx[i]);
+  for ( int i = 0; i <= projected.myIdx; ++i )
+    m_facetIds.push_back(projected.myTriIdx[i]);
 
-  return aProjected.myProjectedPoint;
+  return projected.myProjectedPoint;
 }

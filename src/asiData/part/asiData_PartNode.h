@@ -110,6 +110,7 @@ public:
     PID_Color,            //!< Color.
     PID_HasVertices,      //!< Indicates whether vertices are active.
     PID_HasBackface,      //!< Indicates whether backface coloring is enabled.
+    PID_ShowFaultyFaces,  //!< Indicates whether to visualize faulty faces.
   //----------------------//
   // References           //
   //----------------------//
@@ -253,6 +254,12 @@ public:
 
   asiData_EXPORT bool
     HasBackface() const;
+
+  asiData_EXPORT void
+    SetShowFaultyFaces(const bool);
+
+  asiData_EXPORT bool
+    IsShowFaultyFaces() const;
 
   //-------------------------------------------------------------------------//
 

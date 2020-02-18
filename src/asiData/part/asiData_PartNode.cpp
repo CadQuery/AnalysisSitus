@@ -67,6 +67,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,           PID_Color);
   REGISTER_PARAMETER(Bool,          PID_HasVertices);
   REGISTER_PARAMETER(Bool,          PID_HasBackface);
+  REGISTER_PARAMETER(Bool,          PID_ShowFaultyFaces);
   //
   REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
 
@@ -105,6 +106,7 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetDisplayMode       (0x020);                      // Shading with edges.
   this->SetHasVertices       (false);
   this->SetHasBackface       (false);
+  this->SetShowFaultyFaces   (true);
 
   // Set identity transformation.
   ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) )->SetArray( new HRealArray(0, 11, 0.) );
@@ -112,28 +114,29 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetTransformation(0., 0., 0., 0., 0., 0.);
 
   // Initialize Parameter flags.
-  this->InitParameter(PID_Name,           "Name",               "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_AutoAAG,        "Auto-construct AAG", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,            "Name",               "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_AutoAAG,         "Auto-construct AAG", "",               ParameterFlag_IsVisible, true);
   //
-  this->InitParameter(PID_GroupTrsf,      "Transformation",     "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfTx,         "Tx",                 "Part_TX",        ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfTy,         "Ty",                 "Part_TY",        ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfTz,         "Tz",                 "Part_TZ",        ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfRx,         "Rx",                 "Part_RX",        ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfRy,         "Ry",                 "Part_RY",        ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TrsfRz,         "Rz",                 "Part_RZ",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupTrsf,       "Transformation",     "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTx,          "Tx",                 "Part_TX",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTy,          "Ty",                 "Part_TY",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfTz,          "Tz",                 "Part_TZ",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRx,          "Rx",                 "Part_RX",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRy,          "Ry",                 "Part_RY",        ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TrsfRz,          "Rz",                 "Part_RZ",        ParameterFlag_IsVisible, true);
   //
-  this->InitParameter(PID_GroupTess,      "Tessellation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TessLinDefl,    "Linear deflection",  "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_TessAngDefl,    "Angular deflection", "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_KeepTessParams, "Keep parameters",    "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupTess,       "Tessellation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessLinDefl,     "Linear deflection",  "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_TessAngDefl,     "Angular deflection", "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_KeepTessParams,  "Keep parameters",    "",               ParameterFlag_IsVisible, true);
   //
-  this->InitParameter(PID_GroupPrs,       "Presentation",       "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_DisplayMode,    "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_UseScalars,     "Use scalars",        "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_Color,          "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasVertices,    "Show vertices",      "",               ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_HasBackface,    "Show backface",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupPrs,        "Presentation",       "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_DisplayMode,     "Display mode",       "PrsDisplayMode", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_UseScalars,      "Use scalars",        "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Color,           "Color",              "PrsCustomColor", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasVertices,     "Show vertices",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_HasBackface,     "Show backface",      "",               ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ShowFaultyFaces, "Show faulty faces",  "",               ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -499,6 +502,19 @@ void asiData_PartNode::SetHasBackface(const bool on)
 bool asiData_PartNode::HasBackface() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_HasBackface) )->GetValue();
+}
+
+//! Enables/disables the visualization of faulty faces.
+//! \param[in] on value to set.
+void asiData_PartNode::SetShowFaultyFaces(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_ShowFaultyFaces) )->SetValue(on);
+}
+
+//! \return true/false.
+bool asiData_PartNode::IsShowFaultyFaces() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_ShowFaultyFaces) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

@@ -212,8 +212,10 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
 //! \param[in] dm           display mode to enable.
 //! \param[in] showBackface indicates whether the backface visualization is
 //!                         requested.
+//! \param[in] showFaulty   indicates whether to show faulty faces.
 void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
-                                     const bool                     showBackface) const
+                                     const bool                     showBackface,
+                                     const bool                     showFaulty) const
 {
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -233,7 +235,7 @@ void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
        displayMode == ShapeDisplayMode_ShadedAndWireframe )
   {
     // Configure filter.
-    plMain->GetDisplayModeFilter()->SetDisplayMode(ShapeDisplayMode_Shaded);
+    plMain->GetDisplayModeFilter()->SetDisplayMode(showFaulty ? ShapeDisplayMode_Shaded : ShapeDisplayMode_ShadedFacets);
     plMain->GetDisplayModeFilter()->SetAllowExtraScalars(true);
 
     // Configure actors.
@@ -308,7 +310,8 @@ void asiVisu_PartPrs::beforeUpdatePipelines() const
   /* Actualize display mode */
 
   this->SetDisplayMode( (asiVisu_ShapeDisplayMode) N->GetDisplayMode(),
-                        N->HasBackface() );
+                         N->HasBackface(),
+                         N->IsShowFaultyFaces() );
 }
 
 //-----------------------------------------------------------------------------

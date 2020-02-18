@@ -101,7 +101,8 @@ public:
 
   asiVisu_EXPORT void
     SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
-                   const bool                     showBackface) const;
+                   const bool                     showBackface,
+                   const bool                     showFaulty) const;
 
 public:
 

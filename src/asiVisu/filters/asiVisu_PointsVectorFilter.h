@@ -60,8 +60,8 @@ public:
   //! Sets normals.
   //! \param normals    [in] normals to associate.
   //! \param maxModulus [in] max modulus of a normal vector.
-  void SetNormals(const Handle(asiAlgo_BaseCloud<float>)& normals,
-                  const double                            maxModulus = 1.0)
+  void SetNormals(const Handle(asiAlgo_BaseCloud<double>)& normals,
+                  const double                             maxModulus = 1.0)
   {
     m_normals     = normals;
     m_fMaxModulus = maxModulus;
@@ -117,7 +117,7 @@ private:
   double m_fMaxModulus;
 
   //! Normal field.
-  Handle(asiAlgo_BaseCloud<float>) m_normals;
+  Handle(asiAlgo_BaseCloud<double>) m_normals;
 
   //! Maximum scalar value obtained during the filtering process.
   double m_fMaxScalar;

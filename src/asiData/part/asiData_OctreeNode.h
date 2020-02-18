@@ -62,6 +62,7 @@ public:
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_SamplingStrategy, //!< Sampling strategy.
     PID_ExtractPoints,    //!< Whether to extract points instead of voxels.
+    PID_MaxVectorSize,    //!< Max vector size.
     PID_NumElements,      //!< Number of extracted elements (cells or points).
   //----------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
@@ -124,6 +125,15 @@ public:
   //! \param[in] toExtract true/false.
   asiData_EXPORT void
     SetExtractPoints(const bool toExtract);
+
+  //! \return max vector size.
+  asiData_EXPORT double
+    GetMaxVectorSize() const;
+
+  //! Sets the max vector size.
+  //! \param[in] maxSize value to set.
+  asiData_EXPORT void
+    SetMaxVectorSize(const double maxSize);
 
   //! \return number of elements (points or cells).
   asiData_EXPORT int

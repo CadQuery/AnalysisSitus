@@ -57,13 +57,13 @@ asiVisu_TessNormalsDataProvider::asiVisu_TessNormalsDataProvider(const Handle(as
 //-----------------------------------------------------------------------------
 
 //! \return points where normals are located.
-Handle(asiAlgo_BaseCloud<float>) asiVisu_TessNormalsDataProvider::GetPointsf()
+Handle(asiAlgo_BaseCloud<double>) asiVisu_TessNormalsDataProvider::GetPointsd()
 {
   // Get vectors.
   Handle(asiData_TessNormsNode)
     normsNode = Handle(asiData_TessNormsNode)::DownCast(m_source);
   //
-  m_vectors = asiAlgo_PointCloudUtils::AsCloudf( normsNode->GetVectors() );
+  m_vectors = asiAlgo_PointCloudUtils::AsCloudd( normsNode->GetVectors() );
 
   // Access parent Tessellation Node to get geometry of mesh.
   Handle(asiData_TessNode)
@@ -80,7 +80,7 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_TessNormalsDataProvider::GetPointsf()
     idsMap.Add( ids->Value(i) );
 
   // Prepare the position cloud to return.
-  m_points = new asiAlgo_BaseCloud<float>;
+  m_points = new asiAlgo_BaseCloud<double>;
 
   // Get positions of the vectors.
   if ( normsNode->IsElemental() )
@@ -141,9 +141,9 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_TessNormalsDataProvider::GetPointsf()
 //-----------------------------------------------------------------------------
 
 //! \return normals to visualize.
-Handle(asiAlgo_BaseCloud<float>) asiVisu_TessNormalsDataProvider::GetVectorsf()
+Handle(asiAlgo_BaseCloud<double>) asiVisu_TessNormalsDataProvider::GetVectorsd()
 {
-  // Return cached vectors available after GetPointsf() invocation.
+  // Return cached vectors available after GetPointsd() invocation.
   return m_vectors;
 }
 
@@ -156,7 +156,7 @@ double asiVisu_TessNormalsDataProvider::GetMaxVectorModulus() const
 
   for ( int i = 0; i < m_points->GetNumberOfElements(); ++i )
   {
-    float x, y, z;
+    double x, y, z;
     m_points->GetElement(i, x, y, z);
     //
     aabb.Add( gp_Pnt(x, y, z)  );

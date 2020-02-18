@@ -57,11 +57,11 @@ public:
 
 public:
 
-  virtual Handle(asiAlgo_BaseCloud<float>)
-    GetPointsf() = 0;
+  virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPointsd() = 0;
 
-  virtual Handle(asiAlgo_BaseCloud<float>)
-    GetVectorsf() = 0;
+  virtual Handle(asiAlgo_BaseCloud<double>)
+    GetVectorsd() = 0;
 
   virtual double
     GetMaxVectorModulus() const = 0;

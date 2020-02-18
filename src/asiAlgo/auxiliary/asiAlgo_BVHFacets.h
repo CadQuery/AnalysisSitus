@@ -159,7 +159,8 @@ protected:
   asiAlgo_EXPORT bool
     addTriangulation(const Handle(Poly_Triangulation)& triangulation,
                      const TopLoc_Location&            loc,
-                     const int                         face_idx);
+                     const int                         face_idx,
+                     const bool                        isReversed);
 
 protected:
 

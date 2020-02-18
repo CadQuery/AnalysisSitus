@@ -2540,10 +2540,10 @@ void asiAlgo_Utils::PolygonPoles(const gp_XY&        center,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
-                                         const double                      sampleRate,
-                                         Handle(asiAlgo_BaseCloud<float>)& points,
-                                         Handle(asiAlgo_BaseCloud<float>)& vectors)
+bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                 face,
+                                         const double                       sampleRate,
+                                         Handle(asiAlgo_BaseCloud<double>)& points,
+                                         Handle(asiAlgo_BaseCloud<double>)& vectors)
 {
   if ( sampleRate < 1e-10 || sampleRate > 1 )
     return false;
@@ -2555,8 +2555,8 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
     return false;
 
   // Prepare a point cloud as a result
-  points  = new asiAlgo_BaseCloud<float>;
-  vectors = new asiAlgo_BaseCloud<float>;
+  points  = new asiAlgo_BaseCloud<double>;
+  vectors = new asiAlgo_BaseCloud<double>;
 
   // Take face domain
   double uMin, uMax, vMin, vMax;
@@ -2604,8 +2604,8 @@ bool asiAlgo_Utils::CalculateFaceNormals(const TopoDS_Face&                face,
         {
           N.Normalize();
           //
-          points->AddElement( (float) P.X(), (float) P.Y(), (float) P.Z() );
-          vectors->AddElement( (float) N.X(), (float) N.Y(), (float) N.Z() );
+          points->AddElement  ( P.X(), P.Y(), P.Z() );
+          vectors->AddElement ( N.X(), N.Y(), N.Z() );
         }
       }
 

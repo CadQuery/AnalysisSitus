@@ -57,11 +57,11 @@ public:
 
 public:
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
-    GetPointsf();
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPointsd();
 
-  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<float>)
-    GetVectorsf();
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetVectorsd();
 
   asiVisu_EXPORT virtual double
     GetMaxVectorModulus() const;
@@ -80,8 +80,8 @@ private:
 
 protected:
 
-  Handle(asiAlgo_BaseCloud<float>) m_points;  //!< Cached points.
-  Handle(asiAlgo_BaseCloud<float>) m_vectors; //!< Cached vectors.
+  Handle(asiAlgo_BaseCloud<double>) m_points;  //!< Cached points.
+  Handle(asiAlgo_BaseCloud<double>) m_vectors; //!< Cached vectors.
 
 };
 

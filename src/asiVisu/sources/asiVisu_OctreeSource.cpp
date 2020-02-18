@@ -115,6 +115,13 @@ void asiVisu_OctreeSource::SetExtractPoints(const bool isOn)
 
 //-----------------------------------------------------------------------------
 
+bool asiVisu_OctreeSource::IsExtractPoints() const
+{
+  return m_bExtractPoints;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_OctreeSource::SetSamplingStrategy(const int strategy)
 {
   m_strategy = strategy;
@@ -133,6 +140,9 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
     vtkErrorMacro( << "Invalid input: nullptr octree." );
     return 0;
   }
+
+  m_fMinScalar =  DBL_MAX;
+  m_fMaxScalar = -DBL_MAX;
 
   /* ================
    *  Prepare output.
@@ -155,21 +165,34 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
       return 0;
     }
 
-    m_fMinScalar = m_fMaxScalar = 0.;
+    // Allocate an array for vectors
+    vtkSmartPointer<vtkDoubleArray>
+      vectorsArr = asiVisu_Utils::InitDoubleVectorArray(ARRNAME_POINTCLOUD_VECTORS);
+    //
+    pOutputGrid->GetPointData()->SetVectors(vectorsArr);
+
+    // Allocate an array of scalars.
+    vtkSmartPointer<vtkDoubleArray> scalarsArr = asiVisu_Utils::InitDoubleArray(ARRNAME_VOXEL_N_SCALARS);
+    //
+    pOutputGrid->GetPointData()->SetScalars(scalarsArr);
 
     // Prepare the projection tool.
     asiAlgo_ProjectPointOnMesh projection(m_pFacets);
 
     // Gather points and normals.
-    Handle(asiAlgo_BaseCloud<double>) points = new asiAlgo_BaseCloud<double>;
-    Handle(asiAlgo_BaseCloud<double>) norms  = new asiAlgo_BaseCloud<double>;
+    m_points  = new asiAlgo_BaseCloud<double>;
+    m_vectors = new asiAlgo_BaseCloud<double>;
+    std::vector<double> scalars;
     //
-    this->samplePoints( m_pOctree, &projection, points.get(), norms.get() );
+    this->samplePoints( m_pOctree, &projection, m_points.get(), m_vectors.get(), scalars );
 
     // Add cells.
-    for ( int e = 0; e < points->GetNumberOfElements(); ++e )
+    for ( int e = 0; e < m_points->GetNumberOfElements(); ++e )
     {
-      this->registerVertex(points->GetElement(e), pOutputGrid);
+      this->registerVertexWithNormAndScalar(m_points->GetElement(e),
+                                            m_vectors->GetElement(e),
+                                            scalars[e],
+                                            pOutputGrid);
     }
   }
   else
@@ -180,6 +203,7 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
     //
     pPointData->SetScalars(scalarsArr);
 
+    // Add cells.
     this->addVoxels(m_pOctree, pOutputGrid);
   }
 
@@ -191,7 +215,8 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
 void asiVisu_OctreeSource::samplePoints(void*                       pNode,
                                         asiAlgo_ProjectPointOnMesh* pProj,
                                         asiAlgo_BaseCloud<double>*  pPts,
-                                        asiAlgo_BaseCloud<double>*  pNorms) const
+                                        asiAlgo_BaseCloud<double>*  pNorms,
+                                        std::vector<double>&        scalars)
 {
   if ( pNode == nullptr || pProj == nullptr )
     return;
@@ -209,6 +234,7 @@ void asiVisu_OctreeSource::samplePoints(void*                       pNode,
          isIn  && (m_strategy & SS_In) ||
          isOut && (m_strategy & SS_Out) )
     {
+      // Get center point.
       gp_XYZ
         point = 0.125 * ( mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP0() )
                         + mobius::cascade::GetOpenCascadeXYZ( pMobNode->GetP1() )
@@ -238,15 +264,23 @@ void asiVisu_OctreeSource::samplePoints(void*                       pNode,
         }
       }
 
+      // Evaluate SVO node.
+      const double sc = ( isOn ? 0. : pMobNode->Eval( mobius::cascade::GetMobiusPnt(point) ) );
+      //
+      m_fMinScalar = Min(m_fMinScalar, sc);
+      m_fMaxScalar = Max(m_fMaxScalar, sc);
+
+      // Populate outputs.
       pPts->AddElement(point); // Add point.
       pNorms->AddElement(norm); // Add normal vector.
+      scalars.push_back(sc); // Add scalar.
     }
   }
   else
   {
     for ( size_t k = 0; k < 8; ++k )
     {
-      this->samplePoints(pMobNode->GetChild(k), pProj, pPts, pNorms);
+      this->samplePoints(pMobNode->GetChild(k), pProj, pPts, pNorms, scalars);
     }
   }
 #else
@@ -392,6 +426,40 @@ vtkIdType asiVisu_OctreeSource::registerVertex(const gp_Pnt&        point,
 
   // Register vertex cell.
   vtkIdType cellID = pData->InsertNextCell(VTK_VERTEX, 1, &pids[0]);
+
+  return cellID;
+}
+
+//-----------------------------------------------------------------------------
+
+vtkIdType
+    asiVisu_OctreeSource::registerVertexWithNormAndScalar(const gp_Pnt&        point,
+                                                          const gp_Vec&        norm,
+                                                          const double         scalar,
+                                                          vtkUnstructuredGrid* pData)
+{
+  // Get array of vectors.
+  vtkDoubleArray*
+    pVectorsArr = vtkDoubleArray::SafeDownCast( pData->GetPointData()->GetArray(ARRNAME_POINTCLOUD_VECTORS) );
+
+  // Get array of scalars.
+  vtkDoubleArray*
+    pScalarsArr = vtkDoubleArray::SafeDownCast( pData->GetPointData()->GetArray(ARRNAME_VOXEL_N_SCALARS) );
+
+  std::vector<vtkIdType> pids =
+  {
+    this->addPoint(point, pData),
+  };
+
+  // Register vertex cell.
+  vtkIdType cellID = pData->InsertNextCell(VTK_VERTEX, 1, &pids[0]);
+
+  // Add vector to the array.
+  const double normCoords[3] = { norm.X(), norm.Y(), norm.Z() };
+  pVectorsArr->InsertTypedTuple(cellID, normCoords);
+
+  // Add scalar to the array.
+  pScalarsArr->InsertTypedTuple(cellID, &scalar);
 
   return cellID;
 }

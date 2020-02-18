@@ -55,7 +55,7 @@ asiVisu_FaceNormalsDataProvider::asiVisu_FaceNormalsDataProvider(const Handle(as
 //-----------------------------------------------------------------------------
 
 //! \return points where normals are located.
-Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
+Handle(asiAlgo_BaseCloud<double>) asiVisu_FaceNormalsDataProvider::GetPointsd()
 {
   TopoDS_Face face = this->GetFace();
   //
@@ -75,9 +75,9 @@ Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetPointsf()
 //-----------------------------------------------------------------------------
 
 //! \return normals to visualize.
-Handle(asiAlgo_BaseCloud<float>) asiVisu_FaceNormalsDataProvider::GetVectorsf()
+Handle(asiAlgo_BaseCloud<double>) asiVisu_FaceNormalsDataProvider::GetVectorsd()
 {
-  // Return cached vectors available after GetPointsf() invocation.
+  // Return cached vectors available after GetPointsd() invocation.
   return m_vectors;
 }
 

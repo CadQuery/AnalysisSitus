@@ -747,10 +747,10 @@ namespace asiAlgo_Utils
   //!
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
-    CalculateFaceNormals(const TopoDS_Face&                face,
-                         const double                      sampleRate,
-                         Handle(asiAlgo_BaseCloud<float>)& points,
-                         Handle(asiAlgo_BaseCloud<float>)& vectors);
+    CalculateFaceNormals(const TopoDS_Face&                 face,
+                         const double                       sampleRate,
+                         Handle(asiAlgo_BaseCloud<double>)& points,
+                         Handle(asiAlgo_BaseCloud<double>)& vectors);
 
   //! This function takes "just any" interior point on a face.
   //!

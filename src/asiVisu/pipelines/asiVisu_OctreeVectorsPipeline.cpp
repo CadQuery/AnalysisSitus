@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 13 January 2017
+// Created on: 18 February 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_VectorsPipeline.h>
+#include <asiVisu_OctreeVectorsPipeline.h>
 
-// Visualization includes
+// asiVisu includes
 #include <asiVisu_MeshResultUtils.h>
-#include <asiVisu_PointsSource.h>
+#include <asiVisu_OctreeDataProvider.h>
+#include <asiVisu_OctreeSource.h>
 #include <asiVisu_PointsVectorFilter.h>
-#include <asiVisu_VectorsDataProvider.h>
 
 // VTK includes
 #include <vtkActor.h>
@@ -43,112 +43,120 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkUnstructuredGrid.h>
 
 //-----------------------------------------------------------------------------
-// Pipeline
-//-----------------------------------------------------------------------------
 
-//! Creates new Pipeline instance.
-asiVisu_VectorsPipeline::asiVisu_VectorsPipeline()
-  : asiVisu_Pipeline( vtkSmartPointer<vtkPolyDataMapper>::New(),
-                      vtkSmartPointer<vtkActor>::New() )
+asiVisu_OctreeVectorsPipeline::asiVisu_OctreeVectorsPipeline(const vtkSmartPointer<asiVisu_OctreeSource>& source)
+: asiVisu_Pipeline ( vtkSmartPointer<vtkPolyDataMapper>::New(),
+                     vtkSmartPointer<vtkActor>::New() ),
+  m_source         ( source )
 {
   /* ========================
    *  Prepare custom filters
    * ======================== */
 
-  // Allocate filter populating vector data
+  // Allocate filter populating vector data.
   vtkSmartPointer<asiVisu_PointsVectorFilter>
     vecFilter = vtkSmartPointer<asiVisu_PointsVectorFilter>::New();
 
-  // Allocate Transformation filter
+  // Allocate Transformation filter.
   vtkSmartPointer<vtkTransformPolyDataFilter>
     trsfFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 
-  // Allocate Glyph filter
+  // Allocate Glyph filter.
   vtkSmartPointer<vtkGlyph3D>
     glyphFilter = vtkSmartPointer<vtkGlyph3D>::New();
 
   /* =========================
-   *  Register custom filters
+   *  Register custom filters.
    * ========================= */
 
   m_filterMap.Bind(Filter_Vector,  vecFilter);
   m_filterMap.Bind(Filter_Trsf,    trsfFilter);
   m_filterMap.Bind(Filter_Glyph3D, glyphFilter);
 
-  // Append custom filters to the pipeline
+  // Append custom filters to the pipeline.
   this->append( m_filterMap.Find(Filter_Vector) );
   this->append( m_filterMap.Find(Filter_Glyph3D) );
 }
 
 //-----------------------------------------------------------------------------
 
-//! Sets input data for the pipeline accepting Active Data entities.
-//! Actually this method performs translation of DOMAIN data to
-//! VTK POLYGONAL DATA.
-//! \param[in] dataProvider Data Provider.
-void asiVisu_VectorsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
+void asiVisu_OctreeVectorsPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
-  Handle(asiVisu_VectorsDataProvider)
-    DP = Handle(asiVisu_VectorsDataProvider)::DownCast(dataProvider);
+  Handle(asiVisu_OctreeDataProvider)
+    provider = Handle(asiVisu_OctreeDataProvider)::DownCast(dataProvider);
+
+  /* ===========================
+   *  Validate input Parameters.
+   * =========================== */
+
+  void* pOctree = provider->GetOctree();
+  //
+  if ( pOctree == nullptr || !m_source->IsExtractPoints() )
+  {
+    // Pass empty data set in order to have valid pipeline.
+    vtkSmartPointer<vtkUnstructuredGrid> dummyDS = vtkSmartPointer<vtkUnstructuredGrid>::New();
+    this->SetInputData(dummyDS);
+    this->Modified(); // Update modification timestamp.
+    return;
+  }
 
   /* ============================
-   *  Prepare polygonal data set
+   *  Prepare polygonal data set.
    * ============================ */
 
-  if ( DP->MustExecute( this->GetMTime() ) )
+  if ( provider->MustExecute( this->GetMTime() ) )
   {
-    vtkSmartPointer< asiVisu_PointsSource<double> >
-      pointsSource = vtkSmartPointer< asiVisu_PointsSource<double> >::New();
-    //
-    pointsSource->SetInputPoints( DP->GetPointsd() );
+    m_source->Update();
 
-    // Pass vector array
+    // Pass vectors.
     asiVisu_PointsVectorFilter*
       vecFilter = asiVisu_PointsVectorFilter::SafeDownCast( m_filterMap.Find(Filter_Vector) );
     //
-    vecFilter->SetNormals( DP->GetVectorsd(),
-                           DP->GetMaxVectorModulus() );
+    vecFilter->SetNormals( m_source->GetVectors(),
+                           provider->GetMaxVectorModulus() );
 
-    // Transform glyphs
+    // Transform glyphs.
     vtkTransformPolyDataFilter*
       trsfFilter = vtkTransformPolyDataFilter::SafeDownCast( m_filterMap.Find(Filter_Trsf) );
+    //
     trsfFilter->SetInputConnection( asiVisu_MeshResultUtils::GetVectorGlyph()->GetOutputPort() );
     trsfFilter->SetTransform( asiVisu_MeshResultUtils::GetVectorGlyphTransform() );
 
-    // Adjust glyph filter
+    // Adjust glyph filter.
     vtkGlyph3D* glyphFilter = vtkGlyph3D::SafeDownCast( m_filterMap.Find(Filter_Glyph3D) );
+    //
     glyphFilter->SetSourceConnection( trsfFilter->GetOutputPort() );
     glyphFilter->SetVectorModeToUseVector();
     glyphFilter->SetScaleModeToScaleByVector();
     glyphFilter->SetInputArrayToProcess(1, 0, 0, 0, ARRNAME_POINTCLOUD_VECTORS);
-    glyphFilter->SetScaleFactor(1.0); // No global scaling
+    glyphFilter->SetScaleFactor(1.0); // No global scaling.
 
-    // Complete pipeline
-    this->SetInputConnection( pointsSource->GetOutputPort() );
+    // Complete pipeline.
+    this->SetInputConnection( m_source->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
 
 //-----------------------------------------------------------------------------
 
-//! Callback for adding the actor to a renderer.
-//! \param renderer [in] target renderer.
-void asiVisu_VectorsPipeline::callback_add_to_renderer(vtkRenderer* asiVisu_NotUsed(renderer))
+//! Callback for AddToRenderer() routine. Good place to adjust visualization
+//! properties of the pipeline's actor.
+void asiVisu_OctreeVectorsPipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Callback for removal of the actor from a renderer.
-//! \param renderer [in] target renderer.
-void asiVisu_VectorsPipeline::callback_remove_from_renderer(vtkRenderer* asiVisu_NotUsed(renderer))
+//! Callback for RemoveFromRenderer() routine.
+void asiVisu_OctreeVectorsPipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
 //-----------------------------------------------------------------------------
 
 //! Callback on pipeline update.
-void asiVisu_VectorsPipeline::callback_update()
+void asiVisu_OctreeVectorsPipeline::callback_update()
 {}

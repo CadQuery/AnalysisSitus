@@ -74,6 +74,13 @@ int asiVisu_OctreeDataProvider::GetSamplingStrategy() const
 
 //-----------------------------------------------------------------------------
 
+double asiVisu_OctreeDataProvider::GetMaxVectorModulus() const
+{
+  return m_node->GetMaxVectorSize();
+}
+
+//-----------------------------------------------------------------------------
+
 Handle(ActAPI_HParameterList)
   asiVisu_OctreeDataProvider::translationSources() const
 {
@@ -81,7 +88,8 @@ Handle(ActAPI_HParameterList)
   out << m_partNode ->Parameter(asiData_PartNode::PID_BVH)
       << m_node     ->Parameter(asiData_OctreeNode::PID_Octree)
       << m_node     ->Parameter(asiData_OctreeNode::PID_SamplingStrategy)
-      << m_node     ->Parameter(asiData_OctreeNode::PID_ExtractPoints);
+      << m_node     ->Parameter(asiData_OctreeNode::PID_ExtractPoints)
+      << m_node     ->Parameter(asiData_OctreeNode::PID_MaxVectorSize);
 
   return out.List;
 }

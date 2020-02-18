@@ -69,6 +69,7 @@ set (pipelines_H_FILES
   pipelines/asiVisu_MeshNScalarPipeline.h
   pipelines/asiVisu_MeshPipeline.h
   pipelines/asiVisu_OctreePipeline.h
+  pipelines/asiVisu_OctreeVectorsPipeline.h
   pipelines/asiVisu_PartEdgesPipeline.h
   pipelines/asiVisu_PartPipeline.h
   pipelines/asiVisu_PartPipelineBase.h
@@ -108,6 +109,7 @@ set (pipelines_CPP_FILES
   pipelines/asiVisu_MeshNScalarPipeline.cpp
   pipelines/asiVisu_MeshPipeline.cpp
   pipelines/asiVisu_OctreePipeline.cpp
+  pipelines/asiVisu_OctreeVectorsPipeline.cpp
   pipelines/asiVisu_PartEdgesPipeline.cpp
   pipelines/asiVisu_PartPipeline.cpp
   pipelines/asiVisu_PartPipelineBase.cpp

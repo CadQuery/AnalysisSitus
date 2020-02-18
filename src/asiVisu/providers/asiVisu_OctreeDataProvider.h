@@ -85,6 +85,10 @@ public:
   asiVisu_EXPORT virtual int
     GetSamplingStrategy() const;
 
+  //! \return max vector modulus.
+  asiVisu_EXPORT double
+    GetMaxVectorModulus() const;
+
 protected:
 
   //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK

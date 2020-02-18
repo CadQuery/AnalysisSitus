@@ -101,6 +101,10 @@ public:
   asiVisu_EXPORT void
     SetExtractPoints(const bool isOn);
 
+  //! \return true if the points extraction mode is enabled, false -- otherwise.
+  asiVisu_EXPORT bool
+    IsExtractPoints() const;
+
   //! Sets sampling strategy.
   //! \param[in] strategy sampling strategy.
   asiVisu_EXPORT void
@@ -131,6 +135,18 @@ public:
     return m_fMaxScalar;
   }
 
+  //! \return collected points.
+  const Handle(asiAlgo_BaseCloud<double>)& GetPoints() const
+  {
+    return m_points;
+  }
+
+  //! \return collected vectors.
+  const Handle(asiAlgo_BaseCloud<double>)& GetVectors() const
+  {
+    return m_vectors;
+  }
+
 protected:
 
   //! This method (called by superclass) performs conversion of our native
@@ -152,14 +168,16 @@ private:
   //! Depending on the sampling strategy, points can be sampled inside,
   //! outside or on the shape. The points of the zero-crossing voxels are
   //! projected to the boundary.
-  //! \param[in]     pNode  SVO node to start recursive iteration from.
-  //! \param[in]     pProj  projection utility.
-  //! \param[in,out] pPts   sampled points.
-  //! \param[in,out] pNorms normal vectors in the sampled points.
+  //! \param[in]     pNode   SVO node to start recursive iteration from.
+  //! \param[in]     pProj   projection utility.
+  //! \param[in,out] pPts    sampled points.
+  //! \param[in,out] pNorms  normal vectors in the sampled points.
+  //! \param[in,out] scalars scalar values evaluated in points.
   void samplePoints(void*                       pNode,
                     asiAlgo_ProjectPointOnMesh* pProj,
                     asiAlgo_BaseCloud<double>*  pPts,
-                    asiAlgo_BaseCloud<double>*  pNorms) const;
+                    asiAlgo_BaseCloud<double>*  pNorms,
+                    std::vector<double>&        scalars);
 
   //! Recursively adds SVO node (a voxel) to the unstructured grid being
   //! constructed.
@@ -215,6 +233,20 @@ private:
     registerVertex(const gp_Pnt&        point,
                    vtkUnstructuredGrid* pData);
 
+  //! Adds vertex cell for the given point. The passed `norm` vector will
+  //! be added to the array of vectors associated with points data. The
+  //! passed `scalar` value will be added to the array of scalars.
+  //! \param[in]     point  coordinates of the vertex.
+  //! \param[in]     norm   coordinates of the associated vector.
+  //! \param[in]     scalar scalar value to associate with the point.
+  //! \param[in,out] pData  unstructured data set being populated.
+  //! \return ID of the just added VTK cell.
+  vtkIdType
+    registerVertexWithNormAndScalar(const gp_Pnt&        point,
+                                    const gp_Vec&        norm,
+                                    const double         scalar,
+                                    vtkUnstructuredGrid* pData);
+
   //! Adds the passed coordinates as another point to the VTK data set.
   //! \param[in]     coords coordinates of the point to add.
   //! \param[in,out] pData  unstructured grid being constructed.
@@ -255,6 +287,12 @@ private:
 
   //! Sampling strategy.
   int m_strategy;
+
+  //! Extracted points.
+  Handle(asiAlgo_BaseCloud<double>) m_points;
+
+  //! Extracted vectors.
+  Handle(asiAlgo_BaseCloud<double>) m_vectors;
 
   //! Progress notifier.
   ActAPI_ProgressEntry m_progress;

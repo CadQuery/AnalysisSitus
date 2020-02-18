@@ -52,7 +52,10 @@ asiVisu_OctreePipeline::asiVisu_OctreePipeline()
   m_fToler        (0.),
   m_fMinScalar    (1.e100),
   m_fMaxScalar    (-1.e100)
-{}
+{
+  // Create source here in order to be able to reuse it in other pipelines.
+  m_source = vtkSmartPointer<asiVisu_OctreeSource>::New();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -84,8 +87,6 @@ void asiVisu_OctreePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
   if ( provider->MustExecute( this->GetMTime() ) )
   {
-    m_source = vtkSmartPointer<asiVisu_OctreeSource>::New();
-    //
     m_source->SetInputFacets      ( provider->GetFacets() );
     m_source->SetInputOctree      ( pOctree );
     m_source->SetSamplingStrategy ( provider->GetSamplingStrategy() );

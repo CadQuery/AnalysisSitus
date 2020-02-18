@@ -89,7 +89,6 @@ void asiVisu_PointsSource<REAL_TYPE>::SetInputPoints(const Handle(asiAlgo_BaseCl
   this->Modified();
 }
 
-
 //-----------------------------------------------------------------------------
 
 template <typename REAL_TYPE>

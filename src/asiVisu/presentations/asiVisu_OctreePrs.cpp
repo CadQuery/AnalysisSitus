@@ -34,8 +34,10 @@
 // asiVisu includes
 #include <asiVisu_OctreeDataProvider.h>
 #include <asiVisu_OctreePipeline.h>
+#include <asiVisu_OctreeVectorsPipeline.h>
 
 // VTK includes
+#include <vtkMapper.h>
 #include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
@@ -53,7 +55,7 @@ asiVisu_OctreePrs::asiVisu_OctreePrs(const Handle(ActAPI_INode)& N) : asiVisu_De
   Handle(asiVisu_OctreeDataProvider)
     octree_dp = new asiVisu_OctreeDataProvider(octreeNode);
 
-  // Create pipeline for octrees.
+  // Create pipeline for octree.
   Handle(asiVisu_OctreePipeline)
     octree_pl = new asiVisu_OctreePipeline;
   //
@@ -61,6 +63,20 @@ asiVisu_OctreePrs::asiVisu_OctreePrs(const Handle(ActAPI_INode)& N) : asiVisu_De
   this->assignDataProvider ( Pipeline_Main, octree_dp );
 
   octree_pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+
+  /* ======================
+   *  Pipeline for vectors.
+   * ====================== */
+
+  // Create pipeline for vectors extracted from octree.
+  Handle(asiVisu_OctreeVectorsPipeline)
+    vectors_pl = new asiVisu_OctreeVectorsPipeline( octree_pl->GetSource() );
+  //
+  this->addPipeline        ( Pipeline_Vectors, vectors_pl );
+  this->assignDataProvider ( Pipeline_Vectors, octree_dp );
+
+  vectors_pl->Actor()->GetProperty()->SetColor(1., 1., 1.);
+  vectors_pl->Mapper()->ScalarVisibilityOff();
 }
 
 //-----------------------------------------------------------------------------

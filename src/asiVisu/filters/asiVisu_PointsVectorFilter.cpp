@@ -145,7 +145,7 @@ int asiVisu_PointsVectorFilter::RequestData(vtkInformation*,
     newPointIds->Reset();
 
     // Access scalar value
-    float nx, ny, nz;
+    double nx, ny, nz;
     m_normals->GetElement( (int) cellId, nx, ny, nz );
     asiVisu_VectorTuple aVecTuple(nx, ny, nz);
     this->adjustMinMax(aVecTuple);

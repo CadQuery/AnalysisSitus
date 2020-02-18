@@ -359,7 +359,7 @@ bool asiAlgo_BVHFacets::init(const Handle(Poly_Triangulation)& mesh,
     myBuilder = new BVH_LinearBuilder<double, 3>(5, 32);
 
   // Initialize with the passed facets
-  if ( !this->addTriangulation(mesh, TopLoc_Location(), -1) )
+  if ( !this->addTriangulation(mesh, TopLoc_Location(), -1, false) )
     return false;
 
   // Calculate bounding diagonal using fictive face to satisfy OpenCascade's API
@@ -386,7 +386,7 @@ bool asiAlgo_BVHFacets::addFace(const TopoDS_Face& face,
   TopLoc_Location loc;
   const Handle(Poly_Triangulation)& tris = BRep_Tool::Triangulation(face, loc);
 
-  return this->addTriangulation(tris, loc, face_idx);
+  return this->addTriangulation( tris, loc, face_idx, (face.Orientation() == TopAbs_REVERSED) );
 }
 
 //-----------------------------------------------------------------------------
@@ -395,10 +395,12 @@ bool asiAlgo_BVHFacets::addFace(const TopoDS_Face& face,
 //! \param[in] triangulation triangulation to add.
 //! \param[in] loc           location to apply.
 //! \param[in] face_idx      index of the corresponding face being.
+//! \param[in] isReversed    true if the original B-rep face is reversed.
 //! \return true in case of success, false -- otherwise.
 bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& triangulation,
                                          const TopLoc_Location&            loc,
-                                         const int                         face_idx)
+                                         const int                         face_idx,
+                                         const bool                        isReversed)
 {
   if ( triangulation.IsNull() )
     return false;
@@ -414,13 +416,13 @@ bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& trian
     int n1, n2, n3;
     tri.Get(n1, n2, n3);
 
-    gp_Pnt P0 = nodes(n1);
+    gp_Pnt P0 = nodes(isReversed ? n3 : n1);
     P0.Transform(loc);
     //
     gp_Pnt P1 = nodes(n2);
     P1.Transform(loc);
     //
-    gp_Pnt P2 = nodes(n3);
+    gp_Pnt P2 = nodes(isReversed ? n1 : n3);
     P2.Transform(loc);
 
     // Create a new facet

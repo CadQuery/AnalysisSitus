@@ -45,6 +45,7 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Name, PID_Name);
   REGISTER_PARAMETER(Int,  PID_SamplingStrategy);
   REGISTER_PARAMETER(Bool, PID_ExtractPoints);
+  REGISTER_PARAMETER(Real, PID_MaxVectorSize);
   REGISTER_PARAMETER(Int,  PID_NumElements);
 
   // Register custom Parameters specific to Analysis Situs.
@@ -67,12 +68,14 @@ void asiData_OctreeNode::Init()
   // Set default values to primitive Parameters.
   this->SetSamplingStrategy(0x01 | 0x02 | 0x04);
   this->SetExtractPoints(false);
+  this->SetMaxVectorSize(1.);
   this->SetNumElements(0);
 
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,             "Name",              "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_SamplingStrategy, "Sampling strategy", "Octree_SS",       ParameterFlag_IsVisible, true);
   this->InitParameter(PID_ExtractPoints,    "Extract points",    "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_MaxVectorSize,    "Max norm modulus",  "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_NumElements,      "Num. of elements",  "Octree_NumElems", ParameterFlag_IsVisible, true);
 }
 
@@ -130,6 +133,20 @@ bool asiData_OctreeNode::GetExtractPoints() const
 void asiData_OctreeNode::SetExtractPoints(const bool toExtract)
 {
   ActParamTool::AsBool( this->Parameter(PID_ExtractPoints) )->SetValue(toExtract);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_OctreeNode::GetMaxVectorSize() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_MaxVectorSize) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetMaxVectorSize(const double maxSize)
+{
+  ActParamTool::AsReal( this->Parameter(PID_MaxVectorSize) )->SetValue(maxSize);
 }
 
 //-----------------------------------------------------------------------------

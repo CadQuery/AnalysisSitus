@@ -114,8 +114,6 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOff();
   contour_pl->Actor()->GetProperty()->LightingOff();
   //
-  contour_pl->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
-  //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );
 }
@@ -209,13 +207,15 @@ void asiVisu_PartPrs::Colorize(const QColor& color) const
 //-----------------------------------------------------------------------------
 
 //! Enables the passed display mode.
-//! \param[in] dm           display mode to enable.
-//! \param[in] showBackface indicates whether the backface visualization is
-//!                         requested.
-//! \param[in] showFaulty   indicates whether to show faulty faces.
+//! \param[in] dm                    display mode to enable.
+//! \param[in] showBackface          indicates whether the backface visualization is
+//!                                  requested.
+//! \param[in] showFaulty            indicates whether to show faulty faces.
+//! \param[in] resolveCoincidentTopo indicates whether to resolve coincident topology.
 void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
                                      const bool                     showBackface,
-                                     const bool                     showFaulty) const
+                                     const bool                     showFaulty,
+                                     const bool                     resolveCoincidentTopo) const
 {
   Handle(asiVisu_PartPipeline)
     plMain = Handle(asiVisu_PartPipeline)::DownCast( this->GetPipeline(Pipeline_Main) );
@@ -228,6 +228,12 @@ void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
 
   if ( plMain.IsNull() || plBackside.IsNull() || plContour.IsNull() )
     return;
+
+  // Resolve coincident topology.
+  if ( resolveCoincidentTopo )
+    plContour->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
+  else
+    plContour->Mapper()->SetResolveCoincidentTopologyToOff();
 
   // Shading.
   if ( displayMode == ShapeDisplayMode_Shaded ||
@@ -311,7 +317,8 @@ void asiVisu_PartPrs::beforeUpdatePipelines() const
 
   this->SetDisplayMode( (asiVisu_ShapeDisplayMode) N->GetDisplayMode(),
                          N->HasBackface(),
-                         N->IsShowFaultyFaces() );
+                         N->IsShowFaultyFaces(),
+                         N->IsResolveCoincidentTopo() );
 }
 
 //-----------------------------------------------------------------------------

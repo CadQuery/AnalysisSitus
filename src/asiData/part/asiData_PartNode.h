@@ -111,6 +111,7 @@ public:
     PID_HasVertices,      //!< Indicates whether vertices are active.
     PID_HasBackface,      //!< Indicates whether backface coloring is enabled.
     PID_ShowFaultyFaces,  //!< Indicates whether to visualize faulty faces.
+    PID_IsCoincidentTopo, //!< Indicates whether to resolve coincident topoology in 3D.
   //----------------------//
   // References           //
   //----------------------//
@@ -260,6 +261,12 @@ public:
 
   asiData_EXPORT bool
     IsShowFaultyFaces() const;
+
+  asiData_EXPORT void
+    SetResolveCoincidentTopo(const bool);
+
+  asiData_EXPORT bool
+    IsResolveCoincidentTopo() const;
 
   //-------------------------------------------------------------------------//
 

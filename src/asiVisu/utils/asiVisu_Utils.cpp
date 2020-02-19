@@ -383,7 +383,7 @@ void asiVisu_Utils::CameraOnRight(vtkRenderer* renderer)
 void asiVisu_Utils::ApplyLightingRules(vtkActor* actor)
 {
   actor->GetProperty()->SetOpacity(1.0);
-  actor->GetProperty()->SetAmbient(0.5);
+  actor->GetProperty()->SetAmbient(0.8);
   actor->GetProperty()->SetDiffuse(0.5);
   actor->GetProperty()->SetSpecular(0.5);
   actor->GetProperty()->SetSpecularPower(20);

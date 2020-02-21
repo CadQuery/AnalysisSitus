@@ -31,20 +31,10 @@
 // Own include
 #include <asiTestEngine_ReportTagFactory.h>
 
-//! Default constructor.
-asiTestEngine_ReportTagFactory::asiTestEngine_ReportTagFactory()
-{
-}
-
-//! Destructor.
-asiTestEngine_ReportTagFactory::~asiTestEngine_ReportTagFactory()
-{
-}
-
 //! Returns HTML tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Html(const bool isOpen)
 {
@@ -54,8 +44,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Html(const bool isOpen)
 
 //! Returns HEAD tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Head(const bool isOpen)
 {
@@ -73,8 +63,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Meta()
 
 //! Returns BODY tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Body(const bool isOpen)
 {
@@ -84,8 +74,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Body(const bool isOpen)
 
 //! Returns P tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::P(const bool isOpen)
 {
@@ -93,10 +83,21 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::P(const bool isOpen)
   return m_tag;
 }
 
+//! Returns PRE tag, opening or closing, depending on the passed
+//! parameter.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
+//! \return requested tag.
+asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Pre(const bool isOpen)
+{
+  setPairedTag(m_tag, "pre", isOpen);
+  return m_tag;
+}
+
 //! Returns B tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::B(const bool isOpen)
 {
@@ -106,8 +107,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::B(const bool isOpen)
 
 //! Returns SUB tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Sub(const bool isOpen)
 {
@@ -125,8 +126,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Br()
 
 //! Returns TABLE tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Table(const bool isOpen)
 {
@@ -136,8 +137,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Table(const bool isOpen
 
 //! Returns TBODY tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::TBody(const bool isOpen)
 {
@@ -147,8 +148,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::TBody(const bool isOpen
 
 //! Returns TR tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Tr(const bool isOpen)
 {
@@ -158,8 +159,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Tr(const bool isOpen)
 
 //! Returns TD tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Td(const bool isOpen)
 {
@@ -169,8 +170,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Td(const bool isOpen)
 
 //! Returns TH tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Th(const bool isOpen)
 {
@@ -180,8 +181,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Th(const bool isOpen)
 
 //! Returns FONT tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Font(const bool isOpen)
 {
@@ -191,8 +192,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Font(const bool isOpen)
 
 //! Returns H1 tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H1(const bool isOpen)
 {
@@ -202,8 +203,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H1(const bool isOpen)
 
 //! Returns H2 tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H2(const bool isOpen)
 {
@@ -213,8 +214,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H2(const bool isOpen)
 
 //! Returns H3 tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H3(const bool isOpen)
 {
@@ -224,8 +225,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H3(const bool isOpen)
 
 //! Returns H4 tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::H4(const bool isOpen)
 {
@@ -243,8 +244,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Hr()
 
 //! Returns Style tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Style(const bool isOpen)
 {
@@ -254,8 +255,8 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Style(const bool isOpen
 
 //! Returns Center tag, opening or closing, depending on the passed
 //! parameter.
-//! \param isOpen [in] indicates whether the resulting tag is opening or
-//!        closing.
+//! \param[in] isOpen indicates whether the resulting tag is opening or
+//!                   closing.
 //! \return requested tag.
 asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Center(const bool isOpen)
 {
@@ -265,13 +266,13 @@ asiTestEngine_ReportTag& asiTestEngine_ReportTagFactory::Center(const bool isOpe
 
 //! Prepares the passed tag as a paired one with the given name and
 //! openness indicator.
-//! \param tag [in/out] tag to prepare.
-//! \param baseName [in] base name to set for the tag being prepared.
-//! \param isOpen [in] indicates whether the tag being prepared is opening
-//!        or closing.
+//! \param[in,out] tag      tag to prepare.
+//! \param[in]     baseName base name to set for the tag being prepared.
+//! \param[in]     isOpen   indicates whether the tag being prepared is opening
+//!                         or closing.
 void asiTestEngine_ReportTagFactory::setPairedTag(asiTestEngine_ReportTag& tag,
-                                                  const char* baseName,
-                                                  const bool isOpen)
+                                                  const char*              baseName,
+                                                  const bool               isOpen)
 {
   tag.Release();
   tag.SetIsPaired(true);
@@ -280,10 +281,10 @@ void asiTestEngine_ReportTagFactory::setPairedTag(asiTestEngine_ReportTag& tag,
 }
 
 //! Prepares the passed tag as single (non-paired) one with the given name.
-//! \param tag [in/out] tag to prepare.
-//! \param baseName [in] base name to set for the tag being prepared.
+//! \param[in,out] tag      tag to prepare.
+//! \param[in]     baseName base name to set for the tag being prepared.
 void asiTestEngine_ReportTagFactory::setUnpairedTag(asiTestEngine_ReportTag& tag,
-                                                    const char* baseName)
+                                                    const char*              baseName)
 {
   tag.Release();
   tag.SetIsPaired(false);

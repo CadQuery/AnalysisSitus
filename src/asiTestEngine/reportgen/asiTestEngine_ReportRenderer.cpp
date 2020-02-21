@@ -208,6 +208,17 @@ asiTestEngine_ReportRenderer::THAT
   return this->AddText( text.c_str(), doRemoveNewLines );
 }
 
+//! Overloaded method for OCCT string.
+//! \param text [in] text to render.
+//! \param doRemoveNewLines [in] indicates whether new line characters must
+//!        be removed or not.
+//! \return THIS reference for streaming.
+asiTestEngine_ReportRenderer::THAT
+  asiTestEngine_ReportRenderer::AddText(const TCollection_AsciiString& text, const bool doRemoveNewLines)
+{
+  return this->AddText( text.ToCString(), doRemoveNewLines );
+}
+
 //! Overloaded method for integer.
 //! \param num [in] value to render.
 //! \return THIS reference for streaming.
@@ -224,6 +235,32 @@ asiTestEngine_ReportRenderer::THAT
   asiTestEngine_ReportRenderer::AddText(const double num)
 {
   return this->AddText( asiAlgo_Utils::Str::ToString(num), false );
+}
+
+//! Adds hyperlink with the passed URL.
+//! \param[in] url   URL to reference.
+//! \param[in] title link title.
+asiTestEngine_ReportRenderer::THAT
+  asiTestEngine_ReportRenderer::AddHRef(const char* url,
+                                        const char* title)
+{
+  m_buffer.append("<a href='");
+  m_buffer.append(url);
+  m_buffer.append("'>");
+  m_buffer.append(title);
+  m_buffer.append("</a>");
+  return this;
+}
+
+//! Adds image with the passed URL.
+//! \param[in] url URL to reference.
+asiTestEngine_ReportRenderer::THAT
+  asiTestEngine_ReportRenderer::AddImg(const char* url)
+{
+  m_buffer.append("<img src='");
+  m_buffer.append(url);
+  m_buffer.append("'/>");
+  return this;
 }
 
 //! Renders equality expression in the following format:
@@ -520,6 +557,24 @@ asiTestEngine_ReportRenderer::THAT
   return this;
 }
 
+//! Inserts starting TD tag with the passed CSS class for styling.
+//! \param className [in] CSS class.
+//! \return THIS reference for streaming.
+asiTestEngine_ReportRenderer::THAT
+  asiTestEngine_ReportRenderer::StartTableCell(const TCollection_AsciiString& className)
+{
+  return this->StartTableCell( className.ToCString() );
+}
+
+//! Inserts starting TD tag with the passed CSS class for styling.
+//! \param className [in] CSS class.
+//! \return THIS reference for streaming.
+asiTestEngine_ReportRenderer::THAT
+  asiTestEngine_ReportRenderer::StartTableCell(const char* className)
+{
+  return this->StartTableCell( std::string(className) );
+}
+
 //! Inserts starting TD tag with the passed styling and COLSPAN attribute.
 //! \param colSpan [in] colSpan value to apply.
 //! \param style [in] styling to apply.
@@ -741,6 +796,22 @@ asiTestEngine_ReportRenderer::THAT
 asiTestEngine_ReportRenderer::THAT asiTestEngine_ReportRenderer::EndParagraph()
 {
   m_buffer.append( m_tagFactory.P(false).Result() );
+  return this;
+}
+
+//! Inserts starting PRE tag.
+//! \return THIS reference for streaming.
+asiTestEngine_ReportRenderer::THAT asiTestEngine_ReportRenderer::StartPre()
+{
+  m_buffer.append( m_tagFactory.Pre().Result() );
+  return this;
+}
+
+//! Inserts ending PRE tag.
+//! \return THIS reference for streaming.
+asiTestEngine_ReportRenderer::THAT asiTestEngine_ReportRenderer::EndPre()
+{
+  m_buffer.append( m_tagFactory.Pre(false).Result() );
   return this;
 }
 

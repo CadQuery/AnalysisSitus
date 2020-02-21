@@ -107,6 +107,13 @@ void asiTestEngine_ReportStyle::SetColor(const Color& color)
   (*m_props.pColor) = color;
 }
 
+//! Sets test color property.
+//! \param color [in] font color to set.
+void asiTestEngine_ReportStyle::SetColor(const ActAPI_Color& color)
+{
+  this->SetColor( Color( int(color.Red()*255.), int(color.Green()*255.), int(color.Blue()*255.) ) );
+}
+
 //! Sets font family.
 //! \param font [in] font family to set.
 void asiTestEngine_ReportStyle::SetFontFamily(const std::string& family)

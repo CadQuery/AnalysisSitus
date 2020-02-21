@@ -185,7 +185,7 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
       TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
 
       // Draw imperatively (populates Data Model).
-      interp->GetPlotter().DRAW_SHAPE(subShape, name);
+      interp->GetPlotter().DRAW_SHAPE(subShape, Color_White, name);
 
       // Set tessellation properties.
       if ( !IV.IsNull() )
@@ -243,7 +243,7 @@ int ENGINE_Explode(const Handle(asiTcl_Interp)& interp,
       TCollection_AsciiString name = asiAlgo_Utils::ShapeTypeStr(subShape).c_str();
 
       // Draw imperatively (populates Data Model).
-      interp->GetPlotter().DRAW_SHAPE(subShape, name);
+      interp->GetPlotter().DRAW_SHAPE(subShape, Color_White, name);
 
       // Set tessellation properties.
       if ( !IV.IsNull() )

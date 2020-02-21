@@ -43,11 +43,9 @@ class asiTestEngine_ReportTagFactory
 {
 public:
 
-  asiTestEngine_EXPORT
-    asiTestEngine_ReportTagFactory();
+  asiTestEngine_ReportTagFactory() = default;
 
-  asiTestEngine_EXPORT
-    ~asiTestEngine_ReportTagFactory();
+  ~asiTestEngine_ReportTagFactory() = default;
 
 public:
 
@@ -65,6 +63,9 @@ public:
 
   asiTestEngine_EXPORT asiTestEngine_ReportTag&
     P(const bool isOpen = true);
+
+  asiTestEngine_EXPORT asiTestEngine_ReportTag&
+    Pre(const bool isOpen = true);
 
   asiTestEngine_EXPORT asiTestEngine_ReportTag&
     B(const bool isOpen = true);
@@ -117,11 +118,11 @@ public:
 private:
 
   static void setPairedTag(asiTestEngine_ReportTag& tag,
-                           const char* baseName,
-                           const bool isOpen);
+                           const char*              baseName,
+                           const bool               isOpen);
 
   static void setUnpairedTag(asiTestEngine_ReportTag& tag,
-                             const char* baseName);
+                             const char*              baseName);
 
 private:
 

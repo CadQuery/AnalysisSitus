@@ -391,6 +391,17 @@ void asiVisu_Utils::ApplyLightingRules(vtkActor* actor)
 
 //-----------------------------------------------------------------------------
 
+//! Sets the predefined lighting options to the passed Actor.
+//! \param[in] actor actor to adjust lighting options.
+void asiVisu_Utils::ApplyLightingRulesDark(vtkActor* actor)
+{
+  ApplyLightingRules(actor);
+  //
+  actor->GetProperty()->SetAmbient(0.5);
+}
+
+//-----------------------------------------------------------------------------
+
 //! Translates camera from one position to another.
 //! \param theRenderer [in] Renderer instance.
 //! \param theOldX     [in] old X coordinate.

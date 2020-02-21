@@ -946,7 +946,9 @@ Handle(asiData_IVTopoItemNode)
   Handle(asiData_IVTopoNode) IV_Parent = m_model->GetIVNode()->Topology();
 
   // Add Topological Item Node to Partition
-  Handle(asiData_IVTopoItemNode) item_n = Handle(asiData_IVTopoItemNode)::DownCast( asiData_IVTopoItemNode::Instance() );
+  Handle(asiData_IVTopoItemNode)
+    item_n = Handle(asiData_IVTopoItemNode)::DownCast( asiData_IVTopoItemNode::Instance() );
+  //
   m_model->GetIVTopoItemPartition()->AddNode(item_n);
 
   // Generate unique name

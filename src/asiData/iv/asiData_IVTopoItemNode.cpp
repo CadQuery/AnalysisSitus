@@ -69,7 +69,7 @@ void asiData_IVTopoItemNode::Init()
   this->SetLinearDeflection  ( 0.0 );
   this->SetAngularDeflection ( 0.0 );
   this->SetHasColor          ( true );
-  this->SetColor             ( 2500134 ); // Sort of dark color.
+  this->SetColor             ( 150 << 16 | 150 << 8 | 150 );
 
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);

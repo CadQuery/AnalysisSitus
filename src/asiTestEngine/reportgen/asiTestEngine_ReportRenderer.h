@@ -41,6 +41,8 @@
 // Standard includes
 #include <string>
 
+//-----------------------------------------------------------------------------
+
 //! Utility for generating reports in HTML format. Supplies a predefined set
 //! of atomic layout portions to be streamed one-by-one, producing the
 //! resulting one-string report's content so.
@@ -132,10 +134,21 @@ public:
             const bool doRemoveNewLines = true);
 
   asiTestEngine_EXPORT THAT
+    AddText(const TCollection_AsciiString& text,
+            const bool doRemoveNewLines = true);
+
+  asiTestEngine_EXPORT THAT
     AddText(const int num);
 
   asiTestEngine_EXPORT THAT
     AddText(const double num);
+
+  asiTestEngine_EXPORT THAT
+    AddHRef(const char* url,
+            const char* title);
+
+  asiTestEngine_EXPORT THAT
+    AddImg(const char* url);
 
   asiTestEngine_EXPORT THAT
     AddEquality(const char* var,
@@ -145,8 +158,8 @@ public:
   asiTestEngine_EXPORT THAT
     AddTextWithSubs(const char* text,
                     const char* subs,
-                    const bool isTextSymboled = false,
-                    const bool isSubsSymboled = false);
+                    const bool  isTextSymboled = false,
+                    const bool  isSubsSymboled = false);
 
   asiTestEngine_EXPORT THAT
     AddMeta();
@@ -222,6 +235,12 @@ public:
     StartTableCell(const std::string& className);
 
   asiTestEngine_EXPORT THAT
+    StartTableCell(const TCollection_AsciiString& className);
+
+  asiTestEngine_EXPORT THAT
+    StartTableCell(const char* className);
+
+  asiTestEngine_EXPORT THAT
     StartColSpanTableCell(const int colSpan = 1,
                           const asiTestEngine_ReportStyle& theStyle = 0);
 
@@ -273,6 +292,12 @@ public:
 
   asiTestEngine_EXPORT THAT
     EndParagraph();
+
+  asiTestEngine_EXPORT THAT
+    StartPre();
+
+  asiTestEngine_EXPORT THAT
+    EndPre();
 
   asiTestEngine_EXPORT THAT
     StartSubscript();

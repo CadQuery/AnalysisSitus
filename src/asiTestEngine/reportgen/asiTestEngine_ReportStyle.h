@@ -129,7 +129,13 @@ public:
     SetBgColor(const Color& color);
 
   asiTestEngine_EXPORT void
+    SetBgColor(const ActAPI_Color& color);
+
+  asiTestEngine_EXPORT void
     SetColor(const Color& color);
+
+  asiTestEngine_EXPORT void
+    SetColor(const ActAPI_Color& color);
 
   asiTestEngine_EXPORT void
     SetFontFamily(const std::string& family);
@@ -200,33 +206,33 @@ private:
     bool IsPadding()    const { return (pPxPadding  != nullptr); }
     bool IsWidth()      const { return (pWidth      != nullptr); }
 
-    //! Default constructor.
-    TProps() : pPxBorder(nullptr),
-               pPxPadding(nullptr),
-               pPxFont(nullptr),
-               pBgColor(nullptr),
-               pColor(nullptr),
-               pFontFamily(nullptr),
-               pFontWeight(nullptr),
-               pFontStyle(nullptr),
-               pTextAlign(nullptr),
-               pVertAlign(nullptr),
-               pWidth(nullptr) {}
+    //! Default ctor.
+    TProps() : pPxBorder   (nullptr),
+               pPxPadding  (nullptr),
+               pPxFont     (nullptr),
+               pBgColor    (nullptr),
+               pColor      (nullptr),
+               pFontFamily (nullptr),
+               pFontWeight (nullptr),
+               pFontStyle  (nullptr),
+               pTextAlign  (nullptr),
+               pVertAlign  (nullptr),
+               pWidth      (nullptr) {}
 
     //! Returns true if all properties are nullptrs.
     //! \return true/false.
     bool IsNull() const
     {
-      if ( !pPxBorder &&
-           !pPxPadding &&
-           !pPxFont &&
-           !pBgColor &&
-           !pColor &&
+      if ( !pPxBorder   &&
+           !pPxPadding  &&
+           !pPxFont     &&
+           !pBgColor    &&
+           !pColor      &&
            !pFontFamily &&
            !pFontWeight &&
-           !pFontStyle &&
-           !pTextAlign &&
-           !pVertAlign &&
+           !pFontStyle  &&
+           !pTextAlign  &&
+           !pVertAlign  &&
            !pWidth )
         return true;
 

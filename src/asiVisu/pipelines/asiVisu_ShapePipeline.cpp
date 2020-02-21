@@ -74,7 +74,7 @@ asiVisu_ShapePipeline::asiVisu_ShapePipeline(bool isScalarMode)
   this->Actor()->GetProperty()->SetLineWidth(1);
   this->Actor()->GetProperty()->SetPointSize(8);
   //
-  asiVisu_Utils::ApplyLightingRules( this->Actor() );
+  asiVisu_Utils::ApplyLightingRulesDark( this->Actor() );
 
   // Compose pipeline.
   this->append(m_dmFilter);

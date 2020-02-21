@@ -197,6 +197,9 @@ public:
     ApplyLightingRules(vtkActor* theActor);
 
   asiVisu_EXPORT static void
+    ApplyLightingRulesDark(vtkActor* theActor);
+
+  asiVisu_EXPORT static void
     TranslateView(vtkRenderer* theRenderer,
                   const int    theOldX,
                   const int    theOldY,

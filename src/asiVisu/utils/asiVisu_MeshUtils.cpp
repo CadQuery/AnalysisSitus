@@ -132,5 +132,5 @@ void asiVisu_MeshUtils::DefaultContourColor(double& fR,
 //! \return opacity factor.
 double asiVisu_MeshUtils::DefaultContourOpacity()
 {
-  return 0.2;
+  return 1.0;
 }

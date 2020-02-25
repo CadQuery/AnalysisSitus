@@ -12,7 +12,7 @@ We think that Analysis Situs is the cute name for software that dives into low-l
 details of geometric modeling. You load a model to inquire about what is inside. You
 can study it face-by-face in a CAD-neutral environment. You can look at your model as
 a composition of surface patches trimmed by contours. Also, you can extend the software
-with your tools as the architecture is quite generak (this is how Analysis Situs is used
+with your tools as the architecture is quite general (this is how Analysis Situs is used
 by its primary developer daily).
 
 In the early age of CAD, there was a system PADL served to transfer the digital design

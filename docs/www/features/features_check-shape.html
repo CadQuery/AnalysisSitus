@@ -282,8 +282,8 @@
   </td>
   <td class="table-content-block">
     <p>
-      A valid shape with all its subshapes must unambiguously bound a piece of volume
-      in the modeling space. Sometimes this basic requirement is not satisfied.
+      A correct shape with all its subshapes must bound a piece of volume in the modeling
+      space unambiguously. However, sometimes this essential requirement is not satisfied.
     </p>
     <p>
       Let's take a solid with some inner shells as an example.
@@ -294,20 +294,24 @@
     </p>
     <p><div align="center"><img src="../imgs/anomaly_inv_shells_expl.png"/></div></p>
     <p>
-      In some rare cases, such invalid space partitioning
-      may occur as a result of a faulty Boolean operation. Imagine that
-      a Tool body is being subtracted from an Object body to produce a Result solid
-      (its expected shape is illustrated above on the right). Now imagine that the modeling
-      kernel fails (for whatever reason) to classify the Tool properly. In the figure above, the Tool
-      solid was classified as lying INSIDE the Object, hence its orientation
-      was simply reversed while the boundary edges were not recomputed.
-      If you sample any point on the cavity shell, you would normally expect that this
-      point is INSIDE the parent solid. However, in the example above, some points
-      of the Tool body will be classified as the OUTSIDE points w.r.t. the Result
-      shape which is clearly an error.
+      In some rare cases, such invalid space partitioning may occur as a result of the faulty
+      Boolean operation. Imagine that a Tool body is being subtracted from an Object body to
+      produce a Result shape (its expected form is illustrated above on the right). Now imagine
+      that the modeling kernel fails (for whatever reason) to classify the Tool correctly. In
+      the figure above, the Tool solid was incorrectly classified as lying INSIDE the Object.
+      Hence the orientation of the Tool was reversed while the boundary edges were taken as is.
+      If you sample any point on the cavity shell, you would generally expect that this point is
+      INSIDE the parent solid. However, in the example above, some points of the Tool body are
+      classified as OUTSIDE w.r.t. the Result shape.
     </p>
     <p><div align="center"><img src="../imgs/anomaly_inv_shells.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/freecad/index_hmd_frunk.stp</div></p>
+    <p>
+      This problem can hardly be fixed automatically as the ambiguous space partitioning leaves
+      the design intent unclear. The users obtaining this sort of error should instead return
+      to the corresponding design tools to try fixing the source of the issue (e.g., tweak the
+      operands of the Boolean cut as in the example above).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->

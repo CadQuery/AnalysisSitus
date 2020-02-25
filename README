@@ -1,3 +1,17 @@
+Overview
+=========
+
+Homepage: http://analysissitus.org
+
+Analysis Situs is an open-source, extensible software which assists in the development
+of CAD geometric algorithms based on Boundary Representation (B-Rep) data structures.
+The software is coupled with OpenCascade library which is an open-source geometric modeling
+kernel offering a broad range of modeling operators for the development of multipurpose
+CAD systems and utilities. Analysis Situs serves as a framework for constructing geometric
+modeling algorithms. Additionally, Analysis Situs offers some advanced facilities for inspection
+of geometric and topological structures of existing CAD parts (hence the name "Analysis Situs")
+which can be imported from any popular CAD system.
+
 What's in a name?
 =================
 

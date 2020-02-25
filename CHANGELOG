@@ -1,0 +1,193 @@
+Release notes:
+
+-------------------------------------------------------------------------------
+v0.3.2, 15 October 2019
+-------------------------------------------------------------------------------
+- STEP reader now imports colored faces.
+- Add a set of handy Tcl commands.
+- Add more functionality to the experimental reverse engineering workbench.
+- Improvements in face finder UI.
+- Add visualization of execution graphs (tree functions of Active Data).
+- Add deviation checker for points vs mesh/brep.
+- Allow PNG dumps as vtkImageData from presentation managers.
+- Enable user-defined part transformation (translation, rotation) from parameter editor.
+-------------------------------------------------------------------------------
+v0.3.1, 31 May 2019
+-------------------------------------------------------------------------------
+- Add possibility to colorize faces.
+- Colored faces can be exported to STEP format now.
+- Add zoom in/out with Ctrl+Up/Down keys in Tcl console.
+- More parameters are now available for configuring objects via parameter editor.
+- Enrich the available set of Tcl commands.
+- Add finder for internal locations in the part shape.
+- Enable backface coloring for B-Rep and triangulations.
+- Improve internal architecture for use as a general-purpose CAD platform.
+- Add more commands for interactive reverse engineering.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.3.0, 04 March 2019
+-------------------------------------------------------------------------------
+- Rearrange control panels to give more logical and powerful interface.
+- Add parameter editor and data dictionary.
+- Remove useless (after the latest improvements) toggle button in 3D viewer.
+- Add 'save-step' Tcl command.
+- Add 'build-triangulation-obb' Tcl command.
+- Add 'move-triangulation' Tcl command.
+- Add visualization and selection of triangulation nodes.
+- Prototype surface deviation checker.
+- Prototype commands for saving and loading binary project files.
+- Refactor curvature plot to become a general-purpose 2D plot.
+- Prototype reverse engineering asset of Tcl commands.
+- Add interactive selection of points in point clouds.
+- Refactor purification algorithm for point clouds.
+- Add commands to build bilinear Coons patches.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.2.7, 17 November 2018
+-------------------------------------------------------------------------------
+- Add new Tcl commands and improve some existing.
+- Refactor and improve interactive picking mechanism to make
+  it more flexible.
+- Improve unit testing engine.
+- Add batch processing.
+- Add functions to read STL and PLY meshes.
+- Add computation and visualization of mesh norms in mesh nodes
+  and by elements.
+- Add mesh-based topology-preserving offsets.
+- Add basic facilities for interactive construstion of countours on meshes for
+  further reverse engineering.
+- Implement JSON serialization for AAG and its attributes.
+- Improve 'rebuild-edge' algorithm to make it more robust by following
+  knowledge-guided computation principle.
+- Improve KEV and KEF Euler operators.
+- Start working on documenation pages also available online
+  at http://www.analysissitus.org.
+- General ergonomics improvements.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.2.6, 19 June 2018
+-------------------------------------------------------------------------------
+- Add facilities to serialize B-curves and B-surfaces to JSON.
+- Add dialog for modification of B-curves and B-surfaces via JSON.
+- Output more precise values in 'eval-curve'/'eval-surf' commands.
+- Integrate HLR algorithm of OpenCascade as 'hlr' command.
+- Integrate useful modeling commands (e.g., 'cut', 'trim-curve', some others).
+- Make VTK source for curve visualization more robust and precise.
+- Add asiTestEngine library to support in-house unit testing.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.2.5, 30 May 2018
+-------------------------------------------------------------------------------
+- Ported to OpenCascade 7.3.0.
+- Add analysis of geometric tolerances.
+- Add inequality solver.
+- Add many useful Tcl commands.
+- Add gl2ps integration.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.2.4, 26 March 2018
+-------------------------------------------------------------------------------
+- Add dialog to manage visibility of pipelines for presented objects.
+- Add visualization of control net for B-surfaces.
+- Improve ergonomics of secondary viewers.
+- Enable loading BREP/STEP by double click on filename.
+- Add many useful Tcl commands.
+- Add visualization of curvature combs and plots for curves.
+- Introduce functionality for edge reconstruction by local topology analysis.
+- Enable visualization of sub-shape locations as colored arcs in topology graphs.
+- Develop curve fairing method in asiAlgo_Utils.
+- Bugfix everywhere.
+- Improve ergonomics of Tcl console and Commands dialog.
+-------------------------------------------------------------------------------
+v0.2.3, 22 December 2017
+-------------------------------------------------------------------------------
+- Bugfix.
+- Introduce visualization of modification history as graph.
+-------------------------------------------------------------------------------
+v0.2.2, 14 December 2017
+-------------------------------------------------------------------------------
+- Bugfix.
+- Introduce tools for topological naming and history.
+-------------------------------------------------------------------------------
+v0.2.1, 06 December 2017
+-------------------------------------------------------------------------------
+- Improve ergonomics.
+- Add more Tcl commands including 'undo' and 'redo'.
+- Improve topology killer.
+-------------------------------------------------------------------------------
+v0.2.0, 12 November 2017
+-------------------------------------------------------------------------------
+- Change license to 3-clause BSD.
+- Get rid of unnecessary dependencies.
+- Improve scripting abilities and add more Tcl commands.
+-------------------------------------------------------------------------------
+v0.1.8, 20 September 2017
+-------------------------------------------------------------------------------
+- Fix visualization problem with false-positive invalid faces.
+- Let user change background color via context menu in part viewer.
+-------------------------------------------------------------------------------
+v0.1.7, 19 September 2017
+-------------------------------------------------------------------------------
+- Improve visualization tools for meshes (SDK only).
+- Extend API of imperative plotter (SDK only).
+- Introduce button to add B-Reps to existing part.
+- Introduce Tcl scripting.
+- Introduce error-resistant visualization based on face validity analysis.
+- Enhance topology graph visualization with information on orientations.
+- Implement topologicall killer (kill-edge and kill-face commands).
+- Bugfix and tiny improvements in ergonomics.
+-------------------------------------------------------------------------------
+v0.1.6, 20 July 2017
+-------------------------------------------------------------------------------
+- License under MIT license conditions.
+- Add CMake build system.
+- Set dark color scheme.
+- Add controls for projection views (top, left, front, etc.).
+- Add visualization facilities for OpenCascade's triangulation.
+- Bugfix and tiny improvements.
+-------------------------------------------------------------------------------
+v0.1.5, 15 April 2017
+-------------------------------------------------------------------------------
+- Get rid of OpenCascade visualization modules. Everything is now based on
+  in-house VTK integration code and conventional VTK interactive services.
+- Add face inversion function (context menu in the viewer).
+- Add visualization of face normals (context menu in the viewer).
+- Add tessellation refinement controls (Ctrl+T hotkey).
+- Add gap filling function (button at main controls panel).
+- General bugfix and tiny improvements are also there.
+-------------------------------------------------------------------------------
+v0.1.4, 02 February 2017
+-------------------------------------------------------------------------------
+- Make AAG the driving container for all sub-shapes. AAG is now used to get
+  the indices of faces and edges. This allows to cache all those indices only
+  once (when the model is loaded) and reuse whenever necessary.
+- Introduce many cosmetic changes: version in the title bar, different
+  visualization properties, different highlighting/selection colors, etc.
+- Add status bar, logger, and progress indication widgets (draft).
+- Fix weird errors on edge picking.
+- Add border trihedron concept at algorithmic level.
+- Add VTK pipeline for visualization of normal vectors associated with point
+  clouds.
+- Add tolerance setting for smooth edge detection.
+-------------------------------------------------------------------------------
+v0.1.3, 19 December 2016
+-------------------------------------------------------------------------------
+- Add possibility to save selected faces and edges to BREP-file.
+- Bugfix.
+-------------------------------------------------------------------------------
+v0.1.2, 16 December 2016
+-------------------------------------------------------------------------------
+- Add AAG and topology graphs with visualization.
+- Add dihedral angle checker.
+- Add non-manifold edges checker.
+- Add tools to detach (break sharing info) and kill faces.
+- Fix visualization bug with incorrect feeding of face selection pipeline.
+-------------------------------------------------------------------------------
+v0.1.1, 14 December 2016
+-------------------------------------------------------------------------------
+- Experimental version of adaptive center of rotation (there is a problem with
+  discontinuity at rotation start). Center of rotation is changed by overriding
+  the focal point of the camera and repositioning window center.
+- Cosmetic changes in UI: reordering buttons.
+- Porting to VTK 7.1.
+===============================================================================

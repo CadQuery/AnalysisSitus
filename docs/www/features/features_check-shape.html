@@ -119,8 +119,10 @@
     <span class="code-inline">check-euler</span>
   </td>
   <td class="table-content-block">
-    Checks if the <a href="./features_euler-ops.html">Euler-Poincare property</a> holds
-    for the user-specified genus.
+    <p>
+      Checks if the <a href="./features_euler-ops.html">Euler-Poincare property</a> holds
+      for the user-specified genus.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -132,10 +134,12 @@
     <span class="code-inline">check-vertices-ori</span>
   </td>
   <td class="table-content-block">
-    Checks if the vertices of the part are distinguishable by their orientation
-    flags. A valid edge should have one FORWARD vertex and one REVERSED vertex to properly signify
-    its topological extremities. As a result of some poorly implemented modeling operators,
-    this rule may appear to be violated.
+    <p>
+      Checks if the vertices of the part are distinguishable by their orientation
+      flags. A valid edge should have one FORWARD vertex and one REVERSED vertex to properly signify
+      its topological extremities. As a result of some poorly implemented modeling operators,
+      this rule may appear to be violated.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -147,8 +151,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    The edges should be oriented so that their owning contour is traversed
-    in a determined order (clockwise or counterclockwise).
+    <p>
+      The edges should be oriented so that their owning contour is traversed
+      in a determined order (clockwise or counterclockwise).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -160,8 +166,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    The wire should be oriented so that the material of its owning face
-    is either enclosed (for the outer wires) or lies outside (for holes).
+    <p>
+      The wire should be oriented so that the material of its owning face
+      is either enclosed (for the outer wires) or lies outside (for holes).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -173,8 +181,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    The faces of a solid model should be oriented so that to point outwards the
-    bounded volume. This requirement is relaxed for surface modeling (shells).
+    <p>
+      The faces of a solid model should be oriented so that to point outwards the
+      bounded volume. This requirement is relaxed for surface modeling (shells).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -186,9 +196,11 @@
     <span class="code-inline">check-contours</span>
   </td>
   <td class="table-content-block">
-    Checks if the contours of the part faces are closed (have no gaps). The optional
-    "tolerance" argument is used to tune the precision of coincidence test. You
-    can find more details in the <a href="./features_is-contour-closed.html">corresponding chapter</a>.
+    <p>
+      Checks if the contours of the part faces are closed (have no gaps). The optional
+      "tolerance" argument is used to tune the precision of coincidence test. You
+      can find more details in the <a href="./features_is-contour-closed.html">corresponding chapter</a>.
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_contour-closeness-domain.png"/></div>
        <div align="center"><img src="../imgs/anomaly_contour-closeness-face.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/shading_wrongshape_031.brep</div></p>
@@ -203,8 +215,10 @@
     <span class="code-inline">check-finite</span>
   </td>
   <td class="table-content-block">
-    Checks if the solid body is finite. It should be noted that in some workflows
-    infinite volumes are perfectly valid.
+    <p>
+      Checks if the solid body is finite. It should be noted that in some workflows
+      infinite volumes are perfectly valid.
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_inverted-solid.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/shading_wrongshape_005.brep</div></p>
   </td>
@@ -218,8 +232,10 @@
     <span class="code-inline">check-open-edges</span>
   </td>
   <td class="table-content-block">
-    The open edges (those owned by less than two faces) are valid for shells and prohibited for
-    solid models. To fix this problem, face stitching (sewing) algorithm might be necessary.
+    <p>
+      The open edges (those owned by less than two faces) are valid for shells and prohibited for
+      solid models. To fix this problem, face stitching (sewing) algorithm might be necessary.
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_naked_edges.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/shading_wrongshape_015.brep</div></p>
   </td>
@@ -233,7 +249,9 @@
     N/A
   </td>
   <td class="table-content-block">
-    The gap filling algorithm is required to fix this anomaly.
+    <p>
+      The gap filling algorithm is required to fix this anomaly.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -245,11 +263,51 @@
     N/A
   </td>
   <td class="table-content-block">
-    All surface intersections should be resolved by inserting the corresponding topological primitives (vertices,
-    edges or patches in case of overlapping). If surfaces interact while having no topological
-    resolution, the shape is considered locally faulty. Intersections or overlaps of the trimmed NURBS
-    surfaces are a huge challenge for healing algorithms
-    <a href="../references.html#frischmann-2011">[Frischmann, 2011]</a>.
+    <p>
+      All surface intersections should be resolved by inserting the corresponding topological primitives (vertices,
+      edges or patches in case of overlapping). If surfaces interact while having no topological
+      resolution, the shape is considered locally faulty. Intersections or overlaps of the trimmed NURBS
+      surfaces are a huge challenge for healing algorithms
+      <a href="../references.html#frischmann-2011">[Frischmann, 2011]</a>.
+    </p>
+  </td>
+</tr>
+<!---------------------------------------------------------------------------->
+<tr>
+  <td width="20%" class="table-content-block">
+    Invalid space partitioning
+  </td>
+  <td width="20%" class="table-content-block">
+    N/A
+  </td>
+  <td class="table-content-block">
+    <p>
+      A valid shape with all its subshapes must unambiguously bound a piece of volume
+      in the modeling space. Sometimes this basic requirement is not satisfied.
+    </p>
+    <p>
+      Let's take a solid with some inner shells as an example.
+      A shell entity contained in a solid can represent either the outer boundary or an inner
+      cavity of a body. A point in the cavity shell should be formally inside its
+      parent solid (simply because any cavity is entirely enclosed by its bounding solid).
+      Otherwise, there is an inclusion error (see the figure below).
+    </p>
+    <p><div align="center"><img src="../imgs/anomaly_inv_shells_expl.png"/></div></p>
+    <p>
+      In some rare cases, such invalid space partitioning
+      may occur as a result of a faulty Boolean operation. Imagine that
+      a Tool body is being subtracted from an Object body to produce a Result solid
+      (its expected shape is illustrated above on the right). Now imagine that the modeling
+      kernel fails (for whatever reason) to classify the Tool properly. In the figure above, the Tool
+      solid was classified as lying INSIDE the Object, hence its orientation
+      was simply reversed while the boundary edges were not recomputed.
+      If you sample any point on the cavity shell, you would normally expect that this
+      point is INSIDE the parent solid. However, in the example above, some points
+      of the Tool body will be classified as the OUTSIDE points w.r.t. the Result
+      shape which is clearly an error.
+    </p>
+    <p><div align="center"><img src="../imgs/anomaly_inv_shells.png"/></div>
+       <div align="center" class="code-inline">cad/anomalies/freecad/index_hmd_frunk.stp</div></p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -261,10 +319,12 @@
     N/A
   </td>
   <td class="table-content-block">
-    Surface degeneracies usually occur due to the coincidence of NURBS control points. Such surfaces
-    are often used to represent triangular patches, e.g., in ship
-    hull design. Even though the singularity points are usually allowed by a modeler,
-    their existence may cause problems in subsequent operators (e.g., offsets).
+    <p>
+      Surface degeneracies usually occur due to the coincidence of NURBS control points. Such surfaces
+      are often used to represent triangular patches, e.g., in ship
+      hull design. Even though the singularity points are usually allowed by a modeler,
+      their existence may cause problems in subsequent operators (e.g., offsets).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -276,10 +336,12 @@
     N/A
   </td>
   <td class="table-content-block">
-    The 3D curve is a primary edge representation. If the 3D curve does not
-    exist, it is clearly a problem. To fix the issue, the corresponding p-curves
-    should be evaluated against their host surfaces. The obtained points are then
-    reapproximated.
+    <p>
+      The 3D curve is a primary edge representation. If the 3D curve does not
+      exist, it is clearly a problem. To fix the issue, the corresponding p-curves
+      should be evaluated against their host surfaces. The obtained points are then
+      reapproximated.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -291,9 +353,11 @@
     N/A
   </td>
   <td class="table-content-block">
-    In OpenCascade kernel, the primary 3D curve should be followed by its
-    images in all surface patches meeting at this curve. These p-curves
-    can be recovered by projection of a 3D curve to each host surface.
+    <p>
+      In OpenCascade kernel, the primary 3D curve should be followed by its
+      images in all surface patches meeting at this curve. These p-curves
+      can be recovered by projection of a 3D curve to each host surface.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -305,8 +369,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    The 3D curves and the corresponding p-curves should be parameterized synchronously, so that
-    they yield identical points for the same parameter value (with tolerance).
+    <p>
+      The 3D curves and the corresponding p-curves should be parameterized synchronously, so that
+      they yield identical points for the same parameter value (with tolerance).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -318,9 +384,11 @@
     N/A
   </td>
   <td class="table-content-block">
-    The seam edges correspond to a period value of a periodic surface. These edges
-    are necessary to close the parametric domain of a face. Not all geometric kernels
-    use the notion of seam edges, so it is necessary to recover them sometimes after data exchange.
+    <p>
+      The seam edges correspond to a period value of a periodic surface. These edges
+      are necessary to close the parametric domain of a face. Not all geometric kernels
+      use the notion of seam edges, so it is necessary to recover them sometimes after data exchange.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -332,13 +400,17 @@
     N/A
   </td>
   <td class="table-content-block">
-    A boundary surface is two-manifold if it is homeomorphic to a disk in the
-    neighborhood of every point (i.e., resembles a two-dimensional Euclidian
-    space near each point).
-    Non-manifold vertices, edges and faces might be perfectly valid if they
-    are modeled like this intentionally. Otherwise, the existence of non-manifold
-    boundary elements might be a problem for subsequent modeling operators
-    and manufacturing planning (such models are clearly non-manufacturable).
+    <p>
+      A boundary surface is two-manifold if it is homeomorphic to a disk in the
+      neighborhood of every point (i.e., resembles a two-dimensional Euclidian
+      space near each point).
+    </p>
+    <p>
+      Non-manifold vertices, edges and faces might be perfectly valid if they
+      are modeled like this intentionally. Otherwise, the existence of non-manifold
+      boundary elements might be a problem for subsequent modeling operators
+      and manufacturing planning (such models are clearly non-manufacturable).
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_non-manifold.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/non-manifold/non-manifold-01.brep</div></p>
   </td>
@@ -352,11 +424,13 @@
     N/A
   </td>
   <td class="table-content-block">
-    It sometimes happens that the visually fine, closed models are defined as
-    shells instead of being formal solids. Other examples include single faces defined
-    as shells or compound parts wrapping a single result of a solid Boolean operation.
-    These anomalies can be traced down using a topology graph representation of B-Rep
-    model. The graph will contain excessive nodes and/or nodes of improper type.
+    <p>
+      It sometimes happens that the visually fine, closed models are defined as
+      shells instead of being formal solids. Other examples include single faces defined
+      as shells or compound parts wrapping a single result of a solid Boolean operation.
+      These anomalies can be traced down using a topology graph representation of B-Rep
+      model. The graph will contain excessive nodes and/or nodes of improper type.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -368,9 +442,11 @@
     N/A
   </td>
   <td class="table-content-block">
-    A geometric tolerance of a vertex should not be less than a geometric
-    tolerance of an edge. A geometric tolerance of an edge should not be
-    less than a geometric tolerance of a face.
+    <p>
+      A geometric tolerance of a vertex should not be less than a geometric
+      tolerance of an edge. A geometric tolerance of an edge should not be
+      less than a geometric tolerance of a face.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -424,8 +500,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    Example: a geometrically planar surface represented with a NURBS surface or
-    a surface of revolution (like demonstrated by the example below).
+    <p>
+      Example: a geometrically planar surface represented with a NURBS surface or
+      a surface of revolution (like demonstrated by the example below).
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_cr-face.png"/></div>
        <div align="center"><img src="../imgs/anomaly_cr-domain.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/occ26372_RP.brep</div></p>
@@ -440,9 +518,11 @@
     <span class="code-inline">heal-small-edges</span>
   </td>
   <td class="table-content-block">
-    Sometimes a CAD model contains excessive number of small (usually straight)
-    edges which are hard to treat numerically (e.g., when generating FEA meshes).
-    Such edges can be enlarged by reapproximation.
+    <p>
+      Sometimes a CAD model contains excessive number of small (usually straight)
+      edges which are hard to treat numerically (e.g., when generating FEA meshes).
+      Such edges can be enlarged by reapproximation.
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_small-edges-domain.png"/></div>
        <div align="center"><img src="../imgs/anomaly_small-edges-face.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/occ22778_square.brep</div></p>
@@ -457,7 +537,9 @@
     N/A
   </td>
   <td class="table-content-block">
-    It is possible to merge small faces by reapproximating them.
+    <p>
+      It is possible to merge small faces by reapproximating them.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -469,8 +551,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    Face/edge maximization is usually performed as a post-processing stage of
-    a Boolean operation.
+    <p>
+      Face/edge maximization is usually performed as a post-processing stage of
+      a Boolean operation.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -482,7 +566,9 @@
     <span class="code-inline">check-toler</span>
   </td>
   <td class="table-content-block">
-    See the <a href="./features_check-toler.html">corresponding chapter</a> for details.
+    <p>
+      See the <a href="./features_check-toler.html">corresponding chapter</a> for details.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -494,13 +580,15 @@
     <span class="code-inline">split-by-continuity</span>
   </td>
   <td class="table-content-block">
-    The support of C0 geometric primitives is limited in all geometric kernels. It is
-    usually a good idea to split such entities with the relevant boundary elements (vertices or edges)
-    to enhance the smoothness of the geometry. Alternatively, for NURBS curves
-    and surfaces, it is possible to remove knots if the shape is geometrically continuous
-    though parameterized improperly. The knot insertion algorithm can also be applied
-    for non-G-smooth geometric elements if a certain deformation (within the prescribed
-    tolerance) is allowed.
+    <p>
+      The support of C0 geometric primitives is limited in all geometric kernels. It is
+      usually a good idea to split such entities with the relevant boundary elements (vertices or edges)
+      to enhance the smoothness of the geometry. Alternatively, for NURBS curves
+      and surfaces, it is possible to remove knots if the shape is geometrically continuous
+      though parameterized improperly. The knot insertion algorithm can also be applied
+      for non-G-smooth geometric elements if a certain deformation (within the prescribed
+      tolerance) is allowed.
+    </p>
     <p><div align="center"><img src="../imgs/anomaly_c0-surf.png"/></div>
        <div align="center" class="code-inline">cad/anomalies/from_sat/converted_brep_from_sat_37.brep</div></p>
   </td>
@@ -514,14 +602,16 @@
     <span class="code-inline">check-internal-locations</span>
   </td>
   <td class="table-content-block">
-    In OpenCascade kernel, each topological element might be assigned with a local
-    transformation to place it relative to its parent element. While this capacity
-    of the modeler is convenient for representing assemblies as compounds, we
-    discourage using the transformed boundary elements in a single solid representation.
-    Formally speaking, a local transformation is a property of an arc in the topology
-    graph. In Analysis Situs, it is possible to colorize the arcs for a visual check
-    of internal transformations. It is Ok to have a local transformation for in-compound
-    inclusions and not Ok to have them deeper in the graph.
+    <p>
+      In OpenCascade kernel, each topological element might be assigned with a local
+      transformation to place it relative to its parent element. While this capacity
+      of the modeler is convenient for representing assemblies as compounds, we
+      discourage using the transformed boundary elements in a single solid representation.
+      Formally speaking, a local transformation is a property of an arc in the topology
+      graph. In Analysis Situs, it is possible to colorize the arcs for a visual check
+      of internal transformations. It is Ok to have a local transformation for in-compound
+      inclusions and not Ok to have them deeper in the graph.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -533,11 +623,13 @@
     N/A
   </td>
   <td class="table-content-block">
-    A beautified geometric model is a modification of the input model that
-    incorporates appropriate symmetries and regularities
-    <a href="../references.html#gonzales-2017">[González-Lluch et al, 2017]</a>.
-    Beautification-pending models usually emerge as a result of reverse engineering
-    of a B-Rep model from a discrete dataset (point clouds, mesh).
+    <p>
+      A beautified geometric model is a modification of the input model that
+      incorporates appropriate symmetries and regularities
+      <a href="../references.html#gonzales-2017">[González-Lluch et al, 2017]</a>.
+      Beautification-pending models usually emerge as a result of reverse engineering
+      of a B-Rep model from a discrete dataset (point clouds, mesh).
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -549,11 +641,13 @@
     N/A
   </td>
   <td class="table-content-block">
-    For some operations like removing face, push/pull, etc. surface extensions
-    are used. It may easily happen that if parameter lines of a surface are
-    converging, the surface extension starts to self-intersect. In such
-    situations, any modeling operators which require surface extensions will
-    likely fail.
+    <p>
+      For some operations like removing face, push/pull, etc. surface extensions
+      are used. It may easily happen that if parameter lines of a surface are
+      converging, the surface extension starts to self-intersect. In such
+      situations, any modeling operators which require surface extensions will
+      likely fail.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -589,10 +683,12 @@
     N/A
   </td>
   <td class="table-content-block">
-    The overcomplicated CAD parts may require simplification prior to
-    the engineering analysis, manufacturing planning, data interoperability,
-    visualization, etc. To simplify model, the defeaturing techniques should
-    be employed.
+    <p>
+      The overcomplicated CAD parts may require simplification prior to
+      the engineering analysis, manufacturing planning, data interoperability,
+      visualization, etc. To simplify model, the defeaturing techniques should
+      be employed.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -604,7 +700,9 @@
     N/A
   </td>
   <td class="table-content-block">
-    Thickness is a severe requirement, e.g., in die casting manufacturing.
+    <p>
+      Thickness is a severe requirement, e.g., in die casting manufacturing.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->
@@ -616,8 +714,10 @@
     N/A
   </td>
   <td class="table-content-block">
-    Non-existing bends or non-constant sheet thickness is somewhat
-    unexpected in sheet metal working.
+    <p>
+      Non-existing bends or non-constant sheet thickness is somewhat
+      unexpected in sheet metal working.
+    </p>
   </td>
 </tr>
 <!---------------------------------------------------------------------------->

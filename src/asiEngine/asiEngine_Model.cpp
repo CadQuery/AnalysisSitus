@@ -202,19 +202,6 @@ Handle(asiData_PartNode) asiEngine_Model::GetPartNode() const
 
 //-----------------------------------------------------------------------------
 
-//! \return sole Octree Node.
-Handle(asiData_OctreeNode) asiEngine_Model::GetOctreeNode() const
-{
-  Handle(asiData_PartNode) part = this->GetPartNode();
-  //
-  if ( part.IsNull() || !part->IsWellFormed() )
-    return nullptr;
-
-  return part->GetOctree();
-}
-
-//-----------------------------------------------------------------------------
-
 //! \return Metadata Node attached to the Part Node.
 Handle(asiData_MetadataNode) asiEngine_Model::GetMetadataNode() const
 {

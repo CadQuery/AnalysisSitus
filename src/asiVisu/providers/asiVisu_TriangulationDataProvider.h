@@ -35,7 +35,7 @@
 #include <asiVisu_DataProvider.h>
 
 // Active Data includes
-#include <ActData_TriangulationParameter.h>
+#include <ActData_ParameterFactory.h>
 
 //-----------------------------------------------------------------------------
 
@@ -55,9 +55,14 @@ public:
     asiVisu_TriangulationDataProvider();
 
   //! Ctor accepting Triangulation Parameter.
-  //! \param[in] P parameter holding triangulation to visualize.
+  //! \param[in] triangulationParam Parameter holding the triangulation to visualize.
+  //! \param[in] hasScalarsParam    Parameter holding the Boolean value that indicates
+  //!                               whether to apply colors by scalars.
+  //! \param[in] colorParam         Parameter holding the custom color.
   asiVisu_EXPORT
-    asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& P);
+    asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& triangulationParam,
+                                      const Handle(ActData_BoolParameter)&          hasScalarsParam,
+                                      const Handle(ActData_IntParameter)&           colorParam);
 
 public:
 
@@ -72,6 +77,17 @@ public:
   //! \return OCCT facet model.
   asiVisu_EXPORT virtual Handle(Poly_Triangulation)
     GetTriangulation() const;
+
+  //! \return true if scalars are active.
+  asiVisu_EXPORT bool
+    HasScalars() const;
+
+  //! Returns persistent color.
+  //! \param[out] r red component.
+  //! \param[out] g green component.
+  //! \param[out] b blue component.
+  asiVisu_EXPORT void
+    GetColor(double& r, double& g, double& b) const;
 
 public:
 
@@ -92,8 +108,14 @@ protected:
   //! Source Node.
   Handle(ActAPI_INode) m_node;
 
-  //! Source Parameter.
-  Handle(ActData_TriangulationParameter) m_param;
+  //! Source Parameter with triangulation.
+  Handle(ActData_TriangulationParameter) m_triangulationParam;
+
+  //! Source Parameter with scalars on/off Boolean flag.
+  Handle(ActData_BoolParameter) m_hasScalarsParam;
+
+  //! Source Parameter with color.
+  Handle(ActData_IntParameter) m_colorParam;
 
 };
 

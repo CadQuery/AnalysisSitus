@@ -31,6 +31,9 @@
 // Own include
 #include <asiData_IVTopoItemNode.h>
 
+// asiData includes
+#include <asiData_BVHParameter.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -47,6 +50,9 @@ asiData_IVTopoItemNode::asiData_IVTopoItemNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group, PID_GroupPrs);
   REGISTER_PARAMETER(Bool,  PID_HasColor);
   REGISTER_PARAMETER(Int,   PID_Color);
+
+  // Non-standard Parameters.
+  this->registerParameter(PID_BVH, asiData_BVHParameter::Instance(), false);
 }
 
 //-----------------------------------------------------------------------------
@@ -70,6 +76,7 @@ void asiData_IVTopoItemNode::Init()
   this->SetAngularDeflection ( 0.0 );
   this->SetHasColor          ( true );
   this->SetColor             ( 150 << 16 | 150 << 8 | 150 );
+  this->SetBVH               ( nullptr );
 
   // Initialize Parameter flags.
   this->InitParameter(PID_Name,        "Name",               "", ParameterFlag_IsVisible, true);
@@ -115,6 +122,23 @@ TopoDS_Shape asiData_IVTopoItemNode::GetShape() const
 void asiData_IVTopoItemNode::SetShape(const TopoDS_Shape& shape)
 {
   ActParamTool::AsShape( this->Parameter(PID_Geometry) )->SetShape(shape);
+}
+
+//-----------------------------------------------------------------------------
+
+//! \return stored BVH.
+Handle(asiAlgo_BVHFacets) asiData_IVTopoItemNode::GetBVH() const
+{
+  return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Sets BVH to store.
+//! \param[in] bvh BVH to store.
+void asiData_IVTopoItemNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvh)
+{
+  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvh);
 }
 
 //-----------------------------------------------------------------------------

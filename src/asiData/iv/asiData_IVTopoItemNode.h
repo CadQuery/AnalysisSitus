@@ -40,8 +40,8 @@
 // OCCT includes
 #include <TopoDS_Shape.hxx>
 
-//-----------------------------------------------------------------------------
-// Data Node representing a single topo item in IV (Imperative Viewer)
+class asiAlgo_BVHFacets;
+
 //-----------------------------------------------------------------------------
 
 //! Data Node representing a single topo item in IV (Imperative Viewer).
@@ -66,6 +66,7 @@ public:
     PID_Name,         //!< Name of the Node.
   //------------------//
     PID_Geometry,     //!< Stored geometry.
+    PID_BVH,          //!< BVH structure.
   //------------------//
   // Facets           //
   //------------------//
@@ -104,6 +105,12 @@ public:
 
   asiData_EXPORT void
     SetShape(const TopoDS_Shape& shape);
+
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH() const;
+
+  asiData_EXPORT void
+    SetBVH(const Handle(asiAlgo_BVHFacets)&);
 
   asiData_EXPORT void
     SetLinearDeflection(const double);

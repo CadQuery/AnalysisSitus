@@ -12,6 +12,7 @@ set (H_FILES
   asiEngine_Editing.h
   asiEngine_IV.h
   asiEngine_Model.h
+  asiEngine_Octree.h
   asiEngine_Part.h
   asiEngine_PatchJointAdaptor.h
   asiEngine_RE.h
@@ -28,6 +29,7 @@ set (CPP_FILES
   asiEngine_Editing.cpp
   asiEngine_IV.cpp
   asiEngine_Model.cpp
+  asiEngine_Octree.cpp
   asiEngine_Part.cpp
   asiEngine_PatchJointAdaptor.cpp
   asiEngine_RE.cpp

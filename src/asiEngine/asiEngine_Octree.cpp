@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 30 November 2016
+// Created on: 27 February 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,45 +28,71 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_TriangulationPipeline_h
-#define asiVisu_TriangulationPipeline_h
-
-// asiVisu includes
-#include <asiVisu_TriangulationPipelineBase.h>
+// Own include
+#include <asiEngine_Octree.h>
 
 //-----------------------------------------------------------------------------
 
-//! Visualization pipeline for OCCT surface triangulations.
-class asiVisu_TriangulationPipeline : public asiVisu_TriangulationPipelineBase
+Handle(asiData_OctreeNode)
+  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner)
 {
-public:
+  Handle(asiData_OctreeNode)
+    node = Handle(asiData_OctreeNode)::DownCast( asiData_OctreeNode::Instance() );
+  //
+  m_model->GetOctreePartition()->AddNode(node);
 
-  // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_TriangulationPipeline, asiVisu_TriangulationPipelineBase)
+  // Initialize.
+  node->Init();
+  node->SetName("SVO");
 
-public:
+  // Set as child for the owner Node.
+  owner->AddChildNode(node);
 
-  asiVisu_EXPORT
-    asiVisu_TriangulationPipeline();
+  return node;
+}
 
-public:
+//-----------------------------------------------------------------------------
 
-  asiVisu_EXPORT virtual void
-    SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
+Handle(asiData_OctreeNode)
+  asiEngine_Octree::FindOctree(const Handle(ActAPI_INode)& owner,
+                               const bool                  create)
+{
+  if ( owner.IsNull() || !owner->IsWellFormed() )
+    return nullptr;
 
-protected:
+  Handle(asiData_OctreeNode) octreeNode;
 
-  asiVisu_EXPORT virtual void
-    callback_update();
+  /* Regardless of the owner type, octree is stored as a child Node */
+  for ( Handle(ActAPI_IChildIterator) cit = owner->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    octreeNode = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
 
-protected:
+    if ( octreeNode.IsNull() || !octreeNode->IsWellFormed() )
+      continue;
+  }
 
-  //! Components of part-wise color.
-  double m_fPartRed, m_fPartGreen, m_fPartBlue;
+  // Create if requested.
+  if ( octreeNode.IsNull() && create )
+  {
+    // Create Octree Node.
+    octreeNode = this->CreateOctree(owner);
+  }
 
-  //! Indicates whether the scalars are enabled or not.
-  bool m_bScalarsOn;
+  return octreeNode;
+}
 
-};
+//-----------------------------------------------------------------------------
 
-#endif
+Handle(asiData_OctreeNode)
+  asiEngine_Octree::SetOctree(const Handle(ActAPI_INode)& owner,
+                              void*                       pOctree)
+{
+  // Get Octree Node.
+  Handle(asiData_OctreeNode) octreeNode = this->FindOctree(owner, true);
+
+  // Store in OCAF.
+  if ( !octreeNode.IsNull() && octreeNode->IsWellFormed() )
+    octreeNode->SetOctree(pOctree);
+
+  return octreeNode;
+}

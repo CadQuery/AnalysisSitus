@@ -114,9 +114,6 @@ public:
   asiEngine_EXPORT Handle(asiData_PartNode)
     GetPartNode() const;
 
-  asiEngine_EXPORT Handle(asiData_OctreeNode)
-    GetOctreeNode() const;
-
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     GetMetadataNode() const;
 

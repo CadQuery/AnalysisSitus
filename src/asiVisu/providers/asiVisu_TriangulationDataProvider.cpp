@@ -31,6 +31,9 @@
 // Own include
 #include <asiVisu_TriangulationDataProvider.h>
 
+// asiVisu includes
+#include <asiVisu_Utils.h>
+
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
@@ -42,10 +45,14 @@ asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider()
 
 //-----------------------------------------------------------------------------
 
-asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& P)
+asiVisu_TriangulationDataProvider::asiVisu_TriangulationDataProvider(const Handle(ActData_TriangulationParameter)& triangulationParam,
+                                                                     const Handle(ActData_BoolParameter)&          hasScalarsParam,
+                                                                     const Handle(ActData_IntParameter)&           colorParam)
 : asiVisu_DataProvider ( ),
-  m_node               ( P->GetNode() ),
-  m_param              ( P )
+  m_node               ( triangulationParam->GetNode() ),
+  m_triangulationParam ( triangulationParam ),
+  m_hasScalarsParam    ( hasScalarsParam ),
+  m_colorParam         ( colorParam )
 {}
 
 //-----------------------------------------------------------------------------
@@ -61,7 +68,27 @@ ActAPI_DataObjectId
 Handle(Poly_Triangulation)
   asiVisu_TriangulationDataProvider::GetTriangulation() const
 {
-  return m_param->GetTriangulation();
+  return m_triangulationParam->GetTriangulation();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiVisu_TriangulationDataProvider::HasScalars() const
+{
+  return m_hasScalarsParam.IsNull() ? false : m_hasScalarsParam->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_TriangulationDataProvider::GetColor(double& r, double& g, double& b) const
+{
+  const int icolor = m_colorParam->GetValue();
+
+  QColor qcolor = asiVisu_Utils::IntToColor(icolor);
+
+  r = qcolor.redF();
+  g = qcolor.greenF();
+  b = qcolor.blueF();
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +96,9 @@ Handle(Poly_Triangulation)
 Handle(asiVisu_TriangulationDataProvider)
   asiVisu_TriangulationDataProvider::Clone() const
 {
-  return new asiVisu_TriangulationDataProvider(m_param);
+  return new asiVisu_TriangulationDataProvider(m_triangulationParam,
+                                               m_hasScalarsParam,
+                                               m_colorParam);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,7 +108,13 @@ Handle(ActAPI_HParameterList)
 {
   ActParamStream params;
 
-  params << m_param;
+  params << m_triangulationParam;
+
+  if ( !m_hasScalarsParam.IsNull() )
+    params << m_hasScalarsParam;
+
+  if ( !m_colorParam.IsNull() )
+    params << m_colorParam;
 
   return params.List;
 }

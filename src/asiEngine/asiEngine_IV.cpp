@@ -984,6 +984,26 @@ void asiEngine_IV::Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
 
 //-----------------------------------------------------------------------------
 
+//! Builds BVH for the passed Topo Item Node.
+//! \param[in] owner Topo Item Node to create the BVH for.
+//! \return constructed BVH structure.
+Handle(asiAlgo_BVHFacets)
+  asiEngine_IV::BuildBVH(const Handle(asiData_IVTopoItemNode)& owner)
+{
+  // Build BVH for the shape.
+  Handle(asiAlgo_BVHFacets)
+    bvh = new asiAlgo_BVHFacets(owner->GetShape(),
+                                asiAlgo_BVHFacets::Builder_Binned,
+                                m_progress,
+                                m_plotter);
+
+  // Store in OCAF.
+  owner->SetBVH(bvh);
+  return bvh;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Deletes all topological items.
 void asiEngine_IV::Clean_Topo()
 {

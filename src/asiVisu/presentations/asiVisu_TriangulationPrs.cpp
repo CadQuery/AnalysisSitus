@@ -58,10 +58,16 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
   //
   Handle(ActData_TriangulationParameter)
     TP = Handle(ActData_TriangulationParameter)::DownCast( TN->Parameter(asiData_TriangulationNode::PID_Triangulation) );
+  //
+  Handle(ActData_BoolParameter)
+    scalarsP = Handle(ActData_BoolParameter)::DownCast( TN->Parameter(asiData_TriangulationNode::PID_UseScalars) );
+  //
+  Handle(ActData_IntParameter)
+    colorP = Handle(ActData_IntParameter)::DownCast( TN->Parameter(asiData_TriangulationNode::PID_Color) );
 
   // Create Data Provider
   Handle(asiVisu_TriangulationDataProvider)
-    dp = new asiVisu_TriangulationDataProvider(TP);
+    dp = new asiVisu_TriangulationDataProvider(TP, scalarsP, colorP);
 
   // Main pipeline
   Handle(asiVisu_TriangulationPipeline) pl = new asiVisu_TriangulationPipeline();
@@ -202,9 +208,10 @@ void asiVisu_TriangulationPrs::Colorize(const QColor& color) const
   Handle(asiVisu_TriangulationPipeline)
     pl = Handle(asiVisu_TriangulationPipeline)::DownCast( this->GetPipeline(Pipeline_Triangulation) );
 
-  pl->Actor()->GetProperty()->SetColor( color.redF(),
-                                        color.greenF(),
-                                        color.blueF() );
+  if ( !pl.IsNull() )
+    pl->Actor()->GetProperty()->SetColor( color.redF(),
+                                          color.greenF(),
+                                          color.blueF() );
 }
 
 //-----------------------------------------------------------------------------
@@ -246,16 +253,6 @@ void asiVisu_TriangulationPrs::afterInitPipelines()
   Handle(asiData_TriangulationNode)
     N = Handle(asiData_TriangulationNode)::DownCast( this->GetNode() );
 
-  /* Actualize color */
-
-  if ( N->HasColor() )
-  {
-    QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
-    this->Colorize(color);
-  }
-  else
-    this->Colorize(Qt::white);
-
   /* Actualize visualization of vertices */
 
   if ( N->HasVertices() )
@@ -279,7 +276,13 @@ void asiVisu_TriangulationPrs::beforeUpdatePipelines() const
 //! kernel update routine completes.
 void asiVisu_TriangulationPrs::afterUpdatePipelines() const
 {
-  // Do nothing...
+  Handle(asiData_TriangulationNode)
+    N = Handle(asiData_TriangulationNode)::DownCast( this->GetNode() );
+
+  /* Actualize color */
+
+  QColor color = asiVisu_Utils::IntToColor( N->GetColor() );
+  this->Colorize(color);
 }
 
 //-----------------------------------------------------------------------------

@@ -102,12 +102,6 @@ public:
     FindElemMetadata(const TopoDS_Shape& shape,
                      const bool          create = false);
 
-  asiEngine_EXPORT Handle(asiData_OctreeNode)
-    CreateOctree();
-
-  asiEngine_EXPORT Handle(asiData_OctreeNode)
-    FindOctree(const bool create);
-
   asiEngine_EXPORT Handle(asiData_PartNode)
     Update(const TopoDS_Shape&            model,
            const Handle(asiAlgo_History)& history = nullptr,
@@ -124,9 +118,6 @@ public:
 
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH();
-
-  asiEngine_EXPORT Handle(asiData_OctreeNode)
-    SetOctree(void* pOctree);
 
   asiEngine_EXPORT void
     Clean(const bool cleanMeta = true);

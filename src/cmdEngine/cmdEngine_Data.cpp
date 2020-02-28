@@ -256,7 +256,7 @@ int ENGINE_SetAsVar(const Handle(asiTcl_Interp)& interp,
     cmdEngine::cf->ViewerPart->PrsMgr()->DeRenderPresentation(part_n);
 
   // Draw.
-  interp->GetPlotter().REDRAW_SHAPE( argv[1], part_n->GetShape() );
+  interp->GetPlotter().REDRAW_SHAPE( argv[1], part_n->GetShape(), Color_Default, 1. );
 
   return TCL_OK;
 }

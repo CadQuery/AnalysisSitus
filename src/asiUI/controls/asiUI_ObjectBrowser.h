@@ -154,6 +154,7 @@ protected slots:
   //
   void onPrintParameters       ();
   void onCopyName              ();
+  void onCopyID                ();
   //
   void onComputeNorms          (const bool);
   void onComputeNodalNorms     ();

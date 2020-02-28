@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 20 November 2015
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,11 +34,12 @@
 // asiVisu includes
 #include <asiVisu_MeshPrimitive.h>
 
-//! Initializes VTK lookup table charged with default color scheme for meshes.
-//! \return VTK lookup table.
-vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
+vtkSmartPointer<vtkLookupTable>
+  asiVisu_MeshUtils::InitLookupTable(const double ref_r,
+                                     const double ref_g,
+                                     const double ref_b)
 {
-  vtkSmartPointer<vtkLookupTable>
+    vtkSmartPointer<vtkLookupTable>
     colorTable = vtkSmartPointer<vtkLookupTable>::New();
 
   // Set colors table for 3D shapes
@@ -63,7 +64,7 @@ vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
   colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1,  0.1, 0.1);
   colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0,  1.0, 0.0);
   //
-  colorTable->SetTableValue(MeshPrimitive_CellTriangle,    0.9,  0.9, 0.9);
+  colorTable->SetTableValue(MeshPrimitive_CellTriangle,    ref_r, ref_g, ref_b);
   colorTable->SetTableValue(MeshPrimitive_CellQuad,        0.7,  0.7, 0.7);
   colorTable->SetTableValue(MeshPrimitive_CellTetra,       0.9,  0.9, 0.9);
   colorTable->SetTableValue(MeshPrimitive_CellHexa,        0.7,  0.7, 0.7);
@@ -74,33 +75,51 @@ vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
   return colorTable;
 }
 
-//! Initializes the passed VTK mapper with the given Lookup Table.
-//! \param theMapper         [in/out] mapper to initialize.
-//! \param theLookup         [in]     Lookup Table to initialize the mapper with.
-//! \param theScalarsArrName [in]     name of the array storing the scalars
-//!                                   for colorization.
-void asiVisu_MeshUtils::InitMapper(vtkMapper*      theMapper,
-                                   vtkLookupTable* theLookup,
-                                   const char*     theScalarsArrName)
+//! Initializes VTK lookup table charged with default color scheme for meshes.
+//! \return VTK lookup table.
+vtkSmartPointer<vtkLookupTable> asiVisu_MeshUtils::InitLookupTable()
 {
-  theMapper->ScalarVisibilityOn();
-  theMapper->SetScalarModeToUseCellFieldData();
-  theMapper->SelectColorArray(theScalarsArrName);
-  theMapper->SetColorModeToMapScalars();
-  theMapper->SetScalarRange( theLookup->GetRange() );
-  theMapper->SetLookupTable(theLookup);
-  theMapper->Update();
+  return InitLookupTable(0.9, 0.9, 0.9);
+}
+
+//! Initializes the passed VTK mapper with the given Lookup Table.
+//! \param pMapper         [in/out] mapper to initialize.
+//! \param pLookup         [in]     Lookup Table to initialize the mapper with.
+//! \param pScalarsArrName [in]     name of the array storing the scalars
+//!                                 for colorization.
+void asiVisu_MeshUtils::InitMapper(vtkMapper*      pMapper,
+                                   vtkLookupTable* pLookup,
+                                   const char*     pScalarsArrName)
+{
+  pMapper->ScalarVisibilityOn();
+  pMapper->SetScalarModeToUseCellFieldData();
+  pMapper->SelectColorArray(pScalarsArrName);
+  pMapper->SetColorModeToMapScalars();
+  pMapper->SetScalarRange( pLookup->GetRange() );
+  pMapper->SetLookupTable(pLookup);
+  pMapper->Update();
 }
 
 //! Initializes the passed VTK mapper with the default Lookup Table.
-//! \param theMapper         [in/out] mapper to initialize.
-//! \param theScalarsArrName [in]     name of the array storing the scalars
-//!                                   for colorization.
-void asiVisu_MeshUtils::InitMapper(vtkMapper*  theMapper,
-                                   const char* theScalarsArrName)
+//! \param pMapper         [in,out] mapper to initialize.
+//! \param pScalarsArrName [in]     name of the array storing the scalars
+//!                                 for colorization.
+void asiVisu_MeshUtils::InitMapper(vtkMapper*  pMapper,
+                                   const char* pScalarsArrName)
 {
-  vtkSmartPointer<vtkLookupTable> aLookup = InitLookupTable();
-  InitMapper(theMapper, aLookup, theScalarsArrName);
+  vtkSmartPointer<vtkLookupTable> lookup = InitLookupTable();
+  InitMapper(pMapper, lookup, pScalarsArrName);
+}
+
+//! Initializes mapper and sets the passed color as a default one for facets.
+void asiVisu_MeshUtils::InitMapper(vtkMapper*   pMapper,
+                                   const char*  pScalarsArrName,
+                                   const double ref_r,
+                                   const double ref_g,
+                                   const double ref_b)
+{
+  vtkSmartPointer<vtkLookupTable> lookup = InitLookupTable(ref_r, ref_g, ref_b);
+  InitMapper(pMapper, lookup, pScalarsArrName);
 }
 
 //! Returns default shrink factor for meshes.

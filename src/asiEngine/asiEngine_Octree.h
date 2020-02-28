@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 20 November 2015
+// Created on: 27 February 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,63 +28,57 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_MeshUtils_h
-#define asiVisu_MeshUtils_h
+#ifndef asiEngine_Octree_h
+#define asiEngine_Octree_h
 
-// Visualization includes
-#include <asiVisu.h>
+// asiEngine includes
+#include <asiEngine_Base.h>
 
-// VTK includes
-#include <vtkLookupTable.h>
-#include <vtkMapper.h>
-#include <vtkSmartPointer.h>
+// asiData includes
+#include <asiData_OctreeNode.h>
 
-// OCCT includes
-#include <Standard_Type.hxx>
+//-----------------------------------------------------------------------------
 
-//! Auxiliary functions supporting mesh presentations in VTK viewer.
-namespace asiVisu_MeshUtils
+//! Data Model API for octrees.
+class asiEngine_Octree : public asiEngine_Base
 {
-  asiVisu_EXPORT vtkSmartPointer<vtkLookupTable>
-    InitLookupTable(const double ref_r,
-                    const double ref_g,
-                    const double ref_b);
+public:
 
-  asiVisu_EXPORT vtkSmartPointer<vtkLookupTable>
-    InitLookupTable();
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Octree(const Handle(asiEngine_Model)& model,
+                   ActAPI_ProgressEntry           progress = nullptr,
+                   ActAPI_PlotterEntry            plotter  = nullptr)
+  //
+  : asiEngine_Base(model, progress, plotter)
+  {}
 
-  asiVisu_EXPORT void
-    InitMapper(vtkMapper*      pMapper,
-               vtkLookupTable* pLookup,
-               const char*     pScalarsArrName);
+public:
 
-  asiVisu_EXPORT void
-    InitMapper(vtkMapper*  pMapper,
-               const char* pScalarsArrName);
+  //! Creates octree under the passed owner Node.
+  //! \param[in] owner owner Node.
+  //! \return newly created Octree Node.
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    CreateOctree(const Handle(ActAPI_INode)& owner);
 
-  asiVisu_EXPORT void
-    InitMapper(vtkMapper*   pMapper,
-               const char*  pScalarsArrName,
-               const double ref_r,
-               const double ref_g,
-               const double ref_b);
+  //! Finds or creates an Octree Node.
+  //! \param[in] owner  owner of the Octree Node (i.e., its parent Node).
+  //! \param[in] create whether to create if the Octree Node does not exist.
+  //! \return found or the newly created Octree Node.
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    FindOctree(const Handle(ActAPI_INode)& owner,
+               const bool                  create);
 
-  asiVisu_EXPORT double
-    DefaultShrinkFactor();
+  //! Sets octree for the passed owner Node.
+  //! \param[in] owner   owner of the Octree Node (i.e., its parent Node).
+  //! \param[in] pOctree octree to set.
+  //! \return Octree Node.
+  asiEngine_EXPORT Handle(asiData_OctreeNode)
+    SetOctree(const Handle(ActAPI_INode)& owner,
+              void*                       pOctree);
 
-  asiVisu_EXPORT double
-    DefaultPointSize();
-
-  asiVisu_EXPORT void
-    DefaultContourColor(double& fR,
-                        double& fG,
-                        double& fB);
-
-  asiVisu_EXPORT double
-    DefaultContourLineWidth();
-
-  asiVisu_EXPORT double
-    DefaultContourOpacity();
 };
 
 #endif

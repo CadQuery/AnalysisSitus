@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Created on: 10 July 2017
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2017-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ asiData_TriangulationNode::asiData_TriangulationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(RealArray,     PID_Options);
   REGISTER_PARAMETER(Group,         PID_GroupPrs);
   REGISTER_PARAMETER(Int,           PID_DisplayMode);
-  REGISTER_PARAMETER(Bool,          PID_HasColor);
+  REGISTER_PARAMETER(Bool,          PID_UseScalars);
   REGISTER_PARAMETER(Int,           PID_Color);
   REGISTER_PARAMETER(Bool,          PID_HasVertices);
 
@@ -66,23 +66,21 @@ Handle(ActAPI_INode) asiData_TriangulationNode::Instance()
 //! Performs initial actions required to make the Node WELL-FORMED.
 void asiData_TriangulationNode::Init()
 {
-  // Initialize name Parameter
+  // Initialize name Parameter.
   this->InitParameter(PID_Name, "Name");
 
-  // Set empty initial mesh with empty options
-  this->SetOptions(nullptr);
-  this->SetBVH(nullptr);
-
-  // Set Presentation values
-  this->SetHasColor    (true);
-  this->SetColor       (2500134); // Sort of dark color.
-  this->SetDisplayMode (1);       // Shading.
+  // Set default values.
+  this->SetOptions     (nullptr);
+  this->SetBVH         (nullptr);
+  this->SetUseScalars  (true);
+  this->SetColor       (190 << 16 | 190 << 8 | 190); // Initial color.
+  this->SetDisplayMode (1);
   this->SetHasVertices (false);
 
   // Initialize Parameter flags.
   this->InitParameter(PID_GroupPrs,    "Presentation",  "",                   ParameterFlag_IsVisible, true);
   this->InitParameter(PID_DisplayMode, "Display mode",  "PrsMeshDisplayMode", 0,                       true);
-  this->InitParameter(PID_HasColor,    "Colorized",     "",                   ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_UseScalars,  "Use scalars",   "",                   ParameterFlag_IsVisible, true);
   this->InitParameter(PID_Color,       "Color",         "PrsCustomColor",     ParameterFlag_IsVisible, true);
   this->InitParameter(PID_HasVertices, "Show vertices", "",                   ParameterFlag_IsVisible, true);
 }
@@ -156,20 +154,20 @@ void asiData_TriangulationNode::SetOptions(const Handle(TColStd_HArray1OfReal)& 
   ActParamTool::AsRealArray( this->Parameter(PID_Options) )->SetArray(options);
 }
 
-//! Sets the Boolean value indicating whether the color Parameter of this
-//! Data Node is in force.
-//! \param hasColor [in] value to set.
-void asiData_TriangulationNode::SetHasColor(const bool hasColor) const
+//! Sets the Boolean value indicating whether the scalars are to be used for
+//! coloring the Part's Presentation.
+//! \param on [in] value to set.
+void asiData_TriangulationNode::SetUseScalars(const bool on)
 {
-  ActParamTool::AsBool( this->Parameter(PID_HasColor) )->SetValue(hasColor);
+  ActParamTool::AsBool( this->Parameter(PID_UseScalars) )->SetValue(on);
 }
 
 //! Accessor for the value of the Boolean Parameter indicating whether the
-//! Color Parameter of this Data Node is in force.
+//! scalars are active.
 //! \return true/false.
-bool asiData_TriangulationNode::HasColor() const
+bool asiData_TriangulationNode::GetUseScalars() const
 {
-  return ActParamTool::AsBool( this->Parameter(PID_HasColor) )->GetValue();
+  return ActParamTool::AsBool( this->Parameter(PID_UseScalars) )->GetValue();
 }
 
 //! Sets color.
@@ -213,4 +211,19 @@ void asiData_TriangulationNode::SetHasVertices(const bool hasVertices)
 bool asiData_TriangulationNode::HasVertices() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_HasVertices) )->GetValue();
+}
+
+//! \return underlying Node which stores octree.
+Handle(asiData_OctreeNode) asiData_TriangulationNode::GetOctree() const
+{
+  Handle(asiData_OctreeNode) octree_n;
+  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
+  {
+    octree_n = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
+
+    if ( !octree_n.IsNull() && octree_n->IsWellFormed() )
+      return octree_n;
+  }
+
+  return nullptr;
 }

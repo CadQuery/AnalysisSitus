@@ -652,8 +652,24 @@ void asiUI_ObjectBrowser::onCopyName()
   clipboard->setText( ExtStr2QStr( selected_n->GetName() ) );
 
   // Notify.
-  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's name: %1"
+  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's name: '%1'."
                                              << selected_n->GetName() );
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onCopyID()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  // Set to clipboard.
+  QClipboard* clipboard = QApplication::clipboard();
+  clipboard->setText( ExtStr2QStr( selected_n->GetId() ) );
+
+  // Notify.
+  m_progress.SendLogMessage( LogInfo(Normal) << "Selected Node's ID: %1."
+                                             << selected_n->GetId() );
 }
 
 //-----------------------------------------------------------------------------
@@ -947,6 +963,7 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
   {
     pMenu->addAction( "Print parameters", this, SLOT( onPrintParameters () ) );
     pMenu->addAction( "Copy name",        this, SLOT( onCopyName        () ) );
+    pMenu->addAction( "Copy ID",          this, SLOT( onCopyID          () ) );
   }
   //
   if ( node->IsKind( STANDARD_TYPE(asiData_RootNode) ) )

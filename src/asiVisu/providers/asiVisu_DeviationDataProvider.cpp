@@ -40,7 +40,7 @@ asiVisu_DeviationDataProvider::asiVisu_DeviationDataProvider(const Handle(asiDat
 : asiVisu_MeshNScalarDataProvider()
 {
   m_node  = N;
-  m_param = ActParamTool::AsTriangulation( N->Parameter(asiData_DeviationNode::PID_Mesh) );
+  m_triangulationParam = ActParamTool::AsTriangulation( N->Parameter(asiData_DeviationNode::PID_Mesh) );
 }
 
 //-----------------------------------------------------------------------------

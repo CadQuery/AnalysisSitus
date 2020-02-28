@@ -67,6 +67,24 @@ void onModelLoaded(const TopoDS_Shape& loadedShape)
 
 //-----------------------------------------------------------------------------
 
+void onModelLoaded(const Handle(Poly_Triangulation)& loadedMesh)
+{
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    cmdEngine::model->GetTriangulationNode()->SetTriangulation(loadedMesh);
+  }
+  cmdEngine::model->CommitCommand();
+
+  if ( cmdEngine::cf )
+  {
+    // Update viewer.
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetTriangulationNode() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_LoadStep(const Handle(asiTcl_Interp)& interp,
                     int                          argc,
                     const char**                 argv)
@@ -194,6 +212,32 @@ int ENGINE_LoadBRep(const Handle(asiTcl_Interp)& interp,
 
   return TCL_OK;
 }
+//-----------------------------------------------------------------------------
+
+int ENGINE_LoadSTL(const Handle(asiTcl_Interp)& interp,
+                   int                          argc,
+                   const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  TCollection_AsciiString filename(argv[1]);
+
+  // Read STL
+  Handle(Poly_Triangulation) mesh;
+  if ( !asiAlgo_Utils::ReadStl( filename, mesh, interp->GetProgress() ) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot read STL file.");
+    return TCL_ERROR;
+  }
+
+  onModelLoaded(mesh);
+
+  return TCL_OK;
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -299,6 +343,14 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Loads BREP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadBRep);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("load-stl",
+    //
+    "load-stl filename\n"
+    "\t Loads STL file to the active triangulation.",
+    //
+    __FILE__, group, ENGINE_LoadSTL);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-aag-json",

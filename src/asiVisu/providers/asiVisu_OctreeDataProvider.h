@@ -36,7 +36,6 @@
 
 // asiData includes
 #include <asiData_OctreeNode.h>
-#include <asiData_PartNode.h>
 
 class asiAlgo_BVHFacets;
 
@@ -101,8 +100,8 @@ protected:
 
 protected:
 
-  Handle(asiData_OctreeNode) m_node;     //!< Octree Node.
-  Handle(asiData_PartNode)   m_partNode; //!< Part Node.
+  Handle(asiData_OctreeNode) m_node;      //!< Octree Node.
+  Handle(ActAPI_INode)       m_ownerNode; //!< Owner Node.
 
 };
 

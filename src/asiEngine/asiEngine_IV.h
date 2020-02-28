@@ -37,6 +37,8 @@
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
 
+class asiAlgo_BVHFacets;
+
 //! API for imperative viewer (IV).
 class asiEngine_IV : public asiEngine_Base
 {
@@ -195,6 +197,9 @@ public:
   asiEngine_EXPORT void
     Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
                     const TopoDS_Shape&                   shape);
+
+  asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
+    BuildBVH(const Handle(asiData_IVTopoItemNode)& owner);
 
   asiEngine_EXPORT void
     Clean_Topo();

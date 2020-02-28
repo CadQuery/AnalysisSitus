@@ -32,7 +32,7 @@
 #define asiData_TriangulationNode_h
 
 // asiData includes
-#include <asiData.h>
+#include <asiData_OctreeNode.h>
 
 // asiAlgo includes
 #include <asiAlgo_BVHFacets.h>
@@ -80,7 +80,7 @@ public:
   //-------------------//
     PID_GroupPrs,      //!< Presentation group.
     PID_DisplayMode,   //!< Display mode.
-    PID_HasColor,      //!< Indicates whether the Color Parameter is active.
+    PID_UseScalars,    //!< Indicates whether to use scalars for coloring.
     PID_Color,         //!< Color.
     PID_HasVertices,   //!< Indicates whether vertices are active.
   //-------------------//
@@ -126,10 +126,10 @@ public:
     SetOptions(const Handle(TColStd_HArray1OfReal)& options);
 
   asiData_EXPORT void
-    SetHasColor(const bool hasColor) const;
+    SetUseScalars(const bool);
 
   asiData_EXPORT bool
-    HasColor() const;
+    GetUseScalars() const;
 
   asiData_EXPORT void
     SetColor(const int color) const;
@@ -148,6 +148,11 @@ public:
 
   asiData_EXPORT bool
     HasVertices() const;
+
+public:
+
+  asiData_EXPORT Handle(asiData_OctreeNode)
+    GetOctree() const;
 
 // Initialization:
 public:

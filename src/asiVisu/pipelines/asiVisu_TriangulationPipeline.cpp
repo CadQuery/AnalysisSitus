@@ -32,6 +32,7 @@
 #include <asiVisu_TriangulationPipeline.h>
 
 // asiVisu includes
+#include <asiVisu_MeshUtils.h>
 #include <asiVisu_TriangulationDataProvider.h>
 #include <asiVisu_TriangulationNodeInfo.h>
 #include <asiVisu_Utils.h>
@@ -49,7 +50,11 @@
 //-----------------------------------------------------------------------------
 
 asiVisu_TriangulationPipeline::asiVisu_TriangulationPipeline()
-: asiVisu_TriangulationPipelineBase(nullptr)
+: asiVisu_TriangulationPipelineBase (nullptr),
+  m_fPartRed                        (0.),
+  m_fPartGreen                      (0.),
+  m_fPartBlue                       (0.),
+  m_bScalarsOn                      (false)
 {
   m_dmFilter->SetDisplayMode(MeshDisplayMode_Shaded);
 
@@ -81,6 +86,12 @@ void asiVisu_TriangulationPipeline::SetInput(const Handle(asiVisu_DataProvider)&
     return; // Do nothing
   }
 
+  // Update part-wise colors.
+  DP->GetColor(m_fPartRed, m_fPartGreen, m_fPartBlue);
+
+  // Update use of scalars flag.
+  m_bScalarsOn = DP->HasScalars();
+
   /* ====================
    *  Configure pipeline
    * ==================== */
@@ -103,4 +114,27 @@ void asiVisu_TriangulationPipeline::SetInput(const Handle(asiVisu_DataProvider)&
 
   // Update modification timestamp
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for Update() routine.
+void asiVisu_TriangulationPipeline::callback_update()
+{
+  if ( m_bScalarsOn )
+  {
+    asiVisu_MeshUtils::InitMapper(m_mapper,
+                                  ARRNAME_MESH_ITEM_TYPE,
+                                  m_fPartRed,
+                                  m_fPartGreen,
+                                  m_fPartBlue);
+
+    if ( !m_bMapperColorsSet )
+      m_bMapperColorsSet = true;
+  }
+  else
+  {
+    m_mapper->ScalarVisibilityOff();
+    m_mapper->Update();
+  }
 }

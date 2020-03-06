@@ -33,6 +33,7 @@
 
 // asiEngine includes
 #include <asiEngine_BuildEdgeFunc.h>
+#include <asiEngine_BuildOctreeFunc.h>
 #include <asiEngine_BuildPatchFunc.h>
 #include <asiEngine_SmoothenCornersFunc.h>
 #include <asiEngine_SmoothenPatchesFunc.h>
@@ -343,6 +344,7 @@ void asiEngine_Model::initFunctionDrivers()
   REGISTER_TREE_FUNCTION(ActData_RealEvaluatorFunc);
   //
   REGISTER_TREE_FUNCTION(asiEngine_BuildEdgeFunc);
+  REGISTER_TREE_FUNCTION(asiEngine_BuildOctreeFunc);
   REGISTER_TREE_FUNCTION(asiEngine_BuildPatchFunc);
   REGISTER_TREE_FUNCTION(asiEngine_SmoothenCornersFunc);
   REGISTER_TREE_FUNCTION(asiEngine_SmoothenPatchesFunc);

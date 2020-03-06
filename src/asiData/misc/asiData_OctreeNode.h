@@ -60,6 +60,23 @@ public:
   //----------------------//
     PID_Name,             //!< Name of the Node.
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
+    PID_BuildFunc,        //!< Tree Function Parameter to build the octree.
+  //----------------------//
+    PID_ResolutionGroup,  //!< Group for octree resolution parameters.
+    PID_MinCellSize,      //!< Min cell size.
+    PID_MaxCellSize,      //!< Max cell size.
+    PID_Precision,        //!< Precision.
+  //----------------------//
+    PID_DomainGroup,      //!< Group of domain corner Parameters.
+    PID_DomainMinX,       //!< X coordinate of the min domain corner.
+    PID_DomainMinY,       //!< Y coordinate of the min domain corner.
+    PID_DomainMinZ,       //!< Z coordinate of the min domain corner.
+    PID_DomainMaxX,       //!< X coordinate of the max domain corner.
+    PID_DomainMaxY,       //!< Y coordinate of the max domain corner.
+    PID_DomainMaxZ,       //!< Z coordinate of the max domain corner.
+    PID_DomainIsCube,     //!< Indicates whether the domain is a cube.
+  //----------------------//
+    PID_OutputsGroup,     //!< Group of outputs.
     PID_SamplingStrategy, //!< Sampling strategy.
     PID_ExtractPoints,    //!< Whether to extract points instead of voxels.
     PID_MaxVectorSize,    //!< Max vector size.
@@ -143,6 +160,71 @@ public:
   //! \param[in] numElems the number of elements to store.
   asiData_EXPORT void
     SetNumElements(const int numElems);
+
+  //! Returns the coordindates of the min domain corner.
+  //! \param[out] x X coordinate.
+  //! \param[out] y Y coordinate.
+  //! \param[out] z Z coordinate.
+  asiData_EXPORT void
+    GetDomainMinCorner(double& x, double& y, double& z) const;
+
+  //! Sets the coordindates of the min domain corner.
+  //! \param[in] x X coordinate.
+  //! \param[in] y Y coordinate.
+  //! \param[in] z Z coordinate.
+  asiData_EXPORT void
+    SetDomainMinCorner(const double x, const double y, const double z);
+
+  //! Returns the coordindates of the max domain corner.
+  //! \param[out] x X coordinate.
+  //! \param[out] y Y coordinate.
+  //! \param[out] z Z coordinate.
+  asiData_EXPORT void
+    GetDomainMaxCorner(double& x, double& y, double& z) const;
+
+  //! Sets the coordindates of the max domain corner.
+  //! \param[in] x X coordinate.
+  //! \param[in] y Y coordinate.
+  //! \param[in] z Z coordinate.
+  asiData_EXPORT void
+    SetDomainMaxCorner(const double x, const double y, const double z);
+
+  //! \return true/false.
+  asiData_EXPORT bool
+    IsDomainCube() const;
+
+  //! Sets the flag indicating whether the octree definition domain
+  //! is a bounding cube.
+  //! \param[in] isCube flag to set.
+  asiData_EXPORT void
+    SetDomainCube(const bool isCube);
+
+  //! \return min cell size.
+  asiData_EXPORT double
+    GetMinCellSize() const;
+
+  //! Sets min cell size.
+  //! \param[in] cellSize value to set.
+  asiData_EXPORT void
+    SetMinCellSize(const double cellSize);
+
+  //! \return max cell size.
+  asiData_EXPORT double
+    GetMaxCellSize() const;
+
+  //! Sets max cell size.
+  //! \param[in] cellSize value to set.
+  asiData_EXPORT void
+    SetMaxCellSize(const double cellSize);
+
+  //! \return voxelization precision.
+  asiData_EXPORT double
+    GetPrecision() const;
+
+  //! Sets precision.
+  //! \param[in] value value to set.
+  asiData_EXPORT void
+    SetPrecision(const double value);
 
 protected:
 

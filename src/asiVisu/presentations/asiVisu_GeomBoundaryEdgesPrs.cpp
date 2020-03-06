@@ -106,7 +106,7 @@ Handle(asiVisu_Prs) asiVisu_GeomBoundaryEdgesPrs::Instance(const Handle(ActAPI_I
 //! \return true/false.
 bool asiVisu_GeomBoundaryEdgesPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

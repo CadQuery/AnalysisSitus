@@ -134,6 +134,7 @@ signals:
 //-----------------------------------------------------------------------------
 protected slots:
 
+  void onDataChanged           (const QModelIndex&, const QModelIndex&, const QVector<int>&);
   void onSelectionChanged      ();
   void onContextMenu           (QPoint pos);
   void onShow                  ();
@@ -176,6 +177,12 @@ protected:
   bool selectedNode  (Handle(ActAPI_INode)&     Node) const;
   bool selectedNode  (Handle(ActAPI_INode)&     Node, QTreeWidgetItem*& pItem) const;
   bool selectedNodes (Handle(ActAPI_HNodeList)& Nodes) const;
+
+  /* Show/hide */
+
+  void showNodes     (const Handle(ActAPI_HNodeList)& nodes);
+  void showOnlyNodes (const Handle(ActAPI_HNodeList)& nodes);
+  void hideNodes     (const Handle(ActAPI_HNodeList)& nodes);
 
 protected:
 

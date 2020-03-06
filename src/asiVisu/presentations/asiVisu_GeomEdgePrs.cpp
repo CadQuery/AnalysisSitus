@@ -85,7 +85,7 @@ Handle(asiVisu_Prs) asiVisu_GeomEdgePrs::Instance(const Handle(ActAPI_INode)& th
 //! \return true/false.
 bool asiVisu_GeomEdgePrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

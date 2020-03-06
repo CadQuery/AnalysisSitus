@@ -47,7 +47,7 @@ public:
 
   virtual bool IsVisible() const
   {
-    return true;
+    return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
   }
 
 // Callbacks:

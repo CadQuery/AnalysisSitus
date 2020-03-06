@@ -85,7 +85,7 @@ Handle(asiVisu_Prs) asiVisu_CurvatureCombsPrs::Instance(const Handle(ActAPI_INod
 //! \return true/false.
 bool asiVisu_CurvatureCombsPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

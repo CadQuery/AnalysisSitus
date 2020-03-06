@@ -84,7 +84,7 @@ Handle(asiVisu_Prs) asiVisu_GeomFaceContourPrs::Instance(const Handle(ActAPI_INo
 //! \return true/false.
 bool asiVisu_GeomFaceContourPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

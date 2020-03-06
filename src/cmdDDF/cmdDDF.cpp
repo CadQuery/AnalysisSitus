@@ -136,10 +136,12 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
 
   // Check the owner type (it should have BVH facets).
   Handle(asiAlgo_BVHFacets) bvh;
+  int                       bvhPid;
   //
   if ( ownerNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
   {
-    bvh = Handle(asiData_PartNode)::DownCast(ownerNode)->GetBVH();
+    bvh    = Handle(asiData_PartNode)::DownCast(ownerNode)->GetBVH();
+    bvhPid = asiData_PartNode::PID_BVH;
 
     if ( bvh.IsNull() )
     {
@@ -153,7 +155,8 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   }
   else if ( ownerNode->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
   {
-    bvh = Handle(asiData_TriangulationNode)::DownCast(ownerNode)->GetBVH();
+    bvh    = Handle(asiData_TriangulationNode)::DownCast(ownerNode)->GetBVH();
+    bvhPid = asiData_TriangulationNode::PID_BVH;
 
     if ( bvh.IsNull() )
     {
@@ -170,7 +173,8 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
     Handle(asiData_IVTopoItemNode)
       topoItemNode = Handle(asiData_IVTopoItemNode)::DownCast(ownerNode);
     //
-    bvh = topoItemNode->GetBVH();
+    bvh    = topoItemNode->GetBVH();
+    bvhPid = asiData_IVTopoItemNode::PID_BVH;
 
     if ( bvh.IsNull() )
     {
@@ -197,67 +201,30 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Voxelization with min cell size %1 and precision %2."
                                                        << minSize << prec);
-
-  /* =============================
-   *  Construct distance function.
-   * ============================= */
-
-  TIMER_NEW
-  TIMER_GO
-
-  asiAlgo_MeshDistanceFunc*
-    pDistFunc = new asiAlgo_MeshDistanceFunc(bvh, poly_DistanceFunc::Mode_Signed, isCube);
-
-  pDistFunc->asiPlotter  = interp->GetPlotter();
-  pDistFunc->asiProgress = interp->GetProgress();
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Construct implicit distance function")
-
-  /* ==========================
-   *  Construct distance field.
-   * ========================== */
-
-  TIMER_RESET
-  TIMER_GO
-
-  poly_DistanceField* pDDF = new poly_DistanceField();
-  //
-  pDDF->SetMaxCellSize(maxSize);
-  //
-  if ( !pDDF->Build(minSize, prec, pDistFunc) )
-  {
-    delete pDDF;
-
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
-    return TCL_ERROR;
-  }
-
-  TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build SVO for distance field")
-
-  poly_SVO* pRoot = pDDF->GetRoot();
-
-  // Measure SVO.
-  int                      numSVONodes = 0;
-  const unsigned long long memBytes    = pRoot->GetMemoryInBytes(numSVONodes);
-  const double             memMBytes   = memBytes / (1024.*1024.);
-  //
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
-                                                        << numSVONodes << int(memBytes) << memMBytes );
-
   // Show voxels.
   Handle(asiData_OctreeNode) octreeNode;
   //
   M->OpenCommand();
   {
-    octreeNode = asiEngine_Octree(M).SetOctree(ownerNode, pRoot);
+    octreeNode = asiEngine_Octree(M).CreateOctree(ownerNode, bvhPid);
 
-    // Set the number of SVO nodes.
-    octreeNode->SetNumElements(numSVONodes);
+    const BVH_Vec3d& cornerMin = bvh->Box().CornerMin();
+    const BVH_Vec3d& cornerMax = bvh->Box().CornerMax();
+
+    // Initialize.
+    octreeNode->SetMinCellSize     ( minSize );
+    octreeNode->SetMaxCellSize     ( maxSize );
+    octreeNode->SetPrecision       ( prec );
+    octreeNode->SetDomainCube      ( isCube );
+    octreeNode->SetDomainMinCorner ( cornerMin.x(), cornerMin.y(), cornerMin.z() );
+    octreeNode->SetDomainMaxCorner ( cornerMax.x(), cornerMax.y(), cornerMax.z() );
+
+    // Execute tree functions.
+    M->FuncExecuteAll();
   }
   M->CommitCommand();
-  //
+
+  // Update UI.
   cmdDDF::cf->ObjectBrowser->Populate();
   cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
 

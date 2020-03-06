@@ -102,7 +102,7 @@ Handle(asiVisu_Prs) asiVisu_GeomCurvePrs::Instance(const Handle(ActAPI_INode)& t
 //! \return true/false.
 bool asiVisu_GeomCurvePrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

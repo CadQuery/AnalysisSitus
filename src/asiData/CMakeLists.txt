@@ -37,9 +37,6 @@ set (part_H_FILES
   part/asiData_MetadataNode.h
   part/asiData_NamingAttr.h
   part/asiData_NamingParameter.h
-  part/asiData_OctreeAttr.h
-  part/asiData_OctreeNode.h
-  part/asiData_OctreeParameter.h
   part/asiData_PartNode.h
   part/asiData_SurfDeviationNode.h
   part/asiData_SurfNode.h
@@ -64,9 +61,6 @@ set (part_CPP_FILES
   part/asiData_MetadataNode.cpp
   part/asiData_NamingAttr.cpp
   part/asiData_NamingParameter.cpp
-  part/asiData_OctreeAttr.cpp
-  part/asiData_OctreeNode.cpp
-  part/asiData_OctreeParameter.cpp
   part/asiData_PartNode.cpp
   part/asiData_SurfDeviationNode.cpp
   part/asiData_SurfNode.cpp
@@ -142,12 +136,18 @@ set (misc_H_FILES
   misc/asiData_DesignLawNode.h
   misc/asiData_FuncAttr.h
   misc/asiData_FuncParameter.h
+  misc/asiData_OctreeAttr.h
+  misc/asiData_OctreeNode.h
+  misc/asiData_OctreeParameter.h
 )
 set (misc_CPP_FILES
   misc/asiData_ContourNode.cpp
   misc/asiData_DesignLawNode.cpp
   misc/asiData_FuncAttr.cpp
   misc/asiData_FuncParameter.cpp
+  misc/asiData_OctreeAttr.cpp
+  misc/asiData_OctreeNode.cpp
+  misc/asiData_OctreeParameter.cpp
 )
 
 #------------------------------------------------------------------------------

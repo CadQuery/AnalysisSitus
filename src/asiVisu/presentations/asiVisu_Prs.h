@@ -36,6 +36,9 @@
 #include <asiVisu_Pipeline.h>
 #include <asiVisu_Selection.h>
 
+// asiData includes
+#include <asiData_NodeFlags.h>
+
 // Active Data (API) includes
 #include <ActAPI_IModel.h>
 #include <ActAPI_INode.h>

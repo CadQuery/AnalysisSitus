@@ -62,6 +62,21 @@ public:
                              const Mode                       mode = Mode_Unsigned,
                              const bool                       cube = false);
 
+  //! Ctor with initialization.
+  //! \param[in] facets    faceted representation of a shape to measure distance to..
+  //! \param[in] domainMin min corner point of the function domain.
+  //! \param[in] domainMax max corner point of the function domain.
+  //! \param[in] mode      distance calculation mode.
+  //! \param[in] cube      indicates whether the distance function should be
+  //!                      defined in a cube rather than in the bounding
+  //!                      parallelepiped.
+  asiAlgo_EXPORT
+    asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
+                             const gp_XYZ&                    domainMin,
+                             const gp_XYZ&                    domainMax,
+                             const Mode                       mode = Mode_Unsigned,
+                             const bool                       cube = false);
+
 public:
 
   //! Initializes the distance function with the existing mesh.
@@ -72,6 +87,20 @@ public:
   //! \return true/false.
   asiAlgo_EXPORT bool
     Init(const Handle(asiAlgo_BVHFacets)& facets,
+         const bool                       cube = false);
+
+  //! Initializes the distance function with the existing mesh.
+  //! \param[in] facets    faceted representation of a shape to measure distance to.
+  //! \param[in] domainMin min corner point of the function domain.
+  //! \param[in] domainMax max corner point of the function domain.
+  //! \param[in] cube      indicates whether the distance function should be
+  //!                      defined in a cube rather than in the bounding
+  //!                      parallelepiped.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    Init(const Handle(asiAlgo_BVHFacets)& facets,
+         const gp_XYZ&                    domainMin,
+         const gp_XYZ&                    domainMax,
          const bool                       cube = false);
 
 public:
@@ -86,8 +115,8 @@ public:
 
 protected:
 
-  Handle(asiAlgo_BVHFacets)  m_facets;    //!< BVH for shape represented with facets.
-  mutable asiAlgo_BullardRNG m_RNG;       //!< Random number generator.
+  Handle(asiAlgo_BVHFacets)  m_facets; //!< BVH for shape represented with facets.
+  mutable asiAlgo_BullardRNG m_RNG;    //!< Random number generator.
 
 public:
 

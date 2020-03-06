@@ -218,7 +218,7 @@ Handle(asiVisu_Prs) asiVisu_GeomSurfPrs::Instance(const Handle(ActAPI_INode)& th
 //! \return true/false.
 bool asiVisu_GeomSurfPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

@@ -75,7 +75,7 @@ Handle(asiVisu_Prs) asiVisu_GeomFaceNormsPrs::Instance(const Handle(ActAPI_INode
 //! \return true/false.
 bool asiVisu_GeomFaceNormsPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

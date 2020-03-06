@@ -31,10 +31,14 @@
 // Own include
 #include <asiEngine_Octree.h>
 
+// asiData includes
+#include <asiEngine_BuildOctreeFunc.h>
+
 //-----------------------------------------------------------------------------
 
 Handle(asiData_OctreeNode)
-  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner)
+  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner,
+                                 const int                   ownerBVH)
 {
   Handle(asiData_OctreeNode)
     node = Handle(asiData_OctreeNode)::DownCast( asiData_OctreeNode::Instance() );
@@ -43,7 +47,25 @@ Handle(asiData_OctreeNode)
 
   // Initialize.
   node->Init();
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetName("SVO");
+
+  // Attach tree function.
+  node->ConnectTreeFunction( asiData_OctreeNode::PID_BuildFunc,
+                             asiEngine_BuildOctreeFunc::GUID(),
+                             ActParamStream() << owner->Parameter(ownerBVH)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMinX)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMinY)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMinZ)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMaxX)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMaxY)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainMaxZ)
+                                              << node->Parameter(asiData_OctreeNode::PID_DomainIsCube)
+                                              << node->Parameter(asiData_OctreeNode::PID_MinCellSize)
+                                              << node->Parameter(asiData_OctreeNode::PID_MaxCellSize)
+                                              << node->Parameter(asiData_OctreeNode::PID_Precision),
+                             ActParamStream() << node->Parameter(asiData_OctreeNode::PID_Octree)
+                                              << node->Parameter(asiData_OctreeNode::PID_NumElements) );
 
   // Set as child for the owner Node.
   owner->AddChildNode(node);
@@ -55,6 +77,7 @@ Handle(asiData_OctreeNode)
 
 Handle(asiData_OctreeNode)
   asiEngine_Octree::FindOctree(const Handle(ActAPI_INode)& owner,
+                               const int                   ownerBVH,
                                const bool                  create)
 {
   if ( owner.IsNull() || !owner->IsWellFormed() )
@@ -75,24 +98,8 @@ Handle(asiData_OctreeNode)
   if ( octreeNode.IsNull() && create )
   {
     // Create Octree Node.
-    octreeNode = this->CreateOctree(owner);
+    octreeNode = this->CreateOctree(owner, ownerBVH);
   }
-
-  return octreeNode;
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(asiData_OctreeNode)
-  asiEngine_Octree::SetOctree(const Handle(ActAPI_INode)& owner,
-                              void*                       pOctree)
-{
-  // Get Octree Node.
-  Handle(asiData_OctreeNode) octreeNode = this->FindOctree(owner, true);
-
-  // Store in OCAF.
-  if ( !octreeNode.IsNull() && octreeNode->IsWellFormed() )
-    octreeNode->SetOctree(pOctree);
 
   return octreeNode;
 }

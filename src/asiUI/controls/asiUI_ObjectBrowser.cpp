@@ -53,6 +53,9 @@
 #include <asiAlgo_PatchJointAdaptor.h>
 #include <asiAlgo_Utils.h>
 
+// OpenCascade includes
+#include <TDF_Tool.hxx>
+
 // Qt includes
 #pragma warning(push, 0)
 #include <QApplication>
@@ -75,7 +78,7 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
   this->setMinimumWidth(TREEVIEW_MINSIZE);
   this->setEditTriggers(QAbstractItemView::NoEditTriggers);
   this->header()->hide();
-  this->setColumnCount(1);
+  this->setColumnCount(2);
   this->setAutoExpandDelay(0);
 
   // Populate.
@@ -85,12 +88,16 @@ asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
   this->setSelectionMode(QAbstractItemView::ExtendedSelection);
   this->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-  // Reactions.
+  /* Reactions. */
+
   connect( this, SIGNAL( itemSelectionChanged() ), this, SLOT( onSelectionChanged() ) );
-  //
+
   this->setContextMenuPolicy(Qt::CustomContextMenu);
-  //
+
   connect( this, SIGNAL( customContextMenuRequested(QPoint) ), this, SLOT( onContextMenu(QPoint) ) );
+
+  connect( this->model(), SIGNAL( dataChanged(const QModelIndex&, const QModelIndex&, const QVector<int>&) ),
+           this,          SLOT( onDataChanged(const QModelIndex&, const QModelIndex&, const QVector<int>&) ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -154,6 +161,10 @@ void asiUI_ObjectBrowser::Populate()
   // Reselect Node.
   if ( !selN.IsNull() )
     this->SetSelectedNode( selN->GetId() );
+
+  // Beautify.
+  this->resizeColumnToContents(0);
+  this->resizeColumnToContents(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -246,12 +257,22 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
   for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(); cit->More(); cit->Next() )
   {
     Handle(ActAPI_INode) child_n = cit->Value();
-    //
+
+    // Create child.
     QTreeWidgetItem* child_ui = new QTreeWidgetItem( QStringList() << ExtStr2QStr( child_n->GetName() ) );
 
+    // Configure child.
     child_ui->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );
     //
+    if ( child_n->GetUserFlags() & NodeFlag_IsPresentedInPartView ) 
+    {
+      child_ui->setFlags(child_ui->flags() | Qt::ItemIsUserCheckable);
+      child_ui->setCheckState(1, (child_n->GetUserFlags() & NodeFlag_IsPresentationVisible) ? Qt::Checked : Qt::Unchecked);
+    }
+    //
+    child_ui->setData( 0, BrowserRoleNodeId, AsciiStr2QStr( child_n->GetId() ) );
+
+    // Add child.
     root_ui->addChild(child_ui);
 
     // Check user flags which may customize visibility of an item.
@@ -260,6 +281,31 @@ void asiUI_ObjectBrowser::addChildren(const Handle(ActAPI_INode)& root_n,
 
     // Repeat recursively.
     this->addChildren(child_n, child_ui);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::onDataChanged(const QModelIndex&  topLeft,
+                                        const QModelIndex&  asiUI_NotUsed(bottomRight),
+                                        const QVector<int>& asiUI_NotUsed(roles))
+{
+  if ( topLeft.column() == 1 )
+  {
+    QTreeWidgetItem*         item_ui = this->itemFromIndex(topLeft);
+    TCollection_AsciiString  entry   = QStr2AsciiStr( item_ui->data(0, BrowserRoleNodeId).toString() );
+    Handle(ActAPI_INode)     N       = m_model->FindNode(entry);
+    Handle(ActAPI_HNodeList) nodes   = new ActAPI_HNodeList;
+    nodes->Append(N);
+
+    if ( item_ui->checkState(1) == Qt::Checked )
+    {
+      this->showNodes(nodes);
+    }
+    else
+    {
+      this->hideNodes(nodes);
+    }
   }
 }
 
@@ -315,21 +361,7 @@ void asiUI_ObjectBrowser::onShow()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
-  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
-  {
-    const Handle(ActAPI_INode)& N = nit.Value();
-
-    // Iterate over the associated viewer to find the one where the selected
-    // Node is presented.
-    for ( size_t k = 0; k < m_viewers.size(); ++k )
-      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
-      {
-        m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
-        m_viewers[k]->PrsMgr()->Actualize(N);
-      }
-
-    emit show( N->GetId() );
-  }
+  this->showNodes(selected_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -340,23 +372,7 @@ void asiUI_ObjectBrowser::onShowOnly()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
-  // Derender all presentations.
-  for ( size_t k = 0; k < m_viewers.size(); ++k )
-    if ( m_viewers[k] )
-      m_viewers[k]->PrsMgr()->DeRenderAllPresentations();
-
-  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
-  {
-    const Handle(ActAPI_INode)& N = nit.Value();
-
-    // Iterate over the associated viewer to find the one where the selected
-    // Node is presented.
-    for ( size_t k = 0; k < m_viewers.size(); ++k )
-      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
-        m_viewers[k]->PrsMgr()->Actualize(N);
-
-    emit showOnly( N->GetId() );
-  }
+  this->showOnlyNodes(selected_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -367,21 +383,7 @@ void asiUI_ObjectBrowser::onHide()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
-  for ( ActAPI_HNodeList::Iterator nit(*selected_n); nit.More(); nit.Next() )
-  {
-    const Handle(ActAPI_INode)& N = nit.Value();
-
-    // Iterate over the associated viewers to find the one where the selected
-    // Node is presented.
-    for ( size_t k = 0; k < m_viewers.size(); ++k )
-      if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
-      {
-        m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
-        m_viewers[k]->Repaint();
-      }
-
-    emit hide( N->GetId() );
-  }
+  this->hideNodes(selected_n);
 }
 
 //-----------------------------------------------------------------------------
@@ -629,11 +631,17 @@ void asiUI_ObjectBrowser::onPrintParameters()
   {
     const Handle(ActAPI_IUserParameter)& P = pit->Value();
 
+    TCollection_AsciiString paramEntry;
+    TDF_Tool::Entry(P->RootLabel(), paramEntry);
+
     dump += "\t";
     dump += "[";
     dump += pit->Key();
     dump += "] ";
     dump += P->DynamicType()->Name();
+    dump += " (";
+    dump += paramEntry;
+    dump += ")";
     dump += "\n";
   }
 
@@ -1112,4 +1120,100 @@ bool asiUI_ObjectBrowser::selectedNodes(Handle(ActAPI_HNodeList)& Nodes) const
   }
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::showNodes(const Handle(ActAPI_HNodeList)& nodes)
+{
+  m_model->OpenCommand();
+  {
+    for ( ActAPI_HNodeList::Iterator nit(*nodes); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& N = nit.Value();
+
+      N->AddUserFlags(NodeFlag_IsPresentationVisible);
+
+      // Iterate over the associated viewers to find the one where the selected
+      // Node is presented.
+      for ( size_t k = 0; k < m_viewers.size(); ++k )
+        if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+        {
+          m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
+          m_viewers[k]->PrsMgr()->Actualize(N);
+        }
+
+      emit show( N->GetId() );
+    }
+  }
+  m_model->CommitCommand();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::showOnlyNodes(const Handle(ActAPI_HNodeList)& nodes)
+{
+  m_model->OpenCommand();
+  {
+    // Remove visibility flags from all Nodes.
+    Handle(ActAPI_INode) root_n = m_model->GetRootNode();
+    //
+    for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(true);
+          cit->More();
+          cit->Next() )
+    {
+      Handle(ActAPI_INode) N = cit->Value();
+      //
+      if ( !N.IsNull() )
+        N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
+    }
+
+    // Derender all presentations.
+    for ( size_t k = 0; k < m_viewers.size(); ++k )
+      if ( m_viewers[k] )
+        m_viewers[k]->PrsMgr()->DeRenderAllPresentations();
+
+    for ( ActAPI_HNodeList::Iterator nit(*nodes); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& N = nit.Value();
+
+      N->AddUserFlags(NodeFlag_IsPresentationVisible);
+
+      // Iterate over the associated viewers to find the one where the selected
+      // Node is presented.
+      for ( size_t k = 0; k < m_viewers.size(); ++k )
+        if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+          m_viewers[k]->PrsMgr()->Actualize(N);
+
+      emit showOnly( N->GetId() );
+    }
+  }
+  m_model->CommitCommand();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ObjectBrowser::hideNodes(const Handle(ActAPI_HNodeList)& nodes)
+{
+  m_model->OpenCommand();
+  {
+    for ( ActAPI_HNodeList::Iterator nit(*nodes); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& N = nit.Value();
+
+      N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
+
+      // Iterate over the associated viewers to find the one where the selected
+      // Node is presented.
+      for ( size_t k = 0; k < m_viewers.size(); ++k )
+        if ( m_viewers[k] && m_viewers[k]->PrsMgr()->IsPresented(N) )
+        {
+          m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
+          m_viewers[k]->Repaint();
+        }
+
+      emit hide( N->GetId() );
+    }
+  }
+  m_model->CommitCommand();
 }

@@ -34,6 +34,9 @@
 // asiAlgo includes
 #include <asiAlgo_BVHAlgo.h>
 
+// Mobius includes
+#include <mobius/cascade.h>
+
 // OpenCascade includes
 #include <Precision.hxx>
 
@@ -42,40 +45,10 @@
 // Number of rays used to test sign.
 #define NB_TEST_RAYS 3
 
-//-----------------------------------------------------------------------------
-
-asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode)
-: mobius::poly_DistanceFunc(mode)
-{}
-
-//-----------------------------------------------------------------------------
-
-asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
-                                                   const Mode                       mode,
-                                                   const bool                       cube)
-: mobius::poly_DistanceFunc(mode)
+namespace
 {
-  this->Init(facets, cube);
-}
-
-//-----------------------------------------------------------------------------
-
-bool asiAlgo_MeshDistanceFunc::Init(const Handle(asiAlgo_BVHFacets)& facets,
-                                    const bool                       cube)
-{
-  if ( facets.IsNull() )
-    return false;
-
-  BVH_Box<double, 3> aabb = facets->Box();
-
-  mobius::t_xyz Pmin = mobius::t_xyz( aabb.CornerMin().x(),
-                                      aabb.CornerMin().y(),
-                                      aabb.CornerMin().z() );
-  mobius::t_xyz Pmax = mobius::t_xyz( aabb.CornerMax().x(),
-                                      aabb.CornerMax().y(),
-                                      aabb.CornerMax().z() );
-
-  if ( cube )
+  void CorrectBboxToCube(mobius::t_xyz& Pmin,
+                         mobius::t_xyz& Pmax)
   {
     const double dx = fabs( Pmax.X() - Pmin.X() );
     const double dy = fabs( Pmax.Y() - Pmin.Y() );
@@ -131,6 +104,88 @@ bool asiAlgo_MeshDistanceFunc::Init(const Handle(asiAlgo_BVHFacets)& facets,
     //
     Pmin += ccVec;
     Pmax += ccVec;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode)
+: mobius::poly_DistanceFunc(mode)
+{}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
+                                                   const Mode                       mode,
+                                                   const bool                       cube)
+: mobius::poly_DistanceFunc(mode)
+{
+  this->Init(facets, cube);
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
+                                                   const gp_XYZ&                    domainMin,
+                                                   const gp_XYZ&                    domainMax,
+                                                   const Mode                       mode,
+                                                   const bool                       cube)
+: mobius::poly_DistanceFunc(mode)
+{
+  this->Init(facets, domainMin, domainMax, cube);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_MeshDistanceFunc::Init(const Handle(asiAlgo_BVHFacets)& facets,
+                                    const bool                       cube)
+{
+  if ( facets.IsNull() )
+    return false;
+
+  BVH_Box<double, 3> aabb = facets->Box();
+
+  mobius::t_xyz Pmin = mobius::t_xyz( aabb.CornerMin().x(),
+                                      aabb.CornerMin().y(),
+                                      aabb.CornerMin().z() );
+  mobius::t_xyz Pmax = mobius::t_xyz( aabb.CornerMax().x(),
+                                      aabb.CornerMax().y(),
+                                      aabb.CornerMax().z() );
+
+  if ( cube )
+  {
+    CorrectBboxToCube(Pmin, Pmax);
+  }
+
+  // Coefficient to enlarge a bit the function domain so that it surely
+  // encloses the initial geometry.
+  const double diagCoeff = 0.025;
+
+  m_facets    = facets;
+  m_domainMin = Pmin - (Pmax - Pmin)*diagCoeff;
+  m_domainMax = Pmax + (Pmax - Pmin)*diagCoeff;
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_MeshDistanceFunc::Init(const Handle(asiAlgo_BVHFacets)& facets,
+                                    const gp_XYZ&                    domainMin,
+                                    const gp_XYZ&                    domainMax,
+                                    const bool                       cube)
+{
+  if ( facets.IsNull() )
+    return false;
+
+  BVH_Box<double, 3> aabb = facets->Box();
+
+  mobius::t_xyz Pmin = mobius::cascade::GetMobiusPnt(domainMin);
+  mobius::t_xyz Pmax = mobius::cascade::GetMobiusPnt(domainMax);
+
+  if ( cube )
+  {
+    CorrectBboxToCube(Pmin, Pmax);
   }
 
   // Coefficient to enlarge a bit the function domain so that it surely

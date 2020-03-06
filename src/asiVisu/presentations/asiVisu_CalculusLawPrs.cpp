@@ -61,7 +61,7 @@ Handle(asiVisu_Prs) asiVisu_CalculusLawPrs::Instance(const Handle(ActAPI_INode)&
 //! \return true/false.
 bool asiVisu_CalculusLawPrs::IsVisible() const
 {
-  return true;
+  return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------

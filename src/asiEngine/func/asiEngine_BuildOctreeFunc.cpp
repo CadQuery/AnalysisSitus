@@ -82,6 +82,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
                                        const Handle(ActAPI_HParameterList)& outputs,
                                        const Handle(Standard_Transient)&) const
 {
+#if defined USE_MOBIUS
   ActAPI_ProgressEntry progress = this->GetProgressNotifier();
 
   /* ============================
@@ -192,6 +193,9 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   octreeParam->SetOctree(pRoot);
 
   return 0; // Success.
+#else
+  return 1;
+#endif
 }
 
 //-----------------------------------------------------------------------------

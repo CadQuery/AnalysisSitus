@@ -91,7 +91,10 @@ void asiEngine_TolerantShapes::Populate(const TopoDS_Shape& shape,
   }
 
   if ( m_prsMgr )
+  {
+    m_model->GetPartNode()->RemoveUserFlags(NodeFlag_IsPresentationVisible);
     m_prsMgr->DeRenderPresentation( m_model->GetPartNode() );
+  }
 
   float     colorOutOfRangeRGB[3] = {0.25, 0.25, 0.25};
   const int colorOutOfRange       = asiVisu_Utils::ColorToInt(colorOutOfRangeRGB[0],
@@ -200,7 +203,7 @@ Handle(asiData_TolerantRangeNode)
 
   // Initialize.
   range_n->Init();
-  range_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  range_n->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   range_n->SetName(range_name);
   range_n->SetShape(shape);
   range_n->SetColor(colorNum);

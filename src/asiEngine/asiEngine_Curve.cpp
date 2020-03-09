@@ -43,7 +43,7 @@ Handle(asiData_CurveNode)
   // Initialize
   Handle(asiData_CurveNode) curve = Handle(asiData_CurveNode)::DownCast(node);
   curve->Init();
-  curve->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  curve->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   curve->SetName(name);
 
   // Set as child

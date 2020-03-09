@@ -35,6 +35,11 @@
 #include <gce_MakeLin2d.hxx>
 
 //-----------------------------------------------------------------------------
+
+// Instantiate for allowed types
+template class asiAlgo_QuickHull2d<gp_XY>;
+
+//-----------------------------------------------------------------------------
 // Function: constructor
 //-----------------------------------------------------------------------------
 
@@ -68,10 +73,10 @@ asiAlgo_QuickHull2d<TPoint>::~asiAlgo_QuickHull2d()
 template <typename TPoint>
 bool asiAlgo_QuickHull2d<TPoint>::Perform()
 {
-  if ( m_cloud.IsNull() || !m_cloud->Length() )
+  if ( m_cloud.IsNull() || !m_cloud->GetNumberOfElements() )
     return false;
 
-  if ( m_cloud->Length() == 1 )
+  if ( m_cloud->GetNumberOfElements() == 1 )
   {
     m_hull = new TColStd_HSequenceOfInteger;
     m_hull->Append(1);
@@ -89,9 +94,9 @@ bool asiAlgo_QuickHull2d<TPoint>::Perform()
   double xMin = DBL_MAX, xMax = -DBL_MAX;
   int p_left_idx = -1, p_right_idx = -1;
   //
-  for ( int p_idx = 1; p_idx <= m_cloud->Length(); ++p_idx )
+  for ( int p_idx = 1; p_idx <= m_cloud->GetNumberOfElements(); ++p_idx )
   {
-    const gp_XY& P = m_cloud->Value(p_idx);
+    const gp_XY& P = m_cloud->GetElement(p_idx);
     const double x = P.X();
 
     if ( x < xMin )
@@ -179,8 +184,8 @@ int asiAlgo_QuickHull2d<TPoint>::findDistantPoint(const int  p1_idx,
   // Build a line to divide the entire cloud on two parts
   //------------------------------------------------------
 
-  gp_Pnt2d P1 = m_cloud->Value(p1_idx);
-  gp_Pnt2d P2 = m_cloud->Value(p2_idx);
+  gp_Pnt2d P1 = m_cloud->GetElement(p1_idx);
+  gp_Pnt2d P2 = m_cloud->GetElement(p2_idx);
 
   gp_Lin2d Lin = gce_MakeLin2d(P1, P2);
   gp_Vec2d vecLin( Lin.Direction() );
@@ -192,9 +197,9 @@ int asiAlgo_QuickHull2d<TPoint>::findDistantPoint(const int  p1_idx,
   double dMax = -DBL_MAX;
   int res_idx = -1;
   //
-  for ( int p_idx = 1; p_idx <= m_cloud->Length(); ++p_idx )
+  for ( int p_idx = 1; p_idx <= m_cloud->GetNumberOfElements(); ++p_idx )
   {
-    const gp_XY& Pi = m_cloud->Value(p_idx);
+    const gp_XY& Pi = m_cloud->GetElement(p_idx);
 
     gp_Vec2d vecP1Pi( Pi - P1.XY() );
     if ( vecP1Pi.Magnitude() < gp::Resolution() )

@@ -1627,7 +1627,7 @@ int ENGINE_CheckToler(const Handle(asiTcl_Interp)& interp,
   // we work on the full part.
   TopTools_IndexedMapOfShape selectedSubShapes;
   //
-  if ( cmdEngine::cf->ViewerPart )
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
   {
     asiEngine_Part PartAPI( M,
                             cmdEngine::cf->ViewerPart->PrsMgr(),
@@ -2582,7 +2582,7 @@ int ENGINE_ShowAAG(const Handle(asiTcl_Interp)& interp,
     return interp->ErrorOnWrongArgs(argv[0]);
   }
 
-  if ( !cmdEngine::cf->ViewerPart )
+  if ( !cmdEngine::cf || !cmdEngine::cf->ViewerPart )
   {
     interp->GetProgress().SendLogMessage(LogWarn(Normal) << "Part viewer is not available.");
     return TCL_OK;

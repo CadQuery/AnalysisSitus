@@ -143,30 +143,24 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
     bvh    = Handle(asiData_PartNode)::DownCast(ownerNode)->GetBVH();
     bvhPid = asiData_PartNode::PID_BVH;
 
-    if ( bvh.IsNull() )
+    // Construct BVH right here.
+    M->OpenCommand();
     {
-      // Construct BVH right here.
-      M->OpenCommand();
-      {
-        bvh = asiEngine_Part(M).BuildBVH();
-      }
-      M->CommitCommand();
+      bvh = asiEngine_Part(M).BuildBVH();
     }
+    M->CommitCommand();
   }
   else if ( ownerNode->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
   {
     bvh    = Handle(asiData_TriangulationNode)::DownCast(ownerNode)->GetBVH();
     bvhPid = asiData_TriangulationNode::PID_BVH;
 
-    if ( bvh.IsNull() )
+    // Construct BVH right here.
+    M->OpenCommand();
     {
-      // Construct BVH right here.
-      M->OpenCommand();
-      {
-        bvh = asiEngine_Triangulation(M).BuildBVH();
-      }
-      M->CommitCommand();
+      bvh = asiEngine_Triangulation(M).BuildBVH();
     }
+    M->CommitCommand();
   }
   else if ( ownerNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
   {
@@ -176,15 +170,12 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
     bvh    = topoItemNode->GetBVH();
     bvhPid = asiData_IVTopoItemNode::PID_BVH;
 
-    if ( bvh.IsNull() )
+    // Construct BVH right here.
+    M->OpenCommand();
     {
-      // Construct BVH right here.
-      M->OpenCommand();
-      {
-        bvh = asiEngine_IV(M).BuildBVH(topoItemNode);
-      }
-      M->CommitCommand();
+      bvh = asiEngine_IV(M).BuildBVH(topoItemNode);
     }
+    M->CommitCommand();
   }
   else
   {

@@ -69,6 +69,21 @@
 
 //-----------------------------------------------------------------------------
 
+namespace
+{
+  void PropagateFlag(QTreeWidgetItem* pItem, Qt::CheckState state)
+  {
+    if ( pItem->flags() & Qt::ItemIsUserCheckable )
+      pItem->setCheckState(1, state);
+
+    // Proceed with its children.
+    for ( int c = 0; c < pItem->childCount(); ++c )
+      PropagateFlag(pItem->child(c), state);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
                                          ActAPI_ProgressEntry           progress,
                                          QWidget*                       parent)
@@ -361,6 +376,19 @@ void asiUI_ObjectBrowser::onShow()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
+  // Modify UI.
+  this->blockSignals(true);
+  {
+    QList<QTreeWidgetItem*> items = this->selectedItems();
+    for ( QList<QTreeWidgetItem*>::iterator iit = items.begin(); iit != items.end(); ++iit )
+    {
+      if ( (*iit)->flags() & Qt::ItemIsUserCheckable )
+        (*iit)->setCheckState(1, Qt::Checked);
+    }
+  }
+  this->blockSignals(false);
+
+  // Modify Data Model.
   this->showNodes(selected_n);
 }
 
@@ -372,6 +400,26 @@ void asiUI_ObjectBrowser::onShowOnly()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
+  this->blockSignals(true);
+  {
+    // Hide all items.
+    for ( int i = 0; i < this->topLevelItemCount(); ++i )
+    {
+      QTreeWidgetItem* pItem = this->topLevelItem(i);
+      PropagateFlag(pItem, Qt::Unchecked);
+    }
+
+    // Check items which go visible.
+    QList<QTreeWidgetItem*> items = this->selectedItems();
+    for ( QList<QTreeWidgetItem*>::iterator iit = items.begin(); iit != items.end(); ++iit )
+    {
+      if ( (*iit)->flags() & Qt::ItemIsUserCheckable )
+        (*iit)->setCheckState(1, Qt::Checked);
+    }
+  }
+  this->blockSignals(false);
+
+  // Modify Data Model.
   this->showOnlyNodes(selected_n);
 }
 
@@ -383,6 +431,19 @@ void asiUI_ObjectBrowser::onHide()
   Handle(ActAPI_HNodeList) selected_n;
   if ( !this->selectedNodes(selected_n) ) return;
 
+  // Modify UI.
+  this->blockSignals(true);
+  {
+    QList<QTreeWidgetItem*> items = this->selectedItems();
+    for ( QList<QTreeWidgetItem*>::iterator iit = items.begin(); iit != items.end(); ++iit )
+    {
+      if ( (*iit)->flags() & Qt::ItemIsUserCheckable )
+        (*iit)->setCheckState(1, Qt::Unchecked);
+    }
+  }
+  this->blockSignals(false);
+
+  // Modify Data Model.
   this->hideNodes(selected_n);
 }
 

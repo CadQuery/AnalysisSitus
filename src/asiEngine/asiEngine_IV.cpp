@@ -273,7 +273,7 @@ Handle(asiData_IVPointSet2dNode)
 
   // Initialize
   item_n->Init();
-  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   item_n->SetName(item_name);
   item_n->SetPoints(coords);
 
@@ -481,7 +481,7 @@ Handle(asiData_IVCurveNode)
 
   // Initialize
   item_n->Init();
-  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
 
   // Generate unique name
   TCollection_ExtendedString item_name = ( name.IsEmpty() ? "Curve" : name );
@@ -533,7 +533,7 @@ void asiEngine_IV::Update_Curve(const Handle(asiData_IVCurveNode)& node,
 
   // Initialize
   node->Init();
-  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetCurve(geometry, f, l);
   node->SetDrawOrientationTip(drawOriTip);
 }
@@ -889,7 +889,7 @@ void asiEngine_IV::Update_Surface(const Handle(asiData_IVSurfaceNode)& node,
 {
   // Initialize
   node->Init();
-  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetSurface(surface);
   node->SetLimits(uMin, uMax, vMin, vMax);
 }
@@ -978,7 +978,7 @@ void asiEngine_IV::Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
 {
   // Initialize
   node->Init();
-  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetShape(shape);
 }
 
@@ -1089,7 +1089,7 @@ void asiEngine_IV::Update_TessItem(const Handle(asiData_IVTessItemNode)& node,
 
   // Initialize
   node->Init();
-  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetMesh(mesh);
 }
 
@@ -1191,7 +1191,7 @@ void asiEngine_IV::Update_TextItem(const Handle(asiData_IVTextItemNode)& node,
                                    const TCollection_AsciiString&        text)
 {
   node->Init();
-  node->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetText(text);
 }
 

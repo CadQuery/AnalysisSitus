@@ -181,7 +181,6 @@ void asiUI_Plot2d::Render(const std::vector<double>& x,
   QPushButton* pDump = new QPushButton("Dump graphics", this);
   QVBoxLayout* pVLay = new QVBoxLayout(this);
   //
-  pVLay->addWidget(m_pViewer);
   pVLay->addWidget(pDump);
 
   /* ===================
@@ -203,7 +202,7 @@ void asiUI_Plot2d::Render(const std::vector<double>& x,
   //
   m_contextView->GetInteractor()->Initialize();
 
-  this->resize(400, 400);
+  this->resize(200, 100);
   this->show();
 }
 

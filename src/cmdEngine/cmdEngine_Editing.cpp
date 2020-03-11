@@ -2550,6 +2550,62 @@ int ENGINE_MoveTriangulation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MovePart(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 7 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get shape from the Part Node.
+  TopoDS_Shape
+    shape = cmdEngine::model->GetPartNode()->GetShape();
+  //
+  if ( shape.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Shape is empty.");
+    return TCL_ERROR;
+  }
+
+  // Read input transformation.
+  const double tx = atof(argv[1]);
+  const double ty = atof(argv[2]);
+  const double tz = atof(argv[3]);
+  const double rx = atof(argv[4]);
+  const double ry = atof(argv[5]);
+  const double rz = atof(argv[6]);
+
+  // Prepare transformation.
+  gp_Vec Translation(tx, ty, tz);
+  gp_Quaternion RX(gp::DX(), rx/180.*M_PI);
+  gp_Quaternion RY(gp::DY(), ry/180.*M_PI);
+  gp_Quaternion RZ(gp::DZ(), rz/180.*M_PI);
+  //
+  gp_Trsf T;
+  T.SetRotation(RZ*RY*RX);
+  T.SetTranslationPart(Translation);
+
+  // Create a new transformed shape.
+  TopoDS_Shape newShape = BRepBuilderAPI_Transform(shape, T, true);
+
+  // Update Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(newShape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Actualize.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_ConvertToBSurf(const Handle(asiTcl_Interp)& interp,
                           int                          argc,
                           const char**                 argv)
@@ -3104,6 +3160,17 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t to the global X, Y, Z axes.",
     //
     __FILE__, group, ENGINE_MoveTriangulation);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("move-part",
+    //
+    "move-part tx ty tz rx ry rz\n"
+    "\t Moves part by applying the passed transformation on its deep copy. The values\n"
+    "\t <tx>, <ty>, <tx> define the translation vector. The values <rx>, <ry>, <rz>\n"
+    "\t define the rotation angles in degrees. Rotation is performed with respect\n"
+    "\t to the global X, Y, Z axes.",
+    //
+    __FILE__, group, ENGINE_MovePart);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("convert-to-bsurf",

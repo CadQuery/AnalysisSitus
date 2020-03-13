@@ -28,8 +28,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_GeomFacePrs_h
-#define asiVisu_GeomFacePrs_h
+#ifndef asiVisu_FaceDomainPrs_h
+#define asiVisu_FaceDomainPrs_h
 
 // asiVisu includes
 #include <asiVisu_Prs.h>
@@ -41,13 +41,13 @@
 // VTK includes
 #include <vtkTextWidget.h>
 
-//! Presentation class for a B-Rep face.
-class asiVisu_GeomFacePrs : public asiVisu_Prs
+//! Presentation class for a domain of a B-Rep face.
+class asiVisu_FaceDomainPrs : public asiVisu_Prs
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_GeomFacePrs, asiVisu_Prs)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_FaceDomainPrs, asiVisu_Prs)
 
   // Allows to register this Presentation class
   DEFINE_PRESENTATION_FACTORY(asiData_FaceNode, Instance)
@@ -82,7 +82,7 @@ public:
 private:
 
   //! Allocation is allowed only via Instance() method.
-  asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& theNode);
+  asiVisu_FaceDomainPrs(const Handle(ActAPI_INode)& theNode);
 
 // Callbacks:
 private:

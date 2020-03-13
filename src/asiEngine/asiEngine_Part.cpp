@@ -81,7 +81,7 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
     // Initialize
     Handle(asiData_FaceNode) geom_face_n = Handle(asiData_FaceNode)::DownCast(geom_face_base);
     geom_face_n->Init();
-    geom_face_n->SetUserFlags(NodeFlag_IsPresentationVisible);
+    geom_face_n->SetUserFlags(NodeFlag_IsPresentedInDomainView | NodeFlag_IsPresentationVisible);
     geom_face_n->SetName("Face domain");
 
     // Set as child
@@ -111,7 +111,7 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
     // Initialize
     Handle(asiData_SurfNode) geom_surf_n = Handle(asiData_SurfNode)::DownCast(geom_surf_base);
     geom_surf_n->Init();
-    geom_surf_n->SetUserFlags(NodeFlag_IsPresentationVisible);
+    geom_surf_n->SetUserFlags(NodeFlag_IsPresentedInHostView | NodeFlag_IsPresentationVisible);
     geom_surf_n->SetName("Host surface");
 
     // Set as child
@@ -141,7 +141,7 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
     // Initialize
     Handle(asiData_EdgeNode) geom_edge_n = Handle(asiData_EdgeNode)::DownCast(geom_edge_base);
     geom_edge_n->Init();
-    geom_edge_n->SetUserFlags(NodeFlag_IsPresentationVisible);
+    geom_edge_n->SetUserFlags(NodeFlag_IsPresentedInDomainView | NodeFlag_IsPresentationVisible);
     geom_edge_n->SetName("Edge domain");
 
     // Set as child
@@ -191,7 +191,7 @@ Handle(asiData_PartNode) asiEngine_Part::CreatePart()
     // Initialize
     Handle(asiData_VertexNode) geom_vertex_n = Handle(asiData_VertexNode)::DownCast(geom_vertex_base);
     geom_vertex_n->Init();
-    geom_vertex_n->SetUserFlags(NodeFlag_IsPresentationVisible);
+    geom_vertex_n->SetUserFlags(NodeFlag_IsPresentedInDomainView | NodeFlag_IsPresentationVisible);
     geom_vertex_n->SetName("Vertex");
 
     // Set as child
@@ -589,8 +589,9 @@ void asiEngine_Part::StoreHistory(const Handle(asiAlgo_History)& history)
 
 //! Constructs BVH structure for the visualization facets stored in the
 //! part shape.
+//! \param[in] store specifies whether to store BVH in the Node.
 //! \return constructed BVH.
-Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
+Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH(const bool store)
 {
   // Get Part Node
   Handle(asiData_PartNode) part_n = m_model->GetPartNode();
@@ -602,11 +603,13 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH()
                                 m_progress,
                                 m_plotter);
 
-  // Store in OCAF
-  Handle(asiData_BVHParameter)
-    bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
-  //
-  bvhParam->SetBVH(bvh);
+  if ( store ) // Store in OCAF
+  {
+    Handle(asiData_BVHParameter)
+      bvhParam = Handle(asiData_BVHParameter)::DownCast( part_n->Parameter(asiData_PartNode::PID_BVH) );
+    //
+    bvhParam->SetBVH(bvh);
+  }
 
   return bvh;
 }

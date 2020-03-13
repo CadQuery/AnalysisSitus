@@ -31,6 +31,9 @@
 // Own include
 #include <asiData_OctreeNode.h>
 
+// asiData includes
+#include <asiData_BVHParameter.h>
+
 // asiAlgo includes
 #include <asiAlgo_Utils.h>
 
@@ -62,11 +65,13 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group,        PID_OutputsGroup);
   REGISTER_PARAMETER(Int,          PID_SamplingStrategy);
   REGISTER_PARAMETER(Bool,         PID_ExtractPoints);
+  REGISTER_PARAMETER(Real,         PID_PointSize);
   REGISTER_PARAMETER(Real,         PID_MaxVectorSize);
   REGISTER_PARAMETER(Int,          PID_NumElements);
 
   // Register custom Parameters specific to Analysis Situs.
-  this->registerParameter(PID_Octree, asiData_OctreeParameter::Instance(), false);
+  this->registerParameter(PID_BVH,    asiData_BVHParameter    ::Instance(), false);
+  this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
 }
 
 //-----------------------------------------------------------------------------
@@ -81,6 +86,7 @@ Handle(ActAPI_INode) asiData_OctreeNode::Instance()
 void asiData_OctreeNode::Init()
 {
   // Set default values.
+  this->SetBVH              (nullptr);
   this->SetOctree           (nullptr);
   this->SetMinCellSize      (1.);
   this->SetMaxCellSize      (100.);
@@ -90,6 +96,7 @@ void asiData_OctreeNode::Init()
   this->SetDomainCube       (false);
   this->SetSamplingStrategy (0x01 | 0x02 | 0x04);
   this->SetExtractPoints    (false);
+  this->SetPointSize        (1.);
   this->SetMaxVectorSize    (1.);
   this->SetNumElements      (0);
 
@@ -113,6 +120,7 @@ void asiData_OctreeNode::Init()
   this->InitParameter(PID_OutputsGroup,     "Outputs",           "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_SamplingStrategy, "Sampling strategy", "Octree_SS",       ParameterFlag_IsVisible, true);
   this->InitParameter(PID_ExtractPoints,    "Extract points",    "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_PointSize,        "Point size",        "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_MaxVectorSize,    "Max norm modulus",  "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_NumElements,      "Num. of elements",  "Octree_NumElems", ParameterFlag_IsVisible, true);
   
@@ -130,6 +138,20 @@ TCollection_ExtendedString asiData_OctreeNode::GetName()
 void asiData_OctreeNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets)
+{
+  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvhFacets);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiAlgo_BVHFacets) asiData_OctreeNode::GetBVH() const
+{
+  return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
 }
 
 //-----------------------------------------------------------------------------
@@ -172,6 +194,20 @@ bool asiData_OctreeNode::GetExtractPoints() const
 void asiData_OctreeNode::SetExtractPoints(const bool toExtract)
 {
   ActParamTool::AsBool( this->Parameter(PID_ExtractPoints) )->SetValue(toExtract);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_OctreeNode::GetPointSize() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_PointSize) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetPointSize(const double size)
+{
+  ActParamTool::AsReal( this->Parameter(PID_PointSize) )->SetValue(size);
 }
 
 //-----------------------------------------------------------------------------

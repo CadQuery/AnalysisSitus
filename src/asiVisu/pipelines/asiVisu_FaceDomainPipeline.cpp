@@ -132,10 +132,8 @@ void asiVisu_FaceDomainPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP
       m_extractSelection->SetInputConnection( 0, source->GetOutputPort() );
       m_extractSelection->SetInputData(1, m_selection);
       m_toPolyData->SetInputConnection( m_extractSelection->GetOutputPort() );
-
-      ///
+      //
       m_toPolyData->Update();
-      std::cout << "\t\t\tExtracted cells: " << m_toPolyData->GetOutput()->GetNumberOfCells() << std::endl;
 
       // Set ultimate input
       this->SetInputConnection( m_toPolyData->GetOutputPort() );

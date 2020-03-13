@@ -199,7 +199,8 @@ public:
                     const TopoDS_Shape&                   shape);
 
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
-    BuildBVH(const Handle(asiData_IVTopoItemNode)& owner);
+    BuildBVH(const Handle(asiData_IVTopoItemNode)& node,
+             const bool                            store = true);
 
   asiEngine_EXPORT void
     Clean_Topo();

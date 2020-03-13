@@ -985,20 +985,23 @@ void asiEngine_IV::Update_TopoItem(const Handle(asiData_IVTopoItemNode)& node,
 //-----------------------------------------------------------------------------
 
 //! Builds BVH for the passed Topo Item Node.
-//! \param[in] owner Topo Item Node to create the BVH for.
+//! \param[in] node  Topo Item Node to create the BVH for.
+//! \param[in] store specifies whether to store BVH in the Node.
 //! \return constructed BVH structure.
 Handle(asiAlgo_BVHFacets)
-  asiEngine_IV::BuildBVH(const Handle(asiData_IVTopoItemNode)& owner)
+  asiEngine_IV::BuildBVH(const Handle(asiData_IVTopoItemNode)& node,
+                         const bool                            store)
 {
   // Build BVH for the shape.
   Handle(asiAlgo_BVHFacets)
-    bvh = new asiAlgo_BVHFacets(owner->GetShape(),
+    bvh = new asiAlgo_BVHFacets(node->GetShape(),
                                 asiAlgo_BVHFacets::Builder_Binned,
                                 m_progress,
                                 m_plotter);
 
-  // Store in OCAF.
-  owner->SetBVH(bvh);
+  if ( store ) // Store in OCAF.
+    node->SetBVH(bvh);
+
   return bvh;
 }
 

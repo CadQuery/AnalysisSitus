@@ -134,55 +134,6 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Check the owner type (it should have BVH facets).
-  Handle(asiAlgo_BVHFacets) bvh;
-  int                       bvhPid;
-  //
-  if ( ownerNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
-  {
-    bvh    = Handle(asiData_PartNode)::DownCast(ownerNode)->GetBVH();
-    bvhPid = asiData_PartNode::PID_BVH;
-
-    // Construct BVH right here.
-    M->OpenCommand();
-    {
-      bvh = asiEngine_Part(M).BuildBVH();
-    }
-    M->CommitCommand();
-  }
-  else if ( ownerNode->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
-  {
-    bvh    = Handle(asiData_TriangulationNode)::DownCast(ownerNode)->GetBVH();
-    bvhPid = asiData_TriangulationNode::PID_BVH;
-
-    // Construct BVH right here.
-    M->OpenCommand();
-    {
-      bvh = asiEngine_Triangulation(M).BuildBVH();
-    }
-    M->CommitCommand();
-  }
-  else if ( ownerNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
-  {
-    Handle(asiData_IVTopoItemNode)
-      topoItemNode = Handle(asiData_IVTopoItemNode)::DownCast(ownerNode);
-    //
-    bvh    = topoItemNode->GetBVH();
-    bvhPid = asiData_IVTopoItemNode::PID_BVH;
-
-    // Construct BVH right here.
-    M->OpenCommand();
-    {
-      bvh = asiEngine_IV(M).BuildBVH(topoItemNode);
-    }
-    M->CommitCommand();
-  }
-  else
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Unexpected type of owner.");
-    return TCL_ERROR;
-  }
-
   // Precision.
   double prec = 1.0;
   interp->GetKeyValue(argc, argv, "prec", prec);
@@ -192,13 +143,17 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Voxelization with min cell size %1 and precision %2."
                                                        << minSize << prec);
-  // Show voxels.
+  // Create octree.
   Handle(asiData_OctreeNode) octreeNode;
   //
   M->OpenCommand();
   {
-    octreeNode = asiEngine_Octree(M).CreateOctree(ownerNode, bvhPid);
+    octreeNode = asiEngine_Octree(M).CreateOctree(ownerNode);
 
+    // Get the constructed BVH.
+    Handle(asiAlgo_BVHFacets) bvh = octreeNode->GetBVH();
+
+    // Initialize the domain.
     const BVH_Vec3d& cornerMin = bvh->Box().CornerMin();
     const BVH_Vec3d& cornerMax = bvh->Box().CornerMax();
 
@@ -483,7 +438,7 @@ int DDF_Polygonize(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Construct distance field to serve as an implicit function for the
+  // Construct distance field to serve as a function for the
   // reconstruction algorithm.
   t_ptr<poly_DistanceField> df = new poly_DistanceField(pOctree);
 
@@ -578,7 +533,7 @@ int DDF_PolygonizeCell(const Handle(asiTcl_Interp)& interp,
   //
   cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
 
-  // Construct distance field to serve as an implicit function for the
+  // Construct distance field to serve as a function for the
   // reconstruction algorithm.
   t_ptr<poly_DistanceField> df = new poly_DistanceField(pNode);
 
@@ -671,7 +626,7 @@ int DDF_PolygonizeSVO(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
-  // Construct distance field to serve as an implicit function for the
+  // Construct distance field to serve as a function for the
   // reconstruction algorithm.
   t_ptr<poly_DistanceField> df = new poly_DistanceField(pSVO);
 
@@ -733,6 +688,56 @@ int DDF_PolygonizeSVO(const Handle(asiTcl_Interp)& interp,
 
   // Draw.
   interp->GetPlotter().REDRAW_TRIANGULATION(argv[1], triangulation, Color_Default, 1.);
+
+  return TCL_OK;
+#else
+  cmdDDF_NotUsed(argc);
+  cmdDDF_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int DDF_Unite(const Handle(asiTcl_Interp)& interp,
+              int                          argc,
+              const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Find octree 1.
+  Handle(asiData_OctreeNode)
+    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[2]) );
+  //
+  if ( octreeNodeLeft.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Find octree 2.
+  Handle(asiData_OctreeNode)
+    octreeNodeRight = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[3]) );
+  //
+  if ( octreeNodeRight.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[3]);
+    return TCL_ERROR;
+  }
+
+
 
   return TCL_OK;
 #else
@@ -818,7 +823,7 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("ddf-eval-svo",
     //
     "ddf-eval-svo <octreeId> <x> <y> <z>\n"
-    "\t Evaluates the active SVO node (i.e., its corresponding implicit function)\n"
+    "\t Evaluates the active SVO node (i.e., its corresponding function)\n"
     "\t in the given point with <x>, <y>, <z> coordinates.",
     //
     __FILE__, group, DDF_EvalSVO);
@@ -849,6 +854,14 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Polygonizes the SVO with the <octreeId> identifier.",
     //
     __FILE__, group, DDF_PolygonizeSVO);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("ddf-unite",
+    //
+    "ddf-unite <id1> <id2>\n"
+    "\t Builds a union distance function for the octrees with the IDs <id1> and <id2>.",
+    //
+    __FILE__, group, DDF_Unite);
 }
 
 // Declare entry point PLUGINFACTORY

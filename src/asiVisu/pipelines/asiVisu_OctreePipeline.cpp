@@ -49,7 +49,7 @@ asiVisu_OctreePipeline::asiVisu_OctreePipeline()
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkDataSetMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() ),
-  m_fToler        (0.),
+  m_fToler        (1.e-6),
   m_fMinScalar    (1.e100),
   m_fMaxScalar    (-1.e100)
 {
@@ -80,6 +80,8 @@ void asiVisu_OctreePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
     this->Modified(); // Update modification timestamp
     return; // Do nothing
   }
+
+  this->Actor()->GetProperty()->SetPointSize( provider->GetPointSize() );
 
   /* ============================
    *  Prepare polygonal data set

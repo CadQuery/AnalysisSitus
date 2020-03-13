@@ -33,8 +33,6 @@
 *.igs       eol=lf
 *.ply       eol=lf
 *.iges      eol=lf
-*.stp       eol=lf
-*.step      eol=lf
 *.brep      eol=lf
 *.rle       eol=lf
 *.vrml      eol=lf

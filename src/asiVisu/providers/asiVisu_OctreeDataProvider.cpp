@@ -41,32 +41,13 @@
 asiVisu_OctreeDataProvider::asiVisu_OctreeDataProvider(const Handle(asiData_OctreeNode)& N)
 : asiVisu_DataProvider (),
   m_node               (N)
-{
-  // Get parent Node which is the owner of an octree by design.
-  m_ownerNode = m_node->GetParentNode();
-  //
-  if ( m_ownerNode.IsNull() || !m_ownerNode->IsWellFormed() )
-    Standard_ProgramError::Raise("Inconsistent data model.");
-}
+{}
 
 //-----------------------------------------------------------------------------
 
 asiAlgo_BVHFacets* asiVisu_OctreeDataProvider::GetFacets() const
 {
-  /* Part owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
-    return Handle(asiData_PartNode)::DownCast(m_ownerNode)->GetBVH().get();
-
-  /* Triangulation owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
-    return Handle(asiData_TriangulationNode)::DownCast(m_ownerNode)->GetBVH().get();
-
-  /* IV topo item owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
-    return Handle(asiData_IVTopoItemNode)::DownCast(m_ownerNode)->GetBVH().get();
-
-  /* Unexpected type of owner */
-  return nullptr;
+  return m_node->GetBVH().get();
 }
 
 //-----------------------------------------------------------------------------
@@ -92,6 +73,13 @@ int asiVisu_OctreeDataProvider::GetSamplingStrategy() const
 
 //-----------------------------------------------------------------------------
 
+double asiVisu_OctreeDataProvider::GetPointSize() const
+{
+  return m_node->GetPointSize();
+}
+
+//-----------------------------------------------------------------------------
+
 double asiVisu_OctreeDataProvider::GetMaxVectorModulus() const
 {
   return m_node->GetMaxVectorSize();
@@ -103,22 +91,11 @@ Handle(ActAPI_HParameterList)
   asiVisu_OctreeDataProvider::translationSources() const
 {
   ActAPI_ParameterStream out;
-  out << m_node->Parameter(asiData_OctreeNode::PID_Octree)
+  out << m_node->Parameter(asiData_OctreeNode::PID_BVH)
+      << m_node->Parameter(asiData_OctreeNode::PID_Octree)
       << m_node->Parameter(asiData_OctreeNode::PID_SamplingStrategy)
       << m_node->Parameter(asiData_OctreeNode::PID_ExtractPoints)
       << m_node->Parameter(asiData_OctreeNode::PID_MaxVectorSize);
-
-  /* Part owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
-    out << m_ownerNode->Parameter(asiData_PartNode::PID_BVH);
-
-  /* Triangulation owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
-    out << m_ownerNode->Parameter(asiData_TriangulationNode::PID_BVH);
-
-  /* IV topo item owner */
-  if ( m_ownerNode->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
-    out << m_ownerNode->Parameter(asiData_IVTopoItemNode::PID_BVH);
 
   return out.List;
 }

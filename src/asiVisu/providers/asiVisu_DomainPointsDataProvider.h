@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 November 2019
+// Created on: 20 March 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2019-present, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,83 +28,61 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiVisu_OctreeDataProvider_h
-#define asiVisu_OctreeDataProvider_h
+#ifndef asiVisu_DomainPointsDataProvider_h
+#define asiVisu_DomainPointsDataProvider_h
 
 // asiVisu includes
-#include <asiVisu_DataProvider.h>
+#include <asiVisu_PointsDataProvider.h>
 
 // asiData includes
-#include <asiData_OctreeNode.h>
+#include <asiData_FaceNode.h>
+#include <asiData_PartNode.h>
 
-class asiAlgo_BVHFacets;
-
-//-----------------------------------------------------------------------------
-
-//! Data provider for octree.
-class asiVisu_OctreeDataProvider : public asiVisu_DataProvider
+//! Data provider for vertices in a parametric domain.
+class asiVisu_DomainPointsDataProvider : public asiVisu_PointsDataProvider
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_OctreeDataProvider, asiVisu_DataProvider)
+  DEFINE_STANDARD_RTTI_INLINE(asiVisu_DomainPointsDataProvider, asiVisu_PointsDataProvider)
 
 public:
 
-  //! Ctor.
-  //! \param[in] node Octree Node to source the persistent data from.
   asiVisu_EXPORT
-    asiVisu_OctreeDataProvider(const Handle(asiData_OctreeNode)& N);
+    asiVisu_DomainPointsDataProvider(const Handle(asiData_FaceNode)& faceNode);
 
 public:
 
-  //! Returns associated Node ID.
-  //! \return Node ID.
-  virtual ActAPI_DataObjectId GetNodeID() const
+  asiVisu_EXPORT int
+    GetFaceIndexAmongSubshapes() const;
+
+  asiVisu_EXPORT int
+    GetFaceIndexAmongFaces() const;
+
+  asiVisu_EXPORT TopoDS_Face
+    ExtractFace() const;
+
+public:
+
+  asiVisu_EXPORT virtual Handle(asiAlgo_BaseCloud<double>)
+    GetPoints() const;
+
+public:
+
+  virtual Handle(TColStd_HPackedMapOfInteger) GetIndices() const
   {
-    return m_node->GetId();
+    return nullptr;
   }
 
-public:
+private:
 
-  //! \return facets in BVH structure.
-  asiVisu_EXPORT virtual asiAlgo_BVHFacets*
-    GetFacets() const;
-
-  //! \return root octree node.
-  asiVisu_EXPORT virtual void*
-    GetOctree() const;
-
-  //! \return Boolean flag indicating whether the points extraction mode
-  //!         is activated in the Data Model.
-  asiVisu_EXPORT virtual bool
-    IsPointExtraction() const;
-
-  //! \return SVO sampling strategy mode.
-  asiVisu_EXPORT virtual int
-    GetSamplingStrategy() const;
-
-  //! \return point size.
-  asiVisu_EXPORT double
-    GetPointSize() const;
-
-  //! \return max vector modulus.
-  asiVisu_EXPORT double
-    GetMaxVectorModulus() const;
-
-protected:
-
-  //! Enumerates all Active Data Parameters playing as sources for DOMAIN -> VTK
-  //! translation process. If any Parameter listed by this method is changed
-  //! (more precisely, if its MTime record is updated), the translation must
-  //! be repeated.
-  //! \return list of source Parameters.
   asiVisu_EXPORT virtual Handle(ActAPI_HParameterList)
     translationSources() const;
 
 protected:
 
-  Handle(asiData_OctreeNode) m_node; //!< Octree Node.
+  //! Owning Part Node.
+  Handle(asiData_PartNode) m_partNode;
 
 };
 

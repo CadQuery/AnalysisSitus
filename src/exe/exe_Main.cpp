@@ -41,12 +41,12 @@
 #include <asiVisu_ContourPrs.h>
 #include <asiVisu_CurvatureCombsPrs.h>
 #include <asiVisu_DeviationPrs.h>
+#include <asiVisu_FaceDomainPrs.h>
 #include <asiVisu_GeomBoundaryEdgesPrs.h>
 #include <asiVisu_GeomCurvePrs.h>
 #include <asiVisu_GeomEdgePrs.h>
 #include <asiVisu_GeomFaceContourPrs.h>
 #include <asiVisu_GeomFaceNormsPrs.h>
-#include <asiVisu_GeomFacePrs.h>
 #include <asiVisu_GeomSurfPrs.h>
 #include <asiVisu_IVCurve2dPrs.h>
 #include <asiVisu_IVCurvePrs.h>
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_GeomBoundaryEdgesPrs)
   REGISTER_PRESENTATION(asiVisu_GeomCurvePrs)
   REGISTER_PRESENTATION(asiVisu_GeomEdgePrs)
-  REGISTER_PRESENTATION(asiVisu_GeomFacePrs)
+  REGISTER_PRESENTATION(asiVisu_FaceDomainPrs)
   REGISTER_PRESENTATION(asiVisu_GeomFaceNormsPrs)
   REGISTER_PRESENTATION(asiVisu_GeomFaceContourPrs)
   REGISTER_PRESENTATION(asiVisu_GeomSurfPrs)

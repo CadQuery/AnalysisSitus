@@ -56,6 +56,7 @@
 #include <asiData_IVTopoItemNode.h>
 #include <asiData_IVTopoNode.h>
 #include <asiData_MetadataNode.h>
+#include <asiData_OctreeNode.h>
 #include <asiData_Partition.h>
 #include <asiData_PartNode.h>
 #include <asiData_ReCoEdgeNode.h>

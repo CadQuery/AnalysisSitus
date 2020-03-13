@@ -59,7 +59,7 @@ Handle(asiData_TriangulationNode) asiEngine_Triangulation::CreateTriangulation()
 
 //-----------------------------------------------------------------------------
 
-Handle(asiAlgo_BVHFacets) asiEngine_Triangulation::BuildBVH()
+Handle(asiAlgo_BVHFacets) asiEngine_Triangulation::BuildBVH(const bool store)
 {
   // Get Triangulation Node
   Handle(asiData_TriangulationNode) tris_n = m_model->GetTriangulationNode();
@@ -71,8 +71,9 @@ Handle(asiAlgo_BVHFacets) asiEngine_Triangulation::BuildBVH()
                                 m_progress,
                                 m_plotter);
 
-  // Store in OCAF
-  tris_n->SetBVH(bvh);
+  if ( store) // Store in OCAF
+    tris_n->SetBVH(bvh);
+
   return bvh;
 }
 

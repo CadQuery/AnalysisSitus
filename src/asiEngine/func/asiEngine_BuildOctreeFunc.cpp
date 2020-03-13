@@ -144,7 +144,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
                                : new asiAlgo_MeshDistanceFunc(bvh, poly_DistanceFunc::Mode_Signed, isCube);
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(progress, "Construct implicit distance function")
+  TIMER_COUT_RESULT_NOTIFIER(progress, "Construct distance function")
 
   /* Construct distance field. */
 
@@ -153,9 +153,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
 
   poly_DistanceField* pDDF = new poly_DistanceField();
   //
-  pDDF->SetMaxCellSize(maxSize);
-  //
-  if ( !pDDF->Build(minSize, prec, pDistFunc) )
+  if ( !pDDF->Build(minSize, maxSize, prec, pDistFunc) )
   {
     delete pDDF;
 

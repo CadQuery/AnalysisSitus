@@ -32,7 +32,7 @@
 #define asiData_TriangulationNode_h
 
 // asiData includes
-#include <asiData_OctreeNode.h>
+#include <asiData.h>
 
 // asiAlgo includes
 #include <asiAlgo_BVHFacets.h>
@@ -42,8 +42,6 @@
 #include <ActData_TriangulationParameter.h>
 #include <ActData_Utils.h>
 
-//-----------------------------------------------------------------------------
-// Mesh Node
 //-----------------------------------------------------------------------------
 
 //! Node representing surface triangulation.
@@ -148,11 +146,6 @@ public:
 
   asiData_EXPORT bool
     HasVertices() const;
-
-public:
-
-  asiData_EXPORT Handle(asiData_OctreeNode)
-    GetOctree() const;
 
 // Initialization:
 public:

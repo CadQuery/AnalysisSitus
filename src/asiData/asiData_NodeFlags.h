@@ -40,21 +40,29 @@
 //! so other GUI services might want to use some other set of user flags.
 enum asiData_NodeFlags
 {
-  //! Indicates whether the Data Node can be presented in 3D viewer shipped
-  //! with the framework.
-  NodeFlag_IsPresentedInPartView = 0x00001,
+  //! Indicates whether the Data Node can be presented in 3D viewer tailored
+  //! to parts.
+  NodeFlag_IsPresentedInPartView = 0x001,
+
+  //! Indicates whether the Data Node can be presented in 3D viewer tailored
+  //! to the host geometry.
+  NodeFlag_IsPresentedInHostView = 0x002,
+
+  //! Indicates whether the Data Node can be presented in 3D viewer tailored
+  //! to the parameteric domain.
+  NodeFlag_IsPresentedInDomainView = 0x004,
 
   //! Indicates that 3D Presentation is currently visible.
-  NodeFlag_IsPresentationVisible = 0x00002,
+  NodeFlag_IsPresentationVisible = 0x008,
 
   //! Indicates that Data Node should not be displayed in Object Browser
   //! even if its Tree Node connectivity allows it.
-  NodeFlag_IsHiddenInBrowser = 0x00004,
+  NodeFlag_IsHiddenInBrowser = 0x010,
 
   //! Indicates whether this Data Node is structural or not. We say that
   //! Data Node is structural if it is an essential (and so immutable)
   //! part of the Project tree.
-  NodeFlag_IsStructural = 0x00008,
+  NodeFlag_IsStructural = 0x020,
 
 };
 

@@ -700,21 +700,6 @@ Handle(asiData_MetadataNode) asiData_PartNode::GetMetadata() const
   return nullptr;
 }
 
-//! \return underlying Node which stores octree.
-Handle(asiData_OctreeNode) asiData_PartNode::GetOctree() const
-{
-  Handle(asiData_OctreeNode) octree_n;
-  for ( Handle(ActAPI_IChildIterator) cit = this->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    octree_n = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
-
-    if ( !octree_n.IsNull() && octree_n->IsWellFormed() )
-      return octree_n;
-  }
-
-  return nullptr;
-}
-
 //-----------------------------------------------------------------------------
 
 //! Sets shape to store.

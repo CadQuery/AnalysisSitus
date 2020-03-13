@@ -37,8 +37,9 @@
 // Active Data includes
 #include <ActData_BaseNode.h>
 
-//-----------------------------------------------------------------------------
-// Part Node
+// Forward declarations.
+class asiAlgo_BVHFacets;
+
 //-----------------------------------------------------------------------------
 
 //! Node representing octree spatial decomposition.
@@ -59,6 +60,7 @@ public:
   {
   //----------------------//
     PID_Name,             //!< Name of the Node.
+    PID_BVH,              //!< BVH used for distance function evaluation.
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_BuildFunc,        //!< Tree Function Parameter to build the octree.
   //----------------------//
@@ -79,6 +81,7 @@ public:
     PID_OutputsGroup,     //!< Group of outputs.
     PID_SamplingStrategy, //!< Sampling strategy.
     PID_ExtractPoints,    //!< Whether to extract points instead of voxels.
+    PID_PointSize,        //!< Point size.
     PID_MaxVectorSize,    //!< Max vector size.
     PID_NumElements,      //!< Number of extracted elements (cells or points).
   //----------------------//
@@ -116,6 +119,14 @@ public:
 // Handy accessors to the stored data:
 public:
 
+  //! \return BVH structure.
+  asiData_EXPORT void
+    SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets);
+
+  //! \return BVH structure.
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH() const;
+
   //! \return void pointer to octree data structure.
   asiData_EXPORT void*
     GetOctree() const;
@@ -142,6 +153,15 @@ public:
   //! \param[in] toExtract true/false.
   asiData_EXPORT void
     SetExtractPoints(const bool toExtract);
+
+  //! \return point size.
+  asiData_EXPORT double
+    GetPointSize() const;
+
+  //! Sets the point size.
+  //! \param[in] size value to set.
+  asiData_EXPORT void
+    SetPointSize(const double size);
 
   //! \return max vector size.
   asiData_EXPORT double

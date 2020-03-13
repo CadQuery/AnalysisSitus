@@ -41,8 +41,6 @@
 // Individual face Node
 //-----------------------------------------------------------------------------
 
-DEFINE_STANDARD_HANDLE(asiData_FaceNode, ActData_BaseNode)
-
 //! Node representing a single b-rep face.
 class asiData_FaceNode : public ActData_BaseNode
 {

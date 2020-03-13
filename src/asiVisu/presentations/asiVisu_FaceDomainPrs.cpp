@@ -29,11 +29,13 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiVisu_GeomFacePrs.h>
+#include <asiVisu_FaceDomainPrs.h>
 
 // asiVisu includes
+#include <asiVisu_DomainPointsDataProvider.h>
 #include <asiVisu_FaceDataProvider.h>
 #include <asiVisu_FaceDomainPipeline.h>
+#include <asiVisu_PointsPipeline.h>
 #include <asiVisu_Utils.h>
 
 // asiAlgo includes
@@ -53,7 +55,7 @@
 
 //! Creates a Presentation object for the passed Geometry Face Node.
 //! \param[in] N Face Node to create a Presentation for.
-asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
+asiVisu_FaceDomainPrs::asiVisu_FaceDomainPrs(const Handle(ActAPI_INode)& N)
 : asiVisu_Prs(N)
 {
   Handle(asiData_FaceNode) face_n = Handle(asiData_FaceNode)::DownCast(N);
@@ -61,16 +63,33 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
   // Initialize Part Node.
   m_partNode = Handle(asiData_PartNode)::DownCast( face_n->GetParentNode() );
 
+  /* ==========================
+   *  Pipeline for the contour
+   * ========================== */
+
   // Create Data Provider
   Handle(asiVisu_FaceDataProvider) DP = new asiVisu_FaceDataProvider(face_n);
 
-  // Pipelines for face
   this->addPipeline        ( Pipeline_DomainLoop, new asiVisu_FaceDomainPipeline );
   this->assignDataProvider ( Pipeline_DomainLoop, DP );
 
   // Initialize text widget used for annotations
   m_textWidget = vtkSmartPointer<vtkTextWidget>::New();
   asiVisu_Utils::InitTextWidget(m_textWidget);
+
+  /* ==============================
+   *  Pipeline for the extremities
+   * ============================== */
+
+  // Data Provider for points in the parametric domain
+  Handle(asiVisu_DomainPointsDataProvider) pointsDP = new asiVisu_DomainPointsDataProvider(face_n);
+  Handle(asiVisu_PointsPipeline)           pointsPL = new asiVisu_PointsPipeline(true);
+
+  this->addPipeline        ( Pipeline_Extremities, pointsPL );
+  this->assignDataProvider ( Pipeline_Extremities, pointsDP );
+
+  pointsPL->Actor()->GetProperty()->SetColor     ( 1.0, 1.0, 1.0 );
+  pointsPL->Actor()->GetProperty()->SetPointSize ( asiVisu_Utils::DefaultHilightPointSize() );
 
   /* ========================
    *  Pipeline for detecting
@@ -132,21 +151,21 @@ asiVisu_GeomFacePrs::asiVisu_GeomFacePrs(const Handle(ActAPI_INode)& N)
 //! Factory method for Presentation.
 //! \param theNode [in] Face Node to create a Presentation for.
 //! \return new Presentation instance.
-Handle(asiVisu_Prs) asiVisu_GeomFacePrs::Instance(const Handle(ActAPI_INode)& theNode)
+Handle(asiVisu_Prs) asiVisu_FaceDomainPrs::Instance(const Handle(ActAPI_INode)& theNode)
 {
-  return new asiVisu_GeomFacePrs(theNode);
+  return new asiVisu_FaceDomainPrs(theNode);
 }
 
 //! Returns true if the Presentation is visible, false -- otherwise.
 //! \return true/false.
-bool asiVisu_GeomFacePrs::IsVisible() const
+bool asiVisu_FaceDomainPrs::IsVisible() const
 {
   return m_node->HasUserFlags(NodeFlag_IsPresentationVisible);
 }
 
 //-----------------------------------------------------------------------------
 
-void asiVisu_GeomFacePrs::SetColor(const QColor& color) const
+void asiVisu_FaceDomainPrs::SetColor(const QColor& color) const
 {
   asiVisu_Prs::SetColor(color);
 
@@ -158,13 +177,13 @@ void asiVisu_GeomFacePrs::SetColor(const QColor& color) const
 //-----------------------------------------------------------------------------
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomFacePrs::beforeInitPipelines()
+void asiVisu_FaceDomainPrs::beforeInitPipelines()
 {
   // Do nothing...
 }
 
 //! Callback for initialization of Presentation pipelines.
-void asiVisu_GeomFacePrs::afterInitPipelines()
+void asiVisu_FaceDomainPrs::afterInitPipelines()
 {
   Handle(asiVisu_FaceDataProvider)
     DP = Handle(asiVisu_FaceDataProvider)::DownCast( this->dataProvider(Pipeline_DomainLoop) );
@@ -240,14 +259,14 @@ void asiVisu_GeomFacePrs::afterInitPipelines()
 
 //! Callback for updating of Presentation pipelines invoked before the
 //! kernel update routine starts.
-void asiVisu_GeomFacePrs::beforeUpdatePipelines() const
+void asiVisu_FaceDomainPrs::beforeUpdatePipelines() const
 {
   // Do nothing...
 }
 
 //! Callback for updating of Presentation pipelines invoked after the
 //! kernel update routine completes.
-void asiVisu_GeomFacePrs::afterUpdatePipelines() const
+void asiVisu_FaceDomainPrs::afterUpdatePipelines() const
 {
   /* ====================================
    *  Update selection pipelines as well
@@ -270,9 +289,9 @@ void asiVisu_GeomFacePrs::afterUpdatePipelines() const
 }
 
 //! Callback for highlighting.
-void asiVisu_GeomFacePrs::highlight(vtkRenderer*,
-                                    const Handle(asiVisu_PickerResult)&,
-                                    const asiVisu_SelectionNature) const
+void asiVisu_FaceDomainPrs::highlight(vtkRenderer*,
+                                      const Handle(asiVisu_PickerResult)&,
+                                      const asiVisu_SelectionNature) const
 {
   //// Get target actor which is the only sensitive
   //Handle(asiVisu_Pipeline) poles_pl = this->GetPipeline(Pipeline_Main);
@@ -319,8 +338,8 @@ void asiVisu_GeomFacePrs::highlight(vtkRenderer*,
 }
 
 //! Callback for highlighting reset.
-void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*,
-                                      const asiVisu_SelectionNature) const
+void asiVisu_FaceDomainPrs::unHighlight(vtkRenderer*,
+                                        const asiVisu_SelectionNature) const
 {
   //// Access pipeline for highlighting
   //Handle(asiVisu_FaceDomainPipeline) hili_pl;
@@ -341,7 +360,7 @@ void asiVisu_GeomFacePrs::unHighlight(vtkRenderer*,
 }
 
 //! Callback for rendering.
-void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* renderer) const
+void asiVisu_FaceDomainPrs::renderPipelines(vtkRenderer* renderer) const
 {
   if ( !m_textWidget->GetCurrentRenderer() )
   {
@@ -367,7 +386,7 @@ void asiVisu_GeomFacePrs::renderPipelines(vtkRenderer* renderer) const
 }
 
 //! Callback for de-rendering.
-void asiVisu_GeomFacePrs::deRenderPipelines(vtkRenderer* renderer) const
+void asiVisu_FaceDomainPrs::deRenderPipelines(vtkRenderer* renderer) const
 {
   m_textWidget->Off();
 

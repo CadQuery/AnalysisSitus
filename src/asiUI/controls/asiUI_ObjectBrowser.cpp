@@ -1225,7 +1225,7 @@ void asiUI_ObjectBrowser::showOnlyNodes(const Handle(ActAPI_HNodeList)& nodes)
     {
       Handle(ActAPI_INode) N = cit->Value();
       //
-      if ( !N.IsNull() )
+      if ( !N.IsNull() && N->HasUserFlags(NodeFlag_IsPresentationVisible) )
         N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
     }
 

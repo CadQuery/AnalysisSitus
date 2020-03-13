@@ -79,9 +79,10 @@ public:
     CreateTriangulation();
 
   //! Constructs BVH structure for the facets stored in the Triangulation Node.
+  //! \param[in] store specifies whether to store BVH in the Node.
   //! \return constructed BVH.
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
-    BuildBVH();
+    BuildBVH(const bool store = true);
 
   //! Checks deviation between the active Triangulation Node and the passed
   //! point cloud.

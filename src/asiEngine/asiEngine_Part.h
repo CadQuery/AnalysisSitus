@@ -117,7 +117,7 @@ public:
     StoreHistory(const Handle(asiAlgo_History)& history);
 
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
-    BuildBVH();
+    BuildBVH(const bool store = true);
 
   asiEngine_EXPORT void
     Clean(const bool cleanMeta = true);

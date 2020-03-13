@@ -31,15 +31,46 @@
 // Own include
 #include <asiEngine_Octree.h>
 
+// asiEngine includes
+#include <asiEngine_IV.h>
+#include <asiEngine_Part.h>
+#include <asiEngine_Triangulation.h>
+
 // asiData includes
 #include <asiEngine_BuildOctreeFunc.h>
 
 //-----------------------------------------------------------------------------
 
 Handle(asiData_OctreeNode)
-  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner,
-                                 const int                   ownerBVH)
+  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner)
 {
+  // Build BVH to be used in the distance function. The BVH is constructed
+  // by the corresponding service class (i.e., asiEngine_XXX), though
+  // we do not store the constructed BVH in the owner Node (to avoid
+  // side effects).
+  Handle(asiAlgo_BVHFacets) bvh;
+  //
+  if ( owner->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+  {
+    bvh = asiEngine_Part(m_model).BuildBVH(false);
+  }
+  else if ( owner->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
+  {
+    bvh = asiEngine_Triangulation(m_model).BuildBVH(false);
+  }
+  else if ( owner->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+  {
+    Handle(asiData_IVTopoItemNode)
+      topoItemNode = Handle(asiData_IVTopoItemNode)::DownCast(owner);
+
+    bvh = asiEngine_IV(m_model).BuildBVH(topoItemNode, false);
+  }
+  else
+  {
+    return nullptr; // Unexpected type of owner.
+  }
+
+  // Create a new peristent Node.
   Handle(asiData_OctreeNode)
     node = Handle(asiData_OctreeNode)::DownCast( asiData_OctreeNode::Instance() );
   //
@@ -49,11 +80,12 @@ Handle(asiData_OctreeNode)
   node->Init();
   node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   node->SetName("SVO");
+  node->SetBVH(bvh);
 
   // Attach tree function.
   node->ConnectTreeFunction( asiData_OctreeNode::PID_BuildFunc,
                              asiEngine_BuildOctreeFunc::GUID(),
-                             ActParamStream() << owner->Parameter(ownerBVH)
+                             ActParamStream() << node->Parameter(asiData_OctreeNode::PID_BVH)
                                               << node->Parameter(asiData_OctreeNode::PID_DomainMinX)
                                               << node->Parameter(asiData_OctreeNode::PID_DomainMinY)
                                               << node->Parameter(asiData_OctreeNode::PID_DomainMinZ)
@@ -77,7 +109,6 @@ Handle(asiData_OctreeNode)
 
 Handle(asiData_OctreeNode)
   asiEngine_Octree::FindOctree(const Handle(ActAPI_INode)& owner,
-                               const int                   ownerBVH,
                                const bool                  create)
 {
   if ( owner.IsNull() || !owner->IsWellFormed() )
@@ -89,7 +120,7 @@ Handle(asiData_OctreeNode)
   for ( Handle(ActAPI_IChildIterator) cit = owner->GetChildIterator(); cit->More(); cit->Next() )
   {
     octreeNode = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
-
+    //
     if ( octreeNode.IsNull() || !octreeNode->IsWellFormed() )
       continue;
   }
@@ -98,7 +129,7 @@ Handle(asiData_OctreeNode)
   if ( octreeNode.IsNull() && create )
   {
     // Create Octree Node.
-    octreeNode = this->CreateOctree(owner, ownerBVH);
+    octreeNode = this->CreateOctree(owner);
   }
 
   return octreeNode;

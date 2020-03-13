@@ -43,7 +43,6 @@
 #include <asiData_FaceNormsNode.h>
 #include <asiData_MetadataNode.h>
 #include <asiData_NamingParameter.h>
-#include <asiData_OctreeNode.h>
 #include <asiData_SurfNode.h>
 #include <asiData_TolerantShapesNode.h>
 #include <asiData_VertexNode.h>
@@ -302,9 +301,6 @@ public:
 
   asiData_EXPORT Handle(asiData_MetadataNode)
     GetMetadata() const;
-
-  asiData_EXPORT Handle(asiData_OctreeNode)
-    GetOctree() const;
 
 // Initialization:
 public:

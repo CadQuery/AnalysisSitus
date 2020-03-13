@@ -58,21 +58,17 @@ public:
 public:
 
   //! Creates octree under the passed owner Node.
-  //! \param[in] owner    owner Node.
-  //! \param[in] ownerBVH PID of the BVH Parameter in the owner Node.
+  //! \param[in] owner owner Node.
   //! \return newly created Octree Node.
   asiEngine_EXPORT Handle(asiData_OctreeNode)
-    CreateOctree(const Handle(ActAPI_INode)& owner,
-                 const int                   ownerBVH);
+    CreateOctree(const Handle(ActAPI_INode)& owner);
 
   //! Finds or creates an Octree Node.
-  //! \param[in] owner    owner of the Octree Node (i.e., its parent Node).
-  //! \param[in] ownerBVH PID of the BVH Parameter in the owner Node.
-  //! \param[in] create   whether to create if the Octree Node does not exist.
+  //! \param[in] owner  owner of the Octree Node (i.e., its parent Node).
+  //! \param[in] create whether to create if the Octree Node does not exist.
   //! \return found or the newly created Octree Node.
   asiEngine_EXPORT Handle(asiData_OctreeNode)
     FindOctree(const Handle(ActAPI_INode)& owner,
-               const int                   ownerBVH,
                const bool                  create);
 
 };

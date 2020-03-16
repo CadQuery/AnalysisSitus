@@ -199,7 +199,7 @@ public:
   asiTcl_EXPORT int
     Eval(const TCollection_AsciiString& cmd);
 
-  //! Adds command to Tcl interpreter.
+  //! Adds command to the Tcl interpreter.
   //! \param[in] name     command name.
   //! \param[in] help     help string.
   //! \param[in] filename filename where command is implemented.
@@ -212,6 +212,14 @@ public:
                const TCollection_AsciiString& filename,
                const TCollection_AsciiString& group,
                t_user_func                    func);
+
+  //! Delete command from the Tcl interpretor.
+  //! \param[in] name  command name.
+  //! \param[in] group group name.
+  //! \return true in case of success, false -- otherwise.
+  asiTcl_EXPORT bool
+    DeleteCommand(const TCollection_AsciiString& name,
+                  const TCollection_AsciiString& group);
 
   //! Takes all available commands from Tcl interpreter and pushes their
   //! names together with additional info to the provided output list.
@@ -480,7 +488,7 @@ public:
 
 protected:
 
-  //! Internal method to add command to Tcl interpreter.
+  //! Internal method to add command to the Tcl interpreter.
   //! \param[in] name     command name.
   //! \param[in] help     help string.
   //! \param[in] filename filename where command is implemented.
@@ -493,6 +501,14 @@ protected:
                const TCollection_AsciiString& filename,
                const TCollection_AsciiString& group,
                t_tcl_callback*                callback);
+
+  //! Internal method to delete command from the Tcl interpretor.
+  //! \param[in] name  command name.
+  //! \param[in] group group name.
+  //! \return true in case of success, false -- otherwise.
+  asiTcl_EXPORT bool
+    deleteCommand(const TCollection_AsciiString& name,
+                  const TCollection_AsciiString& group);
 
 protected:
 

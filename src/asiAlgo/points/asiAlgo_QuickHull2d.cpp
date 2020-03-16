@@ -94,7 +94,7 @@ bool asiAlgo_QuickHull2d<TPoint>::Perform()
   double xMin = DBL_MAX, xMax = -DBL_MAX;
   int p_left_idx = -1, p_right_idx = -1;
   //
-  for ( int p_idx = 1; p_idx <= m_cloud->GetNumberOfElements(); ++p_idx )
+  for ( int p_idx = 0; p_idx < m_cloud->GetNumberOfElements(); ++p_idx )
   {
     const gp_XY& P = m_cloud->GetElement(p_idx);
     const double x = P.X();
@@ -197,7 +197,7 @@ int asiAlgo_QuickHull2d<TPoint>::findDistantPoint(const int  p1_idx,
   double dMax = -DBL_MAX;
   int res_idx = -1;
   //
-  for ( int p_idx = 1; p_idx <= m_cloud->GetNumberOfElements(); ++p_idx )
+  for ( int p_idx = 0; p_idx < m_cloud->GetNumberOfElements(); ++p_idx )
   {
     const gp_XY& Pi = m_cloud->GetElement(p_idx);
 

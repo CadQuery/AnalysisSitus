@@ -436,6 +436,14 @@ bool asiTcl_Interp::AddCommand(const TCollection_AsciiString& name,
 
 //-----------------------------------------------------------------------------
 
+bool asiTcl_Interp::DeleteCommand(const TCollection_AsciiString& name,
+                                  const TCollection_AsciiString& group)
+{
+  return this->deleteCommand(name, group);
+}
+
+//-----------------------------------------------------------------------------
+
 void asiTcl_Interp::GetAvailableCommands(std::vector<asiTcl_CommandInfo>& commands) const
 {
   for ( size_t p = 0; p < m_plugins.size(); ++p )
@@ -771,4 +779,76 @@ bool asiTcl_Interp::addCommand(const TCollection_AsciiString& name,
               TCL_GLOBAL_ONLY | TCL_APPEND_VALUE | TCL_LIST_ELEMENT);
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiTcl_Interp::deleteCommand(const TCollection_AsciiString& name,
+                               const TCollection_AsciiString& group)
+{
+  if ( !m_pInterp )
+    return false;
+
+  /* Delete command itself. */
+
+  Tcl_DeleteCommand( m_pInterp, name.ToCString() );
+
+  /* Remove the command name from the asi_Groups array of lists. We do so
+     by reassembling the list of command names and moving out the element
+     which equals to the passed name. Is there a better way to do this
+     using Tcl C API?
+   */
+
+  std::string
+    commandsInGroupStr = Tcl_GetVar2(m_pInterp, "asi_Groups", group.ToCString(),
+                                     TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG),
+    newCommandsInGroupStr;
+
+  std::vector<std::string> commandsInGroup;
+  asiAlgo_Utils::Str::Split(commandsInGroupStr, " ", commandsInGroup);
+
+  for ( size_t c = 0; c < commandsInGroup.size(); ++c )
+  {
+    if ( commandsInGroup[c] != name.ToCString() )
+    {
+      newCommandsInGroupStr += commandsInGroup[c];
+
+      if ( c < commandsInGroup.size() - 1 )
+        newCommandsInGroupStr += " ";
+    }
+  }
+
+  Tcl_SetVar2(m_pInterp, "asi_Groups", group.ToCString(), newCommandsInGroupStr.c_str(),
+              TCL_GLOBAL_ONLY);
+
+  /* Remove the command name from the asi_Files array. */
+
+  int ok1 = Tcl_UnsetVar2( m_pInterp, "asi_Files", name.ToCString(), TCL_GLOBAL_ONLY );
+  //
+  if ( ok1 == TCL_ERROR )
+  {
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl_UnsetVar2 error on asi_Files.");
+  }
+
+  /* Remove the command name from the asi_Help array. */
+
+  int ok2 = Tcl_UnsetVar2( m_pInterp, "asi_Help", name.ToCString(), TCL_GLOBAL_ONLY );
+  //
+  if ( ok2 == TCL_ERROR )
+  {
+    this->GetProgress().SendLogMessage(LogErr(Normal) << "Tcl_UnsetVar2 error on asi_Help.");
+  }
+
+  /* Finalize. */
+
+  const bool isOk = ( (ok1 == TCL_OK) && (ok2 == TCL_OK) );
+
+  if ( isOk )
+  {
+    this->GetProgress().SendLogMessage(LogInfo(Normal) << "The command %1 (%2) was unregistered."
+                                                       << name << group);
+  }
+
+  return isOk;
 }

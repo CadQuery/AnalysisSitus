@@ -34,6 +34,9 @@
 // asiData includes
 #include <asiData_OctreeParameter.h>
 
+// asiAlgo includes
+#include <asiAlgo_CSG.h>
+
 // Active Data includes
 #include <ActData_BaseNode.h>
 
@@ -60,9 +63,12 @@ public:
   {
   //----------------------//
     PID_Name,             //!< Name of the Node.
+    PID_Operation,        //!< CSG operation.
     PID_BVH,              //!< BVH used for distance function evaluation.
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
     PID_BuildFunc,        //!< Tree Function Parameter to build the octree.
+    PID_OpLeft,           //!< Left operand for a Boolean function.
+    PID_OpRight,          //!< Right operand for a Boolean function.
   //----------------------//
     PID_ResolutionGroup,  //!< Group for octree resolution parameters.
     PID_MinCellSize,      //!< Min cell size.
@@ -119,7 +125,17 @@ public:
 // Handy accessors to the stored data:
 public:
 
-  //! \return BVH structure.
+  //! Sets CSG operation type to store.
+  //! \param[in] op operation type to set.
+  asiData_EXPORT void
+    SetOperation(const asiAlgo_CSG op);
+
+  //! \return stored CSG operation type.
+  asiData_EXPORT asiAlgo_CSG
+    GetOperation() const;
+
+  //! Sets BVH structure to store.
+  //! \param[in] bvhFacets BVH structure to store.
   asiData_EXPORT void
     SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets);
 

@@ -161,8 +161,7 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
   {
     if ( m_pFacets == nullptr )
     {
-      vtkErrorMacro( << "Invalid input: nullptr facets." );
-      return 0;
+      vtkWarningMacro( << "No BVH: projection is impossible." );
     }
 
     // Allocate an array for vectors

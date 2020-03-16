@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 February 2020
+// Created on: 14 March 2020
 //-----------------------------------------------------------------------------
 // Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,47 +28,46 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Octree_h
-#define asiEngine_Octree_h
+#ifndef asiAlgo_CSG_h
+#define asiAlgo_CSG_h
 
-// asiEngine includes
-#include <asiEngine_Base.h>
-
-// asiData includes
-#include <asiData_OctreeNode.h>
+// asiAlgo includes
+#include <asiAlgo.h>
 
 //-----------------------------------------------------------------------------
 
-//! Data Model API for octrees.
-class asiEngine_Octree : public asiEngine_Base
+//! Type of CSG operation.
+enum asiAlgo_CSG
 {
-public:
-
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_Octree(const Handle(asiEngine_Model)& model,
-                   ActAPI_ProgressEntry           progress = nullptr,
-                   ActAPI_PlotterEntry            plotter  = nullptr)
-  //
-  : asiEngine_Base(model, progress, plotter)
-  {}
-
-public:
-
-  //! Creates octree under the passed owner Node.
-  //! \param[in] owner     owner Node.
-  //! \param[in] operation CSG operation to set.
-  //! \param[in] left      left operand for a Boolean function.
-  //! \param[in] right     right operand for a Boolean function.
-  //! \return newly created Octree Node.
-  asiEngine_EXPORT Handle(asiData_OctreeNode)
-    CreateOctree(const Handle(ActAPI_INode)&       owner,
-                 const asiAlgo_CSG                 operation,
-                 const Handle(asiData_OctreeNode)& left  = nullptr,
-                 const Handle(asiData_OctreeNode)& right = nullptr);
-
+  CSG_Undefined = 0,
+  CSG_Primitive,   //!< Construction of a primitive.
+  CSG_Union,       //!< Boolean union.
+  CSG_Difference,  //!< Boolean difference.
+  CSG_Intersection //!< Boolean intersection.
 };
+
+//-----------------------------------------------------------------------------
+
+//! Auxiliary functions.
+namespace asiAlgo_CSGUtils
+{
+  //! Returns operation name.
+  //! \param[in] operation type of the CSG operation in question.
+  //! \return const char pointer to the operation name.
+  inline const char* GetOperationName(const asiAlgo_CSG operation)
+  {
+    switch ( operation )
+    {
+      case CSG_Primitive:    return "Primitive";
+      case CSG_Union:        return "Union";
+      case CSG_Difference:   return "Difference";
+      case CSG_Intersection: return "Intersection";
+      default: break;
+    }
+
+    return "Undefined";
+  }
+}
+
 
 #endif

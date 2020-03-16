@@ -220,17 +220,24 @@ void asiVisu_TriangulationPrs::InitializePicker(const vtkSmartPointer<vtkCellPic
 {
   picker->RemoveAllLocators();
 
-  // Set octee locators to speed up cell picking
-  if ( this->MainActor() )
+  try
   {
-    vtkSmartPointer<vtkCellTreeLocator>
-      facetLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
-    //
-    facetLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
-    facetLocator->AutomaticOn();
-    facetLocator->BuildLocator();
-    //
-    picker->AddLocator(facetLocator);
+    // Set octee locators to speed up cell picking
+    if ( this->MainActor() )
+    {
+      vtkSmartPointer<vtkCellTreeLocator>
+        facetLocator = vtkSmartPointer<vtkCellTreeLocator>::New();
+      //
+      facetLocator->SetDataSet( this->MainActor()->GetMapper()->GetInput() );
+      facetLocator->AutomaticOn();
+      facetLocator->BuildLocator();
+      //
+      picker->AddLocator(facetLocator);
+    }
+  }
+  catch ( ... )
+  {
+    std::cout << "Crash in cell locator." << std::endl;
   }
 
   // NOTICE: we do not apply cell locator for selection of edges as it seems

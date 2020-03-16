@@ -148,6 +148,9 @@ void asiAlgo_ProjectPointOnMesh::IntersectLeaves(const BVH_Vec4i&    leaf,
 
 gp_Pnt asiAlgo_ProjectPointOnMesh::Perform(const gp_Pnt& P)
 {
+  if ( m_facets.IsNull() )
+    return P;
+
   ProjectionInfoMesh projected;
 
   const opencascade::handle<BVH_Tree<double, 3> >& BVH = m_facets->BVH();

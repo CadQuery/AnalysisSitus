@@ -42,7 +42,10 @@
 //-----------------------------------------------------------------------------
 
 Handle(asiData_OctreeNode)
-  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)& owner)
+  asiEngine_Octree::CreateOctree(const Handle(ActAPI_INode)&       owner,
+                                 const asiAlgo_CSG                 operation,
+                                 const Handle(asiData_OctreeNode)& left,
+                                 const Handle(asiData_OctreeNode)& right)
 {
   // Build BVH to be used in the distance function. The BVH is constructed
   // by the corresponding service class (i.e., asiEngine_XXX), though
@@ -50,24 +53,27 @@ Handle(asiData_OctreeNode)
   // side effects).
   Handle(asiAlgo_BVHFacets) bvh;
   //
-  if ( owner->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+  if ( operation == CSG_Primitive )
   {
-    bvh = asiEngine_Part(m_model).BuildBVH(false);
-  }
-  else if ( owner->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
-  {
-    bvh = asiEngine_Triangulation(m_model).BuildBVH(false);
-  }
-  else if ( owner->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
-  {
-    Handle(asiData_IVTopoItemNode)
-      topoItemNode = Handle(asiData_IVTopoItemNode)::DownCast(owner);
+    if ( owner->IsKind( STANDARD_TYPE(asiData_PartNode) ) )
+    {
+      bvh = asiEngine_Part(m_model).BuildBVH(false);
+    }
+    else if ( owner->IsKind( STANDARD_TYPE(asiData_TriangulationNode) ) )
+    {
+      bvh = asiEngine_Triangulation(m_model).BuildBVH(false);
+    }
+    else if ( owner->IsKind( STANDARD_TYPE(asiData_IVTopoItemNode) ) )
+    {
+      Handle(asiData_IVTopoItemNode)
+        topoItemNode = Handle(asiData_IVTopoItemNode)::DownCast(owner);
 
-    bvh = asiEngine_IV(m_model).BuildBVH(topoItemNode, false);
-  }
-  else
-  {
-    return nullptr; // Unexpected type of owner.
+      bvh = asiEngine_IV(m_model).BuildBVH(topoItemNode, false);
+    }
+    else
+    {
+      return nullptr; // Unexpected type of owner.
+    }
   }
 
   // Create a new peristent Node.
@@ -76,11 +82,23 @@ Handle(asiData_OctreeNode)
   //
   m_model->GetOctreePartition()->AddNode(node);
 
+  // Prepare name.
+  TCollection_AsciiString nodeName("SVO ");
+  nodeName += asiAlgo_CSGUtils::GetOperationName(operation);
+
   // Initialize.
   node->Init();
   node->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
-  node->SetName("SVO");
+  node->SetName(nodeName);
+  node->SetOperation(operation);
   node->SetBVH(bvh);
+
+  // Set references to the operand SVOs.
+  if ( !left.IsNull() && !right.IsNull() )
+  {
+    node->ConnectReference(asiData_OctreeNode::PID_OpLeft,  left);
+    node->ConnectReference(asiData_OctreeNode::PID_OpRight, right);
+  }
 
   // Attach tree function.
   node->ConnectTreeFunction( asiData_OctreeNode::PID_BuildFunc,
@@ -95,7 +113,10 @@ Handle(asiData_OctreeNode)
                                               << node->Parameter(asiData_OctreeNode::PID_DomainIsCube)
                                               << node->Parameter(asiData_OctreeNode::PID_MinCellSize)
                                               << node->Parameter(asiData_OctreeNode::PID_MaxCellSize)
-                                              << node->Parameter(asiData_OctreeNode::PID_Precision),
+                                              << node->Parameter(asiData_OctreeNode::PID_Precision)
+                                              << node->Parameter(asiData_OctreeNode::PID_Operation)
+                                              << node->Parameter(asiData_OctreeNode::PID_OpLeft)
+                                              << node->Parameter(asiData_OctreeNode::PID_OpRight),
                              ActParamStream() << node->Parameter(asiData_OctreeNode::PID_Octree)
                                               << node->Parameter(asiData_OctreeNode::PID_NumElements) );
 
@@ -103,34 +124,4 @@ Handle(asiData_OctreeNode)
   owner->AddChildNode(node);
 
   return node;
-}
-
-//-----------------------------------------------------------------------------
-
-Handle(asiData_OctreeNode)
-  asiEngine_Octree::FindOctree(const Handle(ActAPI_INode)& owner,
-                               const bool                  create)
-{
-  if ( owner.IsNull() || !owner->IsWellFormed() )
-    return nullptr;
-
-  Handle(asiData_OctreeNode) octreeNode;
-
-  /* Regardless of the owner type, octree is stored as a child Node */
-  for ( Handle(ActAPI_IChildIterator) cit = owner->GetChildIterator(); cit->More(); cit->Next() )
-  {
-    octreeNode = Handle(asiData_OctreeNode)::DownCast( cit->Value() );
-    //
-    if ( octreeNode.IsNull() || !octreeNode->IsWellFormed() )
-      continue;
-  }
-
-  // Create if requested.
-  if ( octreeNode.IsNull() && create )
-  {
-    // Create Octree Node.
-    octreeNode = this->CreateOctree(owner);
-  }
-
-  return octreeNode;
 }

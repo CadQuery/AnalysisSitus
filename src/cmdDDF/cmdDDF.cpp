@@ -148,7 +148,7 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   //
   M->OpenCommand();
   {
-    octreeNode = asiEngine_Octree(M).CreateOctree(ownerNode);
+    octreeNode = asiEngine_Octree(M).CreateOctree(ownerNode, CSG_Primitive);
 
     // Get the constructed BVH.
     Handle(asiAlgo_BVHFacets) bvh = octreeNode->GetBVH();
@@ -717,27 +717,178 @@ int DDF_Unite(const Handle(asiTcl_Interp)& interp,
 
   // Find octree 1.
   Handle(asiData_OctreeNode)
-    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[2]) );
+    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[1]) );
   //
   if ( octreeNodeLeft.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Find octree 2.
+  Handle(asiData_OctreeNode)
+    octreeNodeRight = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[2]) );
+  //
+  if ( octreeNodeRight.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
                                                         << argv[2]);
     return TCL_ERROR;
   }
 
+  // Create octree.
+  Handle(asiData_OctreeNode) octreeNode;
+  //
+  M->OpenCommand();
+  {
+    octreeNode = asiEngine_Octree(M).CreateOctree(octreeNodeLeft->GetParentNode(),
+                                                  CSG_Union,
+                                                  octreeNodeLeft,
+                                                  octreeNodeRight);
+
+    // Execute tree functions.
+    M->FuncExecuteAll();
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  cmdDDF::cf->ObjectBrowser->Populate();
+  cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
+
+  return TCL_OK;
+#else
+  cmdDDF_NotUsed(argc);
+  cmdDDF_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int DDF_Common(const Handle(asiTcl_Interp)& interp,
+               int                          argc,
+               const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Find octree 1.
+  Handle(asiData_OctreeNode)
+    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[1]) );
+  //
+  if ( octreeNodeLeft.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+
   // Find octree 2.
   Handle(asiData_OctreeNode)
-    octreeNodeRight = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[3]) );
+    octreeNodeRight = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[2]) );
   //
   if ( octreeNodeRight.IsNull() )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
-                                                        << argv[3]);
+                                                        << argv[2]);
     return TCL_ERROR;
   }
 
+  // Create octree.
+  Handle(asiData_OctreeNode) octreeNode;
+  //
+  M->OpenCommand();
+  {
+    octreeNode = asiEngine_Octree(M).CreateOctree(octreeNodeLeft->GetParentNode(),
+                                                  CSG_Intersection,
+                                                  octreeNodeLeft,
+                                                  octreeNodeRight);
 
+    // Execute tree functions.
+    M->FuncExecuteAll();
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  cmdDDF::cf->ObjectBrowser->Populate();
+  cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
+
+  return TCL_OK;
+#else
+  cmdDDF_NotUsed(argc);
+  cmdDDF_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
+int DDF_Cut(const Handle(asiTcl_Interp)& interp,
+            int                          argc,
+            const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Find octree 1.
+  Handle(asiData_OctreeNode)
+    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[1]) );
+  //
+  if ( octreeNodeLeft.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Find octree 2.
+  Handle(asiData_OctreeNode)
+    octreeNodeRight = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[2]) );
+  //
+  if ( octreeNodeRight.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[2]);
+    return TCL_ERROR;
+  }
+
+  // Create octree.
+  Handle(asiData_OctreeNode) octreeNode;
+  //
+  M->OpenCommand();
+  {
+    octreeNode = asiEngine_Octree(M).CreateOctree(octreeNodeLeft->GetParentNode(),
+                                                  CSG_Difference,
+                                                  octreeNodeLeft,
+                                                  octreeNodeRight);
+
+    // Execute tree functions.
+    M->FuncExecuteAll();
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  cmdDDF::cf->ObjectBrowser->Populate();
+  cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
 
   return TCL_OK;
 #else
@@ -859,9 +1010,28 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("ddf-unite",
     //
     "ddf-unite <id1> <id2>\n"
-    "\t Builds a union distance function for the octrees with the IDs <id1> and <id2>.",
+    "\t Builds a union, i.e., min(f, g) function for the octrees with the IDs\n"
+    "\t <id1> and <id2>.",
     //
     __FILE__, group, DDF_Unite);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("ddf-intersect",
+    //
+    "ddf-intersect <id1> <id2>\n"
+    "\t Builds an intersection, i.e., max(f, g) function for the octrees with the IDs\n"
+    "\t <id1> and <id2>.",
+    //
+    __FILE__, group, DDF_Common);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("ddf-cut",
+    //
+    "ddf-cut <id1> <id2>\n"
+    "\t Builds a cut, i.e., max(f, -g) function for the octrees with the IDs\n"
+    "\t <id1> and <id2>.",
+    //
+    __FILE__, group, DDF_Cut);
 }
 
 // Declare entry point PLUGINFACTORY

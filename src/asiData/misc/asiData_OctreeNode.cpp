@@ -46,7 +46,10 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
 {
   // Register standard Active Data Parameters.
   REGISTER_PARAMETER(Name,         PID_Name);
+  REGISTER_PARAMETER(Int,          PID_Operation);
   REGISTER_PARAMETER(TreeFunction, PID_BuildFunc);
+  REGISTER_PARAMETER(Reference,    PID_OpLeft);
+  REGISTER_PARAMETER(Reference,    PID_OpRight);
   //
   REGISTER_PARAMETER(Group,        PID_ResolutionGroup);
   REGISTER_PARAMETER(Real,         PID_MinCellSize);
@@ -86,6 +89,7 @@ Handle(ActAPI_INode) asiData_OctreeNode::Instance()
 void asiData_OctreeNode::Init()
 {
   // Set default values.
+  this->SetOperation        (CSG_Undefined);
   this->SetBVH              (nullptr);
   this->SetOctree           (nullptr);
   this->SetMinCellSize      (1.);
@@ -123,7 +127,6 @@ void asiData_OctreeNode::Init()
   this->InitParameter(PID_PointSize,        "Point size",        "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_MaxVectorSize,    "Max norm modulus",  "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_NumElements,      "Num. of elements",  "Octree_NumElems", ParameterFlag_IsVisible, true);
-  
 }
 
 //-----------------------------------------------------------------------------
@@ -138,6 +141,20 @@ TCollection_ExtendedString asiData_OctreeNode::GetName()
 void asiData_OctreeNode::SetName(const TCollection_ExtendedString& name)
 {
   ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetOperation(const asiAlgo_CSG op)
+{
+  ActParamTool::AsInt( this->Parameter(PID_Operation) )->SetValue(op);
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_CSG asiData_OctreeNode::GetOperation() const
+{
+  return (asiAlgo_CSG) ActParamTool::AsInt( this->Parameter(PID_Operation) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

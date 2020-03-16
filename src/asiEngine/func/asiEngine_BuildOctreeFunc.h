@@ -58,6 +58,9 @@ class asiEngine_Model;
 //!   - Min cell size
 //!   - Max cell size
 //!   - Precision
+//!   - Operation type
+//!   - Left operand
+//!   - Right operand
 //!
 //! Output Parameters:
 //!   - Octree

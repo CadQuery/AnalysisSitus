@@ -33,12 +33,14 @@
 
 // asiData includes
 #include <asiData_BVHParameter.h>
+#include <asiData_OctreeNode.h>
 #include <asiData_OctreeParameter.h>
 
 // asiAlgo includes
 #if defined USE_MOBIUS
   #include <asiAlgo_MeshDistanceFunc.h>
 #endif
+#include <asiAlgo_CSG.h>
 #include <asiAlgo_Timer.h>
 
 // Active Data includes
@@ -46,8 +48,11 @@
 #include <ActData_UserExtParameter.h>
 
 #ifdef USE_MOBIUS
+  #include <mobius/poly_CommonFunc.h>
+  #include <mobius/poly_DifferenceFunc.h>
   #include <mobius/poly_DistanceField.h>
   #include <mobius/poly_SVO.h>
+  #include <mobius/poly_UnionFunc.h>
 
   using namespace mobius;
 #endif
@@ -130,6 +135,15 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   const double maxSize = ActParamTool::AsReal( inputs->Value(10) )->GetValue();
   const double prec    = ActParamTool::AsReal( inputs->Value(11) )->GetValue();
 
+  // Get operation type and operands.
+  const asiAlgo_CSG
+    op = (asiAlgo_CSG) ActParamTool::AsInt( inputs->Value(12) )->GetValue();
+  //
+  Handle(ActAPI_IDataCursor)
+    opLeftBase = ActParamTool::AsReference( inputs->Value(13) )->GetTarget();
+  Handle(ActAPI_IDataCursor)
+    opRightBase = ActParamTool::AsReference( inputs->Value(14) )->GetTarget();
+
   /* ==============
    *  Build octree.
    * ============== */
@@ -139,9 +153,31 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   TIMER_NEW
   TIMER_GO
 
-  asiAlgo_MeshDistanceFunc*
-    pDistFunc = isCustomDomain ? new asiAlgo_MeshDistanceFunc(bvh, domainMin, domainMax, poly_DistanceFunc::Mode_Signed, isCube)
-                               : new asiAlgo_MeshDistanceFunc(bvh, poly_DistanceFunc::Mode_Signed, isCube);
+  t_ptr<poly_RealFunc> distFunc;
+
+  if ( op == CSG_Primitive )
+  {
+    distFunc = isCustomDomain ? new asiAlgo_MeshDistanceFunc(bvh, domainMin, domainMax, poly_DistanceFunc::Mode_Signed, isCube)
+                              : new asiAlgo_MeshDistanceFunc(bvh, poly_DistanceFunc::Mode_Signed, isCube);
+  }
+  else if ( (op == CSG_Union) || (op == CSG_Intersection) || (op == CSG_Difference) )
+  {
+    Handle(asiData_OctreeNode) opLeftNode  = Handle(asiData_OctreeNode)::DownCast(opLeftBase);
+    Handle(asiData_OctreeNode) opRightNode = Handle(asiData_OctreeNode)::DownCast(opRightBase);
+
+    poly_SVO* pLeftSVO  = static_cast<poly_SVO*>( opLeftNode->GetOctree() );
+    poly_SVO* pRightSVO = static_cast<poly_SVO*>( opRightNode->GetOctree() );
+
+    t_ptr<poly_DistanceField> leftField  = new poly_DistanceField(pLeftSVO);
+    t_ptr<poly_DistanceField> rightField = new poly_DistanceField(pRightSVO);
+
+    if ( op == CSG_Union )
+      distFunc = new poly_UnionFunc(leftField, rightField);
+    else if ( op == CSG_Intersection )
+      distFunc = new poly_CommonFunc(leftField, rightField);
+    else if ( op == CSG_Difference )
+      distFunc = new poly_DifferenceFunc(leftField, rightField);
+  }
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(progress, "Construct distance function")
@@ -151,12 +187,10 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   TIMER_RESET
   TIMER_GO
 
-  poly_DistanceField* pDDF = new poly_DistanceField();
+  t_ptr<poly_DistanceField> DDF = new poly_DistanceField();
   //
-  if ( !pDDF->Build(minSize, maxSize, prec, pDistFunc) )
+  if ( !DDF->Build(minSize, maxSize, prec, distFunc) )
   {
-    delete pDDF;
-
     progress.SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
     return 1;
   }
@@ -164,7 +198,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(progress, "Build SVO for distance field")
 
-  poly_SVO* pRoot = pDDF->GetRoot();
+  poly_SVO* pRoot = DDF->GetRoot();
 
   // Measure SVO.
   int                      numSVONodes = 0;
@@ -202,16 +236,20 @@ ActAPI_ParameterTypeStream
   asiEngine_BuildOctreeFunc::inputSignature() const
 {
   return ActAPI_ParameterTypeStream() << Parameter_BVH
-                                      << Parameter_Real  // Domain min X.
-                                      << Parameter_Real  // Domain min Y.
-                                      << Parameter_Real  // Domain min Z.
-                                      << Parameter_Real  // Domain max X.
-                                      << Parameter_Real  // Domain max Y.
-                                      << Parameter_Real  // Domain max Z.
-                                      << Parameter_Bool  // Whether the domain is a cube.
-                                      << Parameter_Real  // Min cell size.
-                                      << Parameter_Real  // Max cell size.
-                                      << Parameter_Real; // Precision.
+                                      << Parameter_Real      // Domain min X.
+                                      << Parameter_Real      // Domain min Y.
+                                      << Parameter_Real      // Domain min Z.
+                                      << Parameter_Real      // Domain max X.
+                                      << Parameter_Real      // Domain max Y.
+                                      << Parameter_Real      // Domain max Z.
+                                      << Parameter_Bool      // Whether the domain is a cube.
+                                      << Parameter_Real      // Min cell size.
+                                      << Parameter_Real      // Max cell size.
+                                      << Parameter_Real      // Precision.
+                                      << Parameter_Int       // Operation type.
+                                      << Parameter_Reference // Left operand.
+                                      << Parameter_Reference // Right operand.
+  ;
 }
 
 //-----------------------------------------------------------------------------

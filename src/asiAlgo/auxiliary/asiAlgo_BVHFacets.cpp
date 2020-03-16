@@ -433,9 +433,23 @@ bool asiAlgo_BVHFacets::addTriangulation(const Handle(Poly_Triangulation)& trian
     facet.P1 = BVH_Vec3d( P1.X(), P1.Y(), P1.Z() );
     facet.P2 = BVH_Vec3d( P2.X(), P2.Y(), P2.Z() );
 
-    // Initialize normal
-    gp_Vec V1(P0, P1); V1.Normalize();
-    gp_Vec V2(P0, P2); V2.Normalize();
+    /* Initialize normal */
+
+    gp_Vec V1(P0, P1);
+    //
+    if ( V1.SquareMagnitude() < 1e-8 )
+      continue; // Skip invalid facet.
+    //
+    V1.Normalize();
+
+    gp_Vec V2(P0, P2);
+    //
+    if ( V2.SquareMagnitude() < 1e-8 )
+      continue; // Skip invalid facet.
+    //
+    V2.Normalize();
+
+    // Compute norm
     facet.N = V1.Crossed(V2);
     //
     if ( facet.N.SquareMagnitude() < 1e-8 )

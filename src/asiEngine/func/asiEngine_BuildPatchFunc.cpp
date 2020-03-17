@@ -162,7 +162,7 @@ int asiEngine_BuildPatchFunc::execute(const Handle(ActAPI_HParameterList)& input
   Handle(Geom_BSplineSurface) bsurf;
   //
   if ( !reApi.FillPatchCoons(coedges, minNumKnots, bsurf) )
-    return 1;
+    return 0;
 
   /* =============================================================
    *  Extract inner mesh nodes if mesh approximation is requested

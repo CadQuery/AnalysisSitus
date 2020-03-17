@@ -89,8 +89,8 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
   double resultRayParam = RealLast();
 
 #if defined DRAW_DEBUG
-  this->Plotter().REDRAW_POINT("ray_origin", ray.Location(), Color_Red);
-  this->Plotter().REDRAW_LINK("ray", ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green);
+  this->GetPlotter().REDRAW_POINT("ray_origin", ray.Location(), Color_Red);
+  this->GetPlotter().REDRAW_LINK("ray", ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green);
 #endif
 
   // Traverse BVH
@@ -146,12 +146,12 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
 
     const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                               gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
-                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                                  gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
+                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
   }
   else
     std::cout << "Error: cannot find the intersected facet" << std::endl;
@@ -239,12 +239,12 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
 
     const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                               gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
-    this->Plotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
-                               gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                                  gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
+                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
+                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
   }
   else
     std::cout << "Error: cannot find the host facet" << std::endl;
@@ -313,9 +313,9 @@ double asiAlgo_HitFacet::testLeaf(const gp_Pnt&    P,
       resultFacet = fidx;
 
 #if defined DRAW_DEBUG
-      this->Plotter().DRAW_LINK(p0, p1, Color_Green);
-      this->Plotter().DRAW_LINK(p0, p2, Color_Green);
-      this->Plotter().DRAW_LINK(p1, p2, Color_Green);
+      this->GetPlotter().DRAW_LINK(p0, p1, Color_Green);
+      this->GetPlotter().DRAW_LINK(p0, p2, Color_Green);
+      this->GetPlotter().DRAW_LINK(p1, p2, Color_Green);
 #endif
     }
   }

@@ -298,7 +298,9 @@ int RE_BuildPatches(const Handle(asiTcl_Interp)& interp,
   cmdRE::model->CommitCommand();
 
   // Actualize Patch Nodes.
-  cmdRE::cf->ViewerPart->PrsMgr()->ActualizeCol(patchNodes, false, false, false, false);
+  for ( ActAPI_HNodeList::Iterator nit(*patchNodes); nit.More(); nit.Next() )
+    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(nit.Value(), false, false, false, false);
+  //
   cmdRE::cf->ViewerPart->Repaint();
 
   return TCL_OK;
@@ -2103,8 +2105,6 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().Init();
   interp->GetProgress().SetMessageKey("Actualize scene");
 
-  // Collect
-
   // Update UI.
   if ( cmdRE::cf->ViewerPart )
   {
@@ -2291,7 +2291,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-topologize",
     //
-    "re-topologize\n"
+    "re-topologize <numFaces> <projToler>\n"
     "\t Attempts to topologize the active triangulation with the quads from\n"
     "\t the active tessellation.",
     //

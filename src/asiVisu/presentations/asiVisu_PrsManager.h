@@ -56,7 +56,6 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
-#include <vtkWorldPointPicker.h>
 #pragma warning(pop)
 
 // QVTK includes
@@ -401,7 +400,7 @@ public:
     m_pointPicker->SetTolerance(0.1);
 
     // Initialize world picker
-    m_worldPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
+    m_worldPicker = vtkSmartPointer<vtkCellPicker>::New();
 
     if ( nodeCol.IsNull() || nodeCol->IsEmpty() )
       return;
@@ -517,7 +516,7 @@ private:
   vtkSmartPointer<vtkPointPicker> m_pointPicker;
 
   //! Picker to select any point (not necessarily from point data).
-  vtkSmartPointer<vtkWorldPointPicker> m_worldPicker;
+  vtkSmartPointer<vtkCellPicker> m_worldPicker;
 
   //! Currently selected Presentations.
   asiVisu_ActualSelection m_currentSelection;

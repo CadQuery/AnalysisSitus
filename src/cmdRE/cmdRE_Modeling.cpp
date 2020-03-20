@@ -393,7 +393,7 @@ int RE_BuildContourLines(const Handle(asiTcl_Interp)& interp,
       //
       if ( interp->GetProgress().IsCancelling() )
       {
-        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Cancelled);
+        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Canceled);
         //
         M->AbortCommand();
         return TCL_OK;

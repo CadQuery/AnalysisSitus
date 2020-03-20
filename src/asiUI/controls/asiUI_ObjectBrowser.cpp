@@ -378,6 +378,7 @@ void asiUI_ObjectBrowser::onShow()
 
   // Modify UI.
   this->blockSignals(true);
+  this->model()->blockSignals(true);
   {
     QList<QTreeWidgetItem*> items = this->selectedItems();
     for ( QList<QTreeWidgetItem*>::iterator iit = items.begin(); iit != items.end(); ++iit )
@@ -387,6 +388,7 @@ void asiUI_ObjectBrowser::onShow()
     }
   }
   this->blockSignals(false);
+  this->model()->blockSignals(false);
 
   // Modify Data Model.
   this->showNodes(selected_n);
@@ -401,6 +403,7 @@ void asiUI_ObjectBrowser::onShowOnly()
   if ( !this->selectedNodes(selected_n) ) return;
 
   this->blockSignals(true);
+  this->model()->blockSignals(true);
   {
     // Hide all items.
     for ( int i = 0; i < this->topLevelItemCount(); ++i )
@@ -418,6 +421,7 @@ void asiUI_ObjectBrowser::onShowOnly()
     }
   }
   this->blockSignals(false);
+  this->model()->blockSignals(false);
 
   // Modify Data Model.
   this->showOnlyNodes(selected_n);
@@ -433,6 +437,7 @@ void asiUI_ObjectBrowser::onHide()
 
   // Modify UI.
   this->blockSignals(true);
+  this->model()->blockSignals(true);
   {
     QList<QTreeWidgetItem*> items = this->selectedItems();
     for ( QList<QTreeWidgetItem*>::iterator iit = items.begin(); iit != items.end(); ++iit )
@@ -442,6 +447,7 @@ void asiUI_ObjectBrowser::onHide()
     }
   }
   this->blockSignals(false);
+  this->model()->blockSignals(false);
 
   // Modify Data Model.
   this->hideNodes(selected_n);
@@ -1127,7 +1133,7 @@ bool asiUI_ObjectBrowser::selectedNode(Handle(ActAPI_INode)& Node,
   {
     std::cout << "Error: selected Node is invalid" << std::endl;
 
-    m_progress.SendLogMessage(LogWarn(Normal) << "Selected Node is invalid");
+    m_progress.SendLogMessage(LogWarn(Normal) << "Selected Node is invalid.");
     pItem->setBackgroundColor(0, Qt::darkRed);
     return false;
   }

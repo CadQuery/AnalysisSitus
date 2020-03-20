@@ -283,6 +283,7 @@ Handle(asiData_ReEdgeNode)
   // Initialize Node.
   edge_n->Init(vfirst, vlast);
   edge_n->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
+  edge_n->SetSmoothTransition(false);
 
   // Add as a child to Edges Node.
   edges_n->AddChildNode(edge_n);

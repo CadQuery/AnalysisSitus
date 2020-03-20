@@ -148,7 +148,7 @@ bool asiAlgo_CheckDeviations::internalPerform()
     //
     if ( m_progress.IsCancelling() )
     {
-      m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Cancelled);
+      m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Canceled);
       return false;
     }
   }

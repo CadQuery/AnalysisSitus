@@ -99,7 +99,7 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
 
     if ( m_progress.IsCancelling() )
     {
-      m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Cancelled);
+      m_progress.SetProgressStatus(ActAPI_ProgressStatus::Progress_Canceled);
       return false;
     }
 

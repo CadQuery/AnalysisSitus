@@ -204,7 +204,7 @@ void asiUI_ProgressListener::onStatus(const int status)
     }
     break;
 
-    case Progress_Cancelled:
+    case Progress_Canceled:
     {
       pStatusBar->ShowProgress(false);
     }

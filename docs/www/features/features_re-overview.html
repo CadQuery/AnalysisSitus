@@ -48,14 +48,20 @@ One can think of reverse engineering as a specific CAD modeling
 process where you start from an existing artifact instead of a blank
 workspace. The whole process is driven by a reference shape represented
 with either a point cloud or mesh geometry. Looking from this standpoint,
-Analysis Situs is designed to become a modeling system where the main
-prerequisite is the existence of a reference part guiding the design
+Analysis Situs requires the existence of a reference part guiding the design
 process and used to snap points, curves, and surfaces. The following
-figure illustrates the entire reverse engineering workflow in
-Analysis Situs.
+figure illustrates a typical reverse engineering workflow.
 </p>
 
 <div align="center"><img src="../imgs/re-workflow.png"/></div>
+
+<p>
+Reverse engineering might also be named "reverse geometric modeling"
+or "digital shape reconstruction" to emphasize the fact that this field
+is focused mainly on modeling. A good starting point for those seeking
+a theoretical backbone of the reverse engineering techniques is the
+conference proceedings <a href="..\references.html#hoschek-dankwort-1996">[Hoschek and Dankwort, 1996]</a>.
+</p>
 
 <p>
 It all starts with importing a mesh model. The most popular format

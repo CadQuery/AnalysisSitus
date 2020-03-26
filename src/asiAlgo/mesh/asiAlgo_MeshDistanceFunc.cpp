@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 // Number of rays used to test sign.
-#define NB_TEST_RAYS 3
+#define NB_TEST_RAYS 30
 
 namespace
 {
@@ -53,42 +53,7 @@ namespace
     const double dx = fabs( Pmax.X() - Pmin.X() );
     const double dy = fabs( Pmax.Y() - Pmin.Y() );
     const double dz = fabs( Pmax.Z() - Pmin.Z() );
-    double       d  = 0.;
-
-    bool enlargeDx = false;
-    bool enlargeDy = false;
-    bool enlargeDz = false;
-    //
-    if ( dx > dy )
-    {
-      enlargeDy = true;
-
-      if ( dx > dz )
-      {
-        d         = dx;
-        enlargeDz = true;
-      }
-      else
-      {
-        d         = dz;
-        enlargeDx = true;
-      }
-    }
-    else // dy > dx
-    {
-      enlargeDx = true;
-
-      if ( dy > dz )
-      {
-        d         = dy;
-        enlargeDz = true;
-      }
-      else
-      {
-        d         = dz;
-        enlargeDy = true;
-      }
-    }
+    double       d  = Max(Max(dx, dy), dz);
 
     mobius::t_xyz aabbCenter = (Pmax + Pmin)*0.5;
 
@@ -110,7 +75,7 @@ namespace
 //-----------------------------------------------------------------------------
 
 asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode)
-: mobius::poly_DistanceFunc(mode)
+: mobius::poly_DistanceFunc(mode), m_RNG(128)
 {}
 
 //-----------------------------------------------------------------------------
@@ -118,7 +83,7 @@ asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode)
 asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
                                                    const Mode                       mode,
                                                    const bool                       cube)
-: mobius::poly_DistanceFunc(mode)
+: mobius::poly_DistanceFunc(mode), m_RNG(128)
 {
   this->Init(facets, cube);
 }
@@ -130,7 +95,7 @@ asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacet
                                                    const gp_XYZ&                    domainMax,
                                                    const Mode                       mode,
                                                    const bool                       cube)
-: mobius::poly_DistanceFunc(mode)
+: mobius::poly_DistanceFunc(mode), m_RNG(128)
 {
   this->Init(facets, domainMin, domainMax, cube);
 }
@@ -226,15 +191,15 @@ double asiAlgo_MeshDistanceFunc::Eval(const double x,
 
     for ( int rayIdx = 0; rayIdx < NB_TEST_RAYS; ++rayIdx )
     {
-      if ( vote > 1 || vote < -1 )
+      if ( vote > (NB_TEST_RAYS/2) || vote < -(NB_TEST_RAYS/2) )
         break;
 
       // Initialize random ray.
       asiAlgo_BVHAlgo::t_ray
         ray( BVH_Vec3d(x, y, z),
-             BVH_Vec3d( m_RNG.RandDouble() * 2.0 - 1.0,
-                        m_RNG.RandDouble() * 2.0 - 1.0,
-                        m_RNG.RandDouble() * 2.0 - 1.0) );
+             BVH_Vec3d( m_RNG.NextReal() * 2.0 - 1.0,
+                        m_RNG.NextReal() * 2.0 - 1.0,
+                        m_RNG.NextReal() * 2.0 - 1.0) );
       //
       const int numBounces = asiAlgo_BVHAlgo::rayMeshHitCount(m_facets.get(), ray);
       //

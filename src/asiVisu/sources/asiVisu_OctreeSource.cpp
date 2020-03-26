@@ -204,6 +204,9 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
 
     // Add cells.
     this->addVoxels(m_pOctree, pOutputGrid);
+
+    std::cout << "Min scalar is " << m_fMinScalar << std::endl;
+    std::cout << "Max scalar is " << m_fMaxScalar << std::endl;
   }
 
   return 1;

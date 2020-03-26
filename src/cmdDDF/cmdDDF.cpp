@@ -43,11 +43,11 @@
 
 // asiAlgo includes
 #include <asiAlgo_ProjectPointOnMesh.h>
+#include <asiAlgo_Timer.h>
+//
 #ifdef USE_MOBIUS
   #include <asiAlgo_MeshDistanceFunc.h>
 #endif
-//
-#include <asiAlgo_Timer.h>
 
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
@@ -312,6 +312,39 @@ int DDF_SetSVO(const Handle(asiTcl_Interp)& interp,
   M->OpenCommand();
   {
     octreeNode->SetOctree(pNode);
+
+    double xMin, yMin, zMin, xMax, yMax, zMax;
+    octreeNode->GetDomainMinCorner(xMin, yMin, zMin);
+    octreeNode->GetDomainMaxCorner(xMax, yMax, zMax);
+    //
+    gp_XYZ domainMin(xMin, yMin, zMin);
+    gp_XYZ domainMax(xMax, yMax, zMax);
+
+    // Evaluate real distances to compare with the cached ones.
+    t_ptr<poly_RealFunc>
+      distFunc = new asiAlgo_MeshDistanceFunc( octreeNode->GetBVH(),
+                                               domainMin,
+                                               domainMax,
+                                               poly_DistanceFunc::Mode_Signed,
+                                               octreeNode->IsDomainCube() );
+    //
+    const double f0 = distFunc->Eval( pNode->GetP0().X(), pNode->GetP0().Y(), pNode->GetP0().Z() );
+    const double f1 = distFunc->Eval( pNode->GetP1().X(), pNode->GetP1().Y(), pNode->GetP1().Z() );
+    const double f2 = distFunc->Eval( pNode->GetP2().X(), pNode->GetP2().Y(), pNode->GetP2().Z() );
+    const double f3 = distFunc->Eval( pNode->GetP3().X(), pNode->GetP3().Y(), pNode->GetP3().Z() );
+    const double f4 = distFunc->Eval( pNode->GetP4().X(), pNode->GetP4().Y(), pNode->GetP4().Z() );
+    const double f5 = distFunc->Eval( pNode->GetP5().X(), pNode->GetP5().Y(), pNode->GetP5().Z() );
+    const double f6 = distFunc->Eval( pNode->GetP6().X(), pNode->GetP6().Y(), pNode->GetP6().Z() );
+    const double f7 = distFunc->Eval( pNode->GetP7().X(), pNode->GetP7().Y(), pNode->GetP7().Z() );
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 0: %1 vs %2 evaluated." << pNode->GetScalar(0) << f0 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 1: %1 vs %2 evaluated." << pNode->GetScalar(1) << f1 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 2: %1 vs %2 evaluated." << pNode->GetScalar(2) << f2 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 3: %1 vs %2 evaluated." << pNode->GetScalar(3) << f3 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 4: %1 vs %2 evaluated." << pNode->GetScalar(4) << f4 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 5: %1 vs %2 evaluated." << pNode->GetScalar(5) << f5 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 6: %1 vs %2 evaluated." << pNode->GetScalar(6) << f6 );
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Scalar 7: %1 vs %2 evaluated." << pNode->GetScalar(7) << f7 );
   }
   M->CommitCommand();
   //
@@ -903,6 +936,63 @@ int DDF_Cut(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int DDF_ExtractOutsideLeaves(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+#if defined USE_MOBIUS
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Find octree.
+  Handle(asiData_OctreeNode)
+    octreeNodeLeft = Handle(asiData_OctreeNode)::DownCast( M->FindNode(argv[1]) );
+  //
+  if ( octreeNodeLeft.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find octree with the id %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Get SVO node.
+  poly_SVO* pSVO = static_cast<poly_SVO*>( octreeNodeLeft->GetOctree() );
+  //
+  if ( pSVO == nullptr )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Null SVO in the octree Node with the id %1."
+                                                        << argv[1]);
+    return TCL_ERROR;
+  }
+
+  // Get leaves.
+  std::vector<const poly_SVO*> svoLeaves;
+  pSVO->GetLeaves(svoLeaves, ScalarMembership_On);
+  //
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "%1 SVO leaves collected."
+                                                        << int( svoLeaves.size() ) );
+
+  // Update UI.
+  cmdDDF::cf->ViewerPart->PrsMgr()->Actualize( M->GetTessellationNode() );
+
+  return TCL_OK;
+#else
+  cmdDDF_NotUsed(argc);
+  cmdDDF_NotUsed(argv);
+
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "SVO is a part of Mobius (not available in open source).");
+
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
                      const Handle(Standard_Transient)& data)
 {
@@ -1032,6 +1122,14 @@ void cmdDDF::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t <id1> and <id2>.",
     //
     __FILE__, group, DDF_Cut);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("ddf-extract-outside-leaves",
+    //
+    "ddf-extract-outside-leaves <id>\n"
+    "\t Extracts the outside leaves of the DDF with the specified <id>.",
+    //
+    __FILE__, group, DDF_ExtractOutsideLeaves);
 }
 
 // Declare entry point PLUGINFACTORY

@@ -74,6 +74,8 @@ public:
     PID_MinCellSize,      //!< Min cell size.
     PID_MaxCellSize,      //!< Max cell size.
     PID_Precision,        //!< Precision.
+    PID_IsUniform,        //!< Indicates whether the voxelization is uniform.
+    PID_NumRaysSign,      //!< Number of rays to use for sign resolution.
   //----------------------//
     PID_DomainGroup,      //!< Group of domain corner Parameters.
     PID_DomainMinX,       //!< X coordinate of the min domain corner.
@@ -261,6 +263,15 @@ public:
   //! \param[in] value value to set.
   asiData_EXPORT void
     SetPrecision(const double value);
+
+  //! \return true if the uniform voxelization mode is enabled.
+  asiData_EXPORT bool
+    IsUniform() const;
+
+  //! Enables/disables the uniform voxelization mode.
+  //! \param[in] isUniform value to set.
+  asiData_EXPORT void
+    SetUniform(const bool isUniform);
 
 protected:
 

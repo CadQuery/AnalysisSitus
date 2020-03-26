@@ -189,7 +189,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
 
   t_ptr<poly_DistanceField> DDF = new poly_DistanceField();
   //
-  if ( !DDF->Build(minSize, maxSize, prec, distFunc) )
+  if ( !DDF->Build(minSize, maxSize, prec, false, distFunc) )
   {
     progress.SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
     return 1;

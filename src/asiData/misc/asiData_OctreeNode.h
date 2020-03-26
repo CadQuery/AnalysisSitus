@@ -273,6 +273,17 @@ public:
   asiData_EXPORT void
     SetUniform(const bool isUniform);
 
+  //! \return number of rays used to define the signs of the distance values
+  //!         in ADF computation.
+  asiData_EXPORT int
+    GetNumRaysSign() const;
+
+  //! Sets the number of rays used for determining distance sign in each corner
+  //! of each voxel.
+  //! \param[in] numRays number of rays to set.
+  asiData_EXPORT void
+    SetNumRaysSign(const int numRays);
+
 protected:
 
   //! Default ctor. Registers all involved Parameters.

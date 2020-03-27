@@ -47,26 +47,31 @@ class asiAlgo_MeshDistanceFunc : public mobius::poly_DistanceFunc
 public:
 
   //! Ctor.
-  //! \param[in] mode distance calculation mode.
+  //! \param[in] mode    distance calculation mode.
+  //! \param[in] numRays number of rays to check distance sign.
   asiAlgo_EXPORT
-    asiAlgo_MeshDistanceFunc(const Mode mode = Mode_Unsigned);
+    asiAlgo_MeshDistanceFunc(const Mode mode    = Mode_Unsigned,
+                             const int  numRays = 3);
 
   //! Ctor with initialization.
-  //! \param[in] facets faceted representation of a shape to measure distance to..
-  //! \param[in] mode   distance calculation mode.
-  //! \param[in] cube   indicates whether the distance function should be
-  //!                   defined in a cube rather than in the bounding
-  //!                   parallelepiped.
+  //! \param[in] facets  faceted representation of a shape to measure distance to..
+  //! \param[in] mode    distance calculation mode.
+  //! \param[in] numRays number of rays to check distance sign.
+  //! \param[in] cube    indicates whether the distance function should be
+  //!                    defined in a cube rather than in the bounding
+  //!                    parallelepiped.
   asiAlgo_EXPORT
     asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
-                             const Mode                       mode = Mode_Unsigned,
-                             const bool                       cube = false);
+                             const Mode                       mode    = Mode_Unsigned,
+                             const int                        numRays = 3,
+                             const bool                       cube    = false);
 
   //! Ctor with initialization.
   //! \param[in] facets    faceted representation of a shape to measure distance to..
   //! \param[in] domainMin min corner point of the function domain.
   //! \param[in] domainMax max corner point of the function domain.
   //! \param[in] mode      distance calculation mode.
+  //! \param[in] numRays   number of rays to check distance sign.
   //! \param[in] cube      indicates whether the distance function should be
   //!                      defined in a cube rather than in the bounding
   //!                      parallelepiped.
@@ -74,8 +79,9 @@ public:
     asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
                              const gp_XYZ&                    domainMin,
                              const gp_XYZ&                    domainMax,
-                             const Mode                       mode = Mode_Unsigned,
-                             const bool                       cube = false);
+                             const Mode                       mode    = Mode_Unsigned,
+                             const int                        numRays = 3,
+                             const bool                       cube    = false);
 
 public:
 
@@ -115,8 +121,9 @@ public:
 
 protected:
 
-  Handle(asiAlgo_BVHFacets)  m_facets; //!< BVH for shape represented with facets.
-  mutable asiAlgo_BullardRNG m_RNG;    //!< Random number generator.
+  Handle(asiAlgo_BVHFacets)  m_facets;   //!< BVH for shape represented with facets.
+  int                        m_iNumRays; //!< Number of rays to check distance sign.
+  mutable asiAlgo_BullardRNG m_RNG;      //!< Random number generator.
 
 public:
 

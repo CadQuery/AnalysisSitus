@@ -55,6 +55,8 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Real,         PID_MinCellSize);
   REGISTER_PARAMETER(Real,         PID_MaxCellSize);
   REGISTER_PARAMETER(Real,         PID_Precision);
+  REGISTER_PARAMETER(Bool,         PID_IsUniform);
+  REGISTER_PARAMETER(Int,          PID_NumRaysSign);
   //
   REGISTER_PARAMETER(Group,        PID_DomainGroup);
   REGISTER_PARAMETER(Real,         PID_DomainMinX);
@@ -95,6 +97,8 @@ void asiData_OctreeNode::Init()
   this->SetMinCellSize      (1.);
   this->SetMaxCellSize      (100.);
   this->SetPrecision        (1.);
+  this->SetUniform          (false);
+  this->SetNumRaysSign      (3);
   this->SetDomainMinCorner  (0., 0., 0.);
   this->SetDomainMaxCorner  (0., 0., 0.);
   this->SetDomainCube       (false);
@@ -111,6 +115,8 @@ void asiData_OctreeNode::Init()
   this->InitParameter(PID_MinCellSize,      "Min cell size",     "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_MaxCellSize,      "Max cell size",     "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_Precision,        "Precision",         "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_IsUniform,        "Is uniform",        "",                ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_NumRaysSign,      "Num. rays (sign)",  "",                ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_DomainGroup,      "Domain",            "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_DomainMinX,       "Min X",             "",                ParameterFlag_IsVisible, true);
@@ -353,4 +359,32 @@ double asiData_OctreeNode::GetPrecision() const
 void asiData_OctreeNode::SetPrecision(const double value)
 {
   return ActParamTool::AsReal( this->Parameter(PID_Precision) )->SetValue(value);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiData_OctreeNode::IsUniform() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_IsUniform) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetUniform(const bool isUniform)
+{
+  return ActParamTool::AsBool( this->Parameter(PID_IsUniform) )->SetValue(isUniform);
+}
+
+//-----------------------------------------------------------------------------
+
+int asiData_OctreeNode::GetNumRaysSign() const
+{
+  return ActParamTool::AsInt( this->Parameter(PID_NumRaysSign) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetNumRaysSign(const int numRays)
+{
+  ActParamTool::AsInt( this->Parameter(PID_NumRaysSign) )->SetValue(numRays);
 }

@@ -112,6 +112,7 @@ bool
   //
   devNode->Init();
   devNode->SetName("Deviation");
+  devNode->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
 
   // Store deviations.
   devNode->SetMeshWithScalars( checkDeviations.GetResult() );

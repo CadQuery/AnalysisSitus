@@ -331,7 +331,8 @@ bool asiAlgo_BVHFacets::init(const TopoDS_Shape& model,
     const TopoDS_Face& face = TopoDS::Face( faces(fidx) );
     //
     if ( !this->addFace(face, fidx) )
-      return false;
+      continue; // Do not return false, just skip as otherwise
+                // BVH will be incorrect for faulty shapes!
   }
 
   // Calculate bounding diagonal

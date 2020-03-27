@@ -123,37 +123,6 @@ struct t_undirectedLink
 
 //-----------------------------------------------------------------------------
 
-#if defined USE_MOBIUS
-
-Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
-                                    const double                     lambda,
-                                    ActAPI_ProgressEntry             progress)
-{
-  // Convert to Mobius curve.
-  t_ptr<t_bcurve> mobCurve = cascade::GetMobiusBCurve(curve);
-
-  // Perform fairing from Mobius.
-  geom_FairBCurve fairing(mobCurve, lambda, nullptr, nullptr);
-  //
-  if ( !fairing.Perform() )
-  {
-    progress.SendLogMessage(LogErr(Normal) << "Fairing failed.");
-    return TCL_OK;
-  }
-
-  // Get the faired curve.
-  const t_ptr<t_bcurve>& mobResult = fairing.GetResult();
-
-  // Convert to OpenCascade curve.
-  Handle(Geom_BSplineCurve) result = cascade::GetOpenCascadeBCurve(mobResult);
-
-  return result;
-}
-
-#endif
-
-//-----------------------------------------------------------------------------
-
 int RE_SmoothenRegularEdges(const Handle(asiTcl_Interp)& interp,
                             int                          argc,
                             const char**                 argv)
@@ -484,48 +453,27 @@ int RE_FairContourLines(const Handle(asiTcl_Interp)& interp,
     return TCL_ERROR;
   }
 
+  // Modify parametric model.
   M->OpenCommand();
-
-  // Approximate every edge individually.
-  for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
   {
-    Handle(asiData_ReEdgeNode)
-      edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
-
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Next edge: %1."
-                                                          << edgeNode->GetId() );
-
-    // Get B-curve from edge.
-    Handle(Geom_BSplineCurve)
-      t_bcurve = Handle(Geom_BSplineCurve)::DownCast( edgeNode->GetCurve() );
-    //
-    if ( t_bcurve.IsNull() )
+    for ( Handle(ActAPI_IChildIterator) eit = edgesNode->GetChildIterator(); eit->More(); eit->Next() )
     {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "There is no B-curve ready in edge %1."
-                                                           << edgeNode->GetId() );
-      return TCL_ERROR;
+      Handle(asiData_ReEdgeNode)
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( eit->Value() );
+
+      edgeNode->SetFairCurve(true);
+      edgeNode->SetFairingCoeff(lambda);
     }
 
-    // Fair curve.
-    Handle(Geom_BSplineCurve) fairedBCurve = FairCurve( t_bcurve,
-                                                        lambda,
-                                                        interp->GetProgress() );
-    //
-    if ( fairedBCurve.IsNull() )
-    {
-      interp->GetProgress().SendLogMessage( LogErr(Normal) << "Fairing failed for edge %1."
-                                                           << edgeNode->GetId() );
-      return TCL_ERROR;
-    }
-
-    // Update Data Model.
-    edgeNode->SetCurve(fairedBCurve);
-
-    // Update scene.
-    cmdRE::cf->ViewerPart->PrsMgr()->Actualize(edgeNode);
+    // Execute deps.
+    M->FuncExecuteAll();
   }
-
   M->CommitCommand();
+
+  // Actualize.
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Patches(), true, false, false, false);
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Edges(),   true, false, false, false);
+  cmdRE::cf->ViewerPart->Repaint();
 
   return TCL_OK;
 #else
@@ -2123,6 +2071,85 @@ int RE_Topologize(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int RE_SmoothenEdges(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  asiEngine_RE reApi(cmdRE::model);
+
+  cmdRE::model->OpenCommand();
+  {
+    // Loop over the edges and enable smoothing for those
+    // that are regular.
+    Handle(asiData_ReEdgesNode) edgesNode = reApi.Get_Edges();
+    //
+    for ( Handle(ActAPI_IChildIterator) cit = edgesNode->GetChildIterator(); cit->More(); cit->Next() )
+    {
+      Handle(asiData_ReEdgeNode)
+        edgeNode = Handle(asiData_ReEdgeNode)::DownCast( cit->Value() );
+
+      Handle(asiData_ReVertexNode) fVertexNode = edgeNode->GetFirstVertex();
+      Handle(asiData_ReVertexNode) lVertexNode = edgeNode->GetLastVertex();
+
+      // Get valence of the first vertex.
+      int fValence = 0;
+      {
+        Handle(ActAPI_HParameterList) backrefs = fVertexNode->GetReferrers();
+        //
+        for ( ActAPI_HParameterList::Iterator rit(*backrefs); rit.More(); rit.Next() )
+        {
+          Handle(asiData_ReEdgeNode)
+            refEdgeNode = Handle(asiData_ReEdgeNode)::DownCast( rit.Value()->GetNode() );
+          //
+          if ( !refEdgeNode.IsNull() )
+            fValence++;
+        }
+      }
+
+      // Get valence of the second vertex.
+      int lValence = 0;
+      {
+        Handle(ActAPI_HParameterList) backrefs = lVertexNode->GetReferrers();
+        //
+        for ( ActAPI_HParameterList::Iterator rit(*backrefs); rit.More(); rit.Next() )
+        {
+          Handle(asiData_ReEdgeNode)
+            refEdgeNode = Handle(asiData_ReEdgeNode)::DownCast( rit.Value()->GetNode() );
+          //
+          if ( !refEdgeNode.IsNull() )
+            lValence++;
+        }
+      }
+
+      if ( (fValence == 4) && (lValence == 4) )
+      {
+        edgeNode->SetSmoothTransition(true);
+
+        reApi.ReconnectSmoothenCornersFunc(edgeNode);
+        reApi.ReconnectSmoothenPatchesFunc(edgeNode);
+      }
+    }
+
+    // Execute functions.
+    cmdRE::model->FuncExecuteAll();
+  }
+  cmdRE::model->CommitCommand();
+
+  // Actualize.
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Patches(), true, false, false, false);
+  cmdRE::cf->ViewerPart->PrsMgr()->Actualize(reApi.Get_Edges(),   true, false, false, false);
+  cmdRE::cf->ViewerPart->Repaint();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                               const Handle(Standard_Transient)& cmdRE_NotUsed(data))
 {
@@ -2296,4 +2323,12 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t the active tessellation.",
     //
     __FILE__, group, RE_Topologize);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("re-smoothen-edges",
+    //
+    "re-smoothen-edges\n"
+    "\t Enables smoothing for all regular edges.",
+    //
+    __FILE__, group, RE_SmoothenEdges);
 }

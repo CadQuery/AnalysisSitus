@@ -966,7 +966,9 @@ void asiEngine_RE::ReconnectBuildEdgeFunc(const Handle(asiData_ReEdgeNode)& edge
 
   ActParamStream inputs;
   inputs << edge->Parameter(asiData_ReEdgeNode::PID_Polyline)
-         << edge->Parameter(asiData_ReEdgeNode::PID_ApproxToler);
+         << edge->Parameter(asiData_ReEdgeNode::PID_ApproxToler)
+         << edge->Parameter(asiData_ReEdgeNode::PID_FairCurve)
+         << edge->Parameter(asiData_ReEdgeNode::PID_FairingCoeff);
 
   /* Collect output arguments. */
 

@@ -280,7 +280,6 @@ set (mesh_H_FILES
   mesh/asiAlgo_MeshOffset.h
   mesh/asiAlgo_MeshParams.h
   mesh/asiAlgo_MeshProjectLine.h
-  mesh/MeshTools_DistanceFunction.hxx
 )
 set (mesh_CPP_FILES
   mesh/asiAlgo_MeshComputeNorms.cpp
@@ -293,7 +292,6 @@ set (mesh_CPP_FILES
   mesh/asiAlgo_MeshOffset.cpp
   mesh/asiAlgo_MeshParams.cpp
   mesh/asiAlgo_MeshProjectLine.cpp
-  mesh/MeshTools_DistanceFunction.cxx
 )
 
 if (USE_MOBIUS)

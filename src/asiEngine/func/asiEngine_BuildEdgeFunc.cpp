@@ -37,6 +37,45 @@
 // Active Data includes
 #include <ActData_ParameterFactory.h>
 
+#if defined USE_MOBIUS
+  // Mobius includes
+  #include <mobius/cascade.h>
+  #include <mobius/geom_FairBCurve.h>
+
+  using namespace mobius;
+#endif
+
+//-----------------------------------------------------------------------------
+
+#if defined USE_MOBIUS
+
+Handle(Geom_BSplineCurve) FairCurve(const Handle(Geom_BSplineCurve)& curve,
+                                    const double                     lambda,
+                                    ActAPI_ProgressEntry             progress = nullptr)
+{
+  // Convert to Mobius curve.
+  t_ptr<t_bcurve> mobCurve = cascade::GetMobiusBCurve(curve);
+
+  // Perform fairing from Mobius.
+  geom_FairBCurve fairing(mobCurve, lambda, nullptr, nullptr);
+  //
+  if ( !fairing.Perform() )
+  {
+    progress.SendLogMessage(LogErr(Normal) << "Fairing failed.");
+    return nullptr;
+  }
+
+  // Get the faired curve.
+  const t_ptr<t_bcurve>& mobResult = fairing.GetResult();
+
+  // Convert to OpenCascade curve.
+  Handle(Geom_BSplineCurve) result = cascade::GetOpenCascadeBCurve(mobResult);
+
+  return result;
+}
+
+#endif
+
 //-----------------------------------------------------------------------------
 
 Handle(asiEngine_BuildEdgeFunc) asiEngine_BuildEdgeFunc::Instance()
@@ -68,6 +107,10 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );
 
+  // Fairing props.
+  const bool   toFair = edgeNode->IsFairCurve();
+  const double lambda = edgeNode->GetFairingCoeff();
+
   m_progress.SendLogMessage( LogNotice(Normal) << "Executing tree function '%1%2'..."
                                                << this->GetName()
                                                << edgeNode->RootLabel().Tag() );
@@ -84,6 +127,22 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
     return 1; // Error.
   }
 
+  // Fair curve.
+  if ( toFair )
+  {
+    Handle(Geom_BSplineCurve) fairedBCurve = FairCurve( curve,
+                                                        lambda );
+    //
+    if ( fairedBCurve.IsNull() )
+    {
+      m_progress.SendLogMessage( LogErr(Normal) << "Fairing failed for edge '%1'."
+                                                << edgeNode->GetName() );
+      return 1; // Error.
+    }
+
+    curve = fairedBCurve;
+  }
+
   // Set the result.
   edgeNode->SetCurve(curve);
 
@@ -96,6 +155,8 @@ ActAPI_ParameterTypeStream asiEngine_BuildEdgeFunc::inputSignature() const
 {
   return ActAPI_ParameterTypeStream() << Parameter_RealArray // Polyline.
                                       << Parameter_Real      // Tolerance.
+                                      << Parameter_Bool      // Whether to fair curve.
+                                      << Parameter_Real      // Fairing coefficent.
                                       ;
 }
 

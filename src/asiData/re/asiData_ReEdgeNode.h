@@ -70,6 +70,8 @@ public:
   //-------------------------//
     PID_ApproxToler,         //!< Approximation tolerance.
     PID_SmoothTransition,    //!< Whether the edge realizes smooth transition.
+    PID_FairCurve,           //!< Whether to fair the approximated curve.
+    PID_FairingCoeff,        //!< Fairing coefficient.
     PID_FuncApprox,          //!< Approximation function.
     PID_FuncSmoothenCorners, //!< Tree function to adapt curve network for smooth transition.
     PID_FuncSmoothenPatches, //!< Tree function to adapt adjacent surfaces for smooth transition.
@@ -233,6 +235,24 @@ public:
   //! \return true if smooth transition is enabled, false -- otherwise.
   asiData_EXPORT bool
     IsSmoothTransition() const;
+
+  //! Sets curve fairing mode on/off.
+  //! \param[in] on Boolean value to set.
+  asiData_EXPORT void
+    SetFairCurve(const bool on);
+
+  //! \return true if the curve fairing mode is on, false -- otherwise.
+  asiData_EXPORT bool
+    IsFairCurve() const;
+
+  //! Sets fairing coefficient.
+  //! \param[in] coeff fairing coefficient to set.
+  asiData_EXPORT void
+    SetFairingCoeff(const double coeff);
+
+  //! \return fairing coefficient.
+  asiData_EXPORT double
+    GetFairingCoeff() const;
 
 protected:
 

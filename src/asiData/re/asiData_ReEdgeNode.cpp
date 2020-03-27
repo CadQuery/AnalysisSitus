@@ -57,6 +57,8 @@ asiData_ReEdgeNode::asiData_ReEdgeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Group,        PID_GroupGeometry);
   REGISTER_PARAMETER(Real,         PID_ApproxToler);
   REGISTER_PARAMETER(Bool,         PID_SmoothTransition);
+  REGISTER_PARAMETER(Bool,         PID_FairCurve);
+  REGISTER_PARAMETER(Real,         PID_FairingCoeff);
   REGISTER_PARAMETER(TreeFunction, PID_FuncApprox);
   REGISTER_PARAMETER(TreeFunction, PID_FuncSmoothenCorners);
   REGISTER_PARAMETER(TreeFunction, PID_FuncSmoothenPatches);
@@ -75,10 +77,12 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
                               const Handle(asiData_ReVertexNode)& vlast)
 {
   // Initialize Parameters.
-  this->InitParameter(PID_Name,             "Name",              "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_GroupGeometry,    "Geometry",          "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_ApproxToler,      "Approx. tolerance", "", ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_SmoothTransition, "Smooth (G1)",       "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_Name,             "Name",                "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_GroupGeometry,    "Geometry",            "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_ApproxToler,      "Approx. tolerance",   "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_SmoothTransition, "G1 cross-transition", "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_FairCurve,        "Fair curve",          "", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_FairingCoeff,     "Fairing coefficient", "", ParameterFlag_IsVisible, true);
   //
   this->InitParameter(PID_VertexFirstRef, "First vertex");
   this->InitParameter(PID_VertexLastRef,  "Last vertex");
@@ -101,8 +105,10 @@ void asiData_ReEdgeNode::Init(const Handle(asiData_ReVertexNode)& vfirst,
   ActParamTool::AsInt       ( this->Parameter(PID_VertexFirstIdx) ) ->SetValue( -1 );
   ActParamTool::AsInt       ( this->Parameter(PID_VertexLastIdx) )  ->SetValue( -1 );
   //
-  this->SetApproxToler(1.);
-  this->SetSmoothTransition(false);
+  this->SetApproxToler      (1.);
+  this->SetSmoothTransition (false);
+  this->SetFairCurve        (false);
+  this->SetFairingCoeff     (0.001);
 }
 
 //-----------------------------------------------------------------------------
@@ -390,4 +396,32 @@ void asiData_ReEdgeNode::SetSmoothTransition(const bool on)
 bool asiData_ReEdgeNode::IsSmoothTransition() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_SmoothTransition) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetFairCurve(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_FairCurve) )->SetValue(on);
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiData_ReEdgeNode::IsFairCurve() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_FairCurve) )->GetValue();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_ReEdgeNode::SetFairingCoeff(const double coeff)
+{
+  ActParamTool::AsReal( this->Parameter(PID_FairingCoeff) )->SetValue(coeff);
+}
+
+//-----------------------------------------------------------------------------
+
+double asiData_ReEdgeNode::GetFairingCoeff() const
+{
+  return ActParamTool::AsReal( this->Parameter(PID_FairingCoeff) )->GetValue();
 }

@@ -32,6 +32,8 @@
 #include <asiAlgo_PatchJointAdaptor.h>
 
 // OCCT includes
+#include <GCPnts_QuasiUniformDeflection.hxx>
+#include <GeomAdaptor_Curve.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 
 #if defined USE_MOBIUS
@@ -357,6 +359,82 @@ bool asiAlgo_PatchJointAdaptor::AlignControlPoles(const Handle(Geom_BSplineCurve
   m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return false;
 #endif
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_PatchJointAdaptor::IsG1(const double angPrecRad) const
+{
+  // Discretize.
+  GeomAdaptor_Curve gac(m_curve);
+  GCPnts_QuasiUniformDeflection Defl(gac, 0.1);
+  //
+  if ( !Defl.IsDone() )
+    return false;
+  //
+  const int nPts = Defl.NbPoints();
+  if ( !nPts )
+    return false;
+
+  m_progress.SendLogMessage(LogInfo(Normal) << "G1 condition will be checked in %1 points."
+                                            << nPts);
+
+  // Check in the discretization points.
+  bool isSmooth = true;
+  //
+  for ( int k = 1; k <= nPts; ++k )
+  {
+    gp_Pnt P = Defl.Value(k);
+
+    // Solve point inversion problem for P on the left surface.
+    gp_Vec left_N;
+    {
+      ShapeAnalysis_Surface SAS(m_surfLeft);
+      gp_Pnt2d UV = SAS.ValueOfUV(P, 1.0e-6);
+
+      // Compute surface normal at the projected point.
+      gp_Pnt S_P;
+      gp_Vec S_D1U, S_D1V;
+      //
+      m_surfLeft->D1(UV.X(), UV.Y(), S_P, S_D1U, S_D1V);
+      //
+      left_N = S_D1U ^ S_D1V;
+
+      m_plotter.DRAW_VECTOR_AT(S_P, left_N, Color_Red, "left_N");
+    }
+
+    // Solve point inversion problem for P on the right surface.
+    gp_Vec right_N;
+    {
+      ShapeAnalysis_Surface SAS(m_surfRight);
+      gp_Pnt2d ST = SAS.ValueOfUV(P, 1.0e-6);
+
+      // Compute surface normal at the projected point.
+      gp_Pnt S_P;
+      gp_Vec S_D1U, S_D1V;
+      //
+      m_surfRight->D1(ST.X(), ST.Y(), S_P, S_D1U, S_D1V);
+      //
+      right_N = S_D1U ^ S_D1V;
+
+      m_plotter.DRAW_VECTOR_AT(S_P, right_N, Color_Green, "right_N");
+    }
+
+    const double ang = Abs( left_N.Angle(right_N) );
+    //
+    if ( ang > angPrecRad )
+    {
+      m_plotter.DRAW_POINT(P, Color_Red, "G1_defect");
+      //
+      m_progress.SendLogMessage(LogNotice(Normal) << "Defect is %1 degrees."
+                                                  << ang*180./M_PI);
+
+      isSmooth = false;
+      break;
+    }
+  }
+
+  return isSmooth;
 }
 
 //-----------------------------------------------------------------------------

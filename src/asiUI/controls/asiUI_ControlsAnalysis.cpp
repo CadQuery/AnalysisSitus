@@ -45,6 +45,7 @@
 #include <asiAlgo_CheckValidity.h>
 #include <asiAlgo_FindFree.h>
 #include <asiAlgo_FindNonmanifold.h>
+#include <asiAlgo_PatchJointAdaptor.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -103,12 +104,13 @@ asiUI_ControlsAnalysis::asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& mo
   m_widgets.Validity.pFindOpenEdges        = new QPushButton("Find open edges");
   m_widgets.Validity.pFindNonManifoldEdges = new QPushButton("Find non-manifold edges");
   //
-  m_widgets.Features.pShowTopoGraph   = new QPushButton("Show topology graph");
-  m_widgets.Features.pShowAAG         = new QPushButton("Show AAG");
-  m_widgets.Features.pShowAAGWoSel    = new QPushButton("Show AAG w/o selected");
-  m_widgets.Features.pCheckDihAngles  = new QPushButton("Classify dihedral angles");
-  m_widgets.Features.pFindSmoothEdges = new QPushButton("Find smooth edges");
-  m_widgets.Features.pFindConvexOnly  = new QPushButton("Find convex-only faces");
+  m_widgets.Features.pShowTopoGraph    = new QPushButton("Show topology graph");
+  m_widgets.Features.pShowAAG          = new QPushButton("Show AAG");
+  m_widgets.Features.pShowAAGWoSel     = new QPushButton("Show AAG w/o selected");
+  m_widgets.Features.pCheckDihAngles   = new QPushButton("Classify dihedral angles");
+  m_widgets.Features.pCheckG1Crossings = new QPushButton("Classify G1 crossings");
+  m_widgets.Features.pFindSmoothEdges  = new QPushButton("Find smooth edges");
+  m_widgets.Features.pFindConvexOnly   = new QPushButton("Find convex-only faces");
   //
   m_widgets.Properties.pEdgeCurvature = new QPushButton("Check edge curvature");
   m_widgets.Properties.pEdgeLength    = new QPushButton("Check edge length");
@@ -136,6 +138,7 @@ asiUI_ControlsAnalysis::asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& mo
   pFeaturesLay->addWidget(m_widgets.Features.pShowAAG);
   pFeaturesLay->addWidget(m_widgets.Features.pShowAAGWoSel);
   pFeaturesLay->addWidget(m_widgets.Features.pCheckDihAngles);
+  pFeaturesLay->addWidget(m_widgets.Features.pCheckG1Crossings);
   pFeaturesLay->addWidget(m_widgets.Features.pFindSmoothEdges);
   pFeaturesLay->addWidget(m_widgets.Features.pFindConvexOnly);
 
@@ -172,12 +175,13 @@ asiUI_ControlsAnalysis::asiUI_ControlsAnalysis(const Handle(asiEngine_Model)& mo
   connect( m_widgets.Validity.pFindOpenEdges,        SIGNAL( clicked() ), SLOT( onFindOpenEdges        () ) );
   connect( m_widgets.Validity.pFindNonManifoldEdges, SIGNAL( clicked() ), SLOT( onFindNonManifoldEdges () ) );
   //
-  connect( m_widgets.Features.pShowTopoGraph,   SIGNAL( clicked() ), SLOT( onShowTopoGraph   () ) );
-  connect( m_widgets.Features.pShowAAG,         SIGNAL( clicked() ), SLOT( onShowAAG         () ) );
-  connect( m_widgets.Features.pShowAAGWoSel,    SIGNAL( clicked() ), SLOT( onShowAAGWoSel    () ) );
-  connect( m_widgets.Features.pCheckDihAngles,  SIGNAL( clicked() ), SLOT( onCheckDihAngles  () ) );
-  connect( m_widgets.Features.pFindSmoothEdges, SIGNAL( clicked() ), SLOT( onFindSmoothEdges () ) );
-  connect( m_widgets.Features.pFindConvexOnly,  SIGNAL( clicked() ), SLOT( onFindConvexOnly  () ) );
+  connect( m_widgets.Features.pShowTopoGraph,    SIGNAL( clicked() ), SLOT( onShowTopoGraph    () ) );
+  connect( m_widgets.Features.pShowAAG,          SIGNAL( clicked() ), SLOT( onShowAAG          () ) );
+  connect( m_widgets.Features.pShowAAGWoSel,     SIGNAL( clicked() ), SLOT( onShowAAGWoSel     () ) );
+  connect( m_widgets.Features.pCheckDihAngles,   SIGNAL( clicked() ), SLOT( onCheckDihAngles   () ) );
+  connect( m_widgets.Features.pCheckG1Crossings, SIGNAL( clicked() ), SLOT( onCheckG1Crossings () ) );
+  connect( m_widgets.Features.pFindSmoothEdges,  SIGNAL( clicked() ), SLOT( onFindSmoothEdges  () ) );
+  connect( m_widgets.Features.pFindConvexOnly,   SIGNAL( clicked() ), SLOT( onFindConvexOnly   () ) );
   //
   connect( m_widgets.Properties.pEdgeCurvature, SIGNAL( clicked() ), SLOT( onEdgeCurvature () ) );
   connect( m_widgets.Properties.pEdgeLength,    SIGNAL( clicked() ), SLOT( onEdgeLength    () ) );
@@ -679,6 +683,114 @@ void asiUI_ControlsAnalysis::onCheckDihAngles()
     ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Green)    ) ->SetShape(convexEdgesComp);
     ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red)      ) ->SetShape(concaveEdgesComp);
     ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Ordinary) ) ->SetShape(undefinedEdgesComp);
+  }
+  m_model->CommitCommand();
+
+  // Update viewer
+  Handle(asiVisu_PartPrs)
+    NPrs = Handle(asiVisu_PartPrs)::DownCast( m_partViewer->PrsMgr()->GetPresentation(part_n) );
+  //
+  if ( NPrs.IsNull() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "There is no available presentation for part.");
+    return;
+  }
+  //
+  NPrs->MainActor()->GetProperty()->SetOpacity(0.5);
+  NPrs->GetPipeline(asiVisu_PartPrs::Pipeline_Contour)->Actor()->SetVisibility(0);
+
+  // Actualize presentation of edges.
+  m_partViewer->PrsMgr()->Actualize(BN);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_ControlsAnalysis::onCheckG1Crossings()
+{
+  Handle(asiData_PartNode) part_n;
+  TopoDS_Shape             part;
+  //
+  if ( !asiUI_Common::PartShape(m_model, part_n, part) ) return;
+
+  // Get AAG to access the edges.
+  Handle(asiAlgo_AAG) aag = part_n->GetAAG();
+  //
+  if ( aag.IsNull() )
+  {
+    m_notifier.SendLogMessage(LogErr(Normal) << "AAG is not initialized.");
+    return;
+  }
+
+  // Holders for geometries.
+  TopTools_IndexedMapOfShape smoothEdges, sharpEdges;
+  TopoDS_Compound            smoothEdgesComp, sharpEdgesComp;
+  //
+  BRep_Builder BB;
+  BB.MakeCompound(smoothEdgesComp);
+  BB.MakeCompound(sharpEdgesComp);
+
+  // Angular tolerance.
+  const double angToler = 1.0*M_PI/180.;
+
+  // Check edges.
+  const TopTools_IndexedDataMapOfShapeListOfShape&
+    efMap = aag->RequestMapOfEdgesFaces();
+  //
+  for ( int eidx = 1; eidx <= efMap.Extent(); ++eidx )
+  {
+    const TopoDS_Edge&          edge  = TopoDS::Edge( efMap.FindKey(eidx) );
+    const TopTools_ListOfShape& faces = efMap.FindFromIndex(eidx);
+    //
+    if ( faces.Extent() != 2 )
+      continue; // Skip non-manifold and open edges.
+
+    const TopoDS_Face& F = TopoDS::Face( faces.First() );
+    const TopoDS_Face& G = TopoDS::Face( faces.Last() );
+
+    // Get edge curve.
+    double ef, el;
+    Handle(Geom_Curve) curve = BRep_Tool::Curve(edge, ef, el);
+
+    // Get host surfaces.
+    Handle(Geom_BSplineSurface)
+      SF = Handle(Geom_BSplineSurface)::DownCast( BRep_Tool::Surface(F) );
+    //
+    Handle(Geom_BSplineSurface)
+      SG = Handle(Geom_BSplineSurface)::DownCast( BRep_Tool::Surface(G) );
+    //
+    if ( SF.IsNull() || SG.IsNull() )
+    {
+      m_notifier.SendLogMessage(LogWarn(Normal) << "Only B-surfaces are supported for G1/non-G1 check.");
+      continue;
+    }
+
+    // Check transition smoothness.
+    asiAlgo_PatchJointAdaptor adt(curve, SF, SG, m_notifier);
+    //
+    if ( adt.IsG1(angToler) )
+    {
+      smoothEdges.Add(edge);
+      BB.Add(smoothEdgesComp, edge);
+    }
+    else
+    {
+      sharpEdges.Add(edge);
+      BB.Add(sharpEdgesComp, edge);
+    }
+  }
+
+  // Dump.
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Num. smooth edges: %1." << smoothEdges.Extent() );
+  m_notifier.SendLogMessage( LogInfo(Normal) << "Num. sharp edges: %1."  << sharpEdges.Extent() );
+
+  // Save to model.
+  Handle(asiData_BoundaryEdgesNode)
+    BN = part_n->GetBoundaryEdgesRepresentation();
+  //
+  m_model->OpenCommand();
+  {
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Green) ) ->SetShape(smoothEdgesComp);
+    ActParamTool::AsShape( BN->Parameter(asiData_BoundaryEdgesNode::PID_Red)   ) ->SetShape(sharpEdgesComp);
   }
   m_model->CommitCommand();
 

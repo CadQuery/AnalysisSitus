@@ -135,14 +135,20 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   const double maxSize = ActParamTool::AsReal( inputs->Value(10) )->GetValue();
   const double prec    = ActParamTool::AsReal( inputs->Value(11) )->GetValue();
 
+  // Whether the voxelization is uniform.
+  const bool isUniform = ActParamTool::AsBool( inputs->Value(12) )->GetValue();
+
+  // Number of the sign-determining rays.
+  const int numRays = ActParamTool::AsInt( inputs->Value(13) )->GetValue();
+
   // Get operation type and operands.
   const asiAlgo_CSG
-    op = (asiAlgo_CSG) ActParamTool::AsInt( inputs->Value(12) )->GetValue();
+    op = (asiAlgo_CSG) ActParamTool::AsInt( inputs->Value(14) )->GetValue();
   //
   Handle(ActAPI_IDataCursor)
-    opLeftBase = ActParamTool::AsReference( inputs->Value(13) )->GetTarget();
+    opLeftBase = ActParamTool::AsReference( inputs->Value(15) )->GetTarget();
   Handle(ActAPI_IDataCursor)
-    opRightBase = ActParamTool::AsReference( inputs->Value(14) )->GetTarget();
+    opRightBase = ActParamTool::AsReference( inputs->Value(16) )->GetTarget();
 
   /* ==============
    *  Build octree.
@@ -157,8 +163,16 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
 
   if ( op == CSG_Primitive )
   {
-    distFunc = isCustomDomain ? new asiAlgo_MeshDistanceFunc(bvh, domainMin, domainMax, poly_DistanceFunc::Mode_Signed, isCube)
-                              : new asiAlgo_MeshDistanceFunc(bvh, poly_DistanceFunc::Mode_Signed, isCube);
+    distFunc = isCustomDomain ? new asiAlgo_MeshDistanceFunc(bvh,
+                                                             domainMin,
+                                                             domainMax,
+                                                             poly_DistanceFunc::Mode_Signed,
+                                                             numRays,
+                                                             isCube)
+                              : new asiAlgo_MeshDistanceFunc(bvh,
+                                                             poly_DistanceFunc::Mode_Signed,
+                                                             numRays,
+                                                             isCube);
   }
   else if ( (op == CSG_Union) || (op == CSG_Intersection) || (op == CSG_Difference) )
   {
@@ -189,7 +203,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
 
   t_ptr<poly_DistanceField> DDF = new poly_DistanceField();
   //
-  if ( !DDF->Build(minSize, maxSize, prec, false, distFunc) )
+  if ( !DDF->Build(minSize, maxSize, prec, isUniform, distFunc) )
   {
     progress.SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
     return 1;
@@ -246,6 +260,8 @@ ActAPI_ParameterTypeStream
                                       << Parameter_Real      // Min cell size.
                                       << Parameter_Real      // Max cell size.
                                       << Parameter_Real      // Precision.
+                                      << Parameter_Bool      // Is uniform.
+                                      << Parameter_Int       // Number of sign-determining rays.
                                       << Parameter_Int       // Operation type.
                                       << Parameter_Reference // Left operand.
                                       << Parameter_Reference // Right operand.

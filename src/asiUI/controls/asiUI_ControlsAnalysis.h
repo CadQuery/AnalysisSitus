@@ -83,12 +83,13 @@ public slots:
   void onFindOpenEdges        ();
   void onFindNonManifoldEdges ();
   //
-  void onShowTopoGraph   ();
-  void onShowAAG         ();
-  void onShowAAGWoSel    ();
-  void onCheckDihAngles  ();
-  void onFindSmoothEdges ();
-  void onFindConvexOnly  ();
+  void onShowTopoGraph    ();
+  void onShowAAG          ();
+  void onShowAAGWoSel     ();
+  void onCheckDihAngles   ();
+  void onCheckG1Crossings ();
+  void onFindSmoothEdges  ();
+  void onFindConvexOnly   ();
   //
   void onEdgeCurvature ();
   void onEdgeLength    ();
@@ -142,20 +143,22 @@ private:
     struct t_features
     {
       //! Ctor.
-      t_features() : pShowTopoGraph   (nullptr),
-                     pShowAAG         (nullptr),
-                     pShowAAGWoSel    (nullptr),
-                     pCheckDihAngles  (nullptr),
-                     pFindSmoothEdges (nullptr),
-                     pFindConvexOnly  (nullptr)
+      t_features() : pShowTopoGraph    (nullptr),
+                     pShowAAG          (nullptr),
+                     pShowAAGWoSel     (nullptr),
+                     pCheckDihAngles   (nullptr),
+                     pCheckG1Crossings (nullptr),
+                     pFindSmoothEdges  (nullptr),
+                     pFindConvexOnly   (nullptr)
       {}
 
-      QPushButton* pShowTopoGraph;   //!< To show topology graph.
-      QPushButton* pShowAAG;         //!< To show attributed adjacency graph (AAG).
-      QPushButton* pShowAAGWoSel;    //!< To show AAG without selected faces.
-      QPushButton* pCheckDihAngles;  //!< To classify dihedral angles.
-      QPushButton* pFindSmoothEdges; //!< To find smooth edges.
-      QPushButton* pFindConvexOnly;  //!< To find convex-only faces.
+      QPushButton* pShowTopoGraph;    //!< To show topology graph.
+      QPushButton* pShowAAG;          //!< To show attributed adjacency graph (AAG).
+      QPushButton* pShowAAGWoSel;     //!< To show AAG without selected faces.
+      QPushButton* pCheckDihAngles;   //!< To classify dihedral angles.
+      QPushButton* pCheckG1Crossings; //!< To classify G1/non-G1 crossings.
+      QPushButton* pFindSmoothEdges;  //!< To find smooth edges.
+      QPushButton* pFindConvexOnly;   //!< To find convex-only faces.
     } Features;
 
     struct t_properties

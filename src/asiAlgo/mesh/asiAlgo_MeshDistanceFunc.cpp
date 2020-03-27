@@ -42,9 +42,6 @@
 
 //-----------------------------------------------------------------------------
 
-// Number of rays used to test sign.
-#define NB_TEST_RAYS 30
-
 namespace
 {
   void CorrectBboxToCube(mobius::t_xyz& Pmin,
@@ -74,16 +71,18 @@ namespace
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode)
-: mobius::poly_DistanceFunc(mode), m_RNG(128)
+asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Mode mode,
+                                                   const int  numRays)
+: mobius::poly_DistanceFunc(mode), m_iNumRays(numRays), m_RNG(128)
 {}
 
 //-----------------------------------------------------------------------------
 
 asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacets)& facets,
                                                    const Mode                       mode,
+                                                   const int                        numRays,
                                                    const bool                       cube)
-: mobius::poly_DistanceFunc(mode), m_RNG(128)
+: mobius::poly_DistanceFunc(mode), m_iNumRays(numRays), m_RNG(128)
 {
   this->Init(facets, cube);
 }
@@ -94,8 +93,9 @@ asiAlgo_MeshDistanceFunc::asiAlgo_MeshDistanceFunc(const Handle(asiAlgo_BVHFacet
                                                    const gp_XYZ&                    domainMin,
                                                    const gp_XYZ&                    domainMax,
                                                    const Mode                       mode,
+                                                   const int                        numRays,
                                                    const bool                       cube)
-: mobius::poly_DistanceFunc(mode), m_RNG(128)
+: mobius::poly_DistanceFunc(mode), m_iNumRays(numRays), m_RNG(128)
 {
   this->Init(facets, domainMin, domainMax, cube);
 }
@@ -187,19 +187,20 @@ double asiAlgo_MeshDistanceFunc::Eval(const double x,
   bool isOutside = true;
   if ( m_mode == Mode_Signed )
   {
-    int vote = 0;
+    int vote    = 0;
+    int barrier = std::ceil(double(m_iNumRays) / 2.);
 
-    for ( int rayIdx = 0; rayIdx < NB_TEST_RAYS; ++rayIdx )
+    for ( int rayIdx = 0; rayIdx < m_iNumRays; ++rayIdx )
     {
-      if ( vote > (NB_TEST_RAYS/2) || vote < -(NB_TEST_RAYS/2) )
+      if ( vote > barrier || vote < -barrier )
         break;
 
       // Initialize random ray.
       asiAlgo_BVHAlgo::t_ray
         ray( BVH_Vec3d(x, y, z),
-             BVH_Vec3d( m_RNG.NextReal() * 2.0 - 1.0,
-                        m_RNG.NextReal() * 2.0 - 1.0,
-                        m_RNG.NextReal() * 2.0 - 1.0) );
+             BVH_Vec3d( m_RNG.RandDouble() * 2.0 - 1.0,
+                        m_RNG.RandDouble() * 2.0 - 1.0,
+                        m_RNG.RandDouble() * 2.0 - 1.0) );
       //
       const int numBounces = asiAlgo_BVHAlgo::rayMeshHitCount(m_facets.get(), ray);
       //

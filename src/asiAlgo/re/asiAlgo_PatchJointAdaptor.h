@@ -40,6 +40,7 @@
 // OCCT includes
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <Precision.hxx>
 
 //-----------------------------------------------------------------------------
 
@@ -189,6 +190,13 @@ public:
                       const bool                       isoRightU,
                       const bool                       isoRightMin,
                       const bool                       areOpposite);
+
+  //! Checks G1 (tangent-plane) continuity by consulting the surface
+  //! normal vectors in the discretization points along the common curve.
+  //! \param[in] angPrecRad angular precision in radians.
+  //! \return true in case of G1 continuity or better, false -- otherwise.
+  asiAlgo_EXPORT bool
+    IsG1(const double angPrecRad = Precision::Angular()) const;
 
 public:
 

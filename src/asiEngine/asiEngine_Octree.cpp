@@ -114,6 +114,8 @@ Handle(asiData_OctreeNode)
                                               << node->Parameter(asiData_OctreeNode::PID_MinCellSize)
                                               << node->Parameter(asiData_OctreeNode::PID_MaxCellSize)
                                               << node->Parameter(asiData_OctreeNode::PID_Precision)
+                                              << node->Parameter(asiData_OctreeNode::PID_IsUniform)
+                                              << node->Parameter(asiData_OctreeNode::PID_NumRaysSign)
                                               << node->Parameter(asiData_OctreeNode::PID_Operation)
                                               << node->Parameter(asiData_OctreeNode::PID_OpLeft)
                                               << node->Parameter(asiData_OctreeNode::PID_OpRight),

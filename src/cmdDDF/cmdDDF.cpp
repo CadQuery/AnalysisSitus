@@ -326,6 +326,7 @@ int DDF_SetSVO(const Handle(asiTcl_Interp)& interp,
                                                domainMin,
                                                domainMax,
                                                poly_DistanceFunc::Mode_Signed,
+                                               octreeNode->GetNumRaysSign(),
                                                octreeNode->IsDomainCube() );
     //
     const double f0 = distFunc->Eval( pNode->GetP0().X(), pNode->GetP0().Y(), pNode->GetP0().Z() );

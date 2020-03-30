@@ -1243,15 +1243,20 @@ void asiUI_ControlsAnalysis::onAABB()
   double xMin, yMin, zMin, xMax, yMax, zMax;
   asiAlgo_Utils::Bounds(part, xMin, yMin, zMin, xMax, yMax, zMax);
   //
+  const double maxSide = Max(Abs(xMax - xMin), Max(Abs(yMax - yMin), Abs(zMax - zMin)));
+  //
   m_notifier.SendLogMessage( LogInfo(Normal) << "Bounding box:\n"
                                                 "\t X min = %1\n"
                                                 "\t Y min = %2\n"
                                                 "\t Z min = %3\n"
                                                 "\t X max = %4\n"
                                                 "\t Y max = %5\n"
-                                                "\t Z max = %6"
+                                                "\t Z max = %6\n"
+                                                "\t Max side = %7\n"
+                                                "\t 1 percent of max side = %8"
                                              << xMin << yMin << zMin
-                                             << xMax << yMax << zMax );
+                                             << xMax << yMax << zMax
+                                             << maxSide << 0.01*maxSide );
 
   const double inf = Precision::Infinite()*0.1;
   //

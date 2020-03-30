@@ -238,6 +238,12 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   // Store the octree.
   octreeParam->SetOctree(pRoot);
 
+  // Store the number of nodes.
+  Handle(ActData_IntParameter)
+    numNodesParam = ActParamTool::AsInt( outputs->Value(2) );
+  //
+  numNodesParam->SetValue(numSVONodes);
+
   return 0; // Success.
 #else
   return 1;

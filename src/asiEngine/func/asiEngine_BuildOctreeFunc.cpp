@@ -225,7 +225,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   if ( isUniform )
   {
     progress.SendLogMessage( LogInfo(Normal) << "Depth of the uniform octree: %1."
-                                             << int( pRoot->GetDepth() ) );
+                                             << int( pRoot->GetDepth0() ) );
   }
 
   /* =======================

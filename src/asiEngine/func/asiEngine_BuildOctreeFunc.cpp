@@ -222,6 +222,12 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   progress.SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
                                            << numSVONodes << int(memBytes) << memMBytes );
 
+  if ( isUniform )
+  {
+    progress.SendLogMessage( LogInfo(Normal) << "Depth of the uniform octree: %1."
+                                             << int( pRoot->GetDepth() ) );
+  }
+
   /* =======================
    *  Set output Parameters.
    * ======================= */

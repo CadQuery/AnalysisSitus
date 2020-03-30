@@ -93,7 +93,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   header()->resizeSection(Column_Computed, 0);
 
   // set item delegate for value column
-  asiUI_ParameterEditorDelegate* aDelegate = 
+  asiUI_ParameterEditorDelegate* aDelegate =
     new asiUI_ParameterEditorDelegate(this);
 
   setItemDelegate(aDelegate);
@@ -104,6 +104,7 @@ asiUI_ParameterEditorView::asiUI_ParameterEditorView(const Handle(asiUI_WidgetFa
   setSelectionBehavior(QAbstractItemView::SelectRows);
   setAllColumnsShowFocus(true);
   setTabKeyNavigation(true);
+  hideColumn(Column_Computed);
 
   connect( this, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), SLOT( onItemChanged(QTreeWidgetItem*, int) ) );
   connect( this, SIGNAL( itemPressed(QTreeWidgetItem*, int) ), SLOT( onItemPressed(QTreeWidgetItem*, int) ) );

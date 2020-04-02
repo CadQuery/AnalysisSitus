@@ -978,6 +978,8 @@ int DDF_ExtractOutsideLeaves(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "%1 SVO leaves collected."
                                                         << int( svoLeaves.size() ) );
 
+  // TODO: NYI
+
   // Update UI.
   cmdDDF::cf->ViewerPart->PrsMgr()->Actualize( M->GetTessellationNode() );
 

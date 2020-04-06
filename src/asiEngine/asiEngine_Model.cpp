@@ -35,6 +35,7 @@
 #include <asiEngine_BuildEdgeFunc.h>
 #include <asiEngine_BuildOctreeFunc.h>
 #include <asiEngine_BuildPatchFunc.h>
+#include <asiEngine_CheckThicknessFunc.h>
 #include <asiEngine_SmoothenCornersFunc.h>
 #include <asiEngine_SmoothenPatchesFunc.h>
 #include <asiEngine_Curve.h>
@@ -81,7 +82,7 @@ REGISTER_NODE_TYPE(asiData_MetadataNode)
 REGISTER_NODE_TYPE(asiData_ElemMetadataNode)
 REGISTER_NODE_TYPE(asiData_DeviationNode)
 REGISTER_NODE_TYPE(asiData_OctreeNode)
-//
+REGISTER_NODE_TYPE(asiData_ThicknessNode)
 REGISTER_NODE_TYPE(asiData_TriangulationNode)
 REGISTER_NODE_TYPE(asiData_TessNode)
 REGISTER_NODE_TYPE(asiData_TessNormsNode)
@@ -231,7 +232,6 @@ Handle(asiData_TriangulationNode) asiEngine_Model::GetTriangulationNode() const
   return nullptr;
 }
 
-
 //-----------------------------------------------------------------------------
 
 //! \return single Tessellation Node.
@@ -301,7 +301,6 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_TolerantRangeNode>,  Partition_TolerantRange);
   REGISTER_PARTITION(asiData_Partition<asiData_DeviationNode>,      Partition_Deviation);
   REGISTER_PARTITION(asiData_Partition<asiData_OctreeNode>,         Partition_Octree);
-  //
   REGISTER_PARTITION(asiData_Partition<asiData_TriangulationNode>,  Partition_Triangulation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNode>,           Partition_Tessellation);
   REGISTER_PARTITION(asiData_Partition<asiData_TessNormsNode>,      Partition_TessellationNorms);
@@ -334,6 +333,7 @@ void asiEngine_Model::initPartitions()
   REGISTER_PARTITION(asiData_Partition<asiData_IVTextItemNode>,     Partition_IV_TextItem);
   //
   REGISTER_PARTITION(asiData_Partition<asiData_SurfDeviationNode>,  Partition_SurfDeviation);
+  REGISTER_PARTITION(asiData_Partition<asiData_ThicknessNode>,      Partition_Thickness);
 }
 
 //-----------------------------------------------------------------------------
@@ -346,6 +346,7 @@ void asiEngine_Model::initFunctionDrivers()
   REGISTER_TREE_FUNCTION(asiEngine_BuildEdgeFunc);
   REGISTER_TREE_FUNCTION(asiEngine_BuildOctreeFunc);
   REGISTER_TREE_FUNCTION(asiEngine_BuildPatchFunc);
+  REGISTER_TREE_FUNCTION(asiEngine_CheckThicknessFunc);
   REGISTER_TREE_FUNCTION(asiEngine_SmoothenCornersFunc);
   REGISTER_TREE_FUNCTION(asiEngine_SmoothenPatchesFunc);
 

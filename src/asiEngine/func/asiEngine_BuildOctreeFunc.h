@@ -42,30 +42,7 @@ class asiEngine_Model;
 
 //-----------------------------------------------------------------------------
 
-//! Tree function for automatic construction of octrees. This function is
-//! parameterized as follows:
-//!
-//! \verbatim
-//! Input Parameters:
-//!   - BVH facets
-//!   - Domain min X
-//!   - Domain min Y
-//!   - Domain min Z
-//!   - Domain max X
-//!   - Domain max Y
-//!   - Domain max Z
-//!   - Is cube domain
-//!   - Min cell size
-//!   - Max cell size
-//!   - Precision
-//!   - Operation type
-//!   - Left operand
-//!   - Right operand
-//!
-//! Output Parameters:
-//!   - Octree
-//!   - Num. of elements
-//! \endverbatim
+//! Tree function for automatic construction of octrees.
 class asiEngine_BuildOctreeFunc : public ActData_BaseTreeFunction
 {
 public:

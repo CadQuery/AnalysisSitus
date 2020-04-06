@@ -51,15 +51,15 @@ asiData_DeviationNode::asiData_DeviationNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Real,          PID_ScalarMax);
 }
 
-//! Returns new DETACHED instance of Surface Node ensuring its correct
+//! Returns new DETACHED instance of the Node ensuring its correct
 //! allocation in a heap.
-//! \return new instance of Surface Node.
+//! \return new instance of the Node.
 Handle(ActAPI_INode) asiData_DeviationNode::Instance()
 {
   return new asiData_DeviationNode();
 }
 
-//! Performs initial actions required to make Surface Node WELL-FORMED.
+//! Performs initial actions required to make the Node WELL-FORMED.
 void asiData_DeviationNode::Init()
 {
   // Initialize Parameters.
@@ -103,8 +103,8 @@ void asiData_DeviationNode::SetMeshWithScalars(const asiAlgo_Mesh& mesh)
   // Prepare array of node ids.
   if ( mesh.fields.size() )
   {
-    Handle(asiAlgo_MeshNScalarField)
-      field = Handle(asiAlgo_MeshNScalarField)::DownCast(mesh.fields[0]);
+    Handle(asiAlgo_MeshScalarField)
+      field = Handle(asiAlgo_MeshScalarField)::DownCast(mesh.fields[0]);
 
     // Prepare arrays.
     const int numScalars = field->data.Extent();
@@ -114,7 +114,8 @@ void asiData_DeviationNode::SetMeshWithScalars(const asiAlgo_Mesh& mesh)
 
     // Populate arrays.
     int idx = 0;
-    for ( asiAlgo_MeshNScalarField::t_data::Iterator it(field->data); it.More(); it.Next(), ++idx )
+    for ( asiAlgo_MeshScalarField::t_data::Iterator it(field->data);
+          it.More(); it.Next(), ++idx )
     {
       const int    nodeId = it.Key();
       const double scalar = it.Value();

@@ -97,7 +97,7 @@ void asiVisu_DeviationPrs::afterUpdatePipelines() const
 //-----------------------------------------------------------------------------
 
 //! Callback for rendering.
-//! \param theRenderer [in] renderer.
+//! \param[in] renderer renderer.
 void asiVisu_DeviationPrs::renderPipelines(vtkRenderer* renderer) const
 {
   // Scalar bar

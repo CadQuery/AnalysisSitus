@@ -65,6 +65,7 @@
 #include <asiVisu_SurfDeviationPrs.h>
 #include <asiVisu_TessellationPrs.h>
 #include <asiVisu_TessellationNormsPrs.h>
+#include <asiVisu_ThicknessPrs.h>
 #include <asiVisu_TolerantRangePrs.h>
 #include <asiVisu_TriangulationPrs.h>
 
@@ -220,6 +221,7 @@ int main(int argc, char** argv)
   REGISTER_PRESENTATION(asiVisu_ReEdgePrs)
   REGISTER_PRESENTATION(asiVisu_RePatchPrs)
   REGISTER_PRESENTATION(asiVisu_ReVertexPrs)
+  REGISTER_PRESENTATION(asiVisu_ThicknessPrs)
 
   // Imperative viewer.
   REGISTER_PRESENTATION(asiVisu_IVPointSet2dPrs)

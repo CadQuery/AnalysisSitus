@@ -49,10 +49,10 @@ public:
 
 public:
 
-  //! Ctor accepting Triangulation Parameter.
-  //! \param[in] P parameter holding triangulation to visualize.
+  //! Ctor.
+  //! \param[in] N Deviation Node.
   asiVisu_EXPORT
-    asiVisu_DeviationDataProvider(const Handle(asiData_DeviationNode)& P);
+    asiVisu_DeviationDataProvider(const Handle(asiData_DeviationNode)& N);
 
 public:
 

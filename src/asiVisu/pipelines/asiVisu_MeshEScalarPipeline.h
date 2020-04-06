@@ -32,32 +32,11 @@
 #define asiVisu_MeshEScalarPipeline_h
 
 // asiVisu includes
-#include <asiVisu_MeshDataProvider.h>
-#include <asiVisu_MeshPipeline.h>
+#include <asiVisu_Pipeline.h>
 
-//-----------------------------------------------------------------------------
-// Data Provider
-//-----------------------------------------------------------------------------
+// VTK includes
+#include <vtkLookupTable.h>
 
-//! Provides data necessary for visualization of mesh with elemental scalars.
-class asiVisu_MeshEScalarDataProvider : public asiVisu_MeshDataProvider
-{
-public:
-
-  DEFINE_STANDARD_RTTI_INLINE(asiVisu_MeshEScalarDataProvider, asiVisu_MeshDataProvider)
-
-public:
-
-  virtual Handle(HIntArray)
-    GetElementIDs() const = 0;
-
-  virtual Handle(HRealArray)
-    GetElementScalars() const = 0;
-
-};
-
-//-----------------------------------------------------------------------------
-// Pipeline
 //-----------------------------------------------------------------------------
 
 //! Visualization pipeline for meshes with elemental scalars.
@@ -78,11 +57,23 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
+protected:
+
+  //! Initializes lookup table for scalar mapping.
+  asiVisu_EXPORT void
+    initLookupTable();
+
 private:
 
-  virtual void addToRendererCallback      (vtkRenderer* renderer);
-  virtual void removeFromRendererCallback (vtkRenderer* renderer);
-  virtual void updateCallback             ();
+  //! Callback for AddToRenderer() base routine. Good place to adjust visualization
+  //! properties of the pipeline's actor.
+  virtual void callback_add_to_renderer(vtkRenderer* renderer);
+
+  //! Callback for RemoveFromRenderer() base routine.
+  virtual void callback_remove_from_renderer(vtkRenderer* renderer);
+
+  //! Callback for Update() routine.
+  virtual void callback_update();
 
 private:
 
@@ -108,6 +99,18 @@ protected:
 
   //! Map of internally used filters.
   FilterMap m_filterMap;
+
+  //! Lookup table.
+  vtkSmartPointer<vtkLookupTable> m_lookupTable;
+
+  //! Safety range.
+  double m_fToler;
+
+  //! Min scalar.
+  double m_fMinScalar;
+
+  //! Min scalar.
+  double m_fMaxScalar;
 
 };
 

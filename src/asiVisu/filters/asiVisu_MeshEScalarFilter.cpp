@@ -127,8 +127,8 @@ int asiVisu_MeshEScalarFilter::RequestData(vtkInformation*,
   aNewPoints->Allocate(aNbPoints, aNbPoints);
 
   // Get arrays of IDs
-  vtkIntArray* aCellIDs =
-    vtkIntArray::SafeDownCast( anInput->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
+  vtkIdTypeArray* aCellIDs =
+    vtkIdTypeArray::SafeDownCast( anInput->GetCellData()->GetArray(ARRNAME_MESH_ELEM_IDS) );
 
   // Allocate space for data associated with the new set of points
   vtkPointData* anInputPD  = anInput->GetPointData();
@@ -141,7 +141,7 @@ int asiVisu_MeshEScalarFilter::RequestData(vtkInformation*,
 
   // Allocate an array for cell scalars
   vtkSmartPointer<vtkDoubleArray>
-    aNewCellScalars = asiVisu_Utils::InitDoubleArray(ARRNAME_MESH_N_SCALARS);
+    aNewCellScalars = asiVisu_Utils::InitDoubleArray(ARRNAME_MESH_E_SCALARS);
 
   // Map for shared VTK points
   NCollection_DataMap<int, vtkIdType> aRegPoints;

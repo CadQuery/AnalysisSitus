@@ -46,21 +46,67 @@ public:
 
 public:
 
+  //! Ctor accepting facets in the form of accelerating structure. Initialized once,
+  //! this utility may perform multiple tests for different probe rays.
+  //! \param[in] facets   BVH-based structure of facets to test.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
     asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
-                     ActAPI_ProgressEntry             progress,
-                     ActAPI_PlotterEntry              plotter);
+                     ActAPI_ProgressEntry             progress = nullptr,
+                     ActAPI_PlotterEntry              plotter  = nullptr);
 
 public:
 
-  asiAlgo_EXPORT bool
-    operator() (const gp_Lin& ray, int& facet_index, gp_XYZ& result) const;
+  //! Sets farthest/nearest mode of testing.
+  //! \param[in] on mode to set.
+  void SetFarthestMode(const bool on)
+  {
+    m_bIsFarthest = on;
+  }
 
+  //! Sets the index of a facet to exclude from the intersection test.
+  //! \param[in] fidx id of the facet to skip.
+  void SetFacetToSkip(const int fidx)
+  {
+    m_iFacetToSkip = fidx;
+  }
+
+public:
+
+  //! Performs intersection test for the passed ray.
+  //! \param[in]  ray         probe ray.
+  //! \param[out] facet_index index of nearest facet or -1 if the intersection
+  //!                         cannot be found.
+  //! \param[out] result      intersection point.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    operator() (const gp_Lin& ray,
+                int&          facet_index,
+                gp_XYZ&       result) const;
+
+  //! Performs membership test for a point.
+  //! \param[in]  P               probe point.
+  //! \param[in]  membership_prec precision of membership test.
+  //! \param[out] P_proj          projected point.
+  //! \param[out] facet_index     nearest facet.
+  //! \return distance to the nearest facet.
   asiAlgo_EXPORT double
-    operator() (const gp_Pnt& P, const double membership_prec, gp_Pnt& P_proj, int& facet_index) const;
+    operator() (const gp_Pnt& P,
+                const double  membership_prec,
+                gp_Pnt&       P_proj,
+                int&          facet_index) const;
 
 protected:
 
+  //! Performs narrow-phase testing for a BVH leaf.
+  //! \param[in]  P               probe point.
+  //! \param[in]  leaf            leaf node of the BVH tree.
+  //! \param[in]  membership_prec precision of PMC.
+  //! \param[out] P_proj          projected point.
+  //! \param[out] resultFacet     found facet which yields the min distance.
+  //! \param[out] isInside        indicates whether a point lies inside the triangle.
+  //! \return distance from the point P to the facets of interest.
   double testLeaf(const gp_Pnt&    P,
                   const BVH_Vec4i& leaf,
                   const double     membership_prec,
@@ -68,6 +114,14 @@ protected:
                   int&             resultFacet,
                   bool&            isInside) const;
 
+  //! Performs narrow-phase testing for a BVH leaf.
+  //! \param[in]  ray                      probe ray.
+  //! \param[in]  length                   length of the probe ray to take into account.
+  //! \param[in]  leaf                     leaf node of the BVH tree.
+  //! \param[out] resultFacet              found facet which yields the min distance.
+  //! \param[out] resultRayParamNormalized parameter [0,1] of the intersection point on the ray.
+  //! \param[out] hitPoint                 intersection point.
+  //! \return true if intersection detected, false -- otherwise.
   bool testLeaf(const gp_Lin&    ray,
                 const double     length,
                 const BVH_Vec4i& leaf,
@@ -75,19 +129,46 @@ protected:
                 double&          resultRayParamNormalized,
                 gp_XYZ&          hitPoint) const;
 
+  //! Conducts basic intersection test of the given line with respect to the
+  //! bounding box defined by its corner points.
+  //! \param[in] L      line to test.
+  //! \param[in] boxMin lower corner of the box to test.
+  //! \param[in] boxMax upper corner of the box to test.
+  //! \return true/false.
   bool isOut(const gp_Lin&    ray,
              const BVH_Vec3d& boxMin,
              const BVH_Vec3d& boxMax,
              const double     prec) const;
 
+  //! Checks if the two points p1 and p2 are on the same side with respect to
+  //! the line defined by points a and b.
+  //! \param[in] p1 first point to test.
+  //! \param[in] p2 second point to test.
+  //! \param[in] a  first point on the line.
+  //! \param[in] b  second point on the line.
+  //! \return true/false.
   bool isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,
                   const gp_Pnt& a,  const gp_Pnt& b) const;
 
+  //! Checks whether the point p belongs to a triangle (a, b, c).
+  //! \param[in] p point to test.
+  //! \param[in] a first node of the triangle to test.
+  //! \param[in] b second node of the triangle to test.
+  //! \param[in] c third node of the triangle to test.
+  //! \return true/false.
   bool isInside(const gp_Pnt& p,
                 const gp_Pnt& a,
                 const gp_Pnt& b,
                 const gp_Pnt& c) const;
 
+  //! Checks whether the point p belongs to a triangle (a, b, c). This is another
+  //! approach based on calculation of barycentric coordinates.
+  //! \param[in] p               point to test.
+  //! \param[in] a               first node of the triangle to test.
+  //! \param[in] b               second node of the triangle to test.
+  //! \param[in] c               third node of the triangle to test.
+  //! \param[in] membership_prec precision of PMC.
+  //! \return true/false.
   bool isInsideBarycentric(const gp_Pnt& p,
                            const gp_Pnt& a,
                            const gp_Pnt& b,
@@ -101,6 +182,14 @@ protected:
                      const gp_XYZ& pntTri3,
                      double&       hitParamNormalized,
                      gp_XYZ&       hitPoint) const;
+
+protected:
+
+  //! Indicates whether we're looking for the farthest facet.
+  bool m_bIsFarthest;
+
+  //! Facet to skip.
+  int m_iFacetToSkip;
 
 };
 

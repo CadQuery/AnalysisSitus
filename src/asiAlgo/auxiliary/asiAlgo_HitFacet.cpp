@@ -50,24 +50,16 @@ typedef int BVH_StackItem;
 
 //-----------------------------------------------------------------------------
 
-//! Ctor accepting facets in form of accelerating structure. Initialized once,
-//! this utility may perform multiple tests for different probe rays.
-//! \param[in] facets   BVH-based structure of facets to test.
-//! \param[in] progress progress notifier.
-//! \param[in] plotter  imperative plotter.
 asiAlgo_HitFacet::asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
                                    ActAPI_ProgressEntry             progress,
                                    ActAPI_PlotterEntry              plotter)
-: asiAlgo_BVHAlgo(facets, progress, plotter)
-{}
+: asiAlgo_BVHAlgo(facets, progress, plotter), m_iFacetToSkip(-1)
+{
+  this->SetFarthestMode(false);
+}
 
 //-----------------------------------------------------------------------------
 
-//! Performs hit check for a ray.
-//! \param[in]  ray         probe ray.
-//! \param[out] facet_index nearest facet.
-//! \param[out] result      picked point.
-//! \return true in case of success, false -- otherwise.
 bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
                                   int&          facet_index,
                                   gp_XYZ&       result) const
@@ -86,7 +78,7 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
   const double prec = Precision::Confusion();
 
   // Intersection parameter for sorting
-  double resultRayParam = RealLast();
+  double resultRayParam = ( m_bIsFarthest ? -RealLast() : RealLast() );
 
 #if defined DRAW_DEBUG
   this->GetPlotter().REDRAW_POINT("ray_origin", ray.Location(), Color_Red);
@@ -109,11 +101,15 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
       //
       const bool isHit = this->testLeaf(ray, ray_limit, nodeData, facet_candidate, hitParam, hitPoint);
       //
-      if ( isHit && hitParam < resultRayParam )
+      if ( isHit )
       {
-        facet_index    = facet_candidate;
-        resultRayParam = hitParam;
-        result         = hitPoint;
+        if ( !m_bIsFarthest && (hitParam < resultRayParam) ||
+              m_bIsFarthest && (hitParam > resultRayParam) )
+        {
+          facet_index    = facet_candidate;
+          resultRayParam = hitParam;
+          result         = hitPoint;
+        }
       }
     }
     else // sub-volume
@@ -146,12 +142,12 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
 
     const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(facet_index);
     //
-    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                                  gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()), Color_Red);
-    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P0.x(), facet.P0.y(), facet.P0.z()),
-                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
-    this->GetPlotter().DRAW_LINK( gp_Pnt(facet.P1.x(), facet.P1.y(), facet.P1.z()),
-                                  gp_Pnt(facet.P2.x(), facet.P2.y(), facet.P2.z()), Color_Red);
+    this->GetPlotter().DRAW_LINK( gp_Pnt( facet.P0.x(), facet.P0.y(), facet.P0.z() ),
+                                  gp_Pnt( facet.P1.x(), facet.P1.y(), facet.P1.z() ), Color_Red );
+    this->GetPlotter().DRAW_LINK( gp_Pnt( facet.P0.x(), facet.P0.y(), facet.P0.z() ),
+                                  gp_Pnt( facet.P2.x(), facet.P2.y(), facet.P2.z() ), Color_Red );
+    this->GetPlotter().DRAW_LINK( gp_Pnt( facet.P1.x(), facet.P1.y(), facet.P1.z() ),
+                                  gp_Pnt( facet.P2.x(), facet.P2.y(), facet.P2.z() ), Color_Red );
   }
   else
     std::cout << "Error: cannot find the intersected facet" << std::endl;
@@ -162,12 +158,6 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
 
 //-----------------------------------------------------------------------------
 
-//! Performs hit check for a point.
-//! \param[in]  P               probe point.
-//! \param[in]  membership_prec precision of membership test.
-//! \param[out] P_proj          projected point.
-//! \param[out] facet_index     nearest facet.
-//! \return distance to the nearest facet.
 double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
                                     const double  membership_prec,
                                     gp_Pnt&       P_proj,
@@ -255,14 +245,6 @@ double asiAlgo_HitFacet::operator()(const gp_Pnt& P,
 
 //-----------------------------------------------------------------------------
 
-//! Performs narrow-phase testing for a BVH leaf.
-//! \param[in]  P               probe point.
-//! \param[in]  leaf            leaf node of the BVH tree.
-//! \param[in]  membership_prec precision of PMC.
-//! \param[out] P_proj          projected point.
-//! \param[out] resultFacet     found facet which yields the min distance.
-//! \param[out] isInside        indicates whether a point lies inside the triangle.
-//! \return distance from the point P to the facets of interest.
 double asiAlgo_HitFacet::testLeaf(const gp_Pnt&    P,
                                   const BVH_Vec4i& leaf,
                                   const double     membership_prec,
@@ -325,14 +307,6 @@ double asiAlgo_HitFacet::testLeaf(const gp_Pnt&    P,
 
 //-----------------------------------------------------------------------------
 
-//! Performs narrow-phase testing for a BVH leaf.
-//! \param[in]  ray                      probe ray.
-//! \param[in]  length                   length of the probe ray to take into account.
-//! \param[in]  leaf                     leaf node of the BVH tree.
-//! \param[out] resultFacet              found facet which yields the min distance.
-//! \param[out] resultRayParamNormalized parameter [0,1] of the intersection point on the ray.
-//! \param[out] hitPoint                 intersection point.
-//! \return true if intersection detected, false -- otherwise.
 bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
                                 const double     length,
                                 const BVH_Vec4i& leaf,
@@ -340,34 +314,41 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
                                 double&          resultRayParamNormalized,
                                 gp_XYZ&          hitPoint) const
 {
-  // Prepare a segment of the ray to pass for intersection test
+  // Prepare a segment of the ray to pass for intersection test.
   const gp_XYZ l0 = ray.Location().XYZ();
   const gp_XYZ l1 = l0 + ray.Direction().XYZ()*length;
 
   // Parameter on ray is used for intersection sorting. We are interested
-  // in the closest point only
+  // in the nearest or the farthest point depending on the mode specified
+  // by the user.
   resultFacet              = -1;
-  resultRayParamNormalized = RealLast();
+  resultRayParamNormalized = ( m_bIsFarthest ? -RealLast() : RealLast() );
 
   // Loop over the tentative facets
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
   {
-    // Get facet to test
+    if ( fidx == m_iFacetToSkip )
+      continue; // Skip facet which is explicitly excluded from the intersection test.
+
+    // Get facet to test.
     const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(fidx);
 
-    // Get next facet to test
+    // Get next facet to test.
     const gp_XYZ p0( facet.P0.x(), facet.P0.y(), facet.P0.z() );
     const gp_XYZ p1( facet.P1.x(), facet.P1.y(), facet.P1.z() );
     const gp_XYZ p2( facet.P2.x(), facet.P2.y(), facet.P2.z() );
 
-    // Hit test
+    // Hit test.
     double currentParam;
     gp_XYZ currentPoint;
     //
     if ( this->isIntersected(l0, l1, p0, p1, p2, currentParam, currentPoint) )
     {
-      if ( currentParam < resultRayParamNormalized )
+      if ( !m_bIsFarthest && (currentParam < resultRayParamNormalized) ||
+            m_bIsFarthest && (currentParam > resultRayParamNormalized) )
       {
+        m_plotter.DRAW_TRIANGLE(p0, p1, p2, Color_Red, "facet");
+
         resultFacet              = fidx;
         resultRayParamNormalized = currentParam;
         hitPoint                 = currentPoint;
@@ -380,12 +361,6 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
 
 //-----------------------------------------------------------------------------
 
-//! Conducts basic intersection test of the given line with respect to the
-//! bounding box defined by its corner points.
-//! \param[in] L      line to test.
-//! \param[in] boxMin lower corner of the box to test.
-//! \param[in] boxMax upper corner of the box to test.
-//! \return true/false.
 bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
                              const BVH_Vec3d& boxMin,
                              const BVH_Vec3d& boxMax,
@@ -393,7 +368,7 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
 {
   double xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
   double parmin, parmax, par1, par2;
-  bool xToSet, yToSet;
+  bool   xToSet, yToSet;
 
   // Protection from degenerated bounding box.
   double myXmin = boxMin.x() - prec;
@@ -405,49 +380,54 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
 
   if ( Abs( L.Direction().XYZ().X() ) > 0.0 )
   {
-    par1 = (myXmin - L.Location().XYZ().X()) / L.Direction().XYZ().X();
-    par2 = (myXmax - L.Location().XYZ().X()) / L.Direction().XYZ().X();
+    par1   = (myXmin - L.Location().XYZ().X()) / L.Direction().XYZ().X();
+    par2   = (myXmax - L.Location().XYZ().X()) / L.Direction().XYZ().X();
     parmin = Min(par1, par2);
     parmax = Max(par1, par2);
     xToSet = true;
   }
-  else 
+  else
   {
-    if (L.Location().XYZ().X() < myXmin || myXmax<L.Location().XYZ().X())
+    if ( L.Location().XYZ().X() < myXmin || myXmax < L.Location().XYZ().X() )
       return true;
 
-    xmin = L.Location().XYZ().X();
-    xmax = L.Location().XYZ().X();
+    xmin   = L.Location().XYZ().X();
+    xmax   = L.Location().XYZ().X();
     parmin = -1.0e100;
     parmax = 1.0e100;
     xToSet = false;
   }
 
-  if (Abs(L.Direction().XYZ().Y())>0.0)
+  if ( Abs( L.Direction().XYZ().Y() ) > 0.0 )
   {
-    par1 = (myYmin - L.Location().XYZ().Y()) / L.Direction().XYZ().Y();
-    par2 = (myYmax - L.Location().XYZ().Y()) / L.Direction().XYZ().Y();
-    if (parmax < Min(par1, par2) || parmin > Max(par1, par2))
+    par1 = ( myYmin - L.Location().XYZ().Y() ) / L.Direction().XYZ().Y();
+    par2 = ( myYmax - L.Location().XYZ().Y() ) / L.Direction().XYZ().Y();
+
+    if ( parmax < Min(par1, par2) || parmin > Max(par1, par2) )
       return true;
+
     parmin = Max(parmin, Min(par1, par2));
     parmax = Min(parmax, Max(par1, par2));
     yToSet = true;
   }
   else 
   {
-    if (L.Location().XYZ().Y() < myYmin || myYmax<L.Location().XYZ().Y())
+    if ( L.Location().XYZ().Y() < myYmin || myYmax < L.Location().XYZ().Y() )
       return true;
-    ymin = L.Location().XYZ().Y();
-    ymax = L.Location().XYZ().Y();
+
+    ymin   = L.Location().XYZ().Y();
+    ymax   = L.Location().XYZ().Y();
     yToSet = false;
   }
 
-  if (Abs(L.Direction().XYZ().Z())>0.0)
+  if ( Abs( L.Direction().XYZ().Z() ) > 0.0 )
   {
     par1 = (myZmin - L.Location().XYZ().Z()) / L.Direction().XYZ().Z();
     par2 = (myZmax - L.Location().XYZ().Z()) / L.Direction().XYZ().Z();
-    if (parmax < Min(par1, par2) || parmin > Max(par1, par2))
+
+    if ( parmax < Min(par1, par2) || parmin > Max(par1, par2) )
       return true;
+
     parmin = Max(parmin, Min(par1, par2));
     parmax = Min(parmax, Max(par1, par2));
     par1 = L.Location().XYZ().Z() + parmin*L.Direction().XYZ().Z();
@@ -457,32 +437,33 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
   }
   else 
   {
-    if (L.Location().XYZ().Z() < myZmin || myZmax < L.Location().XYZ().Z())
+    if ( L.Location().XYZ().Z() < myZmin || myZmax < L.Location().XYZ().Z() )
       return true;
+
     zmin = L.Location().XYZ().Z();
     zmax = L.Location().XYZ().Z();
   }
-  if (zmax < myZmin || myZmax < zmin)
+  if ( zmax < myZmin || myZmax < zmin )
     return true;
 
-  if (xToSet) 
+  if ( xToSet )
   {
     par1 = L.Location().XYZ().X() + parmin*L.Direction().XYZ().X();
     par2 = L.Location().XYZ().X() + parmax*L.Direction().XYZ().X();
     xmin = Min(par1, par2);
     xmax = Max(par1, par2);
   }
-  if (xmax < myXmin || myXmax < xmin)
+  if ( xmax < myXmin || myXmax < xmin )
     return true;
 
-  if (yToSet) 
+  if ( yToSet )
   {
     par1 = L.Location().XYZ().Y() + parmin*L.Direction().XYZ().Y();
     par2 = L.Location().XYZ().Y() + parmax*L.Direction().XYZ().Y();
     ymin = Min(par1, par2);
     ymax = Max(par1, par2);
   }
-  if (ymax < myYmin || myYmax < ymin)
+  if ( ymax < myYmin || myYmax < ymin )
     return true;
 
   return false;
@@ -490,13 +471,6 @@ bool asiAlgo_HitFacet::isOut(const gp_Lin&    L,
 
 //-----------------------------------------------------------------------------
 
-//! Checks if the two points p1 and p2 are on the same side with respect to
-//! the line defined by points a and b.
-//! \param[in] p1 first point to test.
-//! \param[in] p2 second point to test.
-//! \param[in] a  first point on the line.
-//! \param[in] b  second point on the line.
-//! \return true/false.
 bool asiAlgo_HitFacet::isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,
                                   const gp_Pnt& a,  const gp_Pnt& b) const
 {
@@ -513,12 +487,6 @@ bool asiAlgo_HitFacet::isSameSide(const gp_Pnt& p1, const gp_Pnt& p2,
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the point p belongs to a triangle (a, b, c).
-//! \param[in] p point to test.
-//! \param[in] a first node of the triangle to test.
-//! \param[in] b second node of the triangle to test.
-//! \param[in] c third node of the triangle to test.
-//! \return true/false.
 bool asiAlgo_HitFacet::isInside(const gp_Pnt& p,
                                 const gp_Pnt& a,
                                 const gp_Pnt& b,
@@ -531,14 +499,6 @@ bool asiAlgo_HitFacet::isInside(const gp_Pnt& p,
 
 //-----------------------------------------------------------------------------
 
-//! Checks whether the point p belongs to a triangle (a, b, c). This is another
-//! approach based on calculation of barycentric coordinates.
-//! \param[in] p               point to test.
-//! \param[in] a               first node of the triangle to test.
-//! \param[in] b               second node of the triangle to test.
-//! \param[in] c               third node of the triangle to test.
-//! \param[in] membership_prec precision of PMC.
-//! \return true/false.
 bool asiAlgo_HitFacet::isInsideBarycentric(const gp_Pnt& p,
                                            const gp_Pnt& a,
                                            const gp_Pnt& b,

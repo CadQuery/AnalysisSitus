@@ -51,17 +51,17 @@ public:
 
 //-----------------------------------------------------------------------------
 
-//! Scalar field associated mesh nodes.
-class asiAlgo_MeshNScalarField : public asiAlgo_MeshField
+//! Scalar field.
+class asiAlgo_MeshScalarField : public asiAlgo_MeshField
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_MeshNScalarField, asiAlgo_MeshField)
+  DEFINE_STANDARD_RTTI_INLINE(asiAlgo_MeshScalarField, asiAlgo_MeshField)
 
 public:
 
-  typedef NCollection_DataMap<int, double> t_data; //!< Node id versus scalar.
+  typedef NCollection_DataMap<int, double> t_data; //!< Element/node id versus scalar.
 
 public:
 

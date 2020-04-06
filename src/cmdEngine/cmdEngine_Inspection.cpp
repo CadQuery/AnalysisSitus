@@ -38,6 +38,7 @@
 #include <asiEngine_Curve.h>
 #include <asiEngine_Editing.h>
 #include <asiEngine_Part.h>
+#include <asiEngine_Thickness.h>
 #include <asiEngine_TolerantShapes.h>
 
 // asiAlgo includes
@@ -3074,6 +3075,62 @@ int ENGINE_GetOuterWire(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckThickness(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  // Get Data Model instance.
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Get owner.
+  Handle(ActAPI_INode) ownerNode;
+  //
+  ActAPI_DataObjectId ownerId;
+  interp->GetKeyValue(argc, argv, "owner", ownerId);
+  //
+  if ( ownerId.IsEmpty() )
+    ownerNode = M->GetPartNode();
+  else
+    ownerNode = M->FindNode(ownerId);
+  //
+  if ( ownerNode.IsNull() || !ownerNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Owner node is null or inconsistent.");
+    return TCL_ERROR;
+  }
+
+  // Thickness analysis API.
+  asiEngine_Thickness thicknessApi( M,
+                                    interp->GetProgress(),
+                                    interp->GetPlotter() );
+  //
+  Handle(asiData_ThicknessNode) TN;
+
+  // Analyze thickness.
+  M->OpenCommand();
+  {
+    TN = thicknessApi.CreateThickness(ownerNode);
+
+    // Execute deps.
+    M->FuncExecuteAll();
+  }
+  M->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf )
+  {
+    if ( cmdEngine::cf->ObjectBrowser )
+      cmdEngine::cf->ObjectBrowser->Populate();
+    if ( cmdEngine::cf->ViewerPart )
+      cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(TN);
+  }
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -3387,4 +3444,12 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Extracts outer wire of the selected face.",
     //
     __FILE__, group, ENGINE_GetOuterWire);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-thickness",
+    //
+    "check-thickness [-owner <ownerId>]\n"
+    "\t Checks the thickness distribution over the passed owner shape.",
+    //
+    __FILE__, group, ENGINE_CheckThickness);
 }

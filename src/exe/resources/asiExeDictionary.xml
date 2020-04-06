@@ -46,6 +46,20 @@
     <description>Number of elements</description>
   </datum>
 
+  <!-- Read-only min scalar -->
+  <datum id="MinScalarReadOnly" format="%5.2x3" label="Min. scalar">
+    <domain type="Integer" min="-1e99" max="1e99"/>
+    <ui widget="Label" />
+    <description>Min. scalar</description>
+  </datum>
+
+  <!-- Read-only max scalar -->
+  <datum id="MaxScalarReadOnly" format="%5.2x3" label="Max. scalar">
+    <domain type="Integer" min="-1e99" max="1e99"/>
+    <ui widget="Label" />
+    <description>Max. scalar</description>
+  </datum>
+
   <!-- Display mode for shape presentation -->
   <datum id="PrsDisplayMode" format="" label="Display mode">
     <domain type="List" list="List-ShapeDisplayMode" />

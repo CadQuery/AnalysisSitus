@@ -19,6 +19,7 @@ set (H_FILES
   asiEngine_STEPReaderOutput.h
   asiEngine_STEPWriterInput.h
   asiEngine_Tessellation.h
+  asiEngine_Thickness.h
   asiEngine_TolerantShapes.h
   asiEngine_Triangulation.h
 )
@@ -36,6 +37,7 @@ set (CPP_FILES
   asiEngine_STEPReaderOutput.cpp
   asiEngine_STEPWriterInput.cpp
   asiEngine_Tessellation.cpp
+  asiEngine_Thickness.cpp
   asiEngine_TolerantShapes.cpp
   asiEngine_Triangulation.cpp
 )
@@ -48,6 +50,7 @@ set (func_H_FILES
   func/asiEngine_BuildEdgeFunc.h
   func/asiEngine_BuildOctreeFunc.h
   func/asiEngine_BuildPatchFunc.h
+  func/asiEngine_CheckThicknessFunc.h
   func/asiEngine_SmoothenCornersFunc.h
   func/asiEngine_SmoothenPatchesFunc.h
 )
@@ -55,6 +58,7 @@ set (func_CPP_FILES
   func/asiEngine_BuildEdgeFunc.cpp
   func/asiEngine_BuildOctreeFunc.cpp
   func/asiEngine_BuildPatchFunc.cpp
+  func/asiEngine_CheckThicknessFunc.cpp
   func/asiEngine_SmoothenCornersFunc.cpp
   func/asiEngine_SmoothenPatchesFunc.cpp
 )

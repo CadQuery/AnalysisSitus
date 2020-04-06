@@ -71,6 +71,7 @@
 #include <asiData_SurfDeviationNode.h>
 #include <asiData_TessNode.h>
 #include <asiData_TessNormsNode.h>
+#include <asiData_ThicknessNode.h>
 #include <asiData_TolerantRangeNode.h>
 #include <asiData_TriangulationNode.h>
 
@@ -151,8 +152,6 @@ public:
   {
     return Handle(asiData_Partition<asiData_RootNode>)::DownCast( this->Partition(Partition_Root) );
   }
-
-//-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to Part Nodes.
   //! \return requested Partition.
@@ -280,8 +279,6 @@ public:
     return Handle(asiData_Partition<asiData_OctreeNode>)::DownCast( this->Partition(Partition_Octree) );
   }
 
-//-----------------------------------------------------------------------------
-
   //! Accessor for a Partition instance dedicated to Triangulation Nodes.
   //! \return requested Partition.
   Handle(asiData_Partition<asiData_TriangulationNode>) GetTriangulationPartition() const
@@ -302,8 +299,6 @@ public:
   {
     return Handle(asiData_Partition<asiData_TessNormsNode>)::DownCast( this->Partition(Partition_TessellationNorms) );
   }
-
-//-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to ReTopo Nodes.
   //! \return requested Partition.
@@ -360,8 +355,6 @@ public:
   {
     return Handle(asiData_Partition<asiData_ReVerticesNode>)::DownCast( this->Partition(Partition_ReVertices) );
   }
-
-//-----------------------------------------------------------------------------
 
   //! Accessor for a Partition instance dedicated to IV Nodes.
   //! \return requested Partition.
@@ -482,6 +475,12 @@ public:
     return Handle(asiData_Partition<asiData_IVTextItemNode>)::DownCast( this->Partition(Partition_IV_TextItem) );
   }
 
+  //! \return Partition of Thickness Nodes.
+  Handle(asiData_Partition<asiData_ThicknessNode>) GetThicknessPartition() const
+  {
+    return Handle(asiData_Partition<asiData_ThicknessNode>)::DownCast( this->Partition(Partition_Thickness) );
+  }
+
 protected:
 
   asiEngine_EXPORT virtual void
@@ -574,6 +573,7 @@ protected:
     Partition_IV_TextItem,
   //---------------------------------------------------------------------------
     Partition_SurfDeviation,
+    Partition_Thickness,
   //---------------------------------------------------------------------------
     Partition_LAST
   };

@@ -81,7 +81,7 @@ bool asiAlgo_CheckDeviations::internalPerform()
   m_progress.Init( m_points->GetNumberOfElements() );
 
   // Prepare scalar field.
-  Handle(asiAlgo_MeshNScalarField) field = new asiAlgo_MeshNScalarField;
+  Handle(asiAlgo_MeshScalarField) field = new asiAlgo_MeshScalarField;
   //
   m_result.fields.push_back(field);
 

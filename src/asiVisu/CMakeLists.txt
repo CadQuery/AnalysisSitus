@@ -161,6 +161,7 @@ set (presentations_H_FILES
   presentations/asiVisu_SurfDeviationPrs.h
   presentations/asiVisu_TessellationNormsPrs.h
   presentations/asiVisu_TessellationPrs.h
+  presentations/asiVisu_ThicknessPrs.h
   presentations/asiVisu_TolerantRangePrs.h
   presentations/asiVisu_TriangulationPrs.h
 )
@@ -196,6 +197,7 @@ set (presentations_CPP_FILES
   presentations/asiVisu_SurfDeviationPrs.cpp
   presentations/asiVisu_TessellationNormsPrs.cpp
   presentations/asiVisu_TessellationPrs.cpp
+  presentations/asiVisu_ThicknessPrs.cpp
   presentations/asiVisu_TolerantRangePrs.cpp
   presentations/asiVisu_TriangulationPrs.cpp
 )
@@ -226,6 +228,7 @@ set (providers_H_FILES
   providers/asiVisu_IVSurfaceDataProvider.h
   providers/asiVisu_LawDataProvider.h
   providers/asiVisu_MeshDataProvider.h
+  providers/asiVisu_MeshEScalarDataProvider.h
   providers/asiVisu_MeshNScalarDataProvider.h
   providers/asiVisu_OctreeDataProvider.h
   providers/asiVisu_PartDataProvider.h
@@ -241,6 +244,7 @@ set (providers_H_FILES
   providers/asiVisu_SurfaceDataProvider.h
   providers/asiVisu_SurfaceDeviationDataProvider.h
   providers/asiVisu_TessNormalsDataProvider.h
+  providers/asiVisu_ThicknessDataProvider.h
   providers/asiVisu_TriangulationDataProvider.h
   providers/asiVisu_VectorsDataProvider.h
 )
@@ -275,6 +279,7 @@ set (providers_CPP_FILES
   providers/asiVisu_ShapeDataProvider.cpp
   providers/asiVisu_SurfaceDeviationDataProvider.cpp
   providers/asiVisu_TessNormalsDataProvider.cpp
+  providers/asiVisu_ThicknessDataProvider.cpp
   providers/asiVisu_TriangulationDataProvider.cpp
   providers/asiVisu_VectorsDataProvider.cpp
 )

@@ -188,7 +188,7 @@ double asiAlgo_MeshDistanceFunc::Eval(const double x,
   if ( m_mode == Mode_Signed )
   {
     int vote    = 0;
-    int barrier = std::ceil(double(m_iNumRays) / 2.);
+    int barrier = int( std::ceil(double(m_iNumRays) / 2.) );
 
     for ( int rayIdx = 0; rayIdx < m_iNumRays; ++rayIdx )
     {

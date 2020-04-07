@@ -53,7 +53,7 @@ typedef int BVH_StackItem;
 asiAlgo_HitFacet::asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
                                    ActAPI_ProgressEntry             progress,
                                    ActAPI_PlotterEntry              plotter)
-: asiAlgo_BVHAlgo(facets, progress, plotter), m_iFacetToSkip(-1)
+: asiAlgo_BVHAlgo(facets, progress, plotter), m_iFaceToSkip(0)
 {
   this->SetFarthestMode(false);
 }
@@ -327,11 +327,11 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
   // Loop over the tentative facets
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
   {
-    if ( fidx == m_iFacetToSkip )
-      continue; // Skip facet which is explicitly excluded from the intersection test.
-
     // Get facet to test.
     const asiAlgo_BVHFacets::t_facet& facet = m_facets->GetFacet(fidx);
+
+    if ( facet.FaceIndex == m_iFaceToSkip )
+      continue; // Skip facet which is explicitly excluded from the intersection test.
 
     // Get next facet to test.
     const gp_XYZ p0( facet.P0.x(), facet.P0.y(), facet.P0.z() );
@@ -347,7 +347,12 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
       if ( !m_bIsFarthest && (currentParam < resultRayParamNormalized) ||
             m_bIsFarthest && (currentParam > resultRayParamNormalized) )
       {
-        m_plotter.DRAW_TRIANGLE(p0, p1, p2, Color_Red, "facet");
+        if ( !m_plotter.Access().IsNull() )
+        {
+          TCollection_AsciiString name("facet_");
+          name += fidx;
+          m_plotter.REDRAW_TRIANGLE(name, p0, p1, p2, Color_Red);
+        }
 
         resultFacet              = fidx;
         resultRayParamNormalized = currentParam;

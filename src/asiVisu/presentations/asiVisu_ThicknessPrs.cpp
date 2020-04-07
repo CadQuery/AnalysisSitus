@@ -62,7 +62,6 @@ asiVisu_ThicknessPrs::asiVisu_ThicknessPrs(const Handle(ActAPI_INode)& N)
   asiVisu_MeshResultUtils::InitScalarBarWidget(m_scalarBarWidget, 0);
 
   this->GetPipeline(Pipeline_Main)->Actor()->GetProperty()->SetPointSize(0);
-  this->GetPipeline(Pipeline_Main)->Actor()->SetPickable(0);
 }
 
 //-----------------------------------------------------------------------------

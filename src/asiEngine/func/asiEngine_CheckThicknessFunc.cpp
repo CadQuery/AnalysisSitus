@@ -74,6 +74,14 @@ int asiEngine_CheckThicknessFunc::execute(const Handle(ActAPI_HParameterList)& i
   const double
     dz = ActParamTool::AsReal( TN->Parameter(asiData_ThicknessNode::PID_Dz) )->GetValue();
 
+  gp_Vec dirVec(dx, dy, dz);
+  //
+  if ( dirVec.Magnitude() < 1.e-6 )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Undefined direction.");
+    return 1; // Error.
+  }
+
   /* ===================
    *  Analyze thickness.
    * =================== */

@@ -65,11 +65,11 @@ public:
     m_bIsFarthest = on;
   }
 
-  //! Sets the index of a facet to exclude from the intersection test.
-  //! \param[in] fidx id of the facet to skip.
-  void SetFacetToSkip(const int fidx)
+  //! Sets the index of a face to exclude from the intersection test.
+  //! \param[in] faceId id of the face to skip.
+  void SetFaceToSkip(const int faceId)
   {
-    m_iFacetToSkip = fidx;
+    m_iFaceToSkip = faceId;
   }
 
 public:
@@ -188,8 +188,8 @@ protected:
   //! Indicates whether we're looking for the farthest facet.
   bool m_bIsFarthest;
 
-  //! Facet to skip.
-  int m_iFacetToSkip;
+  //! Face to skip.
+  int m_iFaceToSkip;
 
 };
 

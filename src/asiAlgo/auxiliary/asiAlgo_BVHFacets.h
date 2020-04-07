@@ -129,26 +129,6 @@ public:
     return m_facets[index];
   }
 
-  //! Attempts to find facet with the specified face (domain-specific)
-  //! id. The first such facet is returned (there can be many facets
-  //! corresponding the same domain id.
-  //! \param[in]  faceId   domain id.
-  //! \param[out] facetIdx found facet index.
-  //! \return false if cannot find facet.
-  bool FindFacet(const int faceId, int& facetIdx) const
-  {
-    for ( size_t f = 0; f < m_facets.size(); ++f )
-    {
-      if ( m_facets[f].FaceIndex == faceId )
-      {
-        facetIdx = int(f);
-        return true;
-      }
-    }
-    facetIdx = -1;
-    return false;
-  }
-
   //! \return AABB of the entire set of objects.
   virtual BVH_Box<double, 3> Box() const
   {

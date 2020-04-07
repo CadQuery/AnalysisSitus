@@ -154,10 +154,8 @@ bool asiAlgo_CheckThickness::Perform_RayMethod()
 
     /* Shoot a ray to find intersection. */
 
-    // Exclude the originating facet from the intersection test.
-    int facet2Skip = -1;
-    if ( m_bvh->FindFacet(tidx, facet2Skip) )
-      HitFacet.SetFacetToSkip(facet2Skip);
+    // Exclude the originating face from the intersection test.
+    HitFacet.SetFaceToSkip(tidx);
 
     // Thickness scalar.
     double thickness = 0.;

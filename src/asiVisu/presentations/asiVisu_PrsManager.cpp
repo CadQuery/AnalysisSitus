@@ -1254,7 +1254,7 @@ bool
     vtkSmartPointer<vtkIdTypeArray>
       pids = vtkIdTypeArray::SafeDownCast( m_cellPicker->GetDataSet()->GetCellData()->GetPedigreeIds() );
     //
-    if ( pids )
+    if ( pids && cellId < pids->GetNumberOfValues() )
     {
       pid = pids->GetValue(cellId);
 #if defined COUT_DEBUG

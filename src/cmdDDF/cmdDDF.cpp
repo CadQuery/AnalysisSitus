@@ -174,6 +174,10 @@ int DDF_BuildSVO(const Handle(asiTcl_Interp)& interp,
   cmdDDF::cf->ObjectBrowser->Populate();
   cmdDDF::cf->ViewerPart->PrsMgr()->Actualize(octreeNode);
 
+  // Size of a single voxel for information.
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Size of a single voxel (bytes): %1."
+                                                        << int( sizeof(poly_SVO) ) );
+
   return TCL_OK;
 #else
   cmdDDF_NotUsed(argc);

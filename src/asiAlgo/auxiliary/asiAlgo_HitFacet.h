@@ -58,11 +58,21 @@ public:
 
 public:
 
-  //! Sets farthest/nearest mode of testing.
-  //! \param[in] on mode to set.
-  void SetFarthestMode(const bool on)
+  //! Intersection testing mode (which bounce to take).
+  enum Mode
   {
-    m_bIsFarthest = on;
+    Mode_Nearest,
+    Mode_Farthest,
+    Mode_All
+  };
+
+public:
+
+  //! Sets nearest/farthest/all mode of testing.
+  //! \param[in] mode mode to set.
+  void SetMode(const Mode mode)
+  {
+    m_mode = mode;
   }
 
   //! Sets the index of a face to exclude from the intersection test.
@@ -75,15 +85,24 @@ public:
 public:
 
   //! Performs intersection test for the passed ray.
-  //! \param[in]  ray         probe ray.
-  //! \param[out] facet_index index of nearest facet or -1 if the intersection
-  //!                         cannot be found.
-  //! \param[out] result      intersection point.
+  //! \param[in]  ray     probe ray.
+  //! \param[out] facetId index of the intersected facet.
+  //! \param[out] hit     intersection point.
   //! \return true in case of success, false -- otherwise.
   asiAlgo_EXPORT bool
     operator() (const gp_Lin& ray,
-                int&          facet_index,
-                gp_XYZ&       result) const;
+                int&          facetId,
+                gp_XYZ&       hit) const;
+
+  //! Performs intersection test for the passed ray.
+  //! \param[in]  ray      probe ray.
+  //! \param[out] facetIds indices of the intersected facets.
+  //! \param[out] hits     intersection points.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    operator() (const gp_Lin&        ray,
+                std::vector<int>&    facetIds,
+                std::vector<gp_XYZ>& hits) const;
 
   //! Performs membership test for a point.
   //! \param[in]  P               probe point.
@@ -185,8 +204,9 @@ protected:
 
 protected:
 
-  //! Indicates whether we're looking for the farthest facet.
-  bool m_bIsFarthest;
+  //! Specifies whether we're looking for the nearest,
+  //! farthest or all intersections.
+  Mode m_mode;
 
   //! Face to skip.
   int m_iFaceToSkip;

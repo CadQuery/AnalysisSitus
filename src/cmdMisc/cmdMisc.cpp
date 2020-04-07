@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_BaseCloud.h>
 #include <asiAlgo_Cloudify.h>
+#include <asiAlgo_HitFacet.h>
 #include <asiAlgo_MeshGen.h>
 #include <asiAlgo_MeshMerge.h>
 #include <asiAlgo_MeshOBB.h>
@@ -3289,6 +3290,141 @@ int MISC_InvertBPoles(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int MISC_GenHeightMap(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+
+  // Get shape.
+  TopoDS_Shape partShape = partNode->GetShape();
+  //
+  if ( partShape.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Shape is null.");
+    return TCL_ERROR;
+  }
+
+  /* ==============
+   *  Build a grid.
+   * ============== */
+
+  TIMER_NEW
+  TIMER_GO
+
+  double xMin, yMin, zMin, xMax, yMax, zMax;
+  if ( !asiAlgo_Utils::Bounds(partShape, xMin, yMin, zMin, xMax, yMax, zMax) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot compute bounds.");
+    return TCL_ERROR;
+  }
+
+  int numSteps = 100;
+  interp->GetKeyValue<int>(argc, argv, "steps", numSteps);
+
+  double proximityOffset = Abs(zMax - zMin)*0.1;
+
+  const double uStep = (xMax - xMin) / numSteps;
+  const double vStep = (yMax - yMin) / numSteps;
+
+  // Choose u values
+  std::vector<double> U;
+  double              u     = xMin;
+  bool                uStop = false;
+  //
+  while ( !uStop )
+  {
+    if ( u > xMax )
+    {
+      u     = xMax;
+      uStop = true;
+    }
+
+    U.push_back(u);
+    u += uStep;
+  }
+
+  // Choose v values
+  std::vector<double> V;
+  double              v     = yMin;
+  bool                vStop = false;
+  //
+  while ( !vStop )
+  {
+    if ( v > yMax )
+    {
+      v     = yMax;
+      vStop = true;
+    }
+
+    V.push_back(v);
+    v += vStep;
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "X step: %1." << uStep);
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Y step: %1." << vStep);
+
+  // Generate grid points.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
+  //
+  for ( size_t i = 0; i < U.size(); ++i )
+  {
+    for ( size_t j = 0; j < V.size(); ++j )
+    {
+      const gp_Pnt P(U[i], V[j], zMin - proximityOffset);
+      pts->AddElement(P);
+    }
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Generate points")
+
+  interp->GetPlotter().REDRAW_POINTS("pts", pts->GetCoordsArray(), Color_White);
+
+  /* ===========
+   *  Build BVH.
+   * =========== */
+
+  TIMER_RESET
+  TIMER_GO
+
+  Handle(asiAlgo_BVHFacets) bvh = asiEngine_Part(M).BuildBVH(false);
+
+  Handle(asiAlgo_BaseCloud<double>) resPts = new asiAlgo_BaseCloud<double>;
+
+  // Cast a ray from each point to get elevation.
+  asiAlgo_HitFacet HitFacet(bvh);
+  HitFacet.SetMode(asiAlgo_HitFacet::Mode_All);
+  //
+  for ( int pidx = 0; pidx < pts->GetNumberOfElements(); ++pidx )
+  {
+    gp_XYZ P = pts->GetElement(pidx);
+
+    // Perform intersection test.
+    std::vector<int> facets;
+    std::vector<gp_XYZ> hits;
+    //
+    if ( !HitFacet(gp_Lin( P, gp::DZ() ), facets, hits) )
+      continue;
+
+    // Add the intersection points to the result.
+    for ( size_t k = 0; k < hits.size(); ++k )
+      resPts->AddElement(hits[k]);
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Build BVH & intersect")
+
+  interp->GetPlotter().REDRAW_POINTS("resPts", resPts->GetCoordsArray(), Color_Red);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
                       const Handle(Standard_Transient)& data)
 {
@@ -3509,6 +3645,14 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Inverts the control points of a B-surface to itself.",
     //
     __FILE__, group, MISC_InvertBPoles);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("misc-gen-hmap",
+    //
+    "misc-gen-hmap <ptsName>\n"
+    "\t Generates height map.",
+    //
+    __FILE__, group, MISC_GenHeightMap);
 
   // Load sub-modules.
   Commands_Coons(interp, data);

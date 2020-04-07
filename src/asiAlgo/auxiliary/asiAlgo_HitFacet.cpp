@@ -55,37 +55,66 @@ asiAlgo_HitFacet::asiAlgo_HitFacet(const Handle(asiAlgo_BVHFacets)& facets,
                                    ActAPI_PlotterEntry              plotter)
 : asiAlgo_BVHAlgo(facets, progress, plotter), m_iFaceToSkip(0)
 {
-  this->SetFarthestMode(false);
+  this->SetMode(Mode_Nearest);
 }
 
 //-----------------------------------------------------------------------------
 
 bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
-                                  int&          facet_index,
-                                  gp_XYZ&       result) const
+                                  int&          facetId,
+                                  gp_XYZ&       hit) const
+{
+  std::vector<int>    facetIds;
+  std::vector<gp_XYZ> hits;
+
+  if ( this->operator()(ray, facetIds, hits) )
+  {
+    facetId = facetIds[0];
+    hit     = hits[0];
+    return true;
+  }
+
+  facetId = -1;
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_HitFacet::operator()(const gp_Lin&        ray,
+                                  std::vector<int>&    facetIds,
+                                  std::vector<gp_XYZ>& hits) const
 {
   const opencascade::handle< BVH_Tree<double, 3> >& bvh = m_facets->BVH();
   if ( bvh.IsNull() )
     return false;
 
-  // Initialize output index
-  facet_index = -1;
+  // Initialize outputs.
+  facetIds.clear();
+  hits.clear();
 
-  // Limit of the ray for hit test
+  // Initialize facet index for a single-point test.
+  int    facetId = -1;
+  gp_XYZ hit;
+
+  // Limit of the ray for hit test.
   const double ray_limit = m_facets->GetBoundingDiag()*100;
 
-  // Precision for fast intersection test on AABB
+  // Precision for fast intersection test on AABB.
   const double prec = Precision::Confusion();
 
-  // Intersection parameter for sorting
-  double resultRayParam = ( m_bIsFarthest ? -RealLast() : RealLast() );
+  // Intersection parameter for sorting.
+  double resultRayParam = 0.;
+  if ( m_mode == Mode_Farthest )
+    resultRayParam = -RealLast();
+  else
+    resultRayParam = RealLast();
 
 #if defined DRAW_DEBUG
   this->GetPlotter().REDRAW_POINT("ray_origin", ray.Location(), Color_Red);
   this->GetPlotter().REDRAW_LINK("ray", ray.Location(), ray.Location().XYZ() + ray.Direction().XYZ()*ray_limit, Color_Green);
 #endif
 
-  // Traverse BVH
+  // Traverse BVH.
   for ( asiAlgo_BVHIterator it(bvh); it.More(); it.Next() )
   {
     const BVH_Vec4i& nodeData = it.Current();
@@ -93,9 +122,9 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
     if ( it.IsLeaf() )
     {
       // If we are here, then we are close to solution. It is a right
-      // time now to perform a precise check
+      // time now to perform a precise check.
 
-      int facet_candidate = -1;
+      int    facet_candidate = -1;
       double hitParam;
       gp_XYZ hitPoint;
       //
@@ -103,16 +132,21 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
       //
       if ( isHit )
       {
-        if ( !m_bIsFarthest && (hitParam < resultRayParam) ||
-              m_bIsFarthest && (hitParam > resultRayParam) )
+        if ( ( (m_mode == Mode_Farthest) && (hitParam > resultRayParam) ) ||
+             ( (m_mode == Mode_Nearest) && (hitParam < resultRayParam) ) )
         {
-          facet_index    = facet_candidate;
+          facetId        = facet_candidate;
           resultRayParam = hitParam;
-          result         = hitPoint;
+          hit            = hitPoint;
+        }
+        else if ( m_mode == Mode_All )
+        {
+          facetIds.push_back(facet_candidate);
+          hits.push_back(hitPoint);
         }
       }
     }
-    else // sub-volume
+    else // sub-volume.
     {
       const BVH_Vec3d& minCorner_Left  = bvh->MinPoint( nodeData.y() );
       const BVH_Vec3d& maxCorner_Left  = bvh->MaxPoint( nodeData.y() );
@@ -153,7 +187,14 @@ bool asiAlgo_HitFacet::operator()(const gp_Lin& ray,
     std::cout << "Error: cannot find the intersected facet" << std::endl;
 #endif
 
-  return facet_index != -1;
+  // In a single-point mode, populate the output collection.
+  if ( (m_mode != Mode_All) && (facetId != -1) )
+  {
+    facetIds.push_back(facetId);
+    hits.push_back(hit);
+  }
+
+  return (facetIds.size() > 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -322,7 +363,7 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
   // in the nearest or the farthest point depending on the mode specified
   // by the user.
   resultFacet              = -1;
-  resultRayParamNormalized = ( m_bIsFarthest ? -RealLast() : RealLast() );
+  resultRayParamNormalized = RealLast();
 
   // Loop over the tentative facets
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
@@ -344,8 +385,7 @@ bool asiAlgo_HitFacet::testLeaf(const gp_Lin&    ray,
     //
     if ( this->isIntersected(l0, l1, p0, p1, p2, currentParam, currentPoint) )
     {
-      if ( !m_bIsFarthest && (currentParam < resultRayParamNormalized) ||
-            m_bIsFarthest && (currentParam > resultRayParamNormalized) )
+      if ( currentParam < resultRayParamNormalized )
       {
         if ( !m_plotter.Access().IsNull() )
         {

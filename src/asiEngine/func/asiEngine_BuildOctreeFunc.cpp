@@ -150,6 +150,25 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   Handle(ActAPI_IDataCursor)
     opRightBase = ActParamTool::AsReference( inputs->Value(16) )->GetTarget();
 
+  /* =======================
+   *  Get output Parameters.
+   * ======================= */
+
+  Handle(ActData_UserExtParameter)
+    octreeExtParam = Handle(ActData_UserExtParameter)::DownCast( outputs->Value(1) );
+  //
+  Handle(ActAPI_INode) octreeNode = octreeExtParam->GetNode();
+
+  // Get the custom Octree Parameter.
+  Handle(asiData_OctreeParameter)
+    octreeParam = Handle(asiData_OctreeParameter)::DownCast( octreeNode->Parameter( octreeExtParam->GetParamId() ) );
+
+  // Delete the previous octree (if any).
+  poly_SVO* pOldOctree = static_cast<poly_SVO*>( octreeParam->GetOctree() );
+  //
+  if ( pOldOctree != nullptr )
+    delete pOldOctree;
+
   /* ==============
    *  Build octree.
    * ============== */
@@ -231,15 +250,6 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   /* =======================
    *  Set output Parameters.
    * ======================= */
-
-  Handle(ActData_UserExtParameter)
-    octreeExtParam = Handle(ActData_UserExtParameter)::DownCast( outputs->Value(1) );
-  //
-  Handle(ActAPI_INode) octreeNode = octreeExtParam->GetNode();
-
-  // Get the custom Octree Parameter.
-  Handle(asiData_OctreeParameter)
-    octreeParam = Handle(asiData_OctreeParameter)::DownCast( octreeNode->Parameter( octreeExtParam->GetParamId() ) );
 
   // Store the octree.
   octreeParam->SetOctree(pRoot);

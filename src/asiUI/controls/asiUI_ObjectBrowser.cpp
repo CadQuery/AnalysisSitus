@@ -52,6 +52,7 @@
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_PatchJointAdaptor.h>
 #include <asiAlgo_Utils.h>
+#include <asiAlgo_WriteREK.h>
 
 // OpenCascade includes
 #include <TDF_Tool.hxx>
@@ -678,6 +679,40 @@ void asiUI_ObjectBrowser::onSaveToXYZ()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ObjectBrowser::onSaveToREK()
+{
+  Handle(ActAPI_INode) selected_n;
+  if ( !this->selectedNode(selected_n) ) return;
+
+  if ( !selected_n->IsKind( STANDARD_TYPE(asiData_OctreeNode) ) )
+    return;
+
+  Handle(asiData_OctreeNode)
+    N = Handle(asiData_OctreeNode)::DownCast(selected_n);
+
+  // Get the uniform grid to save to REK.
+  Handle(asiAlgo_UniformGrid<float>) grid = N->GetUniformGrid();
+  //
+  if ( grid.IsNull() )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "No uniform grid is available.");
+    return;
+  }
+
+  QString filename = asiUI_Common::selectREKFile(asiUI_Common::OpenSaveAction_Save);
+
+  // Save the grid.
+  asiAlgo_WriteREK WriteREK( QStr2StdStr(filename) );
+  //
+  if ( !WriteREK.Write(grid) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Cannot write REK file.");
+    return;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void asiUI_ObjectBrowser::onPrintParameters()
 {
   Handle(ActAPI_INode) selected_n;
@@ -1084,6 +1119,12 @@ void asiUI_ObjectBrowser::populateContextMenu(const Handle(ActAPI_HNodeList)& ac
       {
         pMenu->addSeparator();
         pMenu->addAction( "Save to XYZ...", this, SLOT( onSaveToXYZ () ) );
+      }
+
+      if ( node->IsKind( STANDARD_TYPE(asiData_OctreeNode) ) )
+      {
+        pMenu->addSeparator();
+        pMenu->addAction( "Save to REK...", this, SLOT( onSaveToREK () ) );
       }
 
       if ( node->IsKind( STANDARD_TYPE(asiData_TessNode) ) )

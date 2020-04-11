@@ -232,6 +232,9 @@ public:
     selectXYZFile(const OpenSaveAction action);
 
   asiUI_EXPORT static QString
+    selectREKFile(const OpenSaveAction action);
+
+  asiUI_EXPORT static QString
     selectOBJFile(const OpenSaveAction action);
 
   asiUI_EXPORT static QString

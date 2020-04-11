@@ -34,6 +34,9 @@
 // asiVisu includes
 #include <asiVisu.h>
 
+// asiAlgo includes
+#include <asiAlgo_UniformGrid.h>
+
 // Active Data includes
 #include <ActAPI_IPlotter.h>
 #include <ActAPI_IProgressNotifier.h>
@@ -96,6 +99,15 @@ public:
   asiVisu_EXPORT void*
     GetInputOctree() const;
 
+  //! Sets input uniform (non-adaptive) grid.
+  //! \param[in] grid uniform grid to set.
+  asiVisu_EXPORT void
+    SetInputGrid(const Handle(asiAlgo_UniformGrid<float>)& grid);
+
+  //! \return input uniform grid.
+  asiVisu_EXPORT const Handle(asiAlgo_UniformGrid<float>)&
+    GetInputGrid() const;
+
   //! Sets points extraction mode on/off.
   //! \param[in] isOn true/false.
   asiVisu_EXPORT void
@@ -109,6 +121,19 @@ public:
   //! \param[in] strategy sampling strategy.
   asiVisu_EXPORT void
     SetSamplingStrategy(const int strategy);
+
+  //! \return sampling strategy.
+  asiVisu_EXPORT int
+    GetSamplingStrategy() const;
+
+  //! Sets uniform mode on/off.
+  //! \param[in] isOn true/false.
+  asiVisu_EXPORT void
+    SetUniform(const bool isOn);
+
+  //! \return true if the uniform mode is enabled, false -- otherwise.
+  asiVisu_EXPORT bool
+    IsUniform() const;
 
 public:
 
@@ -145,6 +170,12 @@ public:
   const Handle(asiAlgo_BaseCloud<double>)& GetVectors() const
   {
     return m_vectors;
+  }
+
+  //! \return min voxel size.
+  double GetMinVoxelSize() const
+  {
+    return m_fMinVoxelSize;
   }
 
 protected:
@@ -185,6 +216,10 @@ private:
   //! \param[in,out] pData unstructured data set being populated.
   void addVoxels(void*                pNode,
                  vtkUnstructuredGrid* pData);
+
+  //! Populates the unstructured grid with uniform voxelization.
+  //! \param[in,out] pData unstructured data set being populated.
+  void addUniformVoxels(vtkUnstructuredGrid* pData);
 
   //! Adds VTK voxel to the unstructured data set being constructed.
   //!
@@ -276,14 +311,23 @@ private:
   //! Octree to convert to VTK unstructured data.
   void* m_pOctree;
 
+  //! Uniform grid.
+  Handle(asiAlgo_UniformGrid<float>) m_grid;
+
   //! Min scalar.
   double m_fMinScalar;
 
   //! Max scalar.
   double m_fMaxScalar;
 
+  //! Min voxel size.
+  double m_fMinVoxelSize;
+
   //! Whether to extract points instead of voxels.
   bool m_bExtractPoints;
+
+  //! Whether the uniform discretization mode is enabled.
+  bool m_bUniform;
 
   //! Sampling strategy.
   int m_strategy;

@@ -57,6 +57,34 @@
 
 //-----------------------------------------------------------------------------
 
+namespace
+{
+  bool IsIn(const double sc[8])
+  {
+    for ( size_t k = 0; k < 8; ++k )
+      if ( sc[k] > 0)
+        return false;
+
+    return true;
+  }
+
+  bool IsOut(const double sc[8])
+  {
+    for ( size_t k = 0; k < 8; ++k )
+      if ( sc[k] < 0)
+        return false;
+
+    return true;
+  }
+
+  bool IsZeroCrossing(const double sc[8])
+  {
+    return !IsIn(sc) && !IsOut(sc);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 vtkStandardNewMacro(asiVisu_OctreeSource)
 
 //-----------------------------------------------------------------------------
@@ -67,6 +95,7 @@ asiVisu_OctreeSource::asiVisu_OctreeSource()
   m_pOctree                    ( nullptr    ),
   m_fMinScalar                 ( DBL_MAX    ),
   m_fMaxScalar                 (-DBL_MAX    ),
+  m_fMinVoxelSize              ( DBL_MAX    ),
   m_bExtractPoints             ( false      ),
   m_strategy                   ( SS_OnInOut ) // all
 {
@@ -106,6 +135,23 @@ void* asiVisu_OctreeSource::GetInputOctree() const
 
 //-----------------------------------------------------------------------------
 
+void asiVisu_OctreeSource::SetInputGrid(const Handle(asiAlgo_UniformGrid<float>)& grid)
+{
+  m_grid = grid;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+const Handle(asiAlgo_UniformGrid<float>)&
+  asiVisu_OctreeSource::GetInputGrid() const
+{
+  return m_grid;
+}
+
+//-----------------------------------------------------------------------------
+
 void asiVisu_OctreeSource::SetExtractPoints(const bool isOn)
 {
   m_bExtractPoints = isOn;
@@ -127,6 +173,29 @@ void asiVisu_OctreeSource::SetSamplingStrategy(const int strategy)
   m_strategy = strategy;
   //
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+int asiVisu_OctreeSource::GetSamplingStrategy() const
+{
+  return m_strategy;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_OctreeSource::SetUniform(const bool isOn)
+{
+  m_bUniform = isOn;
+  //
+  this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiVisu_OctreeSource::IsUniform() const
+{
+  return m_bUniform;
 }
 
 //-----------------------------------------------------------------------------
@@ -203,10 +272,14 @@ int asiVisu_OctreeSource::RequestData(vtkInformation*        asiVisu_NotUsed(req
     pPointData->SetScalars(scalarsArr);
 
     // Add cells.
-    this->addVoxels(m_pOctree, pOutputGrid);
+    if ( m_bUniform )
+      this->addUniformVoxels(pOutputGrid);
+    else
+      this->addVoxels(m_pOctree, pOutputGrid);
 
-    std::cout << "Min scalar is " << m_fMinScalar << std::endl;
-    std::cout << "Max scalar is " << m_fMaxScalar << std::endl;
+    std::cout << "Min scalar is "     << m_fMinScalar    << std::endl;
+    std::cout << "Max scalar is "     << m_fMaxScalar    << std::endl;
+    std::cout << "Min voxel size is " << m_fMinVoxelSize << std::endl;
   }
 
   return 1;
@@ -339,6 +412,13 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
       m_fMaxScalar = Max(m_fMaxScalar, sc6);
       m_fMaxScalar = Max(m_fMaxScalar, sc7);
 
+      const double d1 = ( pMobNode->GetP1() - pMobNode->GetP0() ).Modulus();
+      const double d2 = ( pMobNode->GetP2() - pMobNode->GetP0() ).Modulus();
+      const double d3 = ( pMobNode->GetP4() - pMobNode->GetP0() ).Modulus();
+      //
+      const double voxelSize = Max( d1, Max(d2, d3) );
+      m_fMinVoxelSize = Min(m_fMinVoxelSize, voxelSize);
+
       this->registerVoxel( mobius::cascade::GetOpenCascadePnt( pMobNode->GetP0() ),
                            mobius::cascade::GetOpenCascadePnt( pMobNode->GetP1() ),
                            mobius::cascade::GetOpenCascadePnt( pMobNode->GetP2() ),
@@ -361,6 +441,90 @@ void asiVisu_OctreeSource::addVoxels(void*                pNode,
 #else
   vtkErrorMacro( << "Mobius SVO data structure is not available." );
 #endif
+}
+
+//-----------------------------------------------------------------------------
+
+void asiVisu_OctreeSource::addUniformVoxels(vtkUnstructuredGrid* pData)
+{
+  if ( m_grid.IsNull() )
+  {
+    vtkErrorMacro( << "The uniform grid data structure is null." );
+    return;
+  }
+
+  const double step = (double) m_grid->CellSize;
+
+  for ( int i = 0; i <= m_grid->Nx; ++i )
+  {
+    const double x = m_grid->XMin + step*i;
+    //
+    for ( int j = 0; j <= m_grid->Ny; ++j )
+    {
+      const double y = m_grid->YMin + step*j;
+      //
+      for ( int k = 0; k <= m_grid->Nz; ++k )
+      {
+        const double z = m_grid->ZMin + step*k;
+
+        if ( (i < m_grid->Nx) && (j < m_grid->Ny) && (k < m_grid->Nz) )
+        {
+          const double
+            sc[8] = { m_grid->pArray[i]    [j]    [k],
+                      m_grid->pArray[i + 1][j]    [k],
+                      m_grid->pArray[i]    [j + 1][k],
+                      m_grid->pArray[i + 1][j + 1][k],
+                      m_grid->pArray[i]    [j]    [k + 1],
+                      m_grid->pArray[i + 1][j]    [k + 1],
+                      m_grid->pArray[i]    [j + 1][k + 1],
+                      m_grid->pArray[i + 1][j + 1][k + 1] };
+
+          const bool isOn  = ::IsZeroCrossing (sc);
+          const bool isIn  = ::IsIn           (sc);
+          const bool isOut = ::IsOut          (sc);
+
+          if ( ( isOn  && (m_strategy & SS_On)  ) ||
+               ( isIn  && (m_strategy & SS_In)  ) ||
+               ( isOut && (m_strategy & SS_Out) ) )
+          {
+            // Voxel corners.
+            gp_Pnt P0(x,        y,        z);
+            gp_Pnt P1(x + step, y,        z);
+            gp_Pnt P2(x,        y + step, z);
+            gp_Pnt P3(x + step, y + step, z);
+            gp_Pnt P4(x,        y,        z + step);
+            gp_Pnt P5(x + step, y,        z + step);
+            gp_Pnt P6(x,        y + step, z + step);
+            gp_Pnt P7(x + step, y + step, z + step);
+
+            // Extremities over the scalar values.
+            m_fMinScalar = Min(m_fMinScalar, sc[0]);
+            m_fMinScalar = Min(m_fMinScalar, sc[1]);
+            m_fMinScalar = Min(m_fMinScalar, sc[2]);
+            m_fMinScalar = Min(m_fMinScalar, sc[3]);
+            m_fMinScalar = Min(m_fMinScalar, sc[4]);
+            m_fMinScalar = Min(m_fMinScalar, sc[5]);
+            m_fMinScalar = Min(m_fMinScalar, sc[6]);
+            m_fMinScalar = Min(m_fMinScalar, sc[7]);
+            //
+            m_fMaxScalar = Max(m_fMaxScalar, sc[0]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[1]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[2]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[3]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[4]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[5]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[6]);
+            m_fMaxScalar = Max(m_fMaxScalar, sc[7]);
+
+            // Add voxel to the data set.
+            this->registerVoxel(P0, P1, P2, P3, P4, P5, P6, P7,
+                                sc[0], sc[1], sc[2], sc[3], sc[4], sc[5], sc[6], sc[7],
+                                pData);
+          }
+        }
+      }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

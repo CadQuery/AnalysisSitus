@@ -153,6 +153,8 @@ protected slots:
   //
   void onSaveToXYZ             ();
   //
+  void onSaveToREK             ();
+  //
   void onPrintParameters       ();
   void onCopyName              ();
   void onCopyID                ();

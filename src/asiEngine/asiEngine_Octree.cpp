@@ -120,6 +120,7 @@ Handle(asiData_OctreeNode)
                                               << node->Parameter(asiData_OctreeNode::PID_OpLeft)
                                               << node->Parameter(asiData_OctreeNode::PID_OpRight),
                              ActParamStream() << node->Parameter(asiData_OctreeNode::PID_Octree)
+                                              << node->Parameter(asiData_OctreeNode::PID_UniformGrid)
                                               << node->Parameter(asiData_OctreeNode::PID_NumElements) );
 
   // Set as child for the owner Node.

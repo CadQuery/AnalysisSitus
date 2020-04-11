@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 11 April 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,71 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_h
-#define asiData_h
+#ifndef asiAlgo_WriteREK_h
+#define asiAlgo_WriteREK_h
 
-#define asiData_NotUsed(x)
+// asiAlgo includes
+#include <asiAlgo_UniformGrid.h>
 
-#ifdef _WIN32
-  #ifdef asiData_EXPORTS
-    #define asiData_EXPORT __declspec(dllexport)
-  #else
-    #define asiData_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define asiData_EXPORT
-#endif
+// Standard includes
+#include <string>
+#include <ostream>
 
-// asiData includes
-#include <asiData_ParameterFlags.h>
+//! Writes the voxelization in Fraunhofer Raw Volumes file format (REK).
+class asiAlgo_WriteREK
+{
+public:
 
-// Active Data includes
-#include <ActAPI_IParameter.h>
+  //! RAII ctor.
+  //! \param[in] filename input file.
+  asiAlgo_EXPORT
+    asiAlgo_WriteREK(const std::string& filename);
 
-//-----------------------------------------------------------------------------
-// Custom Active Data Parameters
-//-----------------------------------------------------------------------------
+  //! Dtor.
+  asiAlgo_EXPORT
+    ~asiAlgo_WriteREK();
 
-#define Parameter_AAG         Parameter_LASTFREE
-#define Parameter_BVH         Parameter_LASTFREE + 1
-#define Parameter_Naming      Parameter_LASTFREE + 2
-#define Parameter_Function    Parameter_LASTFREE + 3
-#define Parameter_Octree      Parameter_LASTFREE + 4
-#define Parameter_UniformGrid Parameter_LASTFREE + 5
-//
-#define Parameter_LASTFREE_ASITUS Parameter_UniformGrid
+public:
+
+  struct t_header
+  {
+    uint16_t SizeX;       //!< Size X in pixels.
+    uint16_t SizeY;       //!< Size Y in pixels.
+    uint16_t Pixel;       //!< 16 for WORD | 32 for FLOAT.
+    uint16_t SizeZ;       //!< Number of 2D volume slices.
+    char     Res1[572];   //!< Reserved.
+    float    SomeValue;   //!< Reserved.
+    float    PixelSize;   //!< Voxel size (in microns).
+    float    SliceDist;   //!< Slice step (in microns).
+    char     Res2[1456];  //!< Reserved.
+
+    //! Default ctor.
+    t_header() : SizeX(0),
+                 SizeY(0),
+                 Pixel(32),
+                 SizeZ(0),
+                 SomeValue(0.),
+                 PixelSize(0.),
+                 SliceDist(0.)
+    {
+      memset(&Res1, 0, sizeof(Res1));
+      memset(&Res2, 0, sizeof(Res2));
+    }
+  };
+
+public:
+
+  //! Writes the passed uniform grid of 32-bit floating-point values to
+  //! the REK file.
+  //! \param[in] grid the grid to serialize.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Write(const Handle(asiAlgo_UniformGrid<float>)& grid);
+
+protected:
+
+  std::ofstream* m_pFILE; //!< File handle.
+
+};
 
 #endif

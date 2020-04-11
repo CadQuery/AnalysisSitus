@@ -56,6 +56,9 @@ include (${CMAKE_SOURCE_DIR}/cmake/asitus_OCCT_3rdparty.cmake)
 # Inno Setup for installation
 include (${CMAKE_SOURCE_DIR}/cmake/asitus_InnoSetup.cmake)
 
+# TBB is optional
+set (USE_THREADING ON CACHE BOOL "TBB is optional 3-rd party. Building with TBB will allow to run algorithms in multi-threaded mode.")
+
 # Mobius is optional
 set (USE_MOBIUS OFF CACHE BOOL "Mobius is optional 3-rd party. It gives alternative tools for CAGD.")
 #
@@ -83,6 +86,7 @@ endif()
 # Set paths to dynamically linked libs
 set (3RDPARTY_DLL_PATH "${3RDPARTY_tcl_DLL_DIR};\
 ${3RDPARTY_tk_DLL_DIR};\
+${3RDPARTY_tbb_DLL_DIR};\
 ${3RDPARTY_freetype_DLL_DIR};\
 ${3RDPARTY_freeimage_DLL_DIR};\
 ${3RDPARTY_gl2ps_DLL_DIR};\

@@ -44,14 +44,13 @@
 
 //-----------------------------------------------------------------------------
 
-//! Ctor.
 asiVisu_OctreePipeline::asiVisu_OctreePipeline()
 //
 : asiVisu_Pipeline( vtkSmartPointer<vtkDataSetMapper>::New(),
                     vtkSmartPointer<vtkActor>::New() ),
-  m_fToler        (1.e-6),
-  m_fMinScalar    (1.e100),
-  m_fMaxScalar    (-1.e100)
+  m_fToler        ( 1.e-6 ),
+  m_fMinScalar    ( 1.e100 ),
+  m_fMaxScalar    (-1.e100 )
 {
   // Create source here in order to be able to reuse it in other pipelines.
   m_source = vtkSmartPointer<asiVisu_OctreeSource>::New();
@@ -59,46 +58,46 @@ asiVisu_OctreePipeline::asiVisu_OctreePipeline()
 
 //-----------------------------------------------------------------------------
 
-//! Sets input data for the pipeline.
-//! \param[in] DP Data Provider.
 void asiVisu_OctreePipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 {
   Handle(asiVisu_OctreeDataProvider)
     provider = Handle(asiVisu_OctreeDataProvider)::DownCast(DP);
 
   /* ===========================
-   *  Validate input Parameters
+   *  Validate input Parameters.
    * =========================== */
 
   void* pOctree = provider->GetOctree();
   //
   if ( pOctree == nullptr )
   {
-    // Pass empty data set in order to have valid pipeline
+    // Pass empty data set in order to have valid pipeline.
     vtkSmartPointer<vtkUnstructuredGrid> dummyDS = vtkSmartPointer<vtkUnstructuredGrid>::New();
     this->SetInputData(dummyDS);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
 
   this->Actor()->GetProperty()->SetPointSize( provider->GetPointSize() );
 
   /* ============================
-   *  Prepare polygonal data set
+   *  Prepare polygonal data set.
    * ============================ */
 
   if ( provider->MustExecute( this->GetMTime() ) )
   {
     m_source->SetInputFacets      ( provider->GetFacets() );
     m_source->SetInputOctree      ( pOctree );
+    m_source->SetInputGrid        ( provider->GetUniformGrid() );
     m_source->SetSamplingStrategy ( provider->GetSamplingStrategy() );
     m_source->SetExtractPoints    ( provider->IsPointExtraction() );
+    m_source->SetUniform          ( provider->IsUniform() );
 
-    // Initialize pipeline
+    // Initialize pipeline.
     this->SetInputConnection( m_source->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
 
@@ -141,16 +140,16 @@ bool asiVisu_OctreePipeline::initLookupTable()
 
 //-----------------------------------------------------------------------------
 
-//! Callback for AddToRenderer() routine. Good place to adjust visualization
-//! properties of the pipeline's actor.
 void asiVisu_OctreePipeline::callback_add_to_renderer(vtkRenderer*)
 {}
 
-//! Callback for RemoveFromRenderer() routine.
+//-----------------------------------------------------------------------------
+
 void asiVisu_OctreePipeline::callback_remove_from_renderer(vtkRenderer*)
 {}
 
-//! Callback for Update() routine.
+//-----------------------------------------------------------------------------
+
 void asiVisu_OctreePipeline::callback_update()
 {
   // Initialize lookup table.

@@ -140,6 +140,8 @@ set (misc_H_FILES
   misc/asiData_OctreeNode.h
   misc/asiData_OctreeParameter.h
   misc/asiData_ThicknessNode.h
+  misc/asiData_UniformGridAttr.h
+  misc/asiData_UniformGridParameter.h
 )
 set (misc_CPP_FILES
   misc/asiData_ContourNode.cpp
@@ -150,6 +152,8 @@ set (misc_CPP_FILES
   misc/asiData_OctreeNode.cpp
   misc/asiData_OctreeParameter.cpp
   misc/asiData_ThicknessNode.cpp
+  misc/asiData_UniformGridAttr.cpp
+  misc/asiData_UniformGridParameter.cpp
 )
 
 #------------------------------------------------------------------------------

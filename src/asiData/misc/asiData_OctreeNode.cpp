@@ -75,8 +75,9 @@ asiData_OctreeNode::asiData_OctreeNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Int,          PID_NumElements);
 
   // Register custom Parameters specific to Analysis Situs.
-  this->registerParameter(PID_BVH,    asiData_BVHParameter    ::Instance(), false);
-  this->registerParameter(PID_Octree, asiData_OctreeParameter ::Instance(), false);
+  this->registerParameter(PID_BVH,         asiData_BVHParameter         ::Instance(), false);
+  this->registerParameter(PID_Octree,      asiData_OctreeParameter      ::Instance(), false);
+  this->registerParameter(PID_UniformGrid, asiData_UniformGridParameter ::Instance(), false);
 }
 
 //-----------------------------------------------------------------------------
@@ -94,6 +95,7 @@ void asiData_OctreeNode::Init()
   this->SetOperation        (CSG_Undefined);
   this->SetBVH              (nullptr);
   this->SetOctree           (nullptr);
+  this->SetUniformGrid      (nullptr);
   this->SetMinCellSize      (1.);
   this->SetMaxCellSize      (100.);
   this->SetPrecision        (1.);
@@ -151,13 +153,6 @@ void asiData_OctreeNode::SetName(const TCollection_ExtendedString& name)
 
 //-----------------------------------------------------------------------------
 
-void asiData_OctreeNode::SetOperation(const asiAlgo_CSG op)
-{
-  ActParamTool::AsInt( this->Parameter(PID_Operation) )->SetValue(op);
-}
-
-//-----------------------------------------------------------------------------
-
 asiAlgo_CSG asiData_OctreeNode::GetOperation() const
 {
   return (asiAlgo_CSG) ActParamTool::AsInt( this->Parameter(PID_Operation) )->GetValue();
@@ -165,9 +160,9 @@ asiAlgo_CSG asiData_OctreeNode::GetOperation() const
 
 //-----------------------------------------------------------------------------
 
-void asiData_OctreeNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets)
+void asiData_OctreeNode::SetOperation(const asiAlgo_CSG op)
 {
-  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvhFacets);
+  ActParamTool::AsInt( this->Parameter(PID_Operation) )->SetValue(op);
 }
 
 //-----------------------------------------------------------------------------
@@ -175,6 +170,13 @@ void asiData_OctreeNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets)
 Handle(asiAlgo_BVHFacets) asiData_OctreeNode::GetBVH() const
 {
   return Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->GetBVH();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets)
+{
+  Handle(asiData_BVHParameter)::DownCast( this->Parameter(PID_BVH) )->SetBVH(bvhFacets);
 }
 
 //-----------------------------------------------------------------------------
@@ -189,6 +191,20 @@ void* asiData_OctreeNode::GetOctree() const
 void asiData_OctreeNode::SetOctree(void* pOctree)
 {
   Handle(asiData_OctreeParameter)::DownCast( this->Parameter(PID_Octree) )->SetOctree(pOctree);
+}
+
+//-----------------------------------------------------------------------------
+
+Handle(asiAlgo_UniformGrid<float>) asiData_OctreeNode::GetUniformGrid() const
+{
+  return Handle(asiData_UniformGridParameter)::DownCast( this->Parameter(PID_UniformGrid) )->GetGrid();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiData_OctreeNode::SetUniformGrid(const Handle(asiAlgo_UniformGrid<float>)& grid)
+{
+  Handle(asiData_UniformGridParameter)::DownCast( this->Parameter(PID_UniformGrid) )->SetGrid(grid);
 }
 
 //-----------------------------------------------------------------------------

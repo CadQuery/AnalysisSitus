@@ -41,6 +41,7 @@
   #include <asiAlgo_MeshDistanceFunc.h>
 #endif
 #include <asiAlgo_CSG.h>
+#include <asiAlgo_ResampleADF.h>
 #include <asiAlgo_Timer.h>
 
 // Active Data includes
@@ -88,8 +89,6 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
                                        const Handle(Standard_Transient)&) const
 {
 #if defined USE_MOBIUS
-  ActAPI_ProgressEntry progress = this->GetProgressNotifier();
-
   /* ============================
    *  Interpret input Parameters.
    * ============================ */
@@ -157,11 +156,18 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   Handle(ActData_UserExtParameter)
     octreeExtParam = Handle(ActData_UserExtParameter)::DownCast( outputs->Value(1) );
   //
+  Handle(ActData_UserExtParameter)
+    gridExtParam = Handle(ActData_UserExtParameter)::DownCast( outputs->Value(2) );
+  //
   Handle(ActAPI_INode) octreeNode = octreeExtParam->GetNode();
 
   // Get the custom Octree Parameter.
   Handle(asiData_OctreeParameter)
     octreeParam = Handle(asiData_OctreeParameter)::DownCast( octreeNode->Parameter( octreeExtParam->GetParamId() ) );
+
+  // Get the custom Uniform Grid Parameter.
+  Handle(asiData_UniformGridParameter)
+    gridParam = Handle(asiData_UniformGridParameter)::DownCast( octreeNode->Parameter( gridExtParam->GetParamId() ) );
 
   // Delete the previous octree (if any).
   poly_SVO* pOldOctree = static_cast<poly_SVO*>( octreeParam->GetOctree() );
@@ -213,7 +219,7 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(progress, "Construct distance function")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Construct distance function")
 
   /* Construct distance field. */
 
@@ -224,12 +230,12 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   //
   if ( !DDF->Build(minSize, maxSize, prec, isUniform, distFunc) )
   {
-    progress.SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
+    m_progress.SendLogMessage(LogErr(Normal) << "Failed to build distance field.");
     return 1;
   }
 
   TIMER_FINISH
-  TIMER_COUT_RESULT_NOTIFIER(progress, "Build SVO for distance field")
+  TIMER_COUT_RESULT_NOTIFIER(m_progress, "Build SVO for distance field")
 
   poly_SVO* pRoot = DDF->GetRoot();
 
@@ -238,13 +244,35 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   const unsigned long long memBytes    = pRoot->GetMemoryInBytes(numSVONodes);
   const double             memMBytes   = memBytes / (1024.*1024.);
   //
-  progress.SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
-                                           << numSVONodes << int(memBytes) << memMBytes );
+  m_progress.SendLogMessage( LogInfo(Normal) << "SVO contains %1 nodes and occupies %2 bytes (%3 MiB) of memory."
+                                             << numSVONodes << int(memBytes) << memMBytes );
+
+  /* ====================
+   *  Build uniform grid.
+   * ==================== */
+
+  Handle(asiAlgo_UniformGrid<float>) uniformGrid;
 
   if ( isUniform )
   {
-    progress.SendLogMessage( LogInfo(Normal) << "Depth of the uniform octree: %1."
-                                             << int( pRoot->GetDepth0() ) );
+    m_progress.SendLogMessage( LogNotice(Normal) << "Uniform grid is being constructed by ADF resampling..." );
+
+    TIMER_NEW
+    TIMER_GO
+
+    // Perform resampling.
+    asiAlgo_ResampleADF ResampleAlgo(pRoot, m_progress, m_plotter);
+    //
+    if ( !ResampleAlgo.Perform( (float) minSize ) )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "Failed to resample ADF.");
+      return 1;
+    }
+
+    uniformGrid = ResampleAlgo.GetResult();
+
+    TIMER_FINISH
+    TIMER_COUT_RESULT_NOTIFIER(m_progress, "ADF resampling")
   }
 
   /* =======================
@@ -254,9 +282,12 @@ int asiEngine_BuildOctreeFunc::execute(const Handle(ActAPI_HParameterList)& inpu
   // Store the octree.
   octreeParam->SetOctree(pRoot);
 
+  // Store the uniform grid.
+  gridParam->SetGrid(uniformGrid);
+
   // Store the number of nodes.
   Handle(ActData_IntParameter)
-    numNodesParam = ActParamTool::AsInt( outputs->Value(2) );
+    numNodesParam = ActParamTool::AsInt( outputs->Value(3) );
   //
   numNodesParam->SetValue(numSVONodes);
 
@@ -296,5 +327,6 @@ ActAPI_ParameterTypeStream
   asiEngine_BuildOctreeFunc::outputSignature() const
 {
   return ActAPI_ParameterTypeStream() << Parameter_Octree
+                                      << Parameter_UniformGrid
                                       << Parameter_Int; // Num. of elements.
 }

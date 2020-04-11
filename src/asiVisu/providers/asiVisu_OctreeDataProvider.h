@@ -75,10 +75,18 @@ public:
   asiVisu_EXPORT virtual void*
     GetOctree() const;
 
+  //! \return uniform grid.
+  asiVisu_EXPORT virtual Handle(asiAlgo_UniformGrid<float>)
+    GetUniformGrid() const;
+
   //! \return Boolean flag indicating whether the points extraction mode
   //!         is activated in the Data Model.
   asiVisu_EXPORT virtual bool
     IsPointExtraction() const;
+
+  //! \return true/false.
+  asiVisu_EXPORT virtual bool
+    IsUniform() const;
 
   //! \return SVO sampling strategy mode.
   asiVisu_EXPORT virtual int

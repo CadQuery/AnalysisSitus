@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 25 September 2015
+// Created on: 11 April 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,67 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_h
-#define asiData_h
+#ifndef asiAlgo_ResampleADF_h
+#define asiAlgo_ResampleADF_h
 
-#define asiData_NotUsed(x)
-
-#ifdef _WIN32
-  #ifdef asiData_EXPORTS
-    #define asiData_EXPORT __declspec(dllexport)
-  #else
-    #define asiData_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define asiData_EXPORT
-#endif
-
-// asiData includes
-#include <asiData_ParameterFlags.h>
+// asiAlgo includes
+#include <asiAlgo_UniformGrid.h>
 
 // Active Data includes
-#include <ActAPI_IParameter.h>
+#include <ActAPI_IAlgorithm.h>
 
-//-----------------------------------------------------------------------------
-// Custom Active Data Parameters
-//-----------------------------------------------------------------------------
+// Mobius includes
+#include <mobius/poly_SVO.h>
 
-#define Parameter_AAG         Parameter_LASTFREE
-#define Parameter_BVH         Parameter_LASTFREE + 1
-#define Parameter_Naming      Parameter_LASTFREE + 2
-#define Parameter_Function    Parameter_LASTFREE + 3
-#define Parameter_Octree      Parameter_LASTFREE + 4
-#define Parameter_UniformGrid Parameter_LASTFREE + 5
-//
-#define Parameter_LASTFREE_ASITUS Parameter_UniformGrid
+// Standard includes
+#include <string>
+#include <ostream>
+
+using namespace mobius;
+
+//! Resamples an Adaptive Distance Field to generate a uniform
+//! voxelization.
+class asiAlgo_ResampleADF : public ActAPI_IAlgorithm
+{
+public:
+
+  //! Ctor.
+  //! \param[in] pSVO     root SVO node representing the ADF.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_EXPORT
+    asiAlgo_ResampleADF(poly_SVO*            pSVO,
+                        ActAPI_ProgressEntry progress = nullptr,
+                        ActAPI_PlotterEntry  plotter  = nullptr);
+
+public:
+
+  //! Performs ADF resampling.
+  //! \param[in] step discretization step.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Perform(const float step);
+
+  //! \return resulting grid.
+  asiAlgo_EXPORT const Handle(asiAlgo_UniformGrid<float>)&
+    GetResult() const;
+
+  //! Sets multithreading mode (parallel or sequential).
+  //! \param[in] on Boolean value to set.
+  asiAlgo_EXPORT void
+    SetParallelMode(const bool on);
+
+protected:
+
+  //! Root SVO node.
+  poly_SVO* m_pSVO;
+
+  //! Uniform grid which is the result of the uniform sampling.
+  Handle(asiAlgo_UniformGrid<float>) m_grid;
+
+  //! Indicates whether the multithreading is on/off.
+  bool m_bIsParallel;
+
+};
 
 #endif

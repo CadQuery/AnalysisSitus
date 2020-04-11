@@ -33,6 +33,7 @@
 
 // asiData includes
 #include <asiData_OctreeParameter.h>
+#include <asiData_UniformGridParameter.h>
 
 // asiAlgo includes
 #include <asiAlgo_CSG.h>
@@ -66,6 +67,7 @@ public:
     PID_Operation,        //!< CSG operation.
     PID_BVH,              //!< BVH used for distance function evaluation.
     PID_Octree,           //!< Octree decomposition of the space occupied by the part.
+    PID_UniformGrid,      //!< Uniform decomposition of the space occupied by the part.
     PID_BuildFunc,        //!< Tree Function Parameter to build the octree.
     PID_OpLeft,           //!< Left operand for a Boolean function.
     PID_OpRight,          //!< Right operand for a Boolean function.
@@ -127,23 +129,23 @@ public:
 // Handy accessors to the stored data:
 public:
 
+  //! \return stored CSG operation type.
+  asiData_EXPORT asiAlgo_CSG
+    GetOperation() const;
+
   //! Sets CSG operation type to store.
   //! \param[in] op operation type to set.
   asiData_EXPORT void
     SetOperation(const asiAlgo_CSG op);
 
-  //! \return stored CSG operation type.
-  asiData_EXPORT asiAlgo_CSG
-    GetOperation() const;
+  //! \return BVH structure.
+  asiData_EXPORT Handle(asiAlgo_BVHFacets)
+    GetBVH() const;
 
   //! Sets BVH structure to store.
   //! \param[in] bvhFacets BVH structure to store.
   asiData_EXPORT void
     SetBVH(const Handle(asiAlgo_BVHFacets)& bvhFacets);
-
-  //! \return BVH structure.
-  asiData_EXPORT Handle(asiAlgo_BVHFacets)
-    GetBVH() const;
 
   //! \return void pointer to octree data structure.
   asiData_EXPORT void*
@@ -153,6 +155,15 @@ public:
   //! \param[in] pOctree octree to store.
   asiData_EXPORT void
     SetOctree(void* pOctree);
+
+  //! \return uniform grid.
+  asiData_EXPORT Handle(asiAlgo_UniformGrid<float>)
+    GetUniformGrid() const;
+
+  //! Sets the uniform grid to store.
+  //! \param[in] grid uniform grid to store.
+  asiData_EXPORT void
+    SetUniformGrid(const Handle(asiAlgo_UniformGrid<float>)& grid);
 
   //! \return sampling strategy as integer.
   asiData_EXPORT int

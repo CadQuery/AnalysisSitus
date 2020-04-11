@@ -106,6 +106,16 @@ QString asiUI_Common::selectXYZFile(const OpenSaveAction action)
   return selectFile(filter, "Select XYZ file", "Save XYZ file", action);
 }
 
+//! Allows to select filename for REK (Fraunhofer EZRT) format.
+//! \param action [in] open or save.
+//! \return selected filename.
+QString asiUI_Common::selectREKFile(const OpenSaveAction action)
+{
+  QString filter = "REK Fraunhofer EZRT (*.rek)";
+  //
+  return selectFile(filter, "Select REK file", "Save REK file", action);
+}
+
 //! Allows to select filename for OBJ format.
 //! \param action [in] open or save.
 //! \return selected filename.

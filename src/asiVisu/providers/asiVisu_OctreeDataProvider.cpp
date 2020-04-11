@@ -59,9 +59,24 @@ void* asiVisu_OctreeDataProvider::GetOctree() const
 
 //-----------------------------------------------------------------------------
 
+Handle(asiAlgo_UniformGrid<float>)
+  asiVisu_OctreeDataProvider::GetUniformGrid() const
+{
+  return m_node->GetUniformGrid();
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiVisu_OctreeDataProvider::IsPointExtraction() const
 {
   return m_node->GetExtractPoints();
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiVisu_OctreeDataProvider::IsUniform() const
+{
+  return m_node->IsUniform();
 }
 
 //-----------------------------------------------------------------------------
@@ -93,8 +108,10 @@ Handle(ActAPI_HParameterList)
   ActAPI_ParameterStream out;
   out << m_node->Parameter(asiData_OctreeNode::PID_BVH)
       << m_node->Parameter(asiData_OctreeNode::PID_Octree)
+      << m_node->Parameter(asiData_OctreeNode::PID_UniformGrid)
       << m_node->Parameter(asiData_OctreeNode::PID_SamplingStrategy)
       << m_node->Parameter(asiData_OctreeNode::PID_ExtractPoints)
+      << m_node->Parameter(asiData_OctreeNode::PID_IsUniform)
       << m_node->Parameter(asiData_OctreeNode::PID_MaxVectorSize);
 
   return out.List;

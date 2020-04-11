@@ -42,7 +42,10 @@ set (aux_H_FILES
   auxiliary/asiAlgo_Membership.h
   auxiliary/asiAlgo_ProjectPointOnMesh.h
   auxiliary/asiAlgo_ReapproxContour.h
+  auxiliary/asiAlgo_ResampleADF.h
+  auxiliary/asiAlgo_UniformGrid.h
   auxiliary/asiAlgo_Utils.h
+  auxiliary/asiAlgo_WriteREK.h
 )
 set (aux_CPP_FILES
   auxiliary/asiAlgo_BVHAlgo.cpp
@@ -64,7 +67,9 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_IntersectSS.cpp
   auxiliary/asiAlgo_ProjectPointOnMesh.cpp
   auxiliary/asiAlgo_ReapproxContour.cpp
+  auxiliary/asiAlgo_ResampleADF.cpp
   auxiliary/asiAlgo_Utils.cpp
+  auxiliary/asiAlgo_WriteREK.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -547,14 +552,6 @@ foreach (FILE ${mesh_CPP_FILES})
   source_group ("Source Files\\Mesh" FILES "${FILE}")
 endforeach (FILE)
 
-foreach (FILE ${MeshTools_H_FILES})
-  source_group ("Header Files\\Mesh Tools" FILES "${FILE}")
-endforeach (FILE)
-
-foreach (FILE ${MeshTools_CPP_FILES})
-  source_group ("Source Files\\Mesh Tools" FILES "${FILE}")
-endforeach (FILE)
-
 foreach (FILE ${opt_H_FILES})
   source_group ("Header Files\\Optimization" FILES "${FILE}")
 endforeach (FILE)
@@ -601,7 +598,6 @@ set (asiAlgo_include_dir_loc "${CMAKE_CURRENT_SOURCE_DIR};\
   ${CMAKE_CURRENT_SOURCE_DIR}/features;\
   ${CMAKE_CURRENT_SOURCE_DIR}/interop;\
   ${CMAKE_CURRENT_SOURCE_DIR}/mesh;\
-  ${CMAKE_CURRENT_SOURCE_DIR}/MeshTools;\
   ${CMAKE_CURRENT_SOURCE_DIR}/opt;\
   ${CMAKE_CURRENT_SOURCE_DIR}/points;\
   ${CMAKE_CURRENT_SOURCE_DIR}/re;\
@@ -614,16 +610,25 @@ include_directories ( SYSTEM
                       ${3RDPARTY_OCCT_INCLUDE_DIR}
                       ${3RDPARTY_active_data_INCLUDE_DIR}
                       ${3RDPARTY_EIGEN_DIR}
-                      ${3RDPARTY_vtk_INCLUDE_DIR} )
+                      ${3RDPARTY_vtk_INCLUDE_DIR}
+                      ${3RDPARTY_tbb_INCLUDE_DIR} )
 
 if (USE_MOBIUS)
   include_directories(SYSTEM ${3RDPARTY_mobius_INCLUDE_DIR})
 endif()
 
 #------------------------------------------------------------------------------
-# Create library
+# Add target
 #------------------------------------------------------------------------------
 
+# Link with TBB (should be done BEFORE the target is added)
+if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
+  link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})
+else()
+  link_directories(${3RDPARTY_tbb_LIBRARY_DIR})
+endif()
+
+# Add target
 add_library (asiAlgo SHARED
   ${H_FILES}             ${CPP_FILES}
   ${aux_H_FILES}         ${aux_CPP_FILES}
@@ -634,7 +639,6 @@ add_library (asiAlgo SHARED
   ${features_H_FILES}    ${features_CPP_FILES}
   ${interop_H_FILES}     ${interop_CPP_FILES}
   ${mesh_H_FILES}        ${mesh_CPP_FILES}
-  ${MeshTools_H_FILES}   ${MeshTools_CPP_FILES}
   ${opt_H_FILES}         ${opt_CPP_FILES}
   ${points_H_FILES}      ${points_CPP_FILES}
   ${re_H_FILES}          ${re_CPP_FILES}
@@ -644,12 +648,6 @@ add_library (asiAlgo SHARED
 #------------------------------------------------------------------------------
 # Dependencies
 #------------------------------------------------------------------------------
-
-if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
-  link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})
-else()
-  link_directories(${3RDPARTY_tbb_LIBRARY_DIR})
-endif()
 
 foreach (LIB_FILE ${OCCT_LIB_FILES})
   if (WIN32)

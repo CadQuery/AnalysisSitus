@@ -119,3 +119,11 @@ a:visited:hover {
 ul.light {
   list-style-type: circle;
 }
+h1 {
+  color: rgb(0, 0, 0);
+  border-bottom: 1px dotted rgb(150, 150, 150);
+}
+h2 {
+  color: rgb(30, 30, 30);
+  font-size: 18px;
+}

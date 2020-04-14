@@ -134,7 +134,7 @@ void asiData_OctreeNode::Init()
   this->InitParameter(PID_ExtractPoints,    "Extract points",    "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_PointSize,        "Point size",        "",                ParameterFlag_IsVisible, true);
   this->InitParameter(PID_MaxVectorSize,    "Max norm modulus",  "",                ParameterFlag_IsVisible, true);
-  this->InitParameter(PID_NumElements,      "Num. of elements",  "Octree_NumElems", ParameterFlag_IsVisible, true);
+  this->InitParameter(PID_NumElements,      "Num. of SVO nodes", "Octree_NumElems", ParameterFlag_IsVisible, true);
 }
 
 //-----------------------------------------------------------------------------

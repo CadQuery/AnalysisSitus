@@ -525,10 +525,10 @@ public:
   //! \param[in]  shapeType shape type in question. Use the default value
   //!                       to accept any kind of shape.
   asiAlgo_EXPORT void
-    GetLeafs(std::vector<t_item*>&  leafItems,
-             const TopAbs_ShapeEnum shapeType = TopAbs_SHAPE) const;
+    GetLeaves(std::vector<t_item*>&  leafItems,
+              const TopAbs_ShapeEnum shapeType = TopAbs_SHAPE) const;
 
-  //! Merges `this` history with the passed one by concatenating the leafs of
+  //! Merges `this` history with the passed one by concatenating the leaves of
   //! `this` history with the roots of the `other` history.
   //! \param[in] other history to concatenate to this one.
   asiAlgo_EXPORT void
@@ -588,11 +588,11 @@ protected:
   //! Collects leaf items for the given seed and evolution type.
   //! \param[in]  pSeed     seed item.
   //! \param[in]  evolution evolution type.
-  //! \param[out] leafs     collected nodes.
+  //! \param[out] leaves    collected nodes.
   asiAlgo_EXPORT void
-    gatherLeafs(t_item*               pSeed,
-                const EvolutionType   evolution,
-                std::vector<t_item*>& leafs) const;
+    gatherLeaves(t_item*               pSeed,
+                 const EvolutionType   evolution,
+                 std::vector<t_item*>& leaves) const;
 
 protected:
 

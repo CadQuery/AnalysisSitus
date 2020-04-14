@@ -78,7 +78,7 @@ public:
   //! \return human-readable name of the attribute.
   virtual const char* GetName() const override
   {
-    return "adjacency";
+    return "Adjacency";
   }
 
 public:

@@ -97,7 +97,7 @@ public:
   //! \return human-readable name of the attribute.
   virtual const char* GetName() const override
   {
-    return "dihedral angle";
+    return "Dihedral angle";
   }
 
 public:

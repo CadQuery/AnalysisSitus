@@ -71,7 +71,7 @@ public:
   //! \return human-readable name of the attribute.
   virtual const char* GetName() const override
   {
-    return "base face";
+    return "Base face";
   }
 
 };

@@ -103,6 +103,7 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
                                      const Handle(ActAPI_HParameterList)& asiEngine_NotUsed(outputs),
                                      const Handle(Standard_Transient)&    asiEngine_NotUsed(userData)) const
 {
+#if defined USE_MOBIUS
   // Get Edge Node.
   Handle(asiData_ReEdgeNode)
     edgeNode = Handle(asiData_ReEdgeNode)::DownCast( inputs->Value(1)->GetNode() );
@@ -147,6 +148,10 @@ int asiEngine_BuildEdgeFunc::execute(const Handle(ActAPI_HParameterList)& inputs
   edgeNode->SetCurve(curve);
 
   return 0; // Success.
+#else
+  m_progress.SendLogMessage( LogErr(Normal) << "Mobius is not available." );
+  return 1; // Error.
+#endif
 }
 
 //-----------------------------------------------------------------------------

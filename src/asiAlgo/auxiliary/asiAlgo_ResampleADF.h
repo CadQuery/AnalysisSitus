@@ -37,14 +37,16 @@
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
 
-// Mobius includes
-#include <mobius/poly_SVO.h>
+#ifdef USE_MOBIUS
+  // Mobius includes
+  #include <mobius/poly_SVO.h>
+
+  using namespace mobius;
+#endif
 
 // Standard includes
 #include <string>
 #include <ostream>
-
-using namespace mobius;
 
 //! Resamples an Adaptive Distance Field to generate a uniform
 //! voxelization.
@@ -57,7 +59,7 @@ public:
   //! \param[in] progress progress notifier.
   //! \param[in] plotter  imperative plotter.
   asiAlgo_EXPORT
-    asiAlgo_ResampleADF(poly_SVO*            pSVO,
+    asiAlgo_ResampleADF(void*                pSVO,
                         ActAPI_ProgressEntry progress = nullptr,
                         ActAPI_PlotterEntry  plotter  = nullptr);
 
@@ -81,7 +83,7 @@ public:
 protected:
 
   //! Root SVO node.
-  poly_SVO* m_pSVO;
+  void* m_pSVO;
 
   //! Uniform grid which is the result of the uniform sampling.
   Handle(asiAlgo_UniformGrid<float>) m_grid;

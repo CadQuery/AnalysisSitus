@@ -999,7 +999,7 @@ int ENGINE_HLR(const Handle(asiTcl_Interp)& interp,
     BRep_Builder().Add(hlrShape, vcompound);
 
   // Draw the result.
-  interp->GetPlotter().REDRAW_SHAPE(argv[1], hlrShape.Moved(T), Color_Red);
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], hlrShape.Moved(T), Color_Black);
 
   return TCL_OK;
 }

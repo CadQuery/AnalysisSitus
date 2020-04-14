@@ -55,7 +55,7 @@
 //! Converts topology graph to VTK presentable form.
 //! \param[in] topograph topology graph to convert.
 //! \param[in] naming    optional naming service.
-//! \param[in] leafType  type of leafs. This argument allows to stop recursion
+//! \param[in] leafType  type of leaves. This argument allows to stop recursion
 //!                      at a certain sub-shape type level.
 //! \return VTK graph.
 vtkSmartPointer<vtkMutableDirectedGraph>

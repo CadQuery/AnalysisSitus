@@ -38,7 +38,7 @@
 #include <blocked_range3d.h>
 #include <parallel_for.h>
 
-//-----------------------------------------------------------------------------
+#ifdef USE_MOBIUS
 
 //! Intel TBB functor for parallel evaluation of distance field hosted in
 //! adaptive octree (ADF).
@@ -136,9 +136,11 @@ private:
 
 };
 
+#endif // USE_MOBIUS
+
 //-----------------------------------------------------------------------------
 
-asiAlgo_ResampleADF::asiAlgo_ResampleADF(poly_SVO*            pSVO,
+asiAlgo_ResampleADF::asiAlgo_ResampleADF(void*                pSVO,
                                          ActAPI_ProgressEntry progress,
                                          ActAPI_PlotterEntry  plotter)
 : ActAPI_IAlgorithm (progress, plotter),
@@ -150,16 +152,19 @@ asiAlgo_ResampleADF::asiAlgo_ResampleADF(poly_SVO*            pSVO,
 
 bool asiAlgo_ResampleADF::Perform(const float step)
 {
+#ifdef USE_MOBIUS
   if ( m_pSVO == nullptr )
     return false;
 
+  poly_SVO* pSVO = static_cast<poly_SVO*>(m_pSVO);
+
   // Domain.
-  const double xMin = m_pSVO->GetP0().X();
-  const double yMin = m_pSVO->GetP0().Y();
-  const double zMin = m_pSVO->GetP0().Z();
-  const double xMax = m_pSVO->GetP7().X();
-  const double yMax = m_pSVO->GetP7().Y();
-  const double zMax = m_pSVO->GetP7().Z();
+  const double xMin = pSVO->GetP0().X();
+  const double yMin = pSVO->GetP0().Y();
+  const double zMin = pSVO->GetP0().Z();
+  const double xMax = pSVO->GetP7().X();
+  const double yMax = pSVO->GetP7().Y();
+  const double zMax = pSVO->GetP7().Z();
 
   m_plotter.REDRAW_POINT("P0", gp_Pnt(xMin, yMin, zMin), Color_Red);
   m_plotter.REDRAW_POINT("P7", gp_Pnt(xMax, yMax, zMax), Color_Blue);
@@ -186,16 +191,20 @@ bool asiAlgo_ResampleADF::Perform(const float step)
   {
     tbb::parallel_for(
       tbb::blocked_range3d<int>(0, nx + 1, 0, ny + 1, 0, nz + 1),
-      ParallelEvalFunctor<float>(m_pSVO, xStep, yStep, zStep, m_grid)
+      ParallelEvalFunctor<float>(pSVO, xStep, yStep, zStep, m_grid)
     );
   }
   else
   {
-    ParallelEvalFunctor<float> Eval(m_pSVO, xStep, yStep, zStep, m_grid);
+    ParallelEvalFunctor<float> Eval(pSVO, xStep, yStep, zStep, m_grid);
     Eval( tbb::blocked_range3d<int>(0, nx + 1, 0, ny + 1, 0, nz + 1) );
   }
 
   return true;
+#else
+  m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -602,7 +602,7 @@ void asiUI_ControlsAnalysis::onCheckDihAngles()
                                smoothEdgesComp,
                                false,
                                false,
-                               0.0);
+                               0.001);
       }
     }
 
@@ -1307,19 +1307,19 @@ void asiUI_ControlsAnalysis::classifyDihAngle(const TopoDS_Face&          F,
   TopTools_IndexedMapOfShape* pTargetMap;
   TopoDS_Compound*            pTargetComp;
   //
-  if ( angleType == FeatureAngleType_Convex )
+  if ( angleType == FeatureAngleType_Convex ||
+       angleType == FeatureAngleType_SmoothConvex)
   {
     pTargetMap  = &convexEdges;
     pTargetComp = &convexEdgesComp;
   }
-  else if ( angleType == FeatureAngleType_Concave )
+  else if ( angleType == FeatureAngleType_Concave ||
+            angleType == FeatureAngleType_SmoothConcave )
   {
     pTargetMap  = &concaveEdges;
     pTargetComp = &concaveEdgesComp;
   }
-  else if ( angleType == FeatureAngleType_Smooth ||
-            angleType == FeatureAngleType_SmoothConvex ||
-            angleType == FeatureAngleType_SmoothConcave )
+  else if ( angleType == FeatureAngleType_Smooth )
   {
     pTargetMap  = &smoothEdges;
     pTargetComp = &smoothEdgesComp;

@@ -40,10 +40,10 @@
   </datum>
 
   <!-- Number of elements in SVO -->
-  <datum id="Octree_NumElems" format="%5.2x3" label="Num. of elements">
+  <datum id="Octree_NumElems" format="%5.2x3" label="Num. SVO nodes">
     <domain type="Integer" min="-1e99" max="1e99"/>
     <ui widget="Label" />
-    <description>Number of elements</description>
+    <description>Num. SVO nodes</description>
   </datum>
 
   <!-- Read-only min scalar -->

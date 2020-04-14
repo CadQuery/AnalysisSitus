@@ -167,8 +167,8 @@ bool asiAlgo_History::GetLastModified(const TopoDS_Shape&   shape,
   if ( !pSeedItem || !pSeedItem->Modified.size() )
     return false;
 
-  // Collect leafs of MODIFIED evolution.
-  this->gatherLeafs(pSeedItem, Evolution_Modified, modified);
+  // Collect leaves of MODIFIED evolution.
+  this->gatherLeaves(pSeedItem, Evolution_Modified, modified);
 
   return true;
 }
@@ -204,7 +204,7 @@ TopoDS_Shape asiAlgo_History::GetLastImageOrArg(const TopoDS_Shape& shape) const
   if ( this->IsDeleted(shape) )
     return TopoDS_Shape();
 
-  // Get leafs through modification evolution to check if they are deleted.
+  // Get leaves through modification evolution to check if they are deleted.
   std::vector<t_item*> leafItems;
   //
   this->GetLastModified(shape, leafItems);
@@ -264,9 +264,9 @@ bool asiAlgo_History::GetGenerated(const TopoDS_Shape&        shape,
   if ( !pSeedItem || !pSeedItem->Generated.size() )
     return false;
 
-  // Collect leafs of GENERATED evolution.
+  // Collect leaves of GENERATED evolution.
   std::vector<t_item*> leafItems;
-  this->gatherLeafs(pSeedItem, Evolution_Generated, leafItems);
+  this->gatherLeaves(pSeedItem, Evolution_Generated, leafItems);
   //
   for ( size_t k = 0; k < leafItems.size(); ++k )
     generated.push_back(leafItems[k]->TransientPtr);
@@ -334,8 +334,8 @@ bool asiAlgo_History::IsActive(const TopoDS_Shape& shape) const
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_History::GetLeafs(std::vector<t_item*>&  leafItems,
-                               const TopAbs_ShapeEnum shapeType) const
+void asiAlgo_History::GetLeaves(std::vector<t_item*>&  leafItems,
+                                const TopAbs_ShapeEnum shapeType) const
 {
   // Loop over all existing items.
   for ( RandomIterator it(this); it.More(); it.Next() )
@@ -362,21 +362,21 @@ void asiAlgo_History::GetLeafs(std::vector<t_item*>&  leafItems,
 
 void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
 {
-  // Get leafs of this history.
-  std::vector<t_item*> thisLeafs;
-  this->GetLeafs(thisLeafs);
+  // Get leaves of this history.
+  std::vector<t_item*> thisLeaves;
+  this->GetLeaves(thisLeaves);
 
   // Get roots of the passed history.
   const std::vector<t_item*>& otherRoots = other->GetRoots();
 
-  // Map of roots which were merged to leafs.
+  // Map of roots which were merged to leaves.
   NCollection_Map<t_item*, t_item::Hasher> mergedRoots;
 
   // For each leaf, find a root and make a link.
   int numJoints = 0;
-  for ( size_t l = 0; l < thisLeafs.size(); ++l )
+  for ( size_t l = 0; l < thisLeaves.size(); ++l )
   {
-    t_item* pThisLeaf = thisLeafs[l];
+    t_item* pThisLeaf = thisLeaves[l];
     //
     if ( pThisLeaf->IsDeleted )
       continue; // Skip inactive elements.
@@ -407,11 +407,11 @@ void asiAlgo_History::Concatenate(const Handle(asiAlgo_History)& other)
   }
 
   // Some diagnostics.
-  if ( thisLeafs.size() && !numJoints )
+  if ( thisLeaves.size() && !numJoints )
     m_progress.SendLogMessage(LogWarn(Normal) << "Concatenation is not contiguous. "
                                                  "The successive history will be added from its roots.");
   //
-  if ( thisLeafs.size() && ( numJoints == int( thisLeafs.size() ) ) )
+  if ( thisLeaves.size() && ( numJoints == int( thisLeaves.size() ) ) )
     m_progress.SendLogMessage(LogNotice(Normal) << "One-to-one history joint.");
   //
   m_progress.SendLogMessage(LogInfo(Normal) << "History was merged at %1 nodes." << numJoints);
@@ -476,16 +476,16 @@ asiAlgo_History::t_item* asiAlgo_History::makeItem(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_History::gatherLeafs(t_item*               pSeed,
-                                  const EvolutionType   evolution,
-                                  std::vector<t_item*>& leafs) const
+void asiAlgo_History::gatherLeaves(t_item*               pSeed,
+                                   const EvolutionType   evolution,
+                                   std::vector<t_item*>& leaves) const
 {
   std::vector<t_item*> evolved;
   pSeed->GetChildren(evolution, evolved);
 
   if ( !evolved.size() )
-    leafs.push_back(pSeed); // Add to result if no further evolution exists.
+    leaves.push_back(pSeed); // Add to result if no further evolution exists.
   else
     for ( size_t k = 0; k < evolved.size(); ++k )
-      this->gatherLeafs(evolved[k], evolution, leafs); // Proceed recursively.
+      this->gatherLeaves(evolved[k], evolution, leaves); // Proceed recursively.
 }

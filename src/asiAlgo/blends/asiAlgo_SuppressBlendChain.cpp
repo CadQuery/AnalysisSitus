@@ -317,7 +317,7 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   TIMER_GO
 
   std::vector<asiAlgo_History::t_item*> leafItems;
-  m_history->GetLeafs(leafItems, TopAbs_FACE);
+  m_history->GetLeaves(leafItems, TopAbs_FACE);
 
   // Check faces.
   for ( size_t k = 0; k < leafItems.size(); ++k )

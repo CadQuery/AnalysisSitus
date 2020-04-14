@@ -51,8 +51,8 @@ vtkStandardNewMacro(asiVisu_CurveSourceBase)
 
 asiVisu_CurveSourceBase::asiVisu_CurveSourceBase()
 : vtkPolyDataAlgorithm (),
-  m_fOriTipSize        (0.0),
-  m_iPedigreeId        (0)
+  m_iPedigreeId        (0),
+  m_fOriTipSize        (0.0)
 {
   this->SetNumberOfInputPorts(0); // Connected directly to our own Data Provider
                                   // which has nothing to do with VTK pipeline.

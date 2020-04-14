@@ -331,6 +331,7 @@ asiUI_Datum* asiUI_WidgetFactory::editor(const QString& theDataDicID,
 
       return new asiUI_DatumCheckBox(theDataDicID, theParent, theDatumFlags);
     }
+    case asiAlgo_DictionaryItem::Unknown : break;
   }
 
   // notify that the unknown data type specified

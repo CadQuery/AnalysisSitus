@@ -39,7 +39,7 @@ asiAlgo_WriteREK::asiAlgo_WriteREK(const std::string& filename)
   if ( !m_pFILE->is_open() )
   {
     m_pFILE = nullptr;
-    throw std::exception("Cannot open file for writing.");
+    throw std::runtime_error("Cannot open file for writing.");
   }
 }
 

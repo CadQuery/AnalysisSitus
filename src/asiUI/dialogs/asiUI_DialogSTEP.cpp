@@ -78,9 +78,9 @@ asiUI_DialogSTEP::asiUI_DialogSTEP(const Handle(ActAPI_IModel)&    model,
                                    ActAPI_PlotterEntry             plotter,
                                    QWidget*                        parent)
 : QDialog    (parent),
+  m_mode     (mode),
   m_model    (model),
   m_part     (part_n),
-  m_mode     (mode),
   m_notifier (notifier),
   m_plotter  (plotter)
 {

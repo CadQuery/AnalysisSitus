@@ -184,8 +184,8 @@ int asiAlgo_QuickHull2d<TPoint>::findDistantPoint(const int  p1_idx,
   // Build a line to divide the entire cloud on two parts
   //------------------------------------------------------
 
-  gp_Pnt2d P1 = m_cloud->GetElement(p1_idx);
-  gp_Pnt2d P2 = m_cloud->GetElement(p2_idx);
+  gp_Pnt2d P1 = m_cloud->GetElement(p1_idx).Coord;
+  gp_Pnt2d P2 = m_cloud->GetElement(p2_idx).Coord;
 
   gp_Lin2d Lin = gce_MakeLin2d(P1, P2);
   gp_Vec2d vecLin( Lin.Direction() );

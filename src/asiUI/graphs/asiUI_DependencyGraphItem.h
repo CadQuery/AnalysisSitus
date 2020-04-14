@@ -70,7 +70,7 @@ public:
 
   static asiUI_DependencyGraphItem* New();
 
-  vtkTypeMacro(asiUI_DependencyGraphItem, vtkGraphItem);
+  vtkTypeMacro(asiUI_DependencyGraphItem, vtkGraphItem)
 
   virtual ~asiUI_DependencyGraphItem();
 

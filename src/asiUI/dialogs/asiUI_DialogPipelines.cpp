@@ -52,9 +52,9 @@ asiUI_DialogPipelines::asiUI_DialogPipelines(const Handle(asiVisu_Prs)&         
                                              ActAPI_ProgressEntry                       notifier,
                                              QWidget*                                   parent)
 : QDialog    (parent),
+  m_notifier (notifier),
   m_prs      (prs),
-  m_prsMgr   (prsMgr),
-  m_notifier (notifier)
+  m_prsMgr   (prsMgr)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();

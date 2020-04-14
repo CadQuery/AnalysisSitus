@@ -52,8 +52,8 @@
 asiVisu_BCurvePolesPipeline::asiVisu_BCurvePolesPipeline()
 //
 : asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
-  m_bMapperColorsSet (false),
-  m_bForced          (false)
+  m_bForced          ( false ),
+  m_bMapperColorsSet ( false )
 {
   this->Actor()->GetProperty()->SetLineWidth(1.0);
   this->Actor()->GetProperty()->SetLineStipplePattern(0xf0f0);

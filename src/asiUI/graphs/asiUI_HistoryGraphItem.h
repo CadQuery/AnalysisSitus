@@ -79,7 +79,8 @@ class asiUI_HistoryGraphItem : public QObject,
 public:
 
   static asiUI_HistoryGraphItem* New();
-  vtkTypeMacro(asiUI_HistoryGraphItem, vtkGraphItem);
+
+  vtkTypeMacro(asiUI_HistoryGraphItem, vtkGraphItem)
 
   virtual ~asiUI_HistoryGraphItem();
 

@@ -293,7 +293,7 @@ bool asiUI_PrimDataView::dataToView(const Handle(asiUI_PrimDataAdaptor)& Data,
 
   pView->blockSignals(true); // Let's put our gift in Ded Moroz mode
   {
-    t_view ViewGroup = this->ViewGroupByData(Data);
+    this->ViewGroupByData(Data);
     //
     QVariant QDataVal = Data->GetValue();
     qobject_cast<QLineEdit*>(pView)->setText( QDataVal.toString() );

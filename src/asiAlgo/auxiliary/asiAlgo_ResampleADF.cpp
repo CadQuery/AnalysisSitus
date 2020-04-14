@@ -34,11 +34,14 @@
 // asiAlgo includes
 #include <asiAlgo_Timer.h>
 
-// Intel TBB includes
-#include <blocked_range3d.h>
-#include <parallel_for.h>
+#ifdef USE_THREADING
+  // Intel TBB includes
+  #include <blocked_range3d.h>
+  #include <parallel_for.h>
+#endif
 
 #ifdef USE_MOBIUS
+#ifdef USE_THREADING
 
 //! Intel TBB functor for parallel evaluation of distance field hosted in
 //! adaptive octree (ADF).
@@ -136,6 +139,7 @@ private:
 
 };
 
+#endif // USE_THREADING
 #endif // USE_MOBIUS
 
 //-----------------------------------------------------------------------------
@@ -186,6 +190,7 @@ bool asiAlgo_ResampleADF::Perform(const float step)
                                             nx, ny, nz,
                                            (float) step );
 
+#ifdef USE_THREADING
   // Compute scalars.
   if ( m_bIsParallel )
   {
@@ -201,6 +206,10 @@ bool asiAlgo_ResampleADF::Perform(const float step)
   }
 
   return true;
+#else
+  m_progress.SendLogMessage(LogErr(Normal) << "Threading is not available. Configure with TBB.");
+  return false;
+#endif
 #else
   m_progress.SendLogMessage(LogErr(Normal) << "Mobius is not available.");
   return false;

@@ -156,7 +156,7 @@ std::string asiTestEngine_ReportTag::Result() const
   // Add base
   result += m_base;
 
-  if ( !m_bIsClosed || m_bIsClosed && !m_bIsPaired )
+  if ( !m_bIsClosed || (m_bIsClosed && !m_bIsPaired) )
   {
     // Add attributes from the stored list
     for ( int i = 0; i < (int) m_attributes.size(); ++i )

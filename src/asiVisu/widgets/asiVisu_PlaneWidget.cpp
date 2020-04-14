@@ -48,9 +48,9 @@
 #include <vtkTransform.h>
 #pragma warning(pop)
 
-vtkStandardNewMacro(asiVisu_PlaneWidget);
+vtkStandardNewMacro(asiVisu_PlaneWidget)
 
-vtkCxxSetObjectMacro(asiVisu_PlaneWidget,PlaneProperty,vtkProperty);
+vtkCxxSetObjectMacro(asiVisu_PlaneWidget, PlaneProperty, vtkProperty)
 
 asiVisu_PlaneWidget::asiVisu_PlaneWidget() : vtkPolyDataSourceWidget()
 {

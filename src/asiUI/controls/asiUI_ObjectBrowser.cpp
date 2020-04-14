@@ -88,7 +88,7 @@ namespace
 asiUI_ObjectBrowser::asiUI_ObjectBrowser(const Handle(asiEngine_Model)& model,
                                          ActAPI_ProgressEntry           progress,
                                          QWidget*                       parent)
-: QTreeWidget(parent), m_progress(progress), m_model(model)
+: QTreeWidget(parent), m_model(model), m_progress(progress)
 {
   // Configure.
   this->setMinimumWidth(TREEVIEW_MINSIZE);

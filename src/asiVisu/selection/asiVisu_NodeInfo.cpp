@@ -39,7 +39,7 @@
 
 vtkSmartPointer<vtkInformationObjectBaseKey> asiVisu_NodeInfo::m_key = nullptr;
 
-vtkStandardNewMacro(asiVisu_NodeInfo);
+vtkStandardNewMacro(asiVisu_NodeInfo)
 
 //! Default constructor.
 asiVisu_NodeInfo::asiVisu_NodeInfo()

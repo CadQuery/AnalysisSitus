@@ -37,7 +37,7 @@
 #include <vtkInformationObjectBaseKey.h>
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(asiVisu_TriangulationNodeInfo);
+vtkStandardNewMacro(asiVisu_TriangulationNodeInfo)
 
 //! Default constructor.
 asiVisu_TriangulationNodeInfo::asiVisu_TriangulationNodeInfo()

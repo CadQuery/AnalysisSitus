@@ -34,7 +34,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro(asiUI_DependencyGraphItem);
+vtkStandardNewMacro(asiUI_DependencyGraphItem)
 
 //! Destructor.
 asiUI_DependencyGraphItem::~asiUI_DependencyGraphItem()

@@ -70,9 +70,9 @@ asiUI_DialogFindEdge::asiUI_DialogFindEdge(const Handle(asiEngine_Model)&       
                                            QWidget*                                   parent)
 //
 : QDialog   (parent),
+  m_pViewer (pViewer),
   m_model   (model),
-  m_prsMgr  (prsMgr),
-  m_pViewer (pViewer)
+  m_prsMgr  (prsMgr)
 {
   // Main layout
   m_pMainLayout = new QVBoxLayout();

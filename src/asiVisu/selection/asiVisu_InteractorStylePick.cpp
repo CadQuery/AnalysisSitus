@@ -41,7 +41,7 @@
 #include <QPoint>
 #pragma warning(pop)
 
-vtkStandardNewMacro(asiVisu_InteractorStylePick);
+vtkStandardNewMacro(asiVisu_InteractorStylePick)
 
 //! Default constructor.
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick()

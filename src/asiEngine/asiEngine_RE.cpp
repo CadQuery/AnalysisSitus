@@ -552,8 +552,8 @@ bool
   // Project midpoint to extract the central facet.
   asiAlgo_ProjectPointOnMesh pointToMesh(bvh, m_progress, m_plotter);
   //
-  gp_Pnt centerProj     = pointToMesh.Perform(center);
-  int    centerFacetInd = pointToMesh.GetFacetIds().size() ? pointToMesh.GetFacetIds()[0] : -1;
+  pointToMesh.Perform(center);
+  int centerFacetInd = pointToMesh.GetFacetIds().size() ? pointToMesh.GetFacetIds()[0] : -1;
   //
   if ( centerFacetInd == -1 )
   {

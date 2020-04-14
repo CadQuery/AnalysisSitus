@@ -42,7 +42,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkShrinkFilter.h>
 
-vtkStandardNewMacro(asiVisu_ShrinkPolyFilter);
+vtkStandardNewMacro(asiVisu_ShrinkPolyFilter)
 
 //! Default constructor.
 asiVisu_ShrinkPolyFilter::asiVisu_ShrinkPolyFilter()

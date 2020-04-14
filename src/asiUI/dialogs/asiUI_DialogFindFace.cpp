@@ -65,9 +65,9 @@ asiUI_DialogFindFace::asiUI_DialogFindFace(const Handle(asiEngine_Model)&       
                                            QWidget*                                   parent)
 //
 : QDialog    (parent),
+  m_pViewer  (pViewer),
   m_model    (model),
   m_prsMgr   (prsMgr),
-  m_pViewer  (pViewer),
   m_progress (progress),
   m_plotter  (plotter)
 {

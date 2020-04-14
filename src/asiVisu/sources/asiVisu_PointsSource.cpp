@@ -176,8 +176,8 @@ int asiVisu_PointsSource<REAL_TYPE>::RequestData(vtkInformation*        request,
     //       and create cells only for those which are not filtered out.
     //       Though, this looks as a simplest possible solution.
 
-    if (  m_indices.IsNull() || // Filter is not set, so pass any point
-         !m_indices.IsNull() && m_indices->Map().Contains(pointIndex) )
+    if (    m_indices.IsNull() || // Filter is not set, so pass any point
+         ( !m_indices.IsNull() && m_indices->Map().Contains(pointIndex) ) )
       this->registerVertex( pointIndex, polyOutput );
   }
 

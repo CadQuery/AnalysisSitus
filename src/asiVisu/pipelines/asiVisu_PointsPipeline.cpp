@@ -98,10 +98,12 @@ void asiVisu_PointsPipeline::SetInput(const Handle(asiVisu_DataProvider)& DP)
 
     // Set active reper IDs if any.
     if ( m_bAllowSelection )
+    {
       if ( !m_iForcedActiveRepers.IsNull() )
         src->SetFilter( m_iForcedActiveRepers );
       else
         src->SetFilter( provider->GetIndices() );
+    }
 
     // Initialize pipeline
     this->SetInputConnection( src->GetOutputPort() );

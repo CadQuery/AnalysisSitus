@@ -250,7 +250,6 @@ int DDF_DumpVTU(const Handle(asiTcl_Interp)& interp,
   writer->SetInputConnection( octreeSource->GetOutputPort() );
   writer->Write();
 
-  // Dump.
   return TCL_OK;
 #else
   cmdDDF_NotUsed(argc);

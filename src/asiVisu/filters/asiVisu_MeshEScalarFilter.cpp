@@ -195,6 +195,27 @@ int asiVisu_MeshEScalarFilter::RequestData(vtkInformation*,
     aNewCellScalars->InsertTypedTuple(aNewCellPid, aScalarTuple);
   }
 
+  // Pass data arrays
+  for ( int i = 0; i < anInputCD->GetNumberOfArrays(); ++i )
+  {
+    vtkDataArray* pInArr = anInputCD->GetArray(i);
+
+    vtkDataArray* pOutArr = vtkDataArray::CreateDataArray( pInArr->GetDataType() );
+    //
+    pOutArr->SetName( pInArr->GetName() );
+    pOutArr->Allocate( pInArr->GetNumberOfComponents() );
+    pOutArr->SetNumberOfTuples( pInArr->GetNumberOfTuples() );
+    pOutArr->SetNumberOfComponents( pInArr->GetNumberOfComponents() );
+    //
+    anOutputCD->AddArray(pOutArr);
+
+    // Copy elements
+    for ( vtkIdType outIdx = 0; outIdx < aNbCells; ++outIdx )
+    {
+      pOutArr->SetTuple(outIdx, outIdx, pInArr);
+    }
+  }
+
   // Set scalars to cell data
   anOutputCD->SetScalars(aNewCellScalars);
 

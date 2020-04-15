@@ -35,6 +35,12 @@
 #include <asiEngine_Part.h>
 #include <asiEngine_STEPReaderOutput.h>
 
+// asiVisu includes
+#include <asiVisu_MeshEScalarFilter.h>
+#include <asiVisu_MeshEScalarPipeline.h>
+#include <asiVisu_ThicknessPrs.h>
+#include <asiVisu_TriangulationSource.h>
+
 // asiTcl includes
 #include <asiTcl_PluginMacro.h>
 
@@ -44,6 +50,9 @@
 #include <asiAlgo_STEPReduce.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
+
+// VTK includes
+#include <vtkXMLPolyDataWriter.h>
 
 //-----------------------------------------------------------------------------
 
@@ -348,6 +357,69 @@ int ENGINE_ReduceSTEP(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_DumpThicknessVTP(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  // ID of the Node to dump.
+  TCollection_AsciiString nodeId;
+  if ( !interp->GetKeyValue(argc, argv, "id", nodeId) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, specify the ID of "
+                                                           "the Thickness Node to dump.");
+    return TCL_ERROR;
+  }
+
+  // Find the Thickness Node.
+  Handle(asiData_ThicknessNode)
+    TN = Handle(asiData_ThicknessNode)::DownCast( cmdEngine::cf->Model->FindNode(nodeId) );
+  //
+  if ( TN.IsNull() || !TN->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The Node %1 is not a Thickness Node."
+                                                        << nodeId);
+    return TCL_ERROR;
+  }
+
+  // Output filename.
+  TCollection_AsciiString outFilename;
+  if ( !interp->GetKeyValue(argc, argv, "filename", outFilename) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Please, specify output filename.");
+    return TCL_ERROR;
+  }
+
+  if ( !cmdEngine::cf->ViewerPart )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part viewer is not available.");
+    return TCL_ERROR;
+  }
+
+  // Get pipeline to access the data source.
+  Handle(asiVisu_ThicknessPrs)
+    prs = Handle(asiVisu_ThicknessPrs)::DownCast( cmdEngine::cf->ViewerPart->PrsMgr()->GetPresentation(TN) );
+  //
+  Handle(asiVisu_MeshEScalarPipeline)
+    pl = Handle(asiVisu_MeshEScalarPipeline)::DownCast( prs->GetPipeline(asiVisu_ThicknessPrs::Pipeline_Main) );
+  //
+  asiVisu_TriangulationSource* pSource = pl->GetSource();
+  asiVisu_MeshEScalarFilter*   pFilter = pl->GetScalarFilter();
+
+  // Update and dump to file.
+  pFilter->Update();
+  //
+  vtkSmartPointer<vtkXMLPolyDataWriter>
+    writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  //
+  writer->SetFileName( outFilename.ToCString() );
+  writer->SetInputConnection( pFilter->GetOutputPort() );
+  writer->Write();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -409,4 +481,12 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Applies STEP reduction procedure developed by Seth Hillbrand for KICAD.",
     //
     __FILE__, group, ENGINE_ReduceSTEP);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("dump-thickness-vtp",
+    //
+    "dump-thickness-vtp -id <nodeId> -filename <filename>\n"
+    "\t Dumps thickness field to the VTP file.",
+    //
+    __FILE__, group, ENGINE_DumpThicknessVTP);
 }

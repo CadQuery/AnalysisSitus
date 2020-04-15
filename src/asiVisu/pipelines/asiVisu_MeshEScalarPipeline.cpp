@@ -91,26 +91,24 @@ void asiVisu_MeshEScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& t
   if ( meshDp->MustExecute( this->GetMTime() ) )
   {
     // Prepare source.
-    vtkSmartPointer<asiVisu_TriangulationSource>
-      trisSource = vtkSmartPointer<asiVisu_TriangulationSource>::New();
+    m_source = vtkSmartPointer<asiVisu_TriangulationSource>::New();
     //
-    trisSource->CollectEdgesModeOff();
-    trisSource->CollectVerticesModeOff();
-    trisSource->SetInputTriangulation( meshDp->GetTriangulation() );
+    m_source->CollectEdgesModeOff();
+    m_source->CollectVerticesModeOff();
+    m_source->SetInputTriangulation( meshDp->GetTriangulation() );
 
     // Initialize scalar range.
     m_fMinScalar = meshDp->GetMinScalar();
     m_fMaxScalar = meshDp->GetMaxScalar();
 
     // Initialize scalars filter.
-    asiVisu_MeshEScalarFilter*
-      scFilter = asiVisu_MeshEScalarFilter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
+    asiVisu_MeshEScalarFilter* scFilter = this->GetScalarFilter();
     //
     scFilter->SetScalarArrays( meshDp->GetElementIDs(),
                                meshDp->GetElementScalars() );
 
     // Complete pipeline.
-    this->SetInputConnection( trisSource->GetOutputPort() );
+    this->SetInputConnection( m_source->GetOutputPort() );
 
     // Bind actor to owning Node ID. Thus we set back reference from VTK
     // entity to data object.
@@ -119,6 +117,22 @@ void asiVisu_MeshEScalarPipeline::SetInput(const Handle(asiVisu_DataProvider)& t
 
   // Update modification timestamp
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+asiVisu_TriangulationSource*
+  asiVisu_MeshEScalarPipeline::GetSource()
+{
+  return m_source.Get();
+}
+
+//-----------------------------------------------------------------------------
+
+asiVisu_MeshEScalarFilter*
+  asiVisu_MeshEScalarPipeline::GetScalarFilter()
+{
+  return asiVisu_MeshEScalarFilter::SafeDownCast( m_filterMap.Find(Filter_EScalar) );
 }
 
 //-----------------------------------------------------------------------------

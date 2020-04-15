@@ -37,6 +37,9 @@
 // VTK includes
 #include <vtkLookupTable.h>
 
+class asiVisu_MeshEScalarFilter;
+class asiVisu_TriangulationSource;
+
 //-----------------------------------------------------------------------------
 
 //! Visualization pipeline for meshes with elemental scalars.
@@ -56,6 +59,14 @@ public:
 
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
+
+public:
+
+  asiVisu_EXPORT asiVisu_TriangulationSource*
+    GetSource();
+
+  asiVisu_EXPORT asiVisu_MeshEScalarFilter*
+    GetScalarFilter();
 
 protected:
 
@@ -96,6 +107,9 @@ protected:
   typedef NCollection_DataMap< FilterId, vtkSmartPointer<vtkAlgorithm> > FilterMap;
 
 protected:
+
+  //! Triangulation source.
+  vtkSmartPointer<asiVisu_TriangulationSource> m_source;
 
   //! Map of internally used filters.
   FilterMap m_filterMap;

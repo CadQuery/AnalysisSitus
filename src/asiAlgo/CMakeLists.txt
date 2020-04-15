@@ -256,6 +256,7 @@ set (interop_H_FILES
   interop/asiAlgo_ReadSTEPWithMeta.h
   interop/asiAlgo_ReadSTEPWithMetaOutput.h
   interop/asiAlgo_STEP.h
+  interop/asiAlgo_STEPReduce.h
   interop/asiAlgo_WriteSTEPWithMeta.h
   interop/asiAlgo_WriteSTEPWithMetaInput.h
 )
@@ -266,6 +267,7 @@ set (interop_CPP_FILES
   interop/asiAlgo_PLY.cpp
   interop/asiAlgo_ReadSTEPWithMeta.cpp
   interop/asiAlgo_STEP.cpp
+  interop/asiAlgo_STEPReduce.cpp
   interop/asiAlgo_WriteSTEPWithMeta.cpp
 )
 

@@ -41,6 +41,7 @@
 // asiAlgo includes
 #include <asiAlgo_ReadSTEPWithMeta.h>
 #include <asiAlgo_STEP.h>
+#include <asiAlgo_STEPReduce.h>
 #include <asiAlgo_Timer.h>
 #include <asiAlgo_Utils.h>
 
@@ -314,6 +315,39 @@ int ENGINE_LoadPoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_ReduceSTEP(const Handle(asiTcl_Interp)& interp,
+                      int                          argc,
+                      const char**                 argv)
+{
+  if ( argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  std::string inFilename(argv[1]);
+  std::string outFilename(argv[2]);
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Run the compression tool.
+  asiAlgo_STEPReduce ReduceTool( interp->GetProgress(),
+                                 interp->GetPlotter() );
+  //
+  if ( !ReduceTool.Peform(inFilename, outFilename) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "STEP reduction failed.");
+    return TCL_ERROR;
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Reduce STEP")
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -367,4 +401,12 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
     "\t Loads points from file to the point cloud with the given name.",
     //
     __FILE__, group, ENGINE_LoadPoints);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("reduce-step",
+    //
+    "reduce-step <inFlename> <outFilename>\n"
+    "\t Applies STEP reduction procedure developed by Seth Hillbrand for KICAD.",
+    //
+    __FILE__, group, ENGINE_ReduceSTEP);
 }

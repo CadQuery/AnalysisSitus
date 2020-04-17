@@ -160,19 +160,71 @@ bool asiAlgo_CheckThickness::Perform_RayMethod()
     // Thickness scalar.
     double thickness = 0.;
 
-    // Do the intersection test.
-    gp_XYZ hit;
-    int facet_idx;
+    // Do the intersection test. For the custom directions, the
+    // test is done twice: in the forward and the reversed directions.
+    gp_XYZ hit1, hit2, hit;
+    int facetIdx1, facetIdx2, facetIdx = -1;
     //
-    if ( !HitFacet(gp_Lin(C, dir), facet_idx, hit) )
-      if ( m_bIsCustomDir && !HitFacet(gp_Lin( C, dir.Reversed() ), facet_idx, hit) )
+    bool isHit1 = HitFacet(gp_Lin( C, dir ), facetIdx1, hit1);
+    bool isHit2 = false;
+    //
+    if ( m_bIsCustomDir )
+    {
+      isHit2 = HitFacet(gp_Lin( C, dir.Reversed() ), facetIdx2, hit2);
+
+      /*if ( tidx == 51121 )
+      {
+        m_plotter.REDRAW_POINT("C", C, Color_Blue);
+        m_plotter.REDRAW_POINT("hit1", hit1, Color_Red);
+        m_plotter.REDRAW_POINT("hit2", hit2, Color_Red);
+        m_plotter.REDRAW_VECTOR_AT("dir1", C, dir, Color_Blue);
+        m_plotter.REDRAW_VECTOR_AT("dir2", C, dir.Reversed(), Color_Blue);
+
+        return false;
+      }*/
+
+      if ( !isHit1 && !isHit2 )
+      {
         m_progress.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
+      }
+      else if ( isHit1 && !isHit2 )
+      {
+        hit      = hit1;
+        facetIdx = facetIdx1;
+      }
+      else if ( !isHit1 && isHit2 )
+      {
+        hit      = hit2;
+        facetIdx = facetIdx2;
+      }
+      else
+      {
+        // Choose the closest one.
+        const double d1 = C.Distance(hit1);
+        const double d2 = C.Distance(hit2);
+        //
+        hit      = ( (d1 < d2) ? hit1      : hit2 );
+        facetIdx = ( (d1 < d2) ? facetIdx1 : facetIdx2 );
+      }
+    }
+    else
+    {
+      if ( !isHit1 )
+      {
+        m_progress.SendLogMessage(LogWarn(Normal) << "Cannot find the intersected facet.");
+      }
+      else
+      {
+        hit      = hit1;
+        facetIdx = facetIdx1;
+      }
+    }
 
     // Now thickness is simply a distance.
-    if ( facet_idx != -1 )
-     thickness = C.Distance(hit);
+    if ( facetIdx != -1 )
+      thickness = C.Distance(hit);
 
-    /*if ( tidx == 1 )
+    /*if ( !m_bIsCustomDir && (tidx == 51121) )
     {
       m_plotter.REDRAW_POINT("C", C, Color_Blue);
       m_plotter.REDRAW_POINT("hit", hit, Color_Red);
@@ -182,7 +234,7 @@ bool asiAlgo_CheckThickness::Perform_RayMethod()
     }*/
 
     // Store scalars in the field.
-    if ( facet_idx != -1 )
+    if ( facetIdx != -1 )
     {
       double *pThick = field->data.ChangeSeek(tidx);
       if ( pThick == nullptr )

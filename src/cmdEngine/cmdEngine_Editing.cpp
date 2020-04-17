@@ -2838,7 +2838,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kev",
     //
-    "kev <edgeIndex vertexIndex|-edge 'edgeName' -vertex 'vertexName'|-name 'edgeName'>\n"
+    "kev {<edgeIndex> <vertexIndex> | -edge '<edgeName>' -vertex '<vertexName>' | -name '<edgeName>'}\n"
     "\t KEV (Kill-Edge-Vertex) Euler operator.",
     //
     __FILE__, group, ENGINE_KEV);
@@ -2846,7 +2846,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kef",
     //
-    "kef <edgeIndex faceIndex|-edge 'edgeName' -face 'faceName'>\n"
+    "kef {<edgeIndex> <faceIndex> | -edge '<edgeName>' -face '<faceName>'}\n"
     "\t KEF (Kill-Edge-Face) Euler operator.",
     //
     __FILE__, group, ENGINE_KEF);
@@ -2854,7 +2854,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kfmv",
     //
-    "kfmv <faceIndex|-name 'faceName'>\n"
+    "kfmv {<faceIndex> | -name '<faceName>'}\n"
     "\t KFMV (Kill-Face-Make-Vertex) Euler operator.",
     //
     __FILE__, group, ENGINE_KFMV);
@@ -2862,7 +2862,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("merge-vertices",
     //
-    "merge-vertices <-name 'vertexName1' ... -name 'vertexNameK'>\n"
+    "merge-vertices -name '<vertexName1>' -name '<vertexName2>' [... -name '<vertexNameK>']\n"
     "\t Merges several vertices into one.",
     //
     __FILE__, group, ENGINE_MergeVertices);
@@ -2870,7 +2870,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("merge-edges",
     //
-    "merge-edges <-name 'edgeName1' ... -name 'edgeNameK'>\n"
+    "merge-edges -name '<edgeName1>' -name '<edgeName2>' [... -name '<edgeNameK>]'\n"
     "\t Merges several edges into one.",
     //
     __FILE__, group, ENGINE_MergeEdges);
@@ -2878,7 +2878,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-vertex",
     //
-    "kill-vertex <vertexIndex|-name 'vertexName'>\n"
+    "kill-vertex {<vertexIndex> | -name '<vertexName>'}\n"
     "\t Kills vertex with the passed 1-based index from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
     "\t modify geometry. Moreover, unlike Euler operator, this function\n"
@@ -2890,7 +2890,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-edge",
     //
-    "kill-edge <edgeIndex|-name 'edgeName'>\n"
+    "kill-edge {<edgeIndex> | -name '<edgeName>'}\n"
     "\t Kills edge with the passed 1-based index from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
     "\t modify geometry. Moreover, unlike Euler operator, this function\n"
@@ -2902,7 +2902,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-face",
     //
-    "kill-face <fid1 [fid2 [...]] | <fid|-name 'faceName'>> [-defeat]\n"
+    "kill-face {<fid1> [<fid2> [...]] | -name '<faceName>'} [-defeat]\n"
     "\t Kills faces with the passed 1-based indices from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
     "\t modify geometry. Moreover, unlike Euler operator, this function\n"
@@ -2917,7 +2917,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-solid-by-face",
     //
-    "kill-solid-by-face faceIndex\n"
+    "kill-solid-by-face <faceIndex>\n"
     "\t Kills a solid which contains a face with the passed 1-based index.",
     //
     __FILE__, group, ENGINE_KillSolidByFace);
@@ -2933,7 +2933,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("move-by-face",
     //
-    "move-by-face faceIndex offset\n"
+    "move-by-face <faceIndex> <offset>\n"
     "\t Moves part in direction determined by orientation of the given face\n."
     "\t The passed offset value can be positive or negative. In the case of\n"
     "\t positive offset, the movement is done along the face normal. In the\n"
@@ -2948,7 +2948,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("imprint",
     //
-    "imprint varName\n"
+    "imprint <varName>\n"
     "\t Imprints the passed topological object to the working part.\n"
     "\t This operation is essenially the General Fuse algorithm of OpenCascde.",
     //
@@ -2965,7 +2965,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-face-tolerance",
     //
-    "set-face-tolerance faceId toler\n"
+    "set-face-tolerance <faceId> <toler>\n"
     "\t Forces the face with the given index to have the passed tolerance.\n"
     "\t In OpenCascade, there is a rule that a tolerance of a face should be\n"
     "\t not greater than tolerances of its edges (the same rule applies to\n"
@@ -2977,7 +2977,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-tolerance",
     //
-    "set-face-tolerance toler\n"
+    "set-face-tolerance <toler>\n"
     "\t Forces the part to have the passed tolerance in all its sub-shapes.",
     //
     __FILE__, group, ENGINE_SetTolerance);
@@ -2985,7 +2985,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("rebuild-edge",
     //
-    "rebuild-edge <edgeIndex|-name 'edgeName'>\n"
+    "rebuild-edge {<edgeIndex> | -name '<edgeName>'}\n"
     "\t Rebuilds edge with the given ID or name.",
     //
     __FILE__, group, ENGINE_RebuildEdge);
@@ -2993,7 +2993,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-curve",
     //
-    "fair-curve resName curveName fairingCoeff\n"
+    "fair-curve <resName> <curveName> <fairingCoeff>\n"
     "\t Fairs curve with the given name <curveName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function.",
     //
@@ -3002,7 +3002,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("fair-surf",
     //
-    "fair-surf resName surfName fairingCoeff [-relax]\n"
+    "fair-surf <resName> <surfName> <fairingCoeff> [-relax]\n"
     "\t Fairs surface with the given name <surfName>. The passed fairing coefficient\n"
     "\t is a weight of a fairing term in the goal function. If the '-relax' key is passed,\n"
     "\t the natural boundaries of the surface will remain unconstrained.",
@@ -3012,7 +3012,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("split-by-continuity",
     //
-    "split-by-continuity <c0|c1> [toler]\n"
+    "split-by-continuity {c0 | c1} [<toler>]\n"
     "\t Splits part by continuity.",
     //
     __FILE__, group, ENGINE_SplitByContinuity);
@@ -3020,7 +3020,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("extend-surf",
     //
-    "extend-surf resName surfName length <umax|umin|vmax|vmin>\n"
+    "extend-surf <resName> <surfName> <length> {<umax> | <umin> | <vmax> | <vmin>}\n"
     "\t Extends surface <surfName> by length <length> in the given\n"
     "\t parameter's direction.",
     //
@@ -3029,7 +3029,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("trim-curve",
     //
-    "trim-curve resName curveName u0 u1\n"
+    "trim-curve <resName> <curveName> <u0> <u1>\n"
     "\t Trims curve with the given name <curveName> by the passed\n"
     "\t parameter values <u0> and <u1>.",
     //
@@ -3046,7 +3046,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("heal-small-edges",
     //
-    "heal-small-edges len ang_deg\n"
+    "heal-small-edges <len> <ang_deg>\n"
     "\t Heals (merges) small edges in the part. The argument <len> specifies\n"
     "\t the linear threshold for merge. The argument <ang_deg> specifies the\n"
     "\t the angular threshold for merge (in degrees).",
@@ -3056,7 +3056,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("repatch",
     //
-    "repatch [fid1 [fid2 [...]]]\n"
+    "repatch [<fid1> [<fid2> [...]]]\n"
     "\t Repatches faces which are selected interactively or specified as\n"
     "\t arguments (1-based face IDs).",
     //
@@ -3065,7 +3065,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-blend",
     //
-    "kill-blend [fid]\n"
+    "kill-blend [<fid>]\n"
     "\t Attempts to defeature a fillet starting from the face selected\n"
     "\t interactively or specified as 1-based face ID.",
     //
@@ -3074,7 +3074,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-blends-inc",
     //
-    "kill-blends-inc [radius]\n"
+    "kill-blends-inc [<radius>]\n"
     "\t Attempts to defeature all blends incrementally.",
     //
     __FILE__, group, ENGINE_KillBlendsInc);
@@ -3082,7 +3082,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knot-curve",
     //
-    "insert-knot-curve resName curveName u [r]\n"
+    "insert-knot-curve <resName> <curveName> <u> [<r>]\n"
     "\t Inserts the passed knot value <u> <r> times to the\n"
     "\t B-curve <curveName>. A new curve <resName> is created as a result.",
     //
@@ -3091,7 +3091,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knot-surf-u",
     //
-    "insert-knot-surf-u resName surfName u [r]\n"
+    "insert-knot-surf-u <resName> <surfName> <u> [<r>]\n"
     "\t Inserts the passed knot value <u> <r> times to the\n"
     "\t B-surface <surfName> in its U parametric direction.\n"
     "\t A new surface <resName> is created as a result.",
@@ -3101,7 +3101,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knots-surf-u",
     //
-    "insert-knots-surf-u resName surfName num\n"
+    "insert-knots-surf-u <resName> <surfName> <num>\n"
     "\t Inserts the <num> uniformly distributed knots to the surface <surfName>.\n"
     "\t The new surface is created with the <resName> name.",
     //
@@ -3110,7 +3110,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knot-surf-v",
     //
-    "insert-knot-surf-v resName surfName v [r]\n"
+    "insert-knot-surf-v <resName> <surfName> <v> [<r>]\n"
     "\t Inserts the passed knot value <v> <r> times to the\n"
     "\t B-surface <surfName> in its V parametric direction.\n"
     "\t A new surface <resName> is created as a result.",
@@ -3120,7 +3120,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("insert-knots-surf-v",
     //
-    "insert-knots-surf-v resName surfName num\n"
+    "insert-knots-surf-v <resName> <surfName> <num>\n"
     "\t Inserts the <num> uniformly distributed knots to the surface <surfName>.\n"
     "\t The new surface is created with the <resName> name.",
     //
@@ -3129,7 +3129,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("exchange-uv",
     //
-    "exchange-uv surfName\n"
+    "exchange-uv <surfName>\n"
     "\t Flips parameterization of the given B-surface.",
     //
     __FILE__, group, ENGINE_ExchangeUV);
@@ -3137,7 +3137,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("split-curve-bezier",
     //
-    "split-curve-bezier resName curveName\n"
+    "split-curve-bezier <resName> <curveName>\n"
     "\t Splits the passed B-curve <curveName> to a series of Bezier curves.",
     //
     __FILE__, group, ENGINE_SplitCurveBezier);
@@ -3145,7 +3145,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("move-point-curve",
     //
-    "move-point-curve curveName u dx dy dz\n"
+    "move-point-curve <curveName> <u> <dx> <dy> <dz>\n"
     "\t Moves point on B-curve with parameter <u> by vector (<dx>, <dy>, <dz>).",
     //
     __FILE__, group, ENGINE_MovePointCurve);
@@ -3153,7 +3153,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("move-triangulation",
     //
-    "move-triangulation tx ty tz rx ry rz\n"
+    "move-triangulation <tx> <ty> <tz> <rx> <ry> <rz>\n"
     "\t Moves triangulation by applying the passed transformation. The values\n"
     "\t <tx>, <ty>, <tx> define the translation vector. The values <rx>, <ry>, <rz>\n"
     "\t define the rotation angles in degrees. Rotation is performed with respect\n"
@@ -3164,7 +3164,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("move-part",
     //
-    "move-part tx ty tz rx ry rz\n"
+    "move-part <tx> <ty> <tz> <rx> <ry> <rz>\n"
     "\t Moves part by applying the passed transformation on its deep copy. The values\n"
     "\t <tx>, <ty>, <tx> define the translation vector. The values <rx>, <ry>, <rz>\n"
     "\t define the rotation angles in degrees. Rotation is performed with respect\n"
@@ -3175,7 +3175,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("convert-to-bsurf",
     //
-    "convert-to-bsurf res surfName [-cubic]\n"
+    "convert-to-bsurf <res> <surfName> [-cubic]\n"
     "\t Converts the surface with the given name to B-surface. The trimming\n"
     "\t parameters are taken from the corresponding Data Node.",
     //
@@ -3184,7 +3184,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("convert-plane-to-bsurf",
     //
-    "convert-plane-to-bsurf res surfName uDeg vDeg\n"
+    "convert-plane-to-bsurf <res> <surfName> <uDeg> <vDeg>\n"
     "\t Converts the planar surface with the given name to B-surface. The trimming\n"
     "\t parameters are taken from the corresponding Data Node. The desired degrees\n"
     "\t are specified via <uDeg> and <vDeg> arguments.",
@@ -3194,7 +3194,7 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("rotate-qn",
     //
-    "rotate-qn Vx Vy Vz angleDeg\n"
+    "rotate-qn <Vx> <Vy> <Vz> <angleDeg>\n"
     "\t Rotates CAD part applying the passed quaternion defined by the given\n"
     "\t axis of rotation (Vx, Vy, Vz) and the angle in degrees.",
     //

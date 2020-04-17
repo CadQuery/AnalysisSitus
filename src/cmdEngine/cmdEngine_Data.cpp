@@ -844,7 +844,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("save-as",
     //
-    "save-as filename\n"
+    "save-as <filename>\n"
     "\t Saves model to file with the given name.",
     //
     __FILE__, group, ENGINE_SaveAs);
@@ -852,7 +852,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("load",
     //
-    "load filename\n"
+    "load <filename>\n"
     "\t Loads model from file with the given name. The current project data\n"
     "\t will be lost.",
     //
@@ -877,7 +877,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-var",
     //
-    "set-as-var varName\n"
+    "set-as-var <varName>\n"
     "\t Copies part shape to a topological variable.",
     //
     __FILE__, group, ENGINE_SetAsVar);
@@ -885,7 +885,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-as-part",
     //
-    "set-as-part [varName | -node id -param id]\n"
+    "set-as-part [<varName> | -node <id> -param <id>]\n"
     "\t Sets the object with the given name as a part for analysis.\n"
     "\t The object is expected to exist as a topological item in\n"
     "\t imperative plotter. Alternatively, you can specify a custom Node ID\n"
@@ -907,7 +907,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-id",
     //
-    "get-id [parentObjectName / [parentObjectName / [...]]] objectName\n"
+    "get-id [<parentObjectName> / [<parentObjectName> / [...]]] <objectName>\n"
     "\t Finds a data object with the given name and returns its persistent ID.\n"
     "\t If the object name is not unique, you may specify a list of parents\n"
     "\t to narrow your request. The names of the parent objects are separated\n"
@@ -935,7 +935,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-face-color-aag",
     //
-    "set-face-color-aag [-fid id] -color rgb(ured, ugreen, ublue)\n"
+    "set-face-color-aag [-fid <id>] -color rgb(<ured>, <ugreen>, <ublue>)\n"
     "\t Sets color for the given face as AAG attribute.",
     //
     __FILE__, group, ENGINE_SetFaceColorAAG);
@@ -943,7 +943,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("set-face-color",
     //
-    "set-face-color [-fid id] -color rgb(ured, ugreen, ublue)\n"
+    "set-face-color [-fid id] -color rgb(<ured>, <ugreen>, <ublue>)\n"
     "\t Sets color for the given face.",
     //
     __FILE__, group, ENGINE_SetFaceColor);
@@ -959,7 +959,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-param-shape",
     //
-    "get-param-shape resName nodeId paramId\n"
+    "get-param-shape <resName> <nodeId> <paramId>\n"
     "\t Returns shape from the Parameter <paramId> of the Data Node <nodeId>.",
     //
     __FILE__, group, ENGINE_GetParamShape);
@@ -967,7 +967,7 @@ void cmdEngine::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-execution-graph-dot",
     //
-    "dump-execution-graph-dot filename\n"
+    "dump-execution-graph-dot <filename>\n"
     "\t Dumps execution graph of the project to DOT file (Graphviz).",
     //
     __FILE__, group, ENGINE_DumpExecutionGraphDot);

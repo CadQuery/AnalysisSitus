@@ -3139,7 +3139,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("explode",
     //
-    "explode [-vertex|-edge|-wire|-face|-shell|-solid|-noloc]\n"
+    "explode [{-vertex | -edge | -wire | -face | -shell | -solid | -noloc}]\n"
     "\t Explodes active part to sub-shapes of interest. If no sub-shape\n"
     "\t qualifier is passed, this command explodes the part to its direct\n"
     "\t children (e.g. edges for wire, wires for face, etc.). If '-noloc'\n"
@@ -3166,7 +3166,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("face-addr",
     //
-    "face-addr faceIndex\n"
+    "face-addr <faceIndex>\n"
     "\t Prints physical address of the given face.",
     //
     __FILE__, group, ENGINE_FaceAddr);
@@ -3174,7 +3174,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-dist",
     //
-    "check-dist varName\n"
+    "check-dist <varName>\n"
     "\t Computes distance between the part and the given topological object.",
     //
     __FILE__, group, ENGINE_CheckDist);
@@ -3182,7 +3182,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-curvature",
     //
-    "check-curvature [numPts [scaleFactor [curvAmpl]]] [-noplot] [-noalong]\n"
+    "check-curvature [<numPts> [<scaleFactor> [<curvAmpl>]]] [-noplot] [-noalong]\n"
     "\t Checks curvature of the selected edge. As a result, curvature combs\n"
     "\t are visualized in 3D. You can control its scale factor with\n"
     "\t <scaleFactor> argument and also its density with <numPts> argument.\n"
@@ -3204,7 +3204,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-euler",
     //
-    "check-euler [genus]\n"
+    "check-euler [<genus>]\n"
     "\t Opens dialog to check Euler-Poincare property of the Part geometry.\n"
     "\t If <genus> parameter is not specified, this command will open a prompt\n"
     "\t dialog to ask the user to type genus.",
@@ -3214,7 +3214,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-topograph-dot",
     //
-    "dump-topograph-dot filename\n"
+    "dump-topograph-dot <filename>\n"
     "\t Dumps topology graph to DOT file (can be opened by Graphviz).",
     //
     __FILE__, group, ENGINE_DumpTopographDot);
@@ -3222,7 +3222,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("eval-curve",
     //
-    "eval-curve curveName u order [-mobius]\n"
+    "eval-curve <curveName> <u> <order> [-mobius]\n"
     "\t Evaluates curve <curveName> for the given parameter value <u>.\n"
     "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
     "\t functions. The argument <order> specifies the order of derivatives\n"
@@ -3233,7 +3233,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("eval-surf",
     //
-    "eval-surf surfName u v order [-mobius]\n"
+    "eval-surf <surfName> <u> <v> <order> [-mobius]\n"
     "\t Evaluates surface <surfName> for the given parameter pair <u, v>.\n"
     "\t If <-mobius> keyword is used, evaluation is performed using Mobius\n"
     "\t functions. The argument <order> specifies the order of derivatives\n"
@@ -3244,7 +3244,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-toler",
     //
-    "check-toler [numRanges]\n"
+    "check-toler [<numRanges>]\n"
     "\t Checks local tolerances in the part shape and distributes sub-shapes\n."
     "\t by tolerance ranges. You can control the fineness of tolerance ranges\n"
     "\t using <numRanges> optional argument.",
@@ -3286,7 +3286,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-contours",
     //
-    "check-contours [tolerance]\n"
+    "check-contours [<tolerance>]\n"
     "\t Checks whether all contours of the part shape are closed or not.",
     //
     __FILE__, group, ENGINE_CheckContours);
@@ -3302,7 +3302,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-curve-strain",
     //
-    "get-curve-strain curveName\n"
+    "get-curve-strain <curveName>\n"
     "\t Returns strain energy of the passed curve.",
     //
     __FILE__, group, ENGINE_GetCurveStrain);
@@ -3310,7 +3310,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("get-surface-bending",
     //
-    "get-surface-bending surfName\n"
+    "get-surface-bending <surfName>\n"
     "\t Returns bending energy of the passed surface.",
     //
     __FILE__, group, ENGINE_GetSurfaceBending);
@@ -3318,7 +3318,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-edge-vexity",
     //
-    "check-edge-vexity <edgeIndex|-name 'edgeName'>\n"
+    "check-edge-vexity {<edgeIndex> | -name <edgeName>}\n"
     "\t Rebuilds edge with the given ID or name.",
     //
     __FILE__, group, ENGINE_CheckEdgeVexity);
@@ -3326,7 +3326,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("draw-cp",
     //
-    "draw-cp surfName i_index j_index [-mobius]\n"
+    "draw-cp <surfName> <i_index> <j_index> [-mobius]\n"
     "\t Draws control point of a free-form surface.",
     //
     __FILE__, group, ENGINE_DrawCP);
@@ -3362,7 +3362,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("recognize-blends",
     //
-    "recognize-blends [-radius r] [-fid id] [-ebf|-vbf]\n"
+    "recognize-blends [-radius <r>] [-fid <id>] [{-ebf | -vbf}]\n"
     "\t Recognizes all blend faces in AAG representing the part. The optional\n"
     "\t '-fid' key allows to specify the face ID to start recognition from.\n"
     "\t The optional '-radius' key allows to limit the recognized radius.\n"
@@ -3374,7 +3374,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("draw-plot",
     //
-    "draw-plot x1 fx1 x2 fx2 [x3 fx3 [...]] [-log]\n"
+    "draw-plot <x1> <f1> <x2> <f2> [<x3> <f3> [...]] [-log]\n"
     "\t Draws two-dimensional plot of the given values.",
     //
     __FILE__, group, ENGINE_DrawPlot);
@@ -3407,7 +3407,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("invert-point-surf",
     //
-    "invert-point-surf surf x y z\n"
+    "invert-point-surf <surf> <x> <y> <z>\n"
     "\t Inverts point on a surface.",
     //
     __FILE__, group, ENGINE_InvertPointSurf);
@@ -3415,7 +3415,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-part-contains",
     //
-    "check-part-contains shapeName\n"
+    "check-part-contains <shapeName>\n"
     "\t Checks whether the part contains the shape <shapeName> as its sub-shape.",
     //
     __FILE__, group, ENGINE_CheckPartContains);
@@ -3423,7 +3423,7 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-self-inter",
     //
-    "check-self-inter [fid]\n"
+    "check-self-inter [<fid>]\n"
     "\t Checks the parametric domain of the passed/selected face for\n"
     "\t self-intersections.",
     //

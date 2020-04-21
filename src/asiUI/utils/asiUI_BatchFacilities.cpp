@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 26 February 2019
+// Created on: 19 April 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2019-present, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,28 +29,11 @@
 //-----------------------------------------------------------------------------
 
 // Own include
-#include <asiUI_CommonFacilities.h>
+#include <asiUI_BatchFacilities.h>
 
-// asiUI includes
-#include <asiUI_ParamEditorImpl.h>
-#include <asiUI_ProgressNotifier.h>
-
-//-----------------------------------------------------------------------------
-
-asiUI_CommonFacilities::asiUI_CommonFacilities(const bool initBatch)
-//
-: asiUI_BatchFacilities (initBatch),
-  MainWindow            (nullptr),
-  ObjectBrowser         (nullptr),
-  ViewerPart            (nullptr),
-  ViewerDomain          (nullptr),
-  ViewerHost            (nullptr),
-  UnitManager           (nullptr),
-  ParamEditor           (nullptr)
-//
+Handle(asiUI_BatchFacilities) asiUI_BatchFacilities::Instance()
 {
-  WidgetFactory = new asiUI_WidgetFactory(this);
+  static Handle(asiUI_BatchFacilities) ref = new asiUI_BatchFacilities;
 
-  // Initialize notifier.
-  this->Progress = ActAPI_ProgressEntry(new asiUI_ProgressNotifier);
+  return ref;
 }

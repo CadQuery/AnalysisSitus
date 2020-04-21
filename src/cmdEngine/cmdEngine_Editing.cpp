@@ -92,6 +92,7 @@
 #if defined USE_MOBIUS
   #include <mobius/cascade_BSplineCurve.h>
   #include <mobius/cascade_BSplineSurface.h>
+  #include <mobius/cascade_Triangulation.h>
   #include <mobius/geom_FairBCurve.h>
   #include <mobius/geom_FairBSurf.h>
 
@@ -2830,6 +2831,81 @@ int ENGINE_ResetLocation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_RefineTriangulation(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+#if defined USE_MOBIUS
+
+  // Get mesh from the Triangulation Node.
+  Handle(Poly_Triangulation)
+    poly = cmdEngine::model->GetTriangulationNode()->GetTriangulation();
+  //
+  if ( poly.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Triangulation is empty.");
+    return TCL_ERROR;
+  }
+
+  // Convert to Mobius.
+  t_ptr<poly_Mesh> mobMesh;
+  {
+    cascade_Triangulation converter(poly);
+    converter.DirectConvert();
+    mobMesh = converter.GetMobiusTriangulation();
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  const int numTris = mobMesh->GetNumTriangles();
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "%1 triangles to refine."
+                                                       << numTris);
+
+  // Refine. Notice that we do not use triangle iterator here as more triangles
+  // are added as long as we refine.
+  for ( int idx = 0; idx < numTris; ++idx )
+  {
+    mobMesh->RefineByMidpoint( poly_TriangleHandle(idx) );
+  }
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Midpoint refine")
+
+  // Convert back to the OpenCascade triangulation.
+  Handle(Poly_Triangulation) refinedPoly;
+  {
+    cascade_Triangulation converter(mobMesh);
+    converter.DirectConvert();
+    refinedPoly = converter.GetOpenCascadeTriangulation();
+  }
+
+  // Update Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    cmdEngine::model->GetTriangulationNode()->SetTriangulation(refinedPoly);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Actualize.
+  if ( cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetTriangulationNode() );
+
+  return TCL_OK;
+#else
+  interp->GetProgress().SendLogMessage(LogErr(Normal) << "Mobius is not available.");
+  return TCL_ERROR;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -3207,4 +3283,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Resets location associated with the part shape.",
     //
     __FILE__, group, ENGINE_ResetLocation);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("refine-triangulation",
+    //
+    "refine-triangulation\n"
+    "\t Applies midpoint refinement to each triangle.",
+    //
+    __FILE__, group, ENGINE_RefineTriangulation);
+
 }

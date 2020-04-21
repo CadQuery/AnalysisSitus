@@ -98,7 +98,7 @@ public:
           z = m_fZMin + m_fZStep*k;
 
           // Evaluate scalar.
-          const T s = (T) m_pSVO->Eval( t_xyz(x, y, z) );
+          const T s = (T) m_pSVO->Eval( t_xyz(x, y, z), false );
 
           // Put in the grid.
           m_grid->pArray[i][j][k] = s;

@@ -366,7 +366,7 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-contour-to-wire",
     //
-    "re-contour-to-wire varName\n"
+    "re-contour-to-wire <varName>\n"
     "\t Converts contour to topological wire.",
     //
     __FILE__, group, RE_ContourToWire);
@@ -374,7 +374,7 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-interp-mesh",
     //
-    "re-interp-mesh surfName udeg vdeg grain_factor\n"
+    "re-interp-mesh <surfName> <udeg> <vdeg> <grain_factor>\n"
     "\t Interpolates mesh.",
     //
     __FILE__, group, RE_InterpMesh);
@@ -382,7 +382,7 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-plane",
     //
-    "re-make-plane plane\n"
+    "re-make-plane <plane>\n"
     "\t Creates interactive plane.",
     //
     __FILE__, group, RE_MakePlane);
@@ -390,7 +390,7 @@ void cmdRE::Commands_Interaction(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-update-plane",
     //
-    "re-update-plane plane\n"
+    "re-update-plane <plane>\n"
     "\t Updates persistent plane w.r.t. interactive plane.",
     //
     __FILE__, group, RE_UpdatePlane);

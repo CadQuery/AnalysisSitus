@@ -44,9 +44,15 @@ class asiAlgo_WriteREK
 public:
 
   //! RAII ctor.
-  //! \param[in] filename input file.
+  //! \param[in] filename   input file.
+  //! \param[in] scaleCoeff floating-point coefficient to multiply the
+  //!                       raw data values by. Use this to perform
+  //!                       unit conversion. E.g., if the initial CAD data
+  //!                       is in millimeters, passing 1000 here would mean
+  //!                       conversion to microns.
   asiAlgo_EXPORT
-    asiAlgo_WriteREK(const std::string& filename);
+    asiAlgo_WriteREK(const std::string& filename,
+                     const float        scaleCoeff = 1.0);
 
   //! Dtor.
   asiAlgo_EXPORT
@@ -91,7 +97,8 @@ public:
 
 protected:
 
-  std::ofstream* m_pFILE; //!< File handle.
+  std::ofstream* m_pFILE;       //!< File handle.
+  float          m_fScaleCoeff; //!< Raw data scaling coefficient.
 
 };
 

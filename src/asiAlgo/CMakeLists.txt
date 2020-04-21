@@ -45,7 +45,6 @@ set (aux_H_FILES
   auxiliary/asiAlgo_ResampleADF.h
   auxiliary/asiAlgo_UniformGrid.h
   auxiliary/asiAlgo_Utils.h
-  auxiliary/asiAlgo_WriteREK.h
 )
 set (aux_CPP_FILES
   auxiliary/asiAlgo_BVHAlgo.cpp
@@ -69,7 +68,6 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_ReapproxContour.cpp
   auxiliary/asiAlgo_ResampleADF.cpp
   auxiliary/asiAlgo_Utils.cpp
-  auxiliary/asiAlgo_WriteREK.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -257,6 +255,7 @@ set (interop_H_FILES
   interop/asiAlgo_ReadSTEPWithMetaOutput.h
   interop/asiAlgo_STEP.h
   interop/asiAlgo_STEPReduce.h
+  interop/asiAlgo_WriteREK.h
   interop/asiAlgo_WriteSTEPWithMeta.h
   interop/asiAlgo_WriteSTEPWithMetaInput.h
 )
@@ -268,6 +267,7 @@ set (interop_CPP_FILES
   interop/asiAlgo_ReadSTEPWithMeta.cpp
   interop/asiAlgo_STEP.cpp
   interop/asiAlgo_STEPReduce.cpp
+  interop/asiAlgo_WriteREK.cpp
   interop/asiAlgo_WriteSTEPWithMeta.cpp
 )
 

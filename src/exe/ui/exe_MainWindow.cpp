@@ -416,6 +416,8 @@ void exe_MainWindow::createDockWindows()
   cf->Interp = new asiTcl_Interp(cf->Progress, cf->Plotter);
   cf->Interp->Init(!m_bOffscreen); // Do not override channels in offscreen mode.
   cf->Interp->SetModel(cf->Model);
+  cf->Interp->SetPlotter(cf->Plotter);
+  cf->Interp->SetProgress(cf->Progress);
 
   // Load default commands.
   EXE_LOAD_MODULE("cmdMisc")

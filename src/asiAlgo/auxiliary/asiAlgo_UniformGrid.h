@@ -88,9 +88,9 @@ public:
   //! Dtor.
   ~asiAlgo_UniformGrid()
   {
-    for ( int i = 0; i < Nx; ++i )
+    for ( int i = 0; i <= Nx; ++i )
     {
-      for ( int j = 0; j < Ny; ++j )
+      for ( int j = 0; j <= Ny; ++j )
       {
         delete[] pArray[i][j];
       }

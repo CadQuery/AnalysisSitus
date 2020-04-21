@@ -294,6 +294,8 @@ set (interaction_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (utils_H_FILES
+  utils/asiUI_BatchFacilities.h
+  utils/asiUI_BatchNotifier.h
   utils/asiUI_Common.h
   utils/asiUI_CommonFacilities.h
   utils/asiUI_DataAdaptor.h
@@ -309,7 +311,9 @@ set (utils_H_UI_FILES
   utils/asiUI_ProgressNotifier.h
   utils/asiUI_UnitManager.h
 )
-set (utils_CPP_FILES 
+set (utils_CPP_FILES
+  utils/asiUI_BatchFacilities.cpp
+  utils/asiUI_BatchNotifier.cpp
   utils/asiUI_Common.cpp
   utils/asiUI_CommonFacilities.cpp
   utils/asiUI_DataAdaptor.cpp

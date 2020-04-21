@@ -38,7 +38,7 @@
 // OCCT includes
 #include <BRepPrimAPI_MakeBox.hxx>
 
-#undef FILE_DEBUG
+#define FILE_DEBUG
 #if defined FILE_DEBUG
   #pragma message("===== warning: FILE_DEBUG is enabled")
 #endif

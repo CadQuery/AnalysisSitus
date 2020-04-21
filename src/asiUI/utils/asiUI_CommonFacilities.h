@@ -32,16 +32,13 @@
 #define asiUI_CommonFacilities_h
 
 // asiUI includes
+#include <asiUI_BatchFacilities.h>
 #include <asiUI_IParamEditor.h>
 #include <asiUI_ObjectBrowser.h>
-#include <asiUI_ProgressNotifier.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
 #include <asiUI_WidgetFactory.h>
-
-// asiEngine includes
-#include <asiEngine_Model.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -53,18 +50,19 @@
 class QMainWindow;
 
 //! Base class for common facilities.
-class asiUI_CommonFacilities : public Standard_Transient
+class asiUI_CommonFacilities : public asiUI_BatchFacilities
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiUI_CommonFacilities, Standard_Transient)
+  DEFINE_STANDARD_RTTI_INLINE(asiUI_CommonFacilities, asiUI_BatchFacilities)
 
 public:
 
-  // Default ctor.
+  //! Ctor.
+  //! \param[in] initBatch whether to initialize batch facilities.
   asiUI_EXPORT
-    asiUI_CommonFacilities();
+    asiUI_CommonFacilities(const bool initBatch = false);
 
 public:
 
@@ -80,7 +78,7 @@ public:
     asiVisu_PrsManager* domainPM = this->ViewerHost   ? this->ViewerHost->PrsMgr()   : nullptr;
 
     for ( Handle(ActAPI_IChildIterator) cit = this->Model->GetRootNode()->GetChildIterator(true);
-         cit->More(); cit->Next() )
+          cit->More(); cit->Next() )
     {
       Handle(ActAPI_INode) N = cit->Value();
       //
@@ -205,11 +203,8 @@ public:
   asiUI_ViewerDomain*         ViewerDomain;  //!< Viewer for face parametric domain.
   asiUI_ViewerHost*           ViewerHost;    //!< Viewer for host geometry.
   asiUI_UnitManager*          UnitManager;   //!< Utility to manage units.
-  ActAPI_ProgressEntry        Progress;      //!< Progress entry.
-  ActAPI_PlotterEntry         Plotter;       //!< Imperative plotter.
   Handle(asiUI_WidgetFactory) WidgetFactory; //!< Widget factory for datums.
   Handle(asiUI_IParamEditor)  ParamEditor;   //!< Parameter editor.
-  Handle(asiEngine_Model)     Model;         //!< Data Model instance.
 
 };
 

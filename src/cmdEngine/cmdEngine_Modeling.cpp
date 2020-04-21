@@ -1125,7 +1125,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("offset-shell",
     //
-    "offset-shell offset [-simple] [-solid] [-keep] [-toler <val>]\n"
+    "offset-shell <offset> [-simple] [-solid] [-keep] [-toler <val>]\n"
     "\t Offsets part (it should be a topological shell) on the given offset\n"
     "\t value. Offsetting is performed in the direction of face normals. If the\n"
     "\t option '-simple' is passed, this operation will attempt to preserve\n"
@@ -1141,7 +1141,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("offset-tess",
     //
-    "offset-tess offset\n"
+    "offset-tess <offset>\n"
     "\t Offsets mesh nodes in directions of their norms.",
     //
     __FILE__, group, ENGINE_OffsetTess);
@@ -1149,7 +1149,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-edge",
     //
-    "make-edge result curveName\n"
+    "make-edge <result> <curveName>\n"
     "\t Creates edge from a curve. The <curveName> variable should exist\n"
     "\t as a Curve object in the scene graph of imperative plotter.",
     //
@@ -1158,7 +1158,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-face",
     //
-    "make-face result surfaceName\n"
+    "make-face <result> <surfaceName>\n"
     "\t Creates face from a surface. The <surfaceName> variable should exist\n"
     "\t as a Surface object in the scene graph of imperative plotter.",
     //
@@ -1167,7 +1167,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-shell",
     //
-    "make-shell result face1 [face2 [...]]\n"
+    "make-shell <result> <face1> [<face2> [...]]\n"
     "\t Creates a shell from the passed faces.",
     //
     __FILE__, group, ENGINE_MakeShell);
@@ -1175,7 +1175,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-solid",
     //
-    "make-solid result shell1 [shell2 [...]]\n"
+    "make-solid <result> <shell1> [<shell2> [...]]\n"
     "\t Creates a solid from the passed shells.",
     //
     __FILE__, group, ENGINE_MakeSolid);
@@ -1183,7 +1183,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-compound",
     //
-    "make-compound result [shape1 [shape2 [...]]]\n"
+    "make-compound <result> [<shape1> [<shape2> [...]]]\n"
     "\t Creates compound from the passed shapes.",
     //
     __FILE__, group, ENGINE_MakeCompound);
@@ -1191,7 +1191,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("add-subshape",
     //
-    "add-subshape parent child\n"
+    "add-subshape <parent> <child>\n"
     "\t Adds <child> to <parent>.",
     //
     __FILE__, group, ENGINE_AddSubShape);
@@ -1199,7 +1199,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-point",
     //
-    "make-point pointName x y z\n"
+    "make-point <pointName> <x> <y> <z>\n"
     "\t Creates a point with the passed coordinates.",
     //
     __FILE__, group, ENGINE_MakePoint);
@@ -1207,7 +1207,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-curve",
     //
-    "make-curve curveName\n"
+    "make-curve <curveName>\n"
     "\t Creates a curve from the selected edge.",
     //
     __FILE__, group, ENGINE_MakeCurve);
@@ -1215,7 +1215,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-surf",
     //
-    "make-surf surfName [faceName]\n"
+    "make-surf <surfName> [<faceName>]\n"
     "\t Creates a surface from the selected face or a face with the given name.",
     //
     __FILE__, group, ENGINE_MakeSurf);
@@ -1223,7 +1223,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("interpolate-points",
     //
-    "interpolate-points curveName pointsName deg\n"
+    "interpolate-points <curveName> <pointsName> <deg>\n"
     "\t Creates a curve from the passed point series by interpolation.",
     //
     __FILE__, group, ENGINE_InterpolatePoints);
@@ -1231,7 +1231,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("bop-cut",
     //
-    "bop-cut result op1 op2 [fuzz]\n"
+    "bop-cut <result> <op1> <op2> [<fuzz>]\n"
     "\t Cuts <op2> from <op1> using Boolean Cut operation.",
     //
     __FILE__, group, ENGINE_BOPCut);
@@ -1239,7 +1239,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("bop-fuse",
     //
-    "bop-fuse result op1 op2\n"
+    "bop-fuse <result> <op1> <op2>\n"
     "\t Fuses the passed two operands using Boolean Fuse operation.",
     //
     __FILE__, group, ENGINE_BOPFuse);
@@ -1247,7 +1247,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("bop-fuse-gen",
     //
-    "bop-fuse-gen result op1 op2 [fuzz] [-glue]\n"
+    "bop-fuse-gen <result> <op1> <op2> [<fuzz>] [-glue]\n"
     "\t Fuses the passed two operands using Boolean General Fuse operation.\n"
     "\t It is possible to affect the fusion tolerance with <fuzz> argument.\n"
     "\t In case if you have overlapping faces in your operands, you may want\n"
@@ -1258,7 +1258,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("define-geom",
     //
-    "define-geom [name]\n"
+    "define-geom [<name>]\n"
     "\t Opens geometry definition dialog.",
     //
     __FILE__, group, ENGINE_DefineGeom);
@@ -1266,8 +1266,8 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-box",
     //
-    "make-box name [posX posY posZ dX dY dZ]\n"
-    "\t Creates axis-aligned box solid with min corner at <posX, posY, posZ>\n"
+    "make-box name [<posX> <posY> <posZ> <dX> <dY> <dZ>]\n"
+    "\t Creates axis-aligned box solid with min corner at <posX>, <posY>, <posZ>\n"
     "\t and dimensions <dX>, <dY>, <dZ>.",
     //
     __FILE__, group, ENGINE_MakeBox);
@@ -1275,16 +1275,16 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("hlr",
     //
-    "hlr res posX posY posZ nX nY nZ\n"
-    "\t Performs HLR algorithm using <posX, posY, posZ> as a location of a\n"
-    "\t projection plane with <nX, nY, nZ> as its normal direction.",
+    "hlr <res> <posX> <posY> <posZ> <nX> <nY> <nZ>\n"
+    "\t Performs HLR algorithm using <posX>, <posY>, <posZ> as a location of a\n"
+    "\t projection plane with <nX>, <nY>, <nZ> as its normal direction.",
     //
     __FILE__, group, ENGINE_HLR);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-fillet",
     //
-    "make-fillet radius\n"
+    "make-fillet <radius>\n"
     "\t Blends the selected edges with the given radius.",
     //
     __FILE__, group, ENGINE_MakeFillet);
@@ -1292,8 +1292,8 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("build-triangulation-obb",
     //
-    "build-triangulation-obb res\n"
-    "\t Builds oriented bounding box (OBB) for triangulation.",
+    "build-triangulation-obb <res>\n"
+    "\t Builds the oriented bounding box (OBB) for triangulation.",
     //
     __FILE__, group, ENGINE_BuildTriangulationOBB);
 }

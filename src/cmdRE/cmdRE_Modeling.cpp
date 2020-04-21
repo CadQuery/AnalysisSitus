@@ -2159,7 +2159,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   interp->AddCommand("re-smoothen-regular-edges",
     //
     "re-smoothen-regular-edges\n"
-    "\t Finds all regular edges in the topology and enables smoothing \n"
+    "\t Finds all regular edges in the topology and enables smoothing\n"
     "\t mode for them.",
     //
     __FILE__, group, RE_SmoothenRegularEdges);
@@ -2167,7 +2167,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-patches",
     //
-    "re-build-patches [patchName1 [patchName2 ...]] [-fair <coeff>] [-approx]\n"
+    "re-build-patches [<patchName1> [<patchName2> ...]] [-fair <coeff>] [-approx]\n"
     "\t Constructs surface patched for the passed data object(s).",
     //
     __FILE__, group, RE_BuildPatches);
@@ -2175,7 +2175,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-build-contour-lines",
     //
-    "re-build-contour-lines [edgeName1 [edgeName2 ...]] [-toler toler]\n"
+    "re-build-contour-lines [<edgeName1> [<edgeName2> ...]] [-toler <toler>]\n"
     "\t Constructs contour lines either for all patches or for the passed\n"
     "\t edges only.",
     //
@@ -2184,7 +2184,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-fair-contour-lines",
     //
-    "re-fair-contour-lines coeff\n"
+    "re-fair-contour-lines <coeff>\n"
     "\t Fairs (smooths) contour lines for all patches with the given fairing\n"
     "\t coefficient.",
     //
@@ -2193,9 +2193,9 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-cut-with-plane",
     //
-    "re-cut-with-plane res p [-nosort]\n"
-    "\t Cuts triangulation with t_plane. If '-nosort' key is passed, the"
-    "\t resulting points are not post-processed with K-neighbors hull"
+    "re-cut-with-plane <res> <p> [-nosort]\n"
+    "\t Cuts triangulation with plane. If '-nosort' key is passed, the\n"
+    "\t resulting points are not post-processed with K-neighbors hull\n"
     "\t algorithm thus remaining disordered.",
     //
     __FILE__, group, RE_CutWithPlane);
@@ -2211,7 +2211,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-skin-surface",
     //
-    "re-skin-surface resSurf vDegree [-fair-isos lambda] curveName1 ... curveNameK \n"
+    "re-skin-surface <resSurf> <vDegree> [-fair-isos <lambda>] <curveName1> ... <curveNameK>\n"
     "\t Interpolates surface by skinning the passed B-curves.",
     //
     __FILE__, group, RE_SkinSurface);
@@ -2219,7 +2219,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-interp-multicurve",
     //
-    "re-interp-multicurve numpts degree curveName1 [curveName2 [...]]\n"
+    "re-interp-multicurve <numpts> <degree> <curveName1> [<curveName2> [...]]\n"
     "\t Interpolates a set of curves on the same knot sequence.",
     //
     __FILE__, group, RE_InterpMulticurve);
@@ -2227,7 +2227,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-join-curves",
     //
-    "re-join-curves res curveName1 curveName2 [curveName3 [...]]\n"
+    "re-join-curves <res> <curveName1> <curveName2> [<curveName3> [...]]\n"
     "\t Joins curves into a single curve.",
     //
     __FILE__, group, RE_JoinCurves);
@@ -2235,7 +2235,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-check-surf-deviation",
     //
-    "re-check-surf-deviation res surfName\n"
+    "re-check-surf-deviation <res> <surfName>\n"
     "\t Checks deviation between the given surface and the reference mesh.",
     //
     __FILE__, group, RE_CheckSurfDeviation);
@@ -2243,7 +2243,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-check-deviation",
     //
-    "re-check-deviation pointsName\n"
+    "re-check-deviation <pointsName>\n"
     "\t Checks deviation between the given point cloud and the active CAD part.",
     //
     __FILE__, group, RE_CheckDeviation);
@@ -2251,7 +2251,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-check-tri-deviation",
     //
-    "re-check-tri-deviation pointsName\n"
+    "re-check-tri-deviation <pointsName>\n"
     "\t Checks deviation between the given point cloud and the active triangulation.",
     //
     __FILE__, group, RE_CheckTriDeviation);
@@ -2259,7 +2259,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-make-average-plane",
     //
-    "re-make-average-plane res pointsName [{umin umax vmin vmax | -mobius}]\n"
+    "re-make-average-plane <res> <pointsName> [{<umin> <umax> <vmin> <vmax> | -mobius}]\n"
     "\t Approximates the given point cloud with a plane.",
     //
     __FILE__, group, RE_MakeAveragePlane);
@@ -2267,7 +2267,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-sample-part",
     //
-    "re-sample-part res ustep vstep [-facets] [-vertices]\n"
+    "re-sample-part <res> <ustep> <vstep> [-facets] [-vertices]\n"
     "\t Makes a point cloud by sampling CAD part.",
     //
     __FILE__, group, RE_SamplePart);
@@ -2275,7 +2275,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-invert-points",
     //
-    "re-invert-bpoles surfName ptsName [-opencascade]\n"
+    "re-invert-bpoles <surfName> <ptsName> [-opencascade]\n"
     "\t Inverts the passed point cloud to the B-surface with the given name.",
     //
     __FILE__, group, RE_InvertPoints);
@@ -2283,7 +2283,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-purify-cloud",
     //
-    "re-purify-cloud resPtsName ptsName tol3d\n"
+    "re-purify-cloud <resPtsName> <ptsName> <tol3d>\n"
     "\t Purifies point cloud by removing near-coincident points. The precision\n"
     "\t used for coincidence test is passed as <tol3d> argument.",
     //
@@ -2292,7 +2292,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-approx-surf",
     //
-    "re-approx-surf resSurf ptsName {uDegree vDegree | -init initSurf} <-lambda coeff> [-pinned|-pinned2]\n"
+    "re-approx-surf <resSurf> <ptsName> {<uDegree> <vDegree> | -init <initSurf>} [-lambda <coeff>] [{-pinned | -pinned2}]\n"
     "\t Approximates point cloud with B-surface.",
     //
     __FILE__, group, RE_ApproxSurf);
@@ -2300,7 +2300,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-get-triangulation-nodes",
     //
-    "re-get-triangulation-nodes resPtsName\n"
+    "re-get-triangulation-nodes <resPtsName>\n"
     "\t Extracts triangulation nodes as a point cloud.",
     //
     __FILE__, group, RE_GetTriangulationNodes);
@@ -2308,7 +2308,7 @@ void cmdRE::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-get-inner-points",
     //
-    "re-get-inner-points resName patchName\n"
+    "re-get-inner-points <resName> <patchName>\n"
     "\t Extracts the mesh nodes which are bounded by the contour of the given\n"
     "\t patch specified as <patchName>. The extracted nodes are collected in the\n"
     "\t point cloud specified as <resName>.",

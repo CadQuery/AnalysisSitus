@@ -33,7 +33,8 @@
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_WriteREK::asiAlgo_WriteREK(const std::string& filename)
+asiAlgo_WriteREK::asiAlgo_WriteREK(const std::string& filename,
+                                   const float        scaleCoeff)
 {
   m_pFILE = new std::ofstream(filename, std::ios::binary);
   if ( !m_pFILE->is_open() )
@@ -41,6 +42,8 @@ asiAlgo_WriteREK::asiAlgo_WriteREK(const std::string& filename)
     m_pFILE = nullptr;
     throw std::runtime_error("Cannot open file for writing.");
   }
+
+  m_fScaleCoeff = scaleCoeff;
 }
 
 //-----------------------------------------------------------------------------
@@ -96,7 +99,11 @@ bool asiAlgo_WriteREK::Write(const Handle(asiAlgo_UniformGrid<float>)& grid)
     {
       for ( int i = 0; i <= grid->Nx; ++i )
       {
-        m_pFILE->write( (char*) &grid->pArray[i][j][k], sizeof(float) );
+        // Apply scaling.
+        const float val = grid->pArray[i][j][k]*m_fScaleCoeff;
+
+        // Write.
+        m_pFILE->write( (char*) &val, sizeof(float) );
       }
     }
   }

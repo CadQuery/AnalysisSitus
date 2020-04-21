@@ -144,7 +144,7 @@ void cmdRE::Commands_Data(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("re-set-patch-surf",
     //
-    "re-set-patch-surf patchName surfName\n"
+    "re-set-patch-surf <patchName> <surfName>\n"
     "\t Sets new surface for a patch with the given name.",
     //
     __FILE__, group, RE_SetPatchSurf);

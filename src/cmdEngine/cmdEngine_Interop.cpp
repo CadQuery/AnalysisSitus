@@ -428,7 +428,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-step",
     //
-    "load-step filename\n"
+    "load-step <filename>\n"
     "\t Loads STEP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadStep);
@@ -436,7 +436,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("save-step",
     //
-    "save-step [varName] filename\n"
+    "save-step [<varName>] <filename>\n"
     "\t Save active part or variable (if specified) to a STEP file with the\n"
     "\t given name.",
     //
@@ -445,7 +445,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-brep",
     //
-    "load-brep filename\n"
+    "load-brep <filename>\n"
     "\t Loads BREP file to the active part.",
     //
     __FILE__, group, ENGINE_LoadBRep);
@@ -453,7 +453,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-stl",
     //
-    "load-stl filename\n"
+    "load-stl <filename>\n"
     "\t Loads STL file to the active triangulation.",
     //
     __FILE__, group, ENGINE_LoadSTL);
@@ -461,7 +461,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("dump-aag-json",
     //
-    "dump-aag-json filename\n"
+    "dump-aag-json <filename>\n"
     "\t Dumps AAG of the active part to JSON file.",
     //
     __FILE__, group, ENGINE_DumpAAGJSON);
@@ -469,7 +469,7 @@ void cmdEngine::Commands_Interop(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("load-points",
     //
-    "load-points name filename\n"
+    "load-points <name> <filename>\n"
     "\t Loads points from file to the point cloud with the given name.",
     //
     __FILE__, group, ENGINE_LoadPoints);

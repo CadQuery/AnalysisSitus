@@ -81,11 +81,11 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   // Get faces from AAG
   const TopTools_IndexedMapOfShape& Faces        = aag->GetMapOfFaces();
   const TColStd_PackedMapOfInteger& SelFaces     = aag->GetSelectedFaces();
-  const asiAlgo_AAG::t_adjacency&   Neighborhood = aag->GetNeighborhood();
+  const asiAlgo_AdjacencyMx&        Neighborhood = aag->GetNeighborhood();
 
   // Add vertices for faces
   NCollection_DataMap<int, vtkIdType> FaceVertexMap;
-  for ( asiAlgo_AAG::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(Neighborhood.mx); it.More(); it.Next() )
   {
     const int          f_idx     = it.Key();
     const TopoDS_Face& face      = TopoDS::Face( Faces(f_idx) );
@@ -143,7 +143,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
   result->GetEdgeData()  ->AddArray( angleArr  .GetPointer() );
 
   // Add links for adjacency relations
-  for ( asiAlgo_AAG::t_adjacency::Iterator it(Neighborhood); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(Neighborhood.mx); it.More(); it.Next() )
   {
     const int       f_idx = it.Key();
     const vtkIdType v_idx = FaceVertexMap(f_idx);

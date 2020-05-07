@@ -31,6 +31,7 @@ set (aux_H_FILES
   auxiliary/asiAlgo_CSG.h
   auxiliary/asiAlgo_DesignLaw.h
   auxiliary/asiAlgo_DivideByContinuity.h
+  auxiliary/asiAlgo_FindVisibleFaces.h
   auxiliary/asiAlgo_FuncUnivariate.h
   auxiliary/asiAlgo_HitFacet.h
   auxiliary/asiAlgo_IntersectCC.h
@@ -59,6 +60,7 @@ set (aux_CPP_FILES
   auxiliary/asiAlgo_CompleteEdgeLoop.cpp
   auxiliary/asiAlgo_DesignLaw.cpp
   auxiliary/asiAlgo_DivideByContinuity.cpp
+  auxiliary/asiAlgo_FindVisibleFaces.cpp
   auxiliary/asiAlgo_FuncUnivariate.cpp
   auxiliary/asiAlgo_HitFacet.cpp
   auxiliary/asiAlgo_IntersectCC.cpp
@@ -211,6 +213,7 @@ set (editing_CPP_FILES
 set (features_H_FILES
   features/asiAlgo_AAG.h
   features/asiAlgo_AAGIterator.h
+  features/asiAlgo_AdjacencyMx.h
   features/asiAlgo_BorderTrihedron.h
   features/asiAlgo_CheckDihedralAngle.h
   features/asiAlgo_ExtractFeatures.h
@@ -223,6 +226,7 @@ set (features_H_FILES
   features/asiAlgo_FeatureAttrFace.h
   features/asiAlgo_FeatureFormulation.h
   features/asiAlgo_FeatureType.h
+  features/asiAlgo_Isomorphism.h
   features/asiAlgo_Recognizer.h
   features/asiAlgo_ShapePartnerHasher.h
   features/asiAlgo_TopoAttr.h
@@ -234,9 +238,11 @@ set (features_H_FILES
 set (features_CPP_FILES
   features/asiAlgo_AAG.cpp
   features/asiAlgo_AAGIterator.cpp
+  features/asiAlgo_AdjacencyMx.cpp
   features/asiAlgo_CheckDihedralAngle.cpp
   features/asiAlgo_ExtractFeatures.cpp
   features/asiAlgo_ExtractFeaturesResult.cpp
+  features/asiAlgo_Isomorphism.cpp
   features/asiAlgo_Recognizer.cpp
   features/asiAlgo_TopoGraph.cpp
 )

@@ -1439,11 +1439,6 @@ int MISC_Test(const Handle(asiTcl_Interp)& interp,
               int                          argc,
               const char**                 argv)
 {
-  if ( argc != 3 && argc != 4 && argc != 5 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
   // Test anything here.
 
   return TCL_OK;
@@ -1711,6 +1706,73 @@ int MISC_TestTranformAxes(const Handle(asiTcl_Interp)& interp,
   interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.XDirection().XYZ() )*scaleCoeff, Color_Red,    "BAfter_DX");
   interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.YDirection().XYZ() )*scaleCoeff, Color_Green,  "BAfter_DY");
   interp->GetPlotter().DRAW_VECTOR_AT (BAfter.Location(), gp_Vec( BAfter.Direction() .XYZ() )*scaleCoeff, Color_Blue,   "BAfter_DZ");
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int MISC_TestTranformAxesDir(const Handle(asiTcl_Interp)& interp,
+                             int                          argc,
+                             const char**                 argv)
+{
+  if ( argc != 4 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  /* ==============
+   *  Get CAD part
+   * ============== */
+
+  Handle(asiEngine_Model) M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
+
+  /* ================================
+   *  Compute axes of the part shape
+   * ================================ */
+
+  GProp_GProps gProps;
+  BRepGProp::VolumeProperties(partShape, gProps, 1.e-4);
+
+  gp_Vec partPrincipalX = gProps.PrincipalProperties().ThirdAxisOfInertia();
+  gp_Vec partPrincipalY = gProps.PrincipalProperties().SecondAxisOfInertia();
+  gp_Vec partPrincipalZ = gProps.PrincipalProperties().FirstAxisOfInertia();
+
+  // First Ax3.
+  //gp_Ax3 A( gp_Pnt(-1., -2., -3.), gp_Dir(1., 1., 1.), gp_Dir(1., -1., -1.) );
+  gp_Ax3 A(gProps.CentreOfMass(), partPrincipalZ, partPrincipalX);
+  //
+  interp->GetPlotter().DRAW_POINT     (A.Location(),                                 Color_Yellow, "A");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.XDirection().XYZ() ), Color_Red,    "A_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.YDirection().XYZ() ), Color_Green,  "A_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (A.Location(), gp_Vec( A.Direction() .XYZ() ), Color_Blue,   "A_DZ");
+
+  /* =======================
+   *  Get axis to move Z to
+   * ======================= */
+
+  gp_Vec R( atof(argv[0]), atof(argv[1]), atof(argv[2]) );
+  //
+  if ( R.Magnitude() < gp::Resolution() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Null reference vector.");
+    return TCL_ERROR;
+  }
+
+  /* ===========
+   *  Move axes
+   * =========== */
+
+  // Transformed B.
+  gp_Ax3 B = A;
+  B.SetAxis( gp_Ax1( A.Location(), gp_Dir(R) ) );
+  //
+  interp->GetPlotter().DRAW_POINT     (B.Location(),                                 Color_Yellow, "B");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.XDirection().XYZ() ), Color_Red,    "B_DX");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.YDirection().XYZ() ), Color_Green,  "B_DY");
+  interp->GetPlotter().DRAW_VECTOR_AT (B.Location(), gp_Vec( B.Direction() .XYZ() ), Color_Blue,   "B_DZ");
 
   return TCL_OK;
 }
@@ -3587,6 +3649,15 @@ void cmdMisc::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Transforms axes B to place them coincidently with axes A.",
     //
     __FILE__, group, MISC_TestTranformAxes);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("test-transform-axes-dir",
+    //
+    "test-transform-axes-dir <xdir> <ydir> <zdir> \n"
+    "\t Transforms axes to have Z (main) direction collinear with the\n"
+    "\t passed direction.",
+    //
+    __FILE__, group, MISC_TestTranformAxesDir);
 
 #if defined USE_MOBIUS
   //-------------------------------------------------------------------------//

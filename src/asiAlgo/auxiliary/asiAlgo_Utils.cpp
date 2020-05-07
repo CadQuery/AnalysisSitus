@@ -216,6 +216,21 @@ void appendSurfaceDetails(const Handle(Geom_Surface)& surf,
     msg += vMin;
     msg += "\n\t Max V parameter: ";
     msg += vMax;
+    //
+    if ( basisSurf->IsKind( STANDARD_TYPE(Geom_BSplineSurface) ) )
+    {
+      Handle(Geom_BSplineSurface)
+        bsplSurf = Handle(Geom_BSplineSurface)::DownCast(basisSurf);
+      //
+      msg += "\n\t Is U periodic: ";
+      msg += bsplSurf->IsUPeriodic();
+      msg += "\n\t Is U closed: ";
+      msg += bsplSurf->IsUClosed();
+      msg += "\n\t Is V periodic: ";
+      msg += bsplSurf->IsVPeriodic();
+      msg += "\n\t Is V closed: ";
+      msg += bsplSurf->IsVClosed();
+    }
 
     // Recursive call for the basis surface.
     appendSurfaceDetails(basisSurf, msg);

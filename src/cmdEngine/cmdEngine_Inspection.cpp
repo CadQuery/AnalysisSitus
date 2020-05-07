@@ -51,6 +51,8 @@
 #include <asiAlgo_ExtractFeatures.h>
 #include <asiAlgo_FeatureAttrBaseFace.h>
 #include <asiAlgo_FeatureType.h>
+#include <asiAlgo_FindVisibleFaces.h>
+#include <asiAlgo_Isomorphism.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_Timer.h>
@@ -3131,6 +3133,152 @@ int ENGINE_CheckThickness(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_FindVisibleFaces(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get part.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Find visible faces.
+  asiAlgo_FindVisibleFaces FindVisible( partShape,
+                                        interp->GetProgress(),
+                                        interp->GetPlotter() );
+  //
+  if ( !FindVisible.Perform() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find invisible faces.");
+    return TCL_ERROR;
+  }
+
+  // Get visible faces.
+  TColStd_PackedMapOfInteger resIndices;
+  FindVisible.GetResultFaces(resIndices, 0);
+
+  // Highlight the detected faces.
+  if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
+    asiEngine_Part( cmdEngine::model,
+                    cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(resIndices);
+
+  // Dump to result.
+  *interp << resIndices;
+
+  return TCL_OK;
+}
+//-----------------------------------------------------------------------------
+
+int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
+                            int                          argc,
+                            const char**                 argv)
+{
+  // Test anything here.
+
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model) model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Get problem graph.
+  Handle(asiAlgo_AAG) G = model->GetPartNode()->GetAAG();
+  //
+  if ( G.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
+    return TCL_ERROR;
+  }
+
+  // Dump G.
+  if ( G->GetNumberOfNodes() < 50 )
+  {
+    std::stringstream buff;
+    buff << G->GetNeighborhood().AsEigenMx();
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "G:\n%1" << buff.str() );
+  }
+
+  // Get feature model.
+  Handle(asiData_IVTopoItemNode)
+    featureNode = Handle(asiData_IVTopoItemNode)::DownCast( model->FindNodeByName(argv[1]) );
+  //
+  if ( featureNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape        featureShape = featureNode->GetShape();
+  Handle(asiAlgo_AAG) P            = new asiAlgo_AAG(featureShape);
+
+  // Dump P.
+  if ( P->GetNumberOfNodes() < 50 ) // Limit for printing.
+  {
+    std::stringstream buff;
+    buff << P->GetNeighborhood().AsEigenMx();
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P:\n%1" << buff.str() );
+  }
+
+  TIMER_NEW
+  TIMER_GO
+
+  // Prepare isomorphism algo.
+  asiAlgo_Isomorphism isomorphism( G,
+                                   interp->GetProgress(),
+                                   interp->GetPlotter() );
+
+  // Find convex-only faces to reduce the problem graph.
+  //TColStd_PackedMapOfInteger convexOnlyIds;
+  //G->FindConvexOnly(convexOnlyIds);
+
+  // Find isomorphisms on the reduced graph.
+  //G->PushSubgraph(convexOnlyIds);
+  //{
+    if ( !isomorphism.Perform(P) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to find isomorphisms.");
+      return TCL_ERROR;
+    }
+  //}
+  //G->PopSubgraph();
+
+  // Get bijection matrices.
+  const std::vector<Eigen::MatrixXd>& isos = isomorphism.GetIsomorphisms();
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 isomorphism(s)."
+                                                        << int( isos.size() ) );
+
+  // Get all found feature faces.
+  TColStd_PackedMapOfInteger featureFaces = isomorphism.GetAllFeatures();
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Find isomorphisms")
+
+  // Highlight the detected faces.
+  if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
+    asiEngine_Part( cmdEngine::model,
+                    cmdEngine::cf->ViewerPart->PrsMgr() ).HighlightFaces(featureFaces);
+
+  // Dump to result.
+  *interp << featureFaces;
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
                                     const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -3452,4 +3600,22 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks the thickness distribution over the passed owner shape.",
     //
     __FILE__, group, ENGINE_CheckThickness);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("find-visible-faces",
+    //
+    "find-visible-faces\n"
+    "\t Finds visible faces.",
+    //
+    __FILE__, group, ENGINE_FindVisibleFaces);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("find-isomorphisms",
+    //
+    "find-isomorphisms <varShape>\n"
+    "\t Solves subgraph isomorphism problem for the part shape\n"
+    "\t and the passed feature descriptor encoded by <varShape>.",
+    //
+    __FILE__, group, ENGINE_FindIsomorphisms);
+
 }

@@ -32,6 +32,7 @@
 #define asiAlgo_AAG_h
 
 // asiAlgo includes
+#include <asiAlgo_AdjacencyMx.h>
 #include <asiAlgo_FeatureAttr.h>
 #include <asiAlgo_Utils.h>
 
@@ -103,9 +104,6 @@ public:
   };
 
   //---------------------------------------------------------------------------
-
-  //! Type definition for adjacency matrix.
-  typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_adjacency;
 
   //! Type definition for map of attributes.
   typedef NCollection_DataMap<Standard_GUID,
@@ -417,6 +415,10 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterCAD() const;
 
+  //! \return number of graph nodes.
+  asiAlgo_EXPORT int
+    GetNumberOfNodes() const;
+
   //! Sets the collection of "selected" faces, i.e., the faces which are
   //! of particular interest to the client code. There is no logic behind
   //! this technique of marking some faces as selected.
@@ -494,7 +496,7 @@ public:
 
   //! Returns full collection of neighbor faces.
   //! \return neighborhood data.
-  asiAlgo_EXPORT const t_adjacency&
+  asiAlgo_EXPORT const asiAlgo_AdjacencyMx&
     GetNeighborhood() const;
 
   //! Returns all faces of the master model.
@@ -670,13 +672,25 @@ public:
     SetNodeAttribute(const int                          node,
                      const Handle(asiAlgo_FeatureAttr)& attr);
 
-  //! Searches for those faces having ALL neighbors attributed with convex link.
+  //! Searches for the faces having ALL neighbors attributed with convex links.
+  //! \param[out] resultFaceIds IDs of the found faces (if any).
+  //! \return true if anything has been found, false -- otherwise.
+  asiAlgo_EXPORT bool
+    FindConvexOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
+
+  //! Searches for the faces having ALL neighbors attributed with convex links.
   //! \param[out] resultFaces found faces (if any).
   //! \return true if anything has been found, false -- otherwise.
   asiAlgo_EXPORT bool
     FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const;
 
-  //! Searches for those faces having ALL neighbors attributed with concave link.
+  //! Searches for the faces having ALL neighbors attributed with concave links.
+  //! \param[out] resultFaceIds IDs of the found faces (if any).
+  //! \return true if anything has been found, false -- otherwise.
+  asiAlgo_EXPORT bool
+    FindConcaveOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
+
+  //! Searches for the faces having ALL neighbors attributed with concave links.
   //! \param[out] resultFaces found faces (if any).
   //! \return true if anything has been found, false -- otherwise.
   asiAlgo_EXPORT bool
@@ -871,7 +885,7 @@ protected:
 
   //! The data maps stored in this stack represent adjacency matrices. The
   //! stack is used to keep sub-graphs.
-  std::stack<t_adjacency> m_neighborsStack;
+  std::stack<asiAlgo_AdjacencyMx> m_neighborsStack;
 
   //! Stores attributes associated with each arc.
   t_arc_attributes m_arcAttributes;

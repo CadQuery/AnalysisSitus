@@ -61,6 +61,7 @@
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
 #include <Geom_Plane.hxx>
 #include <gp_Pln.hxx>
 #include <HLRBRep_Algo.hxx>
@@ -901,10 +902,50 @@ int ENGINE_MakeBox(const Handle(asiTcl_Interp)& interp,
     dZ = atof(argv[7]);
   }
 
-  // Create box.
+  // Create and draw the box primitive.
   TopoDS_Shape box = BRepPrimAPI_MakeBox( pos, pos.XYZ() + gp_XYZ(dX, dY, dZ) );
+  //
   interp->GetPlotter().REDRAW_SHAPE(argv[1], box);
-  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Box created.");
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "The box '%1' was successfully created."
+                                                       << argv[1]);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MakeCylinder(const Handle(asiTcl_Interp)& interp,
+                        int                          argc,
+                        const char**                 argv)
+{
+  if ( argc != 2 && argc != 7 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  gp_Pnt origin;
+  if ( argc >= 5 )
+  {
+    origin.SetX( atof(argv[2]) );
+    origin.SetY( atof(argv[3]) );
+    origin.SetZ( atof(argv[4]) );
+  }
+
+  gp_Ax2 pos( origin, gp::DZ() );
+  double radius = 1.;
+  double height = 1.;
+  if ( argc >= 7 )
+  {
+    radius = atof(argv[5]);
+    height = atof(argv[6]);
+  }
+
+  // Create and draw the cylinder primitive.
+  TopoDS_Shape cyl = BRepPrimAPI_MakeCylinder(pos, radius, height);
+  //
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], cyl);
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "The cylinder '%1' was successfully created."
+                                                       << argv[1]);
 
   return TCL_OK;
 }
@@ -1271,6 +1312,16 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t and dimensions <dX>, <dY>, <dZ>.",
     //
     __FILE__, group, ENGINE_MakeBox);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-cylinder",
+    //
+    "make-cylinder name [<posX> <posY> <posZ> <r> <h>]\n"
+    "\t Creates a cylindrical primitive oriented along the OZ axis. The <posX>,\n"
+    "\t <posY>, <posZ> arguments define the origin point. The arguments <r> and\n"
+    "\t <h> define the radius and the height.",
+    //
+    __FILE__, group, ENGINE_MakeCylinder);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("hlr",

@@ -135,7 +135,7 @@ public:
 
 protected:
 
-  asiAlgo_AAG::t_adjacency::Iterator m_it; //!< Data map iterator.
+  asiAlgo_AdjacencyMx::t_mx::Iterator m_it; //!< Data map iterator.
 
 };
 

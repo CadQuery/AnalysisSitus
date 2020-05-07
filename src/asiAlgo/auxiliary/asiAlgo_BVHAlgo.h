@@ -44,7 +44,8 @@ const static double REAL_MAX = std::numeric_limits<double>::max();
 
 //-----------------------------------------------------------------------------
 
-//! Tools for calculation distances and projections of points to segments and triangles
+//! Tools for calculation distances and projections of points to
+//! segments and triangles
 class asiAlgo_BVHAlgo : public ActAPI_IAlgorithm
 {
 public:
@@ -64,6 +65,16 @@ public:
   };
 
 public:
+ 
+  //! Ctor accepting progress notifier and imperative plotter.
+  //! \param[in] facets   mesh to operate with.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiAlgo_BVHAlgo(ActAPI_ProgressEntry progress,
+                  ActAPI_PlotterEntry  plotter)
+  //
+  : ActAPI_IAlgorithm(progress, plotter)
+  {}
 
   //! Ctor accepting progress notifier and imperative plotter.
   //! \param[in] facets   mesh to operate with.

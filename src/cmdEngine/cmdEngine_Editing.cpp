@@ -754,6 +754,68 @@ int ENGINE_KillFace(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_KillFaces(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) part_n = cmdEngine::model->GetPartNode();
+
+  // Prepare killer.
+  asiAlgo_TopoKill killer( part_n->GetShape(),
+                           interp->GetProgress(),
+                           interp->GetPlotter() );
+
+  // Get map of sub-shapes with respect to those the passed index is relevant.
+  TopTools_IndexedMapOfShape subShapesOfType;
+  part_n->GetAAG()->RequestMapOf(TopAbs_FACE, subShapesOfType);
+
+  for ( int k = 0; k < argc; ++k )
+  {
+    const int fid = atoi(argv[k]);
+    //
+    if ( fid < 1 || fid > subShapesOfType.Extent() )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face ID %1 is out of range. Skipping..."
+                                                          << fid);
+      continue;
+    }
+
+    const TopoDS_Shape& subshape = subShapesOfType(fid);
+
+    if ( !killer.AskRemove(subshape) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Request on removal of face %1 is rejected."
+                                                          << fid);
+      continue;
+    }
+  }
+
+  if ( !killer.Apply() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Topological killer failed.");
+    return TCL_ERROR;
+  }
+
+  // Get result.
+  const TopoDS_Shape& result = killer.GetResult();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(result);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(part_n);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_KillSolidByFace(const Handle(asiTcl_Interp)& interp,
                            int                          argc,
                            const char**                 argv)
@@ -2978,17 +3040,25 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-face",
     //
-    "kill-face {<fid1> [<fid2> [...]] | -name '<faceName>'} [-defeat]\n"
-    "\t Kills faces with the passed 1-based indices from the active part.\n"
+    "kill-face {<fid> | -name '<faceName>'} [-defeat]\n"
+    "\t Kills the face with the passed 1-based index from the active part.\n"
     "\t This is a pure topological operation which does not attempt to\n"
-    "\t modify geometry. Moreover, unlike Euler operator, this function\n"
+    "\t modify geometry. Moreover, unlike Euler operators, this function\n"
     "\t does not preserve the topological consistency of the CAD part.\n"
     "\t We have introduced this function to ground Euler operators on it.\n"
     "\t If '-defeat' key is passed, another algorithm of smart face removal\n"
     "\t will be used. The 'smart' algorithm not only removes a face but also\n"
-    "\t stitches the neighbor faces to produce a sound solid model as a result.",
+    "\t stitches the neighbor faces to produce a watertight solid model as a result.",
     //
     __FILE__, group, ENGINE_KillFace);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("kill-faces",
+    //
+    "kill-faces <fid1> [<fid2> ...]\n"
+    "\t Kills the faces with the given 1-based indices.",
+    //
+    __FILE__, group, ENGINE_KillFaces);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("kill-solid-by-face",

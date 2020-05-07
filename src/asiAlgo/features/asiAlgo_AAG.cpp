@@ -111,11 +111,11 @@ Handle(asiAlgo_AAG) asiAlgo_AAG::Copy() const
 
 void asiAlgo_AAG::PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep)
 {
-  t_adjacency& currentMx = m_neighborsStack.top();
+  asiAlgo_AdjacencyMx& currentMx = m_neighborsStack.top();
 
   // Gather all present face indices into a single map.
   TColStd_PackedMapOfInteger allFaces;
-  for ( t_adjacency::Iterator it(currentMx); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(currentMx.mx); it.More(); it.Next() )
     allFaces.Unite( it.Value() );
 
   // Prepare a collection of face indices to eliminate.
@@ -141,15 +141,15 @@ void asiAlgo_AAG::PushSubgraphX(const int face2Exclude)
 
 void asiAlgo_AAG::PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude)
 {
-  t_adjacency& currentMx = m_neighborsStack.top();
-  t_adjacency subgraphMx = currentMx; // Start with a copy.
+  asiAlgo_AdjacencyMx& currentMx = m_neighborsStack.top();
+  asiAlgo_AdjacencyMx subgraphMx = currentMx; // Start with a copy.
 
   // Clean matrix rows.
   for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faces2Exclude); fit.More(); fit.Next() )
-    subgraphMx.UnBind( fit.Key() );
+    subgraphMx.mx.UnBind( fit.Key() );
 
   // Clean matrix columns.
-  for ( t_adjacency::Iterator it(subgraphMx); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(subgraphMx.mx); it.More(); it.Next() )
     it.ChangeValue().Subtract(faces2Exclude);
 
   // Push sub-graph to stack.
@@ -168,6 +168,15 @@ void asiAlgo_AAG::PopSubgraph()
 const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
 {
   return m_master;
+}
+
+//-----------------------------------------------------------------------------
+
+int asiAlgo_AAG::GetNumberOfNodes() const
+{
+  const asiAlgo_AdjacencyMx& neighborhood = this->GetNeighborhood();
+  //
+  return neighborhood.mx.Extent();
 }
 
 //-----------------------------------------------------------------------------
@@ -220,14 +229,14 @@ int asiAlgo_AAG::GetFaceId(const TopoDS_Shape& face) const
 
 bool asiAlgo_AAG::HasNeighbors(const int face_idx) const
 {
-  return m_neighborsStack.top().IsBound(face_idx);
+  return m_neighborsStack.top().mx.IsBound(face_idx);
 }
 
 //-----------------------------------------------------------------------------
 
 const TColStd_PackedMapOfInteger& asiAlgo_AAG::GetNeighbors(const int face_idx) const
 {
-  return m_neighborsStack.top().Find(face_idx);
+  return m_neighborsStack.top().mx.Find(face_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -349,7 +358,7 @@ TColStd_PackedMapOfInteger
 
 //-----------------------------------------------------------------------------
 
-const asiAlgo_AAG::t_adjacency& asiAlgo_AAG::GetNeighborhood() const
+const asiAlgo_AdjacencyMx& asiAlgo_AAG::GetNeighborhood() const
 {
   return m_neighborsStack.top();
 }
@@ -541,10 +550,10 @@ TopoDS_Shape asiAlgo_AAG::FindSubShapeByAddr(const std::string& addr)
 
 bool asiAlgo_AAG::HasArc(const t_arc& arc) const
 {
-  const t_adjacency& mx = m_neighborsStack.top();
+  const asiAlgo_AdjacencyMx& mx = m_neighborsStack.top();
 
   // Seek for adjacency record.
-  const TColStd_PackedMapOfInteger* pRow = mx.Seek(arc.F1);
+  const TColStd_PackedMapOfInteger* pRow = mx.mx.Seek(arc.F1);
   //
   if ( !pRow ) return false;
 
@@ -667,21 +676,22 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
+bool asiAlgo_AAG::FindConvexOnly(TColStd_PackedMapOfInteger& resultFaceIds) const
 {
   TColStd_PackedMapOfInteger traversed;
-  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it( m_neighborsStack.top().mx );
+        it.More(); it.Next() )
   {
     const int                         current_face_idx       = it.Key();
     const TColStd_PackedMapOfInteger& current_face_neighbors = it.Value();
 
-    // Mark face as traversed
+    // Mark face as traversed.
     if ( !traversed.Contains(current_face_idx) )
       traversed.Add(current_face_idx);
     else
       continue;
 
-    // Loop over the neighbors
+    // Loop over the neighbors.
     bool isAllConvex = true;
     for ( TColStd_MapIteratorOfPackedMapOfInteger nit(current_face_neighbors); nit.More(); nit.Next() )
     {
@@ -703,18 +713,34 @@ bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
     }
 
     if ( isAllConvex )
-      resultFaces.Add( this->GetFace(current_face_idx) );
+      resultFaceIds.Add(current_face_idx);
   }
 
-  return resultFaces.Extent() > 0;
+  return resultFaceIds.Extent() > 0;
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
+bool asiAlgo_AAG::FindConvexOnly(TopTools_IndexedMapOfShape& resultFaces) const
+{
+  TColStd_PackedMapOfInteger resultFaceIds;
+  //
+  if ( !this->FindConvexOnly(resultFaceIds) )
+    return false;
+
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(resultFaceIds); fit.More(); fit.Next() )
+    resultFaces.Add( this->GetFace( fit.Key() ) );
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_AAG::FindConcaveOnly(TColStd_PackedMapOfInteger& resultFaceIds) const
 {
   TColStd_PackedMapOfInteger traversed;
-  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it( m_neighborsStack.top().mx );
+        it.More(); it.Next() )
   {
     const int                         current_face_idx       = it.Key();
     const TColStd_PackedMapOfInteger& current_face_neighbors = it.Value();
@@ -747,10 +773,25 @@ bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
     }
 
     if ( isAllConcave )
-      resultFaces.Add( this->GetFace(current_face_idx) );
+      resultFaceIds.Add(current_face_idx);
   }
 
-  return resultFaces.Extent() > 0;
+  return resultFaceIds.Extent() > 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_AAG::FindConcaveOnly(TopTools_IndexedMapOfShape& resultFaces) const
+{
+  TColStd_PackedMapOfInteger resultFaceIds;
+  //
+  if ( !this->FindConcaveOnly(resultFaceIds) )
+    return false;
+
+  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(resultFaceIds); fit.More(); fit.Next() )
+    resultFaces.Add( this->GetFace( fit.Key() ) );
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -788,7 +829,7 @@ void asiAlgo_AAG::Remove(const TColStd_PackedMapOfInteger& faceIndices)
     m_nodeAttributes.UnBind(face_idx);
 
     // Find all neighbors
-    const TColStd_PackedMapOfInteger& neighbor_indices = m_neighborsStack.top().Find(face_idx);
+    const TColStd_PackedMapOfInteger& neighbor_indices = m_neighborsStack.top().mx.Find(face_idx);
     for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbor_indices); nit.More(); nit.Next() )
     {
       const int neighbor_idx = nit.Key();
@@ -797,13 +838,13 @@ void asiAlgo_AAG::Remove(const TColStd_PackedMapOfInteger& faceIndices)
       m_arcAttributes.UnBind( t_arc(face_idx, neighbor_idx) );
 
       // Kill the corresponding chunks from the list of neighbors
-      TColStd_PackedMapOfInteger* mapPtr = m_neighborsStack.top().ChangeSeek(neighbor_idx);
+      TColStd_PackedMapOfInteger* mapPtr = m_neighborsStack.top().mx.ChangeSeek(neighbor_idx);
       if ( mapPtr != nullptr )
         (*mapPtr).Subtract(faceIndices);
     }
 
     // Unbind node
-    m_neighborsStack.top().UnBind(face_idx);
+    m_neighborsStack.top().mx.UnBind(face_idx);
   }
 }
 
@@ -896,7 +937,8 @@ void asiAlgo_AAG::GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfI
 {
   // Gather all present face indices into a single map.
   TColStd_PackedMapOfInteger allFaces;
-  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it( m_neighborsStack.top().mx );
+        it.More(); it.Next() )
   {
     const int face = it.Key();
     //
@@ -996,7 +1038,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   //---------------------------------------------------------------------------
 
   // Put main adjacency matrix to the stack of graph states.
-  m_neighborsStack.push( t_adjacency() );
+  m_neighborsStack.push( asiAlgo_AdjacencyMx() );
 
   //---------------------------------------------------------------------------
 
@@ -1026,7 +1068,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   // treatment for each individual face.
   for ( int f = 1; f <= m_faces.Extent(); ++f )
   {
-    m_neighborsStack.top().Bind( f, TColStd_PackedMapOfInteger() );
+    m_neighborsStack.top().mx.Bind( f, TColStd_PackedMapOfInteger() );
     //
     const TopoDS_Face& face = TopoDS::Face( m_faces(f) );
 
@@ -1085,7 +1127,7 @@ void asiAlgo_AAG::addMates(const TopTools_ListOfShape& mateFaces)
   for ( TopTools_ListIteratorOfListOfShape lit(mateFaces); lit.More(); lit.Next() )
   {
     const int                   face_idx   = m_faces.FindIndex( lit.Value() );
-    TColStd_PackedMapOfInteger& face_links = m_neighborsStack.top().ChangeFind(face_idx);
+    TColStd_PackedMapOfInteger& face_links = m_neighborsStack.top().mx.ChangeFind(face_idx);
     const TopoDS_Face&          face       = TopoDS::Face( m_faces.FindKey(face_idx) );
 
     // Add all the rest faces as neighbors.
@@ -1159,7 +1201,8 @@ void asiAlgo_AAG::dumpNodesJSON(Standard_OStream& out,
 {
   int nidx = 0;
   //
-  for ( t_adjacency::Iterator nit( m_neighborsStack.top() ); nit.More(); nit.Next(), ++nidx )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator nit( m_neighborsStack.top().mx );
+        nit.More(); nit.Next(), ++nidx )
   {
     const int nodeId = nit.Key();
     //
@@ -1219,7 +1262,8 @@ void asiAlgo_AAG::dumpArcsJSON(Standard_OStream& out,
 
   int arcidx = 0;
   //
-  for ( t_adjacency::Iterator it( m_neighborsStack.top() ); it.More(); it.Next() )
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it( m_neighborsStack.top().mx );
+        it.More(); it.Next() )
   {
     const int f_idx = it.Key();
 

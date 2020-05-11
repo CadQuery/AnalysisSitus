@@ -65,3 +65,30 @@ Eigen::MatrixXd asiAlgo_AdjacencyMx::AsEigenMx() const
 
   return emx;
 }
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_AdjacencyMx::t_std_mx asiAlgo_AdjacencyMx::AsStandard() const
+{
+  t_std_mx smx;
+
+  // Get dimensions.
+  const int nbRows = this->mx.Extent();
+
+  // Populate the matrix.
+  for ( int r = 1; r <= nbRows; ++r )
+  {
+    const TColStd_PackedMapOfInteger& row = this->mx(r);
+
+    smx.push_back( std::vector<int>() );
+    //
+    std::vector<int>& stdRow = smx[r - 1];
+
+    for ( TColStd_MapIteratorOfPackedMapOfInteger cit(row); cit.More(); cit.Next() )
+    {
+      stdRow.push_back( cit.Key() );
+    }
+  }
+
+  return smx;
+}

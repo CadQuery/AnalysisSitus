@@ -99,10 +99,12 @@ protected:
   struct t_faceInfo
   {
     Handle(Geom_Surface) surf;
+    int                  nVerts;
     int                  nEdges;
+    int                  nWires;
 
     //! Default ctor.
-    t_faceInfo() : nEdges(0)
+    t_faceInfo() : nVerts(0), nEdges(0), nWires(0)
     {}
   };
 
@@ -147,7 +149,7 @@ protected:
   //! Prunes the passed bijection candidate matrix.
   //! \param[in,out] M the matrix to prune.
   asiAlgo_EXPORT void
-    prune(Eigen::MatrixXd& M) const;
+    prune(Eigen::MatrixXd& M);
 
   //! Recursive routine to find isomorphisms.
   //! \param[in]     curRow   currently processed row.
@@ -179,11 +181,14 @@ protected:
   //! Graphs in question.
   Handle(asiAlgo_AAG) m_G_aag, m_P_aag;
 
-  //! Face info.
-  NCollection_DataMap<int, t_faceInfo> m_faceInfo_G, m_faceInfo_P;
+  //! Adjacency matrices driven by standard C++ collections.
+  asiAlgo_AdjacencyMx::t_std_mx m_G_std, m_P_std;
 
   //! Eigen versions of the adjacency matrices.
   Eigen::MatrixXd m_P, m_G;
+
+  //! Face info.
+  NCollection_DataMap<int, t_faceInfo> m_faceInfo_G, m_faceInfo_P;
 
   //! Indicates whether the geometric props of the features
   //! in G should match exactly the geometric props of the

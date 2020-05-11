@@ -99,11 +99,15 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   TIMER_GO
 
   // Convert to Eigen matrices.
-  m_P = P_aag->GetNeighborhood().AsEigenMx();
+  m_P = m_P_aag->GetNeighborhood().AsEigenMx();
   m_G = m_G_aag->GetNeighborhood().AsEigenMx();
 
+  // Convert to standard matrices.
+  m_P_std = m_P_aag->GetNeighborhood().AsStandard();
+  m_G_std = m_G_aag->GetNeighborhood().AsStandard();
+
   TIMER_FINISH
-  TIMER_COUT_RESULT_MSG("Convert G and P to the Eigen matrices")
+  TIMER_COUT_RESULT_MSG("Convert G and P to the computation-ready matrices")
 
   TIMER_RESET
   TIMER_GO
@@ -187,12 +191,20 @@ void asiAlgo_Isomorphism::fillFacesInfo(const Handle(asiAlgo_AAG)&            aa
     const int          fid = it->GetFaceId();
     const TopoDS_Face& F   = aag->GetFace(fid);
 
+    TopTools_IndexedMapOfShape verts;
+    TopExp::MapShapes(F, TopAbs_VERTEX, verts);
+
     TopTools_IndexedMapOfShape edges;
     TopExp::MapShapes(F, TopAbs_EDGE, edges);
 
+    TopTools_IndexedMapOfShape wires;
+    TopExp::MapShapes(F, TopAbs_WIRE, wires);
+
     t_faceInfo info;
     info.surf   = BRep_Tool::Surface(F);
+    info.nVerts = verts.Extent();
     info.nEdges = edges.Extent();
+    info.nWires = wires.Extent();
 
     // For the trimmed surfaces, use the basis ones.
     if ( info.surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
@@ -210,8 +222,7 @@ void asiAlgo_Isomorphism::fillFacesInfo(const Handle(asiAlgo_AAG)&            aa
 
 //-----------------------------------------------------------------------------
 
-Eigen::MatrixXd
-  asiAlgo_Isomorphism::init_M0() const
+Eigen::MatrixXd asiAlgo_Isomorphism::init_M0() const
 {
   const int nRows = m_P_aag->GetNumberOfNodes();
   const int nCols = m_G_aag->GetNumberOfNodes();
@@ -239,30 +250,93 @@ Eigen::MatrixXd
 bool asiAlgo_Isomorphism::areMatching(const int V_P,
                                       const int V_G) const
 {
+  const t_faceInfo& info_G = m_faceInfo_G(V_G);
+  const t_faceInfo& info_P = m_faceInfo_P(V_P);
+
   const TColStd_PackedMapOfInteger& row_P     = m_P_aag->GetNeighbors(V_P);
   const int                         valence_P = row_P.Extent();
 
   const TColStd_PackedMapOfInteger& row_G     = m_G_aag->GetNeighbors(V_G);
   const int                         valence_G = row_G.Extent();
 
+  /* ==============
+   *  Heuristic 01.
+   * ============== */
+
   // Check degrees.
   if ( valence_P > valence_G )
     return false;
 
-  const t_faceInfo& info_G = m_faceInfo_G(V_G);
-  const t_faceInfo& info_P = m_faceInfo_P(V_P);
+  /* ==============
+   *  Heuristic 02.
+   * ============== */
+
+  // If degrees are Ok, we can go further and check that the arc attributes
+  // in G contain the arc attribute in P as a subset.
+
+  int P_angles[FeatureAngleType_LAST];
+  //
+  for ( int k = 0; k < FeatureAngleType_LAST; ++k ) P_angles[k] = 0;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(row_P); nit.More(); nit.Next() )
+  {
+    const int nid = nit.Key();
+
+    Handle(asiAlgo_FeatureAttrAngle)
+      P_angleAttr = m_P_aag->ATTR_ARC<asiAlgo_FeatureAttrAngle>( asiAlgo_AAG::t_arc(V_P, nid) );
+
+    if ( !P_angleAttr.IsNull() )
+      P_angles[ P_angleAttr->GetAngleType() ]++;
+  }
+
+  int G_angles[FeatureAngleType_LAST];
+  //
+  for ( int k = 0; k < FeatureAngleType_LAST; ++k ) G_angles[k] = 0;
+  //
+  for ( TColStd_MapIteratorOfPackedMapOfInteger nit(row_G); nit.More(); nit.Next() )
+  {
+    const int nid = nit.Key();
+
+    Handle(asiAlgo_FeatureAttrAngle)
+      G_angleAttr = m_G_aag->ATTR_ARC<asiAlgo_FeatureAttrAngle>( asiAlgo_AAG::t_arc(V_G, nid) );
+
+    if ( !G_angleAttr.IsNull() )
+      G_angles[ G_angleAttr->GetAngleType() ]++;
+  }
+
+  for ( int k = 0; k < FeatureAngleType_LAST; ++k )
+    if ( G_angles[k] - P_angles[k] < 0 ) // Not a subset.
+      return false;
 
   // Check topology.
   {
+    /* ==============
+     *  Heuristic 03.
+     * ============== */
+
+    if ( info_G.nVerts != info_P.nVerts )
+      return false;
+
     if ( info_G.nEdges != info_P.nEdges )
+      return false;
+
+    if ( info_G.nWires != info_P.nWires )
       return false;
   }
 
   // Check geometry.
   {
+    /* ==============
+     *  Heuristic 04.
+     * ============== */
+
     // Surface type.
     if ( info_G.surf->DynamicType() != info_P.surf->DynamicType() )
       return false;
+
+    /* ==================
+     *  Extra heuristics.
+     * ================== */
 
     // Match props.
     if ( m_bMatchGeomProps )
@@ -321,32 +395,36 @@ bool asiAlgo_Isomorphism::isIsomorphism(const Eigen::MatrixXd& M)
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_Isomorphism::prune(Eigen::MatrixXd& M) const
+void asiAlgo_Isomorphism::prune(Eigen::MatrixXd& M)
 {
-  for ( int r = 0; r < M.rows(); ++r )
+  // The order of iteration does matter. Simply swapping the following
+  // two loops (so that to iterate columns first, instead of rows like
+  // it is now) may slow down runtime twice for some cases.
+  for ( int r = 0; r < M.rows(); ++r ) // P graph.
   {
-    const TColStd_PackedMapOfInteger&
-      neighbors_P = m_P_aag->GetNeighbors(r + 1);
+    const std::vector<int>& neighbors_P = m_P_std[r];
 
-    for ( int c = 0; c < M.cols(); ++c )
+    for ( int c = 0; c < M.cols(); ++c ) // G graph.
     {
-      const TColStd_PackedMapOfInteger&
-        neighbors_G = m_G_aag->GetNeighbors(c + 1);
+      const std::vector<int>& neighbors_G = m_G_std[c];
 
       if ( M(r, c) == 1 )
       {
         // The neighbors should also match in M. If not, then
-        // the (r,c) matching is impossible, and we cancel it.
+        // the current M(r,c) = 1 matching is impossible, and
+        // we have to cancel it.
 
         bool neighborsMatch = true;
-        for ( TColStd_MapIteratorOfPackedMapOfInteger P_it(neighbors_P); P_it.More(); P_it.Next() )
+        for ( std::vector<int>::const_iterator P_it = neighbors_P.cbegin();
+              P_it != neighbors_P.cend(); P_it++ )
         {
-          const int nr = P_it.Key() - 1;
+          const int nr = *P_it - 1;
 
           bool foundNeighborInG = false;
-          for ( TColStd_MapIteratorOfPackedMapOfInteger G_it(neighbors_G); G_it.More(); G_it.Next() )
+          for ( std::vector<int>::const_iterator G_it = neighbors_G.cbegin();
+                G_it != neighbors_G.cend(); G_it++ )
           {
-            const int nc = G_it.Key() - 1;
+            const int nc = *G_it - 1;
 
             if ( M(nr, nc) == 1 )
             {
@@ -375,9 +453,6 @@ void asiAlgo_Isomorphism::recurse(const int                   curRow,
                                   const Eigen::MatrixXd&      M,
                                   TColStd_PackedMapOfInteger& usedCols)
 {
-  /*if ( !this->solutionExists(M) )
-    return;*/
-
   // Check the stopping criterion.
   const int numRows = int( M.rows() );
   //

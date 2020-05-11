@@ -60,7 +60,8 @@ public:
   //! Type definition for the internal data structure.
   typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_mx;
 
-  //typedef NCollection_DataMap< int, std::vector<int> >
+  //! Standard collections-driven adjacency matrix.
+  typedef std::vector< std::vector<int> > t_std_mx;
 
 public:
 
@@ -71,6 +72,10 @@ public:
   //! \return equivalent Eigen maxtrix.
   asiAlgo_EXPORT Eigen::MatrixXd
     AsEigenMx() const;
+
+  //! \return equivalent matrix driven by the standard C++ collections.
+  asiAlgo_EXPORT t_std_mx
+    AsStandard() const;
 };
 
 #endif

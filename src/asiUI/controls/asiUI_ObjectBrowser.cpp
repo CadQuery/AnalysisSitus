@@ -1261,26 +1261,49 @@ void asiUI_ObjectBrowser::showNodes(const Handle(ActAPI_HNodeList)& nodes)
 
 void asiUI_ObjectBrowser::showOnlyNodes(const Handle(ActAPI_HNodeList)& nodes)
 {
+  /* ============================
+   *  Gather the Nodes to affect.
+   * ============================ */
+
+  Handle(ActAPI_HNodeList) allNodes = new ActAPI_HNodeList; // Nodes to affect.
+
+  // Remove visibility flags from all Nodes.
+  Handle(ActAPI_INode) root_n = m_model->GetRootNode();
+  //
+  for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(true);
+        cit->More();
+        cit->Next() )
+  {
+    Handle(ActAPI_INode) N = cit->Value();
+    //
+    if ( !N.IsNull() &&
+          N->HasUserFlags(NodeFlag_IsPresentationVisible) &&
+          N->HasUserFlags(NodeFlag_IsPresentedInPartView) )
+    {
+      allNodes->Append(N);
+    }
+  }
+
+  /* =================================
+   *  Perform Data Model modification.
+   * ================================= */
+
   m_model->OpenCommand();
   {
-    // Remove visibility flags from all Nodes.
-    Handle(ActAPI_INode) root_n = m_model->GetRootNode();
-    //
-    for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(true);
-          cit->More();
-          cit->Next() )
+    for ( ActAPI_HNodeList::Iterator nit(*allNodes); nit.More(); nit.Next() )
     {
-      Handle(ActAPI_INode) N = cit->Value();
-      //
-      if ( !N.IsNull() && N->HasUserFlags(NodeFlag_IsPresentationVisible) )
-        N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
+      const Handle(ActAPI_INode)& N = nit.Value();
+
+      // Set inivisible state in the Data Model.
+      N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
+
+      // Derender all presentations.
+      for ( size_t k = 0; k < m_viewers.size(); ++k )
+        if ( m_viewers[k] )
+          m_viewers[k]->PrsMgr()->DeRenderPresentation(N);
     }
 
-    // Derender all presentations.
-    for ( size_t k = 0; k < m_viewers.size(); ++k )
-      if ( m_viewers[k] )
-        m_viewers[k]->PrsMgr()->DeRenderAllPresentations();
-
+    // For the Nodes to keep visible, do the opposite.
     for ( ActAPI_HNodeList::Iterator nit(*nodes); nit.More(); nit.Next() )
     {
       const Handle(ActAPI_INode)& N = nit.Value();

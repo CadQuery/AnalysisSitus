@@ -53,6 +53,7 @@
 #endif
 
 // OCCT includes
+#include <BOPAlgo_Splitter.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -700,6 +701,65 @@ int ENGINE_InterpolatePoints(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_BOPSplit(const Handle(asiTcl_Interp)& interp,
+                    int                          argc,
+                    const char**                 argv)
+{
+  if ( argc != 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Get cutting face.
+  Handle(asiData_IVTopoItemNode)
+    faceNode = Handle(asiData_IVTopoItemNode)::DownCast( cmdEngine::model->FindNodeByName(argv[1]) );
+  //
+  if ( faceNode.IsNull() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a face with name %1." << argv[1]);
+    return TCL_OK;
+  }
+  //
+  TopoDS_Face cuttingFace = TopoDS::Face( faceNode->GetShape() );
+
+  // Prepare arguments.
+  TopTools_ListOfShape arguments, tools;
+  arguments.Append(partShape);
+  tools.Append(cuttingFace);
+
+  // Split.
+  BOPAlgo_Splitter splitter;
+  splitter.SetArguments(arguments);
+  splitter.SetTools(tools);
+  splitter.Perform();
+
+  // Modify Data Model.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update( splitter.Shape() );
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_BOPCut(const Handle(asiTcl_Interp)& interp,
                   int                          argc,
                   const char**                 argv)
@@ -867,6 +927,64 @@ int ENGINE_DefineGeom(const Handle(asiTcl_Interp)& interp,
   }
 
   pDlg->show();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_MakePlane(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  if ( argc != 2 && argc != 8 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_OK;
+  }
+  //
+  TopoDS_Shape partShape = partNode->GetShape();
+
+  // Init position.
+  gp_Pnt pos;
+  //
+  if ( argc >= 5 )
+  {
+    pos.SetX( atof(argv[2]) );
+    pos.SetY( atof(argv[3]) );
+    pos.SetZ( atof(argv[4]) );
+  }
+
+  // Init norm.
+  double nX = 0.0, nY = 0.0, nZ = 1.0;
+  //
+  if ( argc >= 8 )
+  {
+    nX = atof(argv[5]);
+    nY = atof(argv[6]);
+    nZ = atof(argv[7]);
+  }
+
+  // Create plane.
+  Handle(Geom_Plane) plane = new Geom_Plane( pos, gp_Vec(nX, nY, nZ) );
+
+  // Make face.
+  double xMin, yMin, zMin, xMax, yMax, zMax;
+  asiAlgo_Utils::Bounds(partShape, xMin, yMin, zMin, xMax, yMax, zMax);
+  //
+  const double d = Max( Abs(xMax - xMin), Max( Abs(yMax - yMin), Abs(zMax - zMin) ) );
+  TopoDS_Face cuttingFace = BRepBuilderAPI_MakeFace(plane->Pln(), -d, d, -d, d);
+
+  // Create shape.
+  interp->GetPlotter().REDRAW_SHAPE(argv[1], cuttingFace, Color_Default);
 
   return TCL_OK;
 }
@@ -1270,6 +1388,14 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     __FILE__, group, ENGINE_InterpolatePoints);
 
   //-------------------------------------------------------------------------//
+  interp->AddCommand("bop-split",
+    //
+    "bop-cut <plane>\n"
+    "\t Splits the active part by the passed plane.",
+    //
+    __FILE__, group, ENGINE_BOPSplit);
+
+  //-------------------------------------------------------------------------//
   interp->AddCommand("bop-cut",
     //
     "bop-cut <result> <op1> <op2> [<fuzz>]\n"
@@ -1303,6 +1429,15 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Opens geometry definition dialog.",
     //
     __FILE__, group, ENGINE_DefineGeom);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("make-plane",
+    //
+    "make-plane name [<posX> <posY> <posZ> <nX> <nY> <nZ>]\n"
+    "\t Creates a plane with origin at <posX>, <posY>, <posZ>\n"
+    "\t and the normal direction (<nX>, <nY>, <nZ>).",
+    //
+    __FILE__, group, ENGINE_MakePlane);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("make-box",

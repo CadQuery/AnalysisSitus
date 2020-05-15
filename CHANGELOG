@@ -1,6 +1,14 @@
 Release notes:
 
 -------------------------------------------------------------------------------
+v0.4.0, 15 May 2020
+-------------------------------------------------------------------------------
+- Linux-ready.
+- Enhancements in GUI, including object browser and parameter editor.
+- Add new handy Tcl commands.
+- Migrate to VTK 8.2.
+- Bugfix.
+-------------------------------------------------------------------------------
 v0.3.2, 15 October 2019
 -------------------------------------------------------------------------------
 - STEP reader now imports colored faces.

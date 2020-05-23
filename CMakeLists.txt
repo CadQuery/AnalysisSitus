@@ -180,7 +180,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiUI)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTestEngine)
 
 if (WIN32)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
+  if (NOT $ENV{CLION_IDE})
+    add_subdirectory(${CMAKE_SOURCE_DIR}/src/asiTest)
+  endif()
 endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/exe)
@@ -210,7 +212,9 @@ set_property(TARGET asiTestEngine PROPERTY FOLDER Framework)
 set_property(TARGET asiExe        PROPERTY FOLDER Executables)
 
 if (WIN32)
-  set_property(TARGET asiTest PROPERTY FOLDER Executables)
+  if (NOT $ENV{CLION_IDE})
+    set_property(TARGET asiTest PROPERTY FOLDER Executables)
+  endif()
 endif()
 
 if (NOT "${INNOSETUP_EXE}" STREQUAL "" AND EXISTS "${INNOSETUP_EXE}")

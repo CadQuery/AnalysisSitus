@@ -612,21 +612,28 @@ asiAlgo_CheckValidity::asiAlgo_CheckValidity(ActAPI_ProgressEntry progress,
 
 bool asiAlgo_CheckValidity::CheckBasic(const TopoDS_Shape& shape)
 {
-  BRepCheck_Analyzer Checker(shape);
-
-  // Check validity
-  if ( Checker.IsValid() )
+  try
   {
-    m_progress.SendLogMessage(LogInfo(Normal) << "Part is topologically and geometrically sound.");
-    return true;
+    BRepCheck_Analyzer Checker(shape);
+
+    // Check validity
+    if ( Checker.IsValid() )
+    {
+      m_progress.SendLogMessage(LogInfo(Normal) << "Part is topologically and geometrically sound.");
+      return true;
+    }
+
+    // ...
+    // Shape is known to be invalid at this stage
+    // ...
+
+    // Perform structural dump
+    CheckShapeAux::StructuralDump(m_progress, m_plotter, Checker, shape);
   }
-
-  // ...
-  // Shape is known to be invalid at this stage
-  // ...
-
-  // Perform structural dump
-  CheckShapeAux::StructuralDump(m_progress, m_plotter, Checker, shape);
+  catch ( ... )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Exception occurred in BRepCheck_Analyzer.");
+  }
 
   return false;
 }

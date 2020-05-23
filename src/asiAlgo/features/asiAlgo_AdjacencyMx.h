@@ -63,19 +63,23 @@ public:
   //! Standard collections-driven adjacency matrix.
   typedef std::vector< std::vector<int> > t_std_mx;
 
+  //! Map of indices for subgraphs.
+  typedef NCollection_DataMap<int, int> t_indexMap;
+
 public:
 
   t_mx mx; //!< Adjacency rows.
 
 public:
 
+  //! \param[out] idxMap
   //! \return equivalent Eigen maxtrix.
   asiAlgo_EXPORT Eigen::MatrixXd
-    AsEigenMx() const;
+    AsEigenMx(/*t_indexMap& idxMap*/) const;
 
   //! \return equivalent matrix driven by the standard C++ collections.
   asiAlgo_EXPORT t_std_mx
-    AsStandard() const;
+    AsStandard(/*t_indexMap& idxMap*/) const;
 };
 
 #endif

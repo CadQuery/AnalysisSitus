@@ -425,7 +425,9 @@ install (TARGETS asiData
          ARCHIVE DESTINATION framework/libd COMPONENT Library
          LIBRARY DESTINATION framework/libd COMPONENT Library)
 
-install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiData.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
+if (MSVC)
+  install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiData.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
+endif()
 
 install (FILES ${H_FILES}      DESTINATION framework/include)
 install (FILES ${part_H_FILES} DESTINATION framework/include)

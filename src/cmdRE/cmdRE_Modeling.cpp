@@ -1372,8 +1372,8 @@ int RE_SamplePart(const Handle(asiTcl_Interp)& interp,
     //
     cloudify.SetParametricSteps( atof(argv[2]), atof(argv[3]) );
     //
-    if ( onFacets && !cloudify.Sample_Facets (shape, sampledPts) ||
-        !onFacets && !cloudify.Sample_Faces  (shape, sampledPts) )
+    if ( (  onFacets && !cloudify.Sample_Facets (shape, sampledPts) ) ||
+         ( !onFacets && !cloudify.Sample_Faces  (shape, sampledPts) ) )
     {
       interp->GetProgress().SendLogMessage( LogErr(Normal) << "Cannot sample shape." );
       return TCL_ERROR;

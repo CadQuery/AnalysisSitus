@@ -105,8 +105,10 @@ install (TARGETS asiTestEngine
          ARCHIVE DESTINATION framework/libd COMPONENT Library
          LIBRARY DESTINATION framework/libd COMPONENT Library)
 
-install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bind CONFIGURATIONS Debug)
-install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bini CONFIGURATIONS RelWithDebInfo)
+if (MSVC)
+  install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bind CONFIGURATIONS Debug)
+  install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/asiTestEngine.pdb DESTINATION bini CONFIGURATIONS RelWithDebInfo)
+endif()
 
 install (FILES ${H_FILES}           DESTINATION framework/include)
 install (FILES ${reportgen_H_FILES} DESTINATION framework/include)

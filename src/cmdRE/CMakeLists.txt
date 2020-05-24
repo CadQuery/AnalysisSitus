@@ -126,4 +126,6 @@ install (TARGETS cmdRE
          ARCHIVE DESTINATION framework/libd COMPONENT Library
          LIBRARY DESTINATION framework/libd COMPONENT Library)
 
-install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/cmdRE.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
+if (MSVC)
+  install (FILES ${PROJECT_BINARY_DIR}/../../${PLATFORM}${COMPILER_BITNESS}/${COMPILER}/bind/cmdRE.pdb DESTINATION framework/bind CONFIGURATIONS Debug)
+endif()

@@ -3184,14 +3184,9 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
                             int                          argc,
                             const char**                 argv)
 {
-  // Test anything here.
-
-  if ( argc != 2 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
   Handle(asiEngine_Model) model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  const bool toDump = interp->HasKeyword(argc, argv, "dump");
 
   // Get problem graph.
   Handle(asiAlgo_AAG) G = model->GetPartNode()->GetAAG();
@@ -3200,17 +3195,6 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
     return TCL_ERROR;
-  }
-
-  // Dump G.
-  if ( G->GetNumberOfNodes() < 50 )
-  {
-    asiAlgo_AdjacencyMx::t_indexMap mapping;
-
-    std::stringstream buff;
-    buff << G->GetNeighborhood().AsEigenMx(mapping);
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "G:\n%1" << buff.str() );
-    std::cout << "G:\n" << buff.str() << std::endl;
   }
 
   // Get feature model.
@@ -3237,40 +3221,83 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
     std::cout << "P:\n" << buff.str() << std::endl;
   }
 
+  TColStd_PackedMapOfInteger featureFaces;
+
   TIMER_NEW
   TIMER_GO
 
-  // Prepare isomorphism algo.
-  asiAlgo_Isomorphism isomorphism( G,
-                                   interp->GetProgress(),
-                                   interp->GetPlotter() );
+  // Reduce AAG if requested.
+  bool isReduced = false;
+  //
+  if ( interp->HasKeyword(argc, argv, "noconvex") )
+  {
+    TColStd_PackedMapOfInteger convexOnlyFaces;
+    G->FindConvexOnly(convexOnlyFaces);
+    G->PushSubgraphX(convexOnlyFaces);
+    isReduced = true;
+  }
 
-  // Find convex-only faces to reduce the problem graph.
-  //TColStd_PackedMapOfInteger convexOnlyIds;
-  //G->FindConvexOnly(convexOnlyIds);
+  NCollection_Vector<TColStd_PackedMapOfInteger> ccomps;
+  G->GetConnectedComponents(ccomps);
 
-  // Find isomorphisms on the reduced graph.
-  //G->PushSubgraph(convexOnlyIds);
-  //{
-    if ( !isomorphism.Perform(P) )
+  std::cout << "There are " << ccomps.Length() << " connected components in the AAG to analyze." << std::endl;
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "There are %1 connected components to analyze."
+                                                        << ccomps.Length() );
+
+  for ( int ccidx = 0; ccidx < ccomps.Length(); ++ccidx )
+  {
+    // Recognize features in each connected component separately.
+    G->PushSubgraph( ccomps(ccidx) );
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to find isomorphisms.");
-      return TCL_ERROR;
+      if ( toDump )
+      {
+        interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Number of nodes in G: %1."
+                                                              << G->GetNumberOfNodes() );
+
+        // Dump G.
+        if ( G->GetNumberOfNodes() < 50 )
+        {
+          asiAlgo_AdjacencyMx::t_indexMap mapping;
+
+          std::stringstream buff;
+          buff << G->GetNeighborhood().AsEigenMx(mapping);
+          interp->GetProgress().SendLogMessage( LogInfo(Normal) << "G:\n%1" << buff.str() );
+          std::cout << "G:\n" << buff.str() << std::endl;
+        }
+      }
+
+      // Prepare isomorphism algo.
+      asiAlgo_Isomorphism isomorphism( G,
+                                       interp->GetProgress(),
+                                       interp->GetPlotter() );
+
+      // Find isomorphisms.
+      if ( !isomorphism.Perform(P) )
+      {
+        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to find isomorphisms.");
+        return TCL_ERROR;
+      }
+
+      // Get bijection matrices.
+      const std::vector<Eigen::MatrixXd>& isos = isomorphism.GetIsomorphisms();
+
+      if ( toDump )
+      {
+        interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 isomorphism(s)."
+                                                              << int( isos.size() ) );
+      }
+
+      // Get all found feature faces.
+      featureFaces.Unite( isomorphism.GetAllFeatures() );
     }
-  //}
-  //G->PopSubgraph();
-
-  // Get bijection matrices.
-  const std::vector<Eigen::MatrixXd>& isos = isomorphism.GetIsomorphisms();
-
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 isomorphism(s)."
-                                                        << int( isos.size() ) );
-
-  // Get all found feature faces.
-  TColStd_PackedMapOfInteger featureFaces = isomorphism.GetAllFeatures();
+    G->PopSubgraph();
+  }
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Find isomorphisms")
+
+  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 feature face(s)."
+                                                        << featureFaces.Extent() );
 
   // Highlight the detected faces.
   if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )
@@ -3279,6 +3306,10 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
 
   // Dump to result.
   *interp << featureFaces;
+
+  // Restore the full graph if it has been reduced.
+  if ( isReduced )
+    G->PopSubgraph();
 
   return TCL_OK;
 }

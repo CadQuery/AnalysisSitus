@@ -5,6 +5,14 @@
 > fit
 > find-isomorphisms f
 
+> load-brep /home/ssv/work/temp/feature4.brep; fit; set-as-var f
+> load-step /home/ssv/work/AnalysisSitus/data/cad/nist/nist_ctc_02_colored.stp; fit
+> find-isomorphisms f
+
 > load-brep /home/ssv/work/temp/feature3.brep; fit; set-as-var f
 > make-box b; fit; make-cylinder c 0.5 0.5 0.25 0.25 0.75; bop-cut res b c; set-as-part res; donly; fit
 > find-isomorphisms f
+
+> load-brep /home/ssv/work/temp/feature5.brep; fit; set-as-var f
+> load-step /home/ssv/work/step-inspector/data/tests-main/11kfaces.stp; fit
+> find-isomorphisms f -noconvex

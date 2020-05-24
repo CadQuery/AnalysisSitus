@@ -98,13 +98,13 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   TIMER_NEW
   TIMER_GO
 
-  // Convert to Eigen matrices.
-  m_P = m_P_aag->GetNeighborhood().AsEigenMx();
-  m_G = m_G_aag->GetNeighborhood().AsEigenMx();
+  // Convert to Eigen matrices. The mappings between the indices are preserved in the member-field maps.
+  m_P = m_P_aag->GetNeighborhood().AsEigenMx(m_P_eigenMapping);
+  m_G = m_G_aag->GetNeighborhood().AsEigenMx(m_G_eigenMapping);
 
-  // Convert to standard matrices.
-  m_P_std = m_P_aag->GetNeighborhood().AsStandard();
-  m_G_std = m_G_aag->GetNeighborhood().AsStandard();
+  // Convert to standard matrices. The mappings between the indices are preserved in the member-field maps.
+  m_P_std = m_P_aag->GetNeighborhood().AsStandard(m_P_stdMapping);
+  m_G_std = m_G_aag->GetNeighborhood().AsStandard(m_G_stdMapping);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Convert G and P to the computation-ready matrices")
@@ -124,15 +124,16 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   const int K = int( M0.rows() );
   const int N = int( M0.cols() );
 
-  std::cout << "Rows (K): " << K << std::endl;
-  std::cout << "Columns (N): " << N << std::endl;
-  std::cout << "N^K = " << Pow(N, K) << std::endl;
+  std::cout << "Rows (K): "      << K         << std::endl;
+  std::cout << "Columns (N): "   << N         << std::endl;
+  std::cout << "N^K threshold: " << Pow(N, K) << std::endl;
 
   // Find isomorphisms recursively.
   TColStd_PackedMapOfInteger usedCols;
   this->recurse(0, M0, usedCols);
 
-  std::cout << "Num. of tests for isomorphism: " << m_iNumTests << std::endl;
+  std::cout << "Num. of conducted tests for isomorphism: " << m_iNumTests << std::endl;
+  std::cout << "Num. of found isomorphisms: " << m_Ms.size() << std::endl;
 
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Find isomorphisms recursively")
@@ -146,7 +147,7 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Collect feature faces")
 
-  return !m_Ms.empty();
+  return true; // Even if there are no isomorphisms, we return `true` to indicate success.
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +189,7 @@ void asiAlgo_Isomorphism::fillFacesInfo(const Handle(asiAlgo_AAG)&            aa
   //
   for ( ; it->More(); it->Next() )
   {
-    const int          fid = it->GetFaceId();
+    const t_topoId     fid = it->GetFaceId();
     const TopoDS_Face& F   = aag->GetFace(fid);
 
     TopTools_IndexedMapOfShape verts;
@@ -230,15 +231,15 @@ Eigen::MatrixXd asiAlgo_Isomorphism::init_M0() const
   Eigen::MatrixXd M0(nRows, nCols);
 
   // Iterate rows of P.
-  for ( int idx_P = 1; idx_P <= nRows; ++idx_P )
+  for ( int idx_P = 0; idx_P < nRows; ++idx_P )
   {
     // Iterate rows of G.
-    for ( int idx_G = 1; idx_G <= nCols; ++idx_G )
+    for ( int idx_G = 0; idx_G < nCols; ++idx_G )
     {
       if ( this->areMatching(idx_P, idx_G) )
-        M0(idx_P - 1, idx_G - 1) = 1;
+        M0(idx_P, idx_G) = 1;
       else
-        M0(idx_P - 1, idx_G - 1) = 0;
+        M0(idx_P, idx_G) = 0;
     }
   }
 
@@ -247,9 +248,12 @@ Eigen::MatrixXd asiAlgo_Isomorphism::init_M0() const
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_Isomorphism::areMatching(const int V_P,
-                                      const int V_G) const
+bool asiAlgo_Isomorphism::areMatching(const int V_P_eigenIdx,
+                                      const int V_G_eigenIdx) const
 {
+  const t_topoId V_P = m_P_eigenMapping.Find1(V_P_eigenIdx);
+  const t_topoId V_G = m_G_eigenMapping.Find1(V_G_eigenIdx);
+
   const t_faceInfo& info_G = m_faceInfo_G(V_G);
   const t_faceInfo& info_P = m_faceInfo_P(V_P);
 
@@ -280,7 +284,7 @@ bool asiAlgo_Isomorphism::areMatching(const int V_P,
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(row_P); nit.More(); nit.Next() )
   {
-    const int nid = nit.Key();
+    const t_topoId nid = nit.Key();
 
     Handle(asiAlgo_FeatureAttrAngle)
       P_angleAttr = m_P_aag->ATTR_ARC<asiAlgo_FeatureAttrAngle>( asiAlgo_AAG::t_arc(V_P, nid) );
@@ -295,7 +299,7 @@ bool asiAlgo_Isomorphism::areMatching(const int V_P,
   //
   for ( TColStd_MapIteratorOfPackedMapOfInteger nit(row_G); nit.More(); nit.Next() )
   {
-    const int nid = nit.Key();
+    const t_topoId nid = nit.Key();
 
     Handle(asiAlgo_FeatureAttrAngle)
       G_angleAttr = m_G_aag->ATTR_ARC<asiAlgo_FeatureAttrAngle>( asiAlgo_AAG::t_arc(V_G, nid) );
@@ -418,13 +422,13 @@ void asiAlgo_Isomorphism::prune(Eigen::MatrixXd& M)
         for ( std::vector<int>::const_iterator P_it = neighbors_P.cbegin();
               P_it != neighbors_P.cend(); P_it++ )
         {
-          const int nr = *P_it - 1;
+          const int nr = *P_it;
 
           bool foundNeighborInG = false;
           for ( std::vector<int>::const_iterator G_it = neighbors_G.cbegin();
                 G_it != neighbors_G.cend(); G_it++ )
           {
-            const int nc = *G_it - 1;
+            const int nc = *G_it;
 
             if ( M(nr, nc) == 1 )
             {
@@ -544,14 +548,14 @@ void asiAlgo_Isomorphism::recurse(const int                   curRow,
 
 //-----------------------------------------------------------------------------
 
-int asiAlgo_Isomorphism::getImage(const int              V_P,
-                                  const Eigen::MatrixXd& M) const
+t_topoId asiAlgo_Isomorphism::getDomainImage(const int              V_P_eigenIdx,
+                                             const Eigen::MatrixXd& M) const
 {
   const int numCols = int( M.cols() );
   for ( int c = 0; c < numCols; ++c )
   {
-    if ( M(V_P - 1, c) == 1 )
-      return c + 1;
+    if ( M(V_P_eigenIdx, c) == 1 )
+      return m_G_eigenMapping.Find1(c); // Use G mapping as G is a universum.
   }
 
   return 0; // Invalid index.
@@ -579,8 +583,8 @@ void asiAlgo_Isomorphism::collectFeatures()
       Handle(asiAlgo_FeatureAttrAngle)
         P_angleAttr = Handle(asiAlgo_FeatureAttrAngle)::DownCast( ait.Value() );
 
-      const int imF1 = this->getImage(P_arc.F1, m_Ms[i]);
-      const int imF2 = this->getImage(P_arc.F2, m_Ms[i]);
+      const t_topoId imF1 = this->getDomainImage(m_P_eigenMapping.Find2(P_arc.F1), m_Ms[i]);
+      const t_topoId imF2 = this->getDomainImage(m_P_eigenMapping.Find2(P_arc.F2), m_Ms[i]);
 
       candidates.Add(imF1);
       candidates.Add(imF2);
@@ -606,7 +610,7 @@ void asiAlgo_Isomorphism::collectFeatures()
       Handle(asiAlgo_FeatureAttrAngle)
         P_angleAttr = m_P_aag->ATTR_NODE<asiAlgo_FeatureAttrAngle>(1);
 
-      const int imF = this->getImage(1, m_Ms[i]);
+      const t_topoId imF = this->getDomainImage(m_P_eigenMapping.Find2(0), m_Ms[i]);
 
       candidates.Add(imF);
 

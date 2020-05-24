@@ -36,6 +36,7 @@
 
 // OpenCascade includes
 #include <NCollection_DataMap.hxx>
+#include <NCollection_DoubleMap.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
 
 // Standard includes
@@ -58,13 +59,13 @@ class asiAlgo_AdjacencyMx
 public:
 
   //! Type definition for the internal data structure.
-  typedef NCollection_DataMap<int, TColStd_PackedMapOfInteger> t_mx;
+  typedef NCollection_DataMap<t_topoId, TColStd_PackedMapOfInteger> t_mx;
 
   //! Standard collections-driven adjacency matrix.
   typedef std::vector< std::vector<int> > t_std_mx;
 
   //! Map of indices for subgraphs.
-  typedef NCollection_DataMap<int, int> t_indexMap;
+  typedef NCollection_DoubleMap<int, t_topoId> t_indexMap;
 
 public:
 
@@ -72,14 +73,19 @@ public:
 
 public:
 
-  //! \param[out] idxMap
-  //! \return equivalent Eigen maxtrix.
+  //! Converts the adjacency matrix to the Eigen matrix.
+  //! \param[out] idxMap the mapping between the original face IDs and their corresponding indices
+  //!                    in the output Eigen matrix.
+  //! \return equivalent Eigen matrix.
   asiAlgo_EXPORT Eigen::MatrixXd
-    AsEigenMx(/*t_indexMap& idxMap*/) const;
+    AsEigenMx(t_indexMap& idxMap) const;
 
+  //! Converts the adjacency matrix to the standard C++ matrix.
+  //! \param[out] idxMap the mapping between the original face IDs and their corresponding indices
+  //!                    in the output standard C++ matrix.
   //! \return equivalent matrix driven by the standard C++ collections.
   asiAlgo_EXPORT t_std_mx
-    AsStandard(/*t_indexMap& idxMap*/) const;
+    AsStandard(t_indexMap& idxMap) const;
 };
 
 #endif

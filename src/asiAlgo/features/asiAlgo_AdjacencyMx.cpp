@@ -36,7 +36,8 @@
 
 //-----------------------------------------------------------------------------
 
-Eigen::MatrixXd asiAlgo_AdjacencyMx::AsEigenMx() const
+Eigen::MatrixXd
+  asiAlgo_AdjacencyMx::AsEigenMx(t_indexMap& idxMap) const
 {
   // Get dimensions.
   const int nbRows = this->mx.Extent();
@@ -50,16 +51,28 @@ Eigen::MatrixXd asiAlgo_AdjacencyMx::AsEigenMx() const
     for ( int c = 0; c < nbCols; ++c )
       emx(r, c) = 0.;
 
-  // Populate the matrix.
-  for ( int r = 1; r <= nbRows; ++r )
+  // Fill mapping.
+  auto eigenRowIdx = 0;
+  for ( t_mx::Iterator rowIt(this->mx); rowIt.More(); rowIt.Next(), ++eigenRowIdx )
   {
-    const TColStd_PackedMapOfInteger& row = this->mx(r);
+    const t_topoId rowFaceId = rowIt.Key();
 
+    // Set mapping.
+    idxMap.Bind(eigenRowIdx, rowFaceId);
+  }
+
+  // Populate the matrix.
+  eigenRowIdx = 0;
+  for ( t_mx::Iterator rowIt(this->mx); rowIt.More(); rowIt.Next(), ++eigenRowIdx )
+  {
+    const TColStd_PackedMapOfInteger& row = rowIt.Value();
+
+    // Populate the adjacency matrix.
     for ( TColStd_MapIteratorOfPackedMapOfInteger cit(row); cit.More(); cit.Next() )
     {
-      const int c = cit.Key();
+      const t_topoId nid = cit.Key();
 
-      emx(r - 1, c - 1) = 1;
+      emx( eigenRowIdx, idxMap.Find2(nid) ) = 1;
     }
   }
 
@@ -68,25 +81,37 @@ Eigen::MatrixXd asiAlgo_AdjacencyMx::AsEigenMx() const
 
 //-----------------------------------------------------------------------------
 
-asiAlgo_AdjacencyMx::t_std_mx asiAlgo_AdjacencyMx::AsStandard() const
+asiAlgo_AdjacencyMx::t_std_mx
+  asiAlgo_AdjacencyMx::AsStandard(t_indexMap& idxMap) const
 {
   t_std_mx smx;
 
-  // Get dimensions.
-  const int nbRows = this->mx.Extent();
+  // Fill mapping.
+  auto stdRowIdx = 0;
+  for ( t_mx::Iterator rowIt(this->mx); rowIt.More(); rowIt.Next(), ++stdRowIdx )
+  {
+    const t_topoId rowFaceId = rowIt.Key();
+
+    // Set mapping.
+    idxMap.Bind(stdRowIdx, rowFaceId);
+  }
 
   // Populate the matrix.
-  for ( int r = 1; r <= nbRows; ++r )
+  stdRowIdx = 0;
+  for ( t_mx::Iterator rowIt(this->mx); rowIt.More(); rowIt.Next(), ++stdRowIdx )
   {
-    const TColStd_PackedMapOfInteger& row = this->mx(r);
+    const TColStd_PackedMapOfInteger& row = rowIt.Value();
 
     smx.push_back( std::vector<int>() );
     //
-    std::vector<int>& stdRow = smx[r - 1];
+    std::vector<int>& stdRow = smx[stdRowIdx];
 
+    // Populate the adjacency matrix.
     for ( TColStd_MapIteratorOfPackedMapOfInteger cit(row); cit.More(); cit.Next() )
     {
-      stdRow.push_back( cit.Key() );
+      const t_topoId nid = cit.Key();
+
+      stdRow.push_back( idxMap.Find2(nid) );
     }
   }
 

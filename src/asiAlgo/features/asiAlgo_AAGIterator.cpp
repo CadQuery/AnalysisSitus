@@ -80,7 +80,7 @@ bool asiAlgo_AAGRandomIterator::GetNeighbors(TColStd_PackedMapOfInteger& neighbo
 }
 
 //! \return ID of the current face.
-int asiAlgo_AAGRandomIterator::GetFaceId() const
+t_topoId asiAlgo_AAGRandomIterator::GetFaceId() const
 {
   return m_it.Key();
 }
@@ -116,7 +116,7 @@ void asiAlgo_AAGSetIterator::Next()
 //! \return false is no neighbors available.
 bool asiAlgo_AAGSetIterator::GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const
 {
-  const int face_id = m_it.Key();
+  const t_topoId face_id = m_it.Key();
   if ( !m_graph->HasNeighbors(face_id) )
     return false;
 
@@ -125,7 +125,7 @@ bool asiAlgo_AAGSetIterator::GetNeighbors(TColStd_PackedMapOfInteger& neighbors)
 }
 
 //! \return ID of the current face.
-int asiAlgo_AAGSetIterator::GetFaceId() const
+t_topoId asiAlgo_AAGSetIterator::GetFaceId() const
 {
   return m_it.Key();
 }

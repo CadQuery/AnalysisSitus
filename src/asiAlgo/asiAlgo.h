@@ -53,4 +53,8 @@
 
 #define ASI_FILE_EXT "situ"
 
+//-----------------------------------------------------------------------------
+
+typedef int t_topoId; // Domain (1-based face ID).
+
 #endif

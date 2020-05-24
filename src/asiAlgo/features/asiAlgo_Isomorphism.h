@@ -111,24 +111,23 @@ protected:
 protected:
 
   asiAlgo_EXPORT void
-    fillFacesInfo(const Handle(asiAlgo_AAG)&            aag,
-                  NCollection_DataMap<int, t_faceInfo>& map);
+    fillFacesInfo(const Handle(asiAlgo_AAG)&                 aag,
+                  NCollection_DataMap<t_topoId, t_faceInfo>& map);
 
   //! Initializes bijection matrix `M0`.
   //! \return the initialized matrix.
   asiAlgo_EXPORT Eigen::MatrixXd
     init_M0() const;
 
-  //! Checks if the given vertices of graphs `P` and
-  //! `G` are matching, i.e., we can put 1 in the
-  //! corresponding element of the bijection matrix
-  //! `M`.
-  //! \param[in] V_P one-based index of the node in graph `P`.
-  //! \param[in] V_G one-based index of the node in graph `G`.
+  //! Checks if the given vertices of graphs `P` and `G` are matching, i.e.,
+  //! if we can put 1 in the corresponding element of the bijection matrix `M`.
+  //!
+  //! \param[in] V_P_eigenIdx zero-based index of the node in graph `P`.
+  //! \param[in] V_G_eigenIdx zero-based index of the node in graph `G`.
   //! \return true/false.
   asiAlgo_EXPORT bool
-    areMatching(const int V_P,
-                const int V_G) const;
+    areMatching(const int V_P_eigenIdx,
+                const int V_G_eigenIdx) const;
 
   //! Checks if the passed matrix `M` encodes some solution.
   //! Each row in the matrix `M` should contain at least one
@@ -160,14 +159,15 @@ protected:
             const Eigen::MatrixXd&      M,
             TColStd_PackedMapOfInteger& usedCols);
 
-  //! Returns the image of the passed `V_P` vertex of the pattern
+  //! Returns the domain image (1-based face ID) of the passed `V_P` vertex of the pattern
   //! graph w.r.t. to the given bijection specified by the `M` matrix.
-  //! \param[in] V_P index of a vertex in the pattern graph.
-  //! \param[in] M   bijection matrix (isomorphism).
+  //!
+  //! \param[in] V_P_eigenIdx zero-based index of a vertex in the pattern graph.
+  //! \param[in] M            bijection matrix (isomorphism).
   //! \return index of the `V_P` vertex in the problem graph `G`.
-  asiAlgo_EXPORT int
-    getImage(const int              V_P,
-             const Eigen::MatrixXd& M) const;
+  asiAlgo_EXPORT t_topoId
+    getDomainImage(const int              V_P_eigenIdx,
+                   const Eigen::MatrixXd& M) const;
 
   //! Filters out all collected isomorphisms to reduce them
   //! to the real features. This method checks the arc attributes
@@ -185,10 +185,16 @@ protected:
   asiAlgo_AdjacencyMx::t_std_mx m_G_std, m_P_std;
 
   //! Eigen versions of the adjacency matrices.
-  Eigen::MatrixXd m_P, m_G;
+  Eigen::MatrixXd m_G, m_P;
+
+  //! Mappings between the domain and the Eigen versions of adjacency matrices.
+  asiAlgo_AdjacencyMx::t_indexMap m_G_eigenMapping, m_P_eigenMapping;
+
+  //! Mappings between the domain and the C++ standard versions of adjacency matrices.
+  asiAlgo_AdjacencyMx::t_indexMap m_G_stdMapping, m_P_stdMapping;
 
   //! Face info.
-  NCollection_DataMap<int, t_faceInfo> m_faceInfo_G, m_faceInfo_P;
+  NCollection_DataMap<t_topoId, t_faceInfo> m_faceInfo_G, m_faceInfo_P;
 
   //! Indicates whether the geometric props of the features
   //! in G should match exactly the geometric props of the

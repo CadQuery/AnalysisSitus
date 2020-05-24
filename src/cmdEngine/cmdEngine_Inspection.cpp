@@ -3205,9 +3205,12 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
   // Dump G.
   if ( G->GetNumberOfNodes() < 50 )
   {
+    asiAlgo_AdjacencyMx::t_indexMap mapping;
+
     std::stringstream buff;
-    buff << G->GetNeighborhood().AsEigenMx();
+    buff << G->GetNeighborhood().AsEigenMx(mapping);
     interp->GetProgress().SendLogMessage( LogInfo(Normal) << "G:\n%1" << buff.str() );
+    std::cout << "G:\n" << buff.str() << std::endl;
   }
 
   // Get feature model.
@@ -3226,9 +3229,12 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
   // Dump P.
   if ( P->GetNumberOfNodes() < 50 ) // Limit for printing.
   {
+    asiAlgo_AdjacencyMx::t_indexMap mapping;
+
     std::stringstream buff;
-    buff << P->GetNeighborhood().AsEigenMx();
+    buff << P->GetNeighborhood().AsEigenMx(mapping);
     interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P:\n%1" << buff.str() );
+    std::cout << "P:\n" << buff.str() << std::endl;
   }
 
   TIMER_NEW

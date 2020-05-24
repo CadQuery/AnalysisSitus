@@ -88,7 +88,7 @@ public:
     GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const = 0;
 
   //! \return face ID of current AAG.
-  virtual int
+  virtual t_topoId
     GetFaceId() const = 0;
 
 protected:
@@ -130,7 +130,7 @@ public:
   asiAlgo_EXPORT virtual bool
     GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const;
 
-  asiAlgo_EXPORT virtual int
+  asiAlgo_EXPORT virtual t_topoId
     GetFaceId() const;
 
 protected:
@@ -176,7 +176,7 @@ public:
   asiAlgo_EXPORT virtual bool
     GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const;
 
-  asiAlgo_EXPORT virtual int
+  asiAlgo_EXPORT virtual t_topoId
     GetFaceId() const;
 
 protected:
@@ -206,9 +206,9 @@ namespace asiAlgo_AAGIterationRule
 
   public:
 
-    bool IsBlocking(const int asiAlgo_NotUsed(seed)) { return false; }
-    bool IsBlocking(const int asiAlgo_NotUsed(current),
-                    const int asiAlgo_NotUsed(next)) { return false; }
+    bool IsBlocking(const t_topoId asiAlgo_NotUsed(seed)) { return false; }
+    bool IsBlocking(const t_topoId asiAlgo_NotUsed(current),
+                    const t_topoId asiAlgo_NotUsed(next)) { return false; }
   };
 }
 
@@ -225,7 +225,7 @@ public:
   //! \param[in] seed  seed face.
   //! \param[in] rule  rule to block traversal of neighbor nodes.
   asiAlgo_AAGNeighborsIterator(const Handle(asiAlgo_AAG)& graph,
-                               const int                  seed,
+                               const t_topoId             seed,
                                const Handle(t_blockRule)& rule) : asiAlgo_AAGIterator()
   {
     this->SetBlockRule(rule);
@@ -247,7 +247,7 @@ public:
   //! \param[in] graph graph to iterate.
   //! \param[in] seed  1-based ID of the seed face to start iteration from.
   void Init(const Handle(asiAlgo_AAG)& graph,
-            const int                  seed)
+            const t_topoId             seed)
   {
     asiAlgo_AAGIterator::SetGraph(graph);
     //
@@ -275,7 +275,7 @@ public:
       Standard_ProgramError::Raise("No next item");
 
     // Take current.
-    const int iCurrent = this->GetFaceId();
+    const t_topoId iCurrent = this->GetFaceId();
     m_fringe.pop(); // Top item is done.
 
     // Put all nodes pending for iteration to the fringe.
@@ -283,7 +283,7 @@ public:
     //
     for ( TColStd_MapIteratorOfPackedMapOfInteger nit(neighbors); nit.More(); nit.Next() )
     {
-      const int iNext = nit.Key();
+      const t_topoId iNext = nit.Key();
       //
       if ( m_visited.Contains(iNext) )
         continue;
@@ -305,7 +305,7 @@ public:
   //! \return false is no neighbors available.
   bool GetNeighbors(TColStd_PackedMapOfInteger& neighbors) const
   {
-    const int face_id = this->GetFaceId();
+    const t_topoId face_id = this->GetFaceId();
     if ( !m_graph->HasNeighbors(face_id) )
       return false;
 
@@ -314,16 +314,16 @@ public:
   }
 
   //! \return ID of the current face.
-  int GetFaceId() const
+  t_topoId GetFaceId() const
   {
     return m_fringe.top();
   }
 
 protected:
 
-  int                        m_iSeed;     //!< Seed node.
+  t_topoId                   m_iSeed;     //!< Seed node.
   TColStd_PackedMapOfInteger m_visited;   //!< Visited nodes.
-  std::stack<int>            m_fringe;    //!< Where to return.
+  std::stack<t_topoId>       m_fringe;    //!< Where to return.
   Handle(t_blockRule)        m_blockRule; //!< Rule to block further iterations.
 
 };

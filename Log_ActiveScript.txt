@@ -1,0 +1,10 @@
+> load-brep /home/ssv/work/temp/feature2.brep
+> fit
+> set-as-var f
+> load-step /home/ssv/work/AnalysisSitus/data/cad/ANC101_colored.stp
+> fit
+> find-isomorphisms f
+
+> load-brep /home/ssv/work/temp/feature3.brep; fit; set-as-var f
+> make-box b; fit; make-cylinder c 0.5 0.5 0.25 0.25 0.75; bop-cut res b c; set-as-part res; donly; fit
+> find-isomorphisms f

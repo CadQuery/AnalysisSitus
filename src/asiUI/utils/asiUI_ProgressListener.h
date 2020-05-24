@@ -64,6 +64,9 @@ public:
   asiUI_EXPORT virtual void
     Connect();
 
+  asiUI_EXPORT void
+    SetProcessEvents(const bool on);
+
 protected slots:
 
   asiUI_EXPORT void onStep       ();

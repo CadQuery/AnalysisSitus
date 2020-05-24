@@ -35,6 +35,7 @@
 #include <asiUI_BatchFacilities.h>
 #include <asiUI_IParamEditor.h>
 #include <asiUI_ObjectBrowser.h>
+#include <asiUI_ProgressListener.h>
 #include <asiUI_ViewerDomain.h>
 #include <asiUI_ViewerPart.h>
 #include <asiUI_ViewerHost.h>
@@ -197,14 +198,15 @@ public:
 
 public:
 
-  QMainWindow*                MainWindow;    //!< Main window.
-  asiUI_ObjectBrowser*        ObjectBrowser; //!< Object browser.
-  asiUI_ViewerPart*           ViewerPart;    //!< Viewer for part.
-  asiUI_ViewerDomain*         ViewerDomain;  //!< Viewer for face parametric domain.
-  asiUI_ViewerHost*           ViewerHost;    //!< Viewer for host geometry.
-  asiUI_UnitManager*          UnitManager;   //!< Utility to manage units.
-  Handle(asiUI_WidgetFactory) WidgetFactory; //!< Widget factory for datums.
-  Handle(asiUI_IParamEditor)  ParamEditor;   //!< Parameter editor.
+  QMainWindow*                MainWindow;       //!< Main window.
+  asiUI_ObjectBrowser*        ObjectBrowser;    //!< Object browser.
+  asiUI_ViewerPart*           ViewerPart;       //!< Viewer for part.
+  asiUI_ViewerDomain*         ViewerDomain;     //!< Viewer for face parametric domain.
+  asiUI_ViewerHost*           ViewerHost;       //!< Viewer for host geometry.
+  asiUI_UnitManager*          UnitManager;      //!< Utility to manage units.
+  Handle(asiUI_WidgetFactory) WidgetFactory;    //!< Widget factory for datums.
+  Handle(asiUI_IParamEditor)  ParamEditor;      //!< Parameter editor.
+  asiUI_ProgressListener*     ProgressListener; //!< Progress listener.
 
 };
 

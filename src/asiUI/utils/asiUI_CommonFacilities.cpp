@@ -46,7 +46,8 @@ asiUI_CommonFacilities::asiUI_CommonFacilities(const bool initBatch)
   ViewerDomain          (nullptr),
   ViewerHost            (nullptr),
   UnitManager           (nullptr),
-  ParamEditor           (nullptr)
+  ParamEditor           (nullptr),
+  ProgressListener      (nullptr)
 //
 {
   WidgetFactory = new asiUI_WidgetFactory(this);

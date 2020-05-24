@@ -3184,7 +3184,8 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
                             int                          argc,
                             const char**                 argv)
 {
-  Handle(asiEngine_Model) model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  Handle(asiEngine_Model)
+    model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
 
   const bool toDump = interp->HasKeyword(argc, argv, "dump");
 
@@ -3221,6 +3222,10 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
     std::cout << "P:\n" << buff.str() << std::endl;
   }
 
+  /* =========================
+   *  Search for isomorphisms.
+   * ========================= */
+
   TColStd_PackedMapOfInteger featureFaces;
 
   TIMER_NEW
@@ -3239,6 +3244,12 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
 
   NCollection_Vector<TColStd_PackedMapOfInteger> ccomps;
   G->GetConnectedComponents(ccomps);
+
+  interp->GetProgress().SetMessageKey("Searching for isomorphisms");
+  interp->GetProgress().Init( ccomps.Length() );
+
+  // Enable events processing.
+  cmdEngine::cf->ProgressListener->SetProcessEvents(true);
 
   std::cout << "There are " << ccomps.Length() << " connected components in the AAG to analyze." << std::endl;
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "There are %1 connected components to analyze."
@@ -3275,6 +3286,10 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
       if ( !isomorphism.Perform(P) )
       {
         interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to find isomorphisms.");
+        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
+
+        // Disable events processing.
+        cmdEngine::cf->ProgressListener->SetProcessEvents(false);
         return TCL_ERROR;
       }
 
@@ -3291,10 +3306,31 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
       featureFaces.Unite( isomorphism.GetAllFeatures() );
     }
     G->PopSubgraph();
+
+    // Step progress and check for cancellation.
+    interp->GetProgress().StepProgress(1);
+    //
+    if ( interp->GetProgress().IsCancelling() )
+    {
+      interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Canceled);
+
+      // Disable events processing.
+      cmdEngine::cf->ProgressListener->SetProcessEvents(false);
+      return TCL_OK;
+    }
   }
+
+  interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
+
+  // Disable events processing.
+  cmdEngine::cf->ProgressListener->SetProcessEvents(false);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Find isomorphisms")
+
+  /* =======================
+   *  Finalize computations.
+   * ======================= */
 
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 feature face(s)."
                                                         << featureFaces.Extent() );

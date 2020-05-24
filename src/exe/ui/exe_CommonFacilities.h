@@ -39,7 +39,6 @@
 #include <asiUI_IStatusBar.h>
 #include <asiUI_IV.h>
 #include <asiUI_ObjectBrowser.h>
-#include <asiUI_ProgressListener.h>
 #include <asiUI_ProgressNotifier.h>
 
 // asiTcl includes
@@ -55,10 +54,9 @@ public:
 
 public:
 
-  asiUI_ProgressListener*  ProgressListener; //!< Progress listener.
-  Handle(asiUI_IStatusBar) StatusBar;        //!< Status bar of the main window.
-  Handle(asiUI_Logger)     Logger;           //!< Logger.
-  Handle(asiTcl_Interp)    Interp;           //!< Tcl interpreter.
+  Handle(asiUI_IStatusBar) StatusBar; //!< Status bar of the main window.
+  Handle(asiUI_Logger)     Logger;    //!< Logger.
+  Handle(asiTcl_Interp)    Interp;     //!< Tcl interpreter.
 
   //! Visualization facilities.
   struct t_prs
@@ -86,8 +84,7 @@ private:
 
   exe_CommonFacilities() //!< ctor.
   //
-  : asiUI_CommonFacilities (),
-    ProgressListener       (nullptr)
+  : asiUI_CommonFacilities()
   {
     // Create Data Model
     this->Model = new asiEngine_Model;

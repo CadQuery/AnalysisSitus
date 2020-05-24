@@ -110,6 +110,13 @@ void asiUI_ProgressListener::Connect()
 
 //-----------------------------------------------------------------------------
 
+void asiUI_ProgressListener::SetProcessEvents(const bool on)
+{
+  m_bProcessEvents = on;
+}
+
+//-----------------------------------------------------------------------------
+
 //! Progress updated.
 void asiUI_ProgressListener::onStep()
 {

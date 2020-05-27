@@ -68,7 +68,8 @@ public:
 public:
 
   //! \return single instance of facilities.
-  static Handle(asiUI_BatchFacilities) Instance();
+  asiUI_EXPORT static Handle(asiUI_BatchFacilities)
+    Instance();
 
 protected:
 

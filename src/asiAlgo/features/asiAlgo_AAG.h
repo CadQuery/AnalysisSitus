@@ -116,14 +116,14 @@ public:
   //! for adjacency relation.
   struct t_arc
   {
-    int F1; //!< First face.
-    int F2; //!< Second face.
+    t_topoId F1; //!< First face.
+    t_topoId F2; //!< Second face.
 
     //! ctor default.
     t_arc() : F1(0), F2(0) {}
 
     //! ctor with parameters.
-    t_arc(const int _F1, const int _F2) : F1(_F1), F2(_F2) {}
+    t_arc(const t_topoId _F1, const t_topoId _F2) : F1(_F1), F2(_F2) {}
 
     //! \return hash code for the arc.
     static int HashCode(const t_arc& arc, const int upper)
@@ -280,7 +280,7 @@ public:
   typedef NCollection_DataMap<t_arc, Handle(asiAlgo_FeatureAttr), t_arc> t_arc_attributes;
 
   //! Node attributes.
-  typedef NCollection_DataMap<int, t_attr_set> t_node_attributes;
+  typedef NCollection_DataMap<t_topoId, t_attr_set> t_node_attributes;
 
   //---------------------------------------------------------------------------
 
@@ -398,7 +398,7 @@ public:
   //!
   //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
   asiAlgo_EXPORT void
-    PushSubgraphX(const int face2Exclude);
+    PushSubgraphX(const t_topoId face2Exclude);
 
   //! \brief Pops the top sub-graph from the internal stack.
   //!
@@ -435,7 +435,7 @@ public:
   //! \param[in] face_idx face index.
   //! \return true/false.
   asiAlgo_EXPORT bool
-    HasFace(const int face_idx) const;
+    HasFace(const t_topoId face_idx) const;
 
   //! Returns true if the passed face is in graph.
   //! \param[in] face face to check.
@@ -447,12 +447,12 @@ public:
   //! \param[in] face_idx face index.
   //! \return topological face.
   asiAlgo_EXPORT const TopoDS_Face&
-    GetFace(const int face_idx) const;
+    GetFace(const t_topoId face_idx) const;
 
   //! Returns face ID.
   //! \param[in] face face of interest.
   //! \return face ID.
-  asiAlgo_EXPORT int
+  asiAlgo_EXPORT t_topoId
     GetFaceId(const TopoDS_Shape& face) const;
 
   //! Checks whether the given face has any neighbors recorded in the AAG.
@@ -461,13 +461,13 @@ public:
   //! \param[in] face_idx face index.
   //! \return true in case if at least one neighbor presents, false -- otherwise.
   asiAlgo_EXPORT bool
-    HasNeighbors(const int face_idx) const;
+    HasNeighbors(const t_topoId face_idx) const;
 
   //! Returns neighbors for the face having the given internal index.
   //! \param[in] face_idx face index.
   //! \return indices of the neighbor faces.
   asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
-    GetNeighbors(const int face_idx) const;
+    GetNeighbors(const t_topoId face_idx) const;
 
   //! Returns only those neighbor faces which share the given edge with the
   //! passed face of interest.
@@ -475,7 +475,7 @@ public:
   //! \param[in] edge     common edge.
   //! \return indices of the neighbor faces sharing the given edge.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThru(const int face_idx, const TopoDS_Edge& edge);
+    GetNeighborsThru(const t_topoId face_idx, const TopoDS_Edge& edge);
 
   //! Returns neighbor faces for the given face of interest with additional
   //! filter on edges realizing the neighborhood.
@@ -483,7 +483,7 @@ public:
   //! \param[in] edge_ids indices of edges of interest.
   //! \return indices of the neighbor faces.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThru(const int                         face_idx,
+    GetNeighborsThru(const t_topoId                    face_idx,
                      const TColStd_PackedMapOfInteger& edge_ids);
 
   //! Returns only those neighbor faces which do not share the given edges with
@@ -492,7 +492,7 @@ public:
   //! \param[in] xEdges   edge where neighborhood is restricted.
   //! \return indices of the neighbor faces not sharing the given edges.
   asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThruX(const int face_idx, const TColStd_PackedMapOfInteger& xEdges);
+    GetNeighborsThruX(const t_topoId face_idx, const TColStd_PackedMapOfInteger& xEdges);
 
   //! Returns full collection of neighbor faces.
   //! \return neighborhood data.
@@ -625,7 +625,7 @@ public:
   //! \param[in] node ID of the graph node to check.
   //! \return true/false.
   asiAlgo_EXPORT bool
-    HasNodeAttributes(const int node) const;
+    HasNodeAttributes(const t_topoId node) const;
 
   //! Accessor for the entire collection of nodal attributes.
   //! \return attributes associated with all graph node.
@@ -636,14 +636,14 @@ public:
   //! \param[in] node ID of the graph node of interest.
   //! \return attributes associated with the given graph node.
   asiAlgo_EXPORT const t_attr_set&
-    GetNodeAttributes(const int node) const;
+    GetNodeAttributes(const t_topoId node) const;
 
   //! Returns attribute associated with the given graph node.
   //! \param[in] node    ID of the graph node of interest.
   //! \param[in] attr_id ID of the attribute to access.
   //! \return attribute associated with the given node.
   asiAlgo_EXPORT Handle(asiAlgo_FeatureAttr)
-    GetNodeAttribute(const int            node,
+    GetNodeAttribute(const t_topoId       node,
                      const Standard_GUID& attr_id) const;
 
   //! Removes attribute with the passed GUID from the given graph node.
@@ -652,7 +652,7 @@ public:
   //! \return true if the attribute was removed, false -- otherwise (e.g., if
   //!         such attribute does not exist).
   asiAlgo_EXPORT bool
-    RemoveNodeAttribute(const int            node,
+    RemoveNodeAttribute(const t_topoId       node,
                         const Standard_GUID& attr_id);
 
   //! Removes all attributes assigned to nodes.
@@ -669,8 +669,14 @@ public:
   //! \param[in] node ID of the graph node of interest.
   //! \param[in] attr attribute to set.
   asiAlgo_EXPORT bool
-    SetNodeAttribute(const int                          node,
+    SetNodeAttribute(const t_topoId                     node,
                      const Handle(asiAlgo_FeatureAttr)& attr);
+
+  //! Finds base faces, i.e., the faces having inner loops.
+  //! \param[out] resultFaceIds IDs of the found faces (if any).
+  //! \return true if anything has been found, false -- otherwise.
+  asiAlgo_EXPORT bool
+    FindBaseOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
 
   //! Searches for the faces having ALL neighbors attributed with convex links.
   //! \param[out] resultFaceIds IDs of the found faces (if any).
@@ -737,7 +743,7 @@ public:
   //! \param[in] fid face ID in question.
   //! \return attribute.
   template<typename t_attr_type>
-  Handle(t_attr_type) ATTR_NODE(const int fid) const
+  Handle(t_attr_type) ATTR_NODE(const t_topoId fid) const
   {
     return Handle(t_attr_type)::DownCast( this->GetNodeAttribute( fid, t_attr_type::GUID() ) );
   }
@@ -809,7 +815,7 @@ protected:
   //! \param[in,out] out        target output stream.
   //! \param[in]     whitespace num of spaces to prefix each row.
   asiAlgo_EXPORT void
-    dumpNodeJSON(const int         node,
+    dumpNodeJSON(const t_topoId    node,
                  const bool        isFirst,
                  Standard_OStream& out,
                  const int         whitespace = 0) const;

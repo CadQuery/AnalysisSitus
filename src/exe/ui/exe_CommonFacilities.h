@@ -55,8 +55,6 @@ public:
 public:
 
   Handle(asiUI_IStatusBar) StatusBar; //!< Status bar of the main window.
-  Handle(asiUI_Logger)     Logger;    //!< Logger.
-  Handle(asiTcl_Interp)    Interp;     //!< Tcl interpreter.
 
   //! Visualization facilities.
   struct t_prs

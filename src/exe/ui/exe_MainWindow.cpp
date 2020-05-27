@@ -403,9 +403,9 @@ void exe_MainWindow::createDockWindows()
 
   // Initialize and connect progress listener.
   cf->Logger           = new asiUI_Logger(Widgets.wLogger);
-  cf->ProgressListener = new asiUI_ProgressListener(statusBar,
-                                                    cf->Progress.Access(),
-                                                    cf->Logger);
+  cf->ProgressListener = new asiUI_ProgressListener( statusBar,
+                                                     cf->Progress.Access(),
+                                                     Handle(asiUI_Logger)::DownCast(cf->Logger) );
   cf->ProgressListener->Connect();
 
   /* ==================================

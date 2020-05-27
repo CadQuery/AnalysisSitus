@@ -3239,6 +3239,20 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
     TColStd_PackedMapOfInteger convexOnlyFaces;
     G->FindConvexOnly(convexOnlyFaces);
     G->PushSubgraphX(convexOnlyFaces);
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Num. of convex faces to exclude: %1."
+                                                          << convexOnlyFaces.Extent() );
+    isReduced = true;
+  }
+  //
+  if ( interp->HasKeyword(argc, argv, "nobase") )
+  {
+    TColStd_PackedMapOfInteger baseOnlyFaces;
+    G->FindBaseOnly(baseOnlyFaces);
+    G->PushSubgraphX(baseOnlyFaces);
+
+    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Num. of base faces to exclude: %1."
+                                                          << baseOnlyFaces.Extent() );
     isReduced = true;
   }
 

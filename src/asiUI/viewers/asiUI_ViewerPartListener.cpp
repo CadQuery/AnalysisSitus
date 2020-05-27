@@ -42,6 +42,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
+#include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 
 // asiVisu includes
@@ -78,13 +79,15 @@ asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*            
                                                    ActAPI_ProgressEntry           progress,
                                                    ActAPI_PlotterEntry            plotter)
 //
-: asiUI_Viewer3dListener (wViewerPart, model, progress, plotter),
-  m_wViewerDomain        (wViewerDomain),
-  m_wViewerHost          (wViewerHost),
-  m_pSaveBREPAction      (nullptr),
-  m_pShowNormsAction     (nullptr),
-  m_pInvertFacesAction   (nullptr),
-  m_pShowOriContour      (nullptr)
+: asiUI_Viewer3dListener  (wViewerPart, model, progress, plotter),
+  m_wViewerDomain         (wViewerDomain),
+  m_wViewerHost           (wViewerHost),
+  m_pSaveBREPAction       (nullptr),
+  m_pShowNormsAction      (nullptr),
+  m_pInvertFacesAction    (nullptr),
+  m_pShowOriContourAction (nullptr),
+  m_pCopyAsStringAction   (nullptr),
+  m_pSetAsVariableAction  (nullptr)
 {}
 
 //-----------------------------------------------------------------------------
@@ -286,19 +289,20 @@ void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
       if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceNormsNode) ) )
         m_pShowNormsAction = menu.addAction("Show face normals");
       if ( m_pViewer->PrsMgr()->IsPresentable( STANDARD_TYPE(asiData_FaceContourNode) ) )
-        m_pShowOriContour = menu.addAction("Show face oriented contour");
+        m_pShowOriContourAction = menu.addAction("Show face oriented contour");
       //
       m_pInvertFacesAction = menu.addAction("Invert faces");
     }
 
     menu.addSeparator();
     //
-    m_pSaveBREPAction = menu.addAction("Save to BREP...");
+    m_pSaveBREPAction      = menu.addAction("Save to BREP...");
+    m_pSetAsVariableAction = menu.addAction("Set as variable");
 
     // Add items which work for single-element selection.
     if ( faceIndices.Extent() == 1 || edgeIndices.Extent() == 1 )
     {
-      m_pCopyAsString = menu.addAction("Copy as JSON");
+      m_pCopyAsStringAction = menu.addAction("Copy as JSON");
     }
   }
 }
@@ -355,7 +359,7 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
   //---------------------------------------------------------------------------
   // ACTION: copy as string
   //---------------------------------------------------------------------------
-  else if ( pAction == m_pCopyAsString )
+  else if ( pAction == m_pCopyAsStringAction )
   {
     // Get highlighted sub-shapes.
     TopTools_IndexedMapOfShape selected;
@@ -421,7 +425,7 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
   //---------------------------------------------------------------------------
   // ACTION: show oriented contour
   //---------------------------------------------------------------------------
-  else if ( pAction == m_pShowOriContour )
+  else if ( pAction == m_pShowOriContourAction )
   {
     TIMER_NEW
     TIMER_GO
@@ -474,5 +478,35 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
     // Actualize
     m_pViewer->PrsMgr()->Actualize(part_n);
     m_pViewer->PrsMgr()->Actualize( m_model->GetPartNode()->GetNormsRepresentation() );
+  }
+
+  //---------------------------------------------------------------------------
+  // ACTION: set as variable
+  //---------------------------------------------------------------------------
+  if ( pAction == m_pSetAsVariableAction )
+  {
+    // Get highlighted sub-shapes
+    TopTools_IndexedMapOfShape selected;
+    asiEngine_Part( m_model, m_pViewer->PrsMgr() ).GetHighlightedSubShapes(selected);
+
+    // Prepare a shape to set as a variable
+    TopoDS_Shape shape2Var;
+    //
+    if ( selected.Extent() == 1 )
+      shape2Var = selected(1);
+    else
+    {
+      // Put selected shapes to a compound
+      TopoDS_Compound comp;
+      BRep_Builder().MakeCompound(comp);
+      //
+      for ( int k = 1; k <= selected.Extent(); ++k )
+        BRep_Builder().Add( comp, selected(k) );
+      //
+      shape2Var = comp;
+    }
+
+    // Add variable via the imperative plotter
+    m_plotter.DRAW_SHAPE(shape2Var, Color_Yellow, "var");
   }
 }

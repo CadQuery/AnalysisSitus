@@ -676,6 +676,31 @@ bool asiAlgo_AAG::SetNodeAttribute(const int                          node,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_AAG::FindBaseOnly(TColStd_PackedMapOfInteger& resultFaceIds) const
+{
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it( m_neighborsStack.top().mx );
+        it.More(); it.Next() )
+  {
+    const int fid = it.Key();
+
+    // Get face to check the number of wires.
+    const TopoDS_Face& face = this->GetFace(fid);
+
+    // Get the number of wires.
+    TopTools_IndexedMapOfShape wires;
+    TopExp::MapShapes(face, TopAbs_WIRE, wires);
+    //
+    const int numWires = wires.Extent();
+
+    if ( numWires > 1 )
+      resultFaceIds.Add(fid);
+  }
+
+  return resultFaceIds.Extent() > 0;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_AAG::FindConvexOnly(TColStd_PackedMapOfInteger& resultFaceIds) const
 {
   TColStd_PackedMapOfInteger traversed;

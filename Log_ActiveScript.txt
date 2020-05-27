@@ -15,4 +15,4 @@
 
 > load-brep /home/ssv/work/temp/feature5.brep; fit; set-as-var f
 > load-step /home/ssv/work/step-inspector/data/tests-main/11kfaces.stp; fit
-> find-isomorphisms f -noconvex
+> find-isomorphisms f -noconvex -nobase

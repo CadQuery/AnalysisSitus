@@ -90,8 +90,9 @@ protected:
   QAction* m_pSaveBREPAction;
   QAction* m_pShowNormsAction;
   QAction* m_pInvertFacesAction;
-  QAction* m_pShowOriContour;
-  QAction* m_pCopyAsString;
+  QAction* m_pShowOriContourAction;
+  QAction* m_pCopyAsStringAction;
+  QAction* m_pSetAsVariableAction;
 
 };
 

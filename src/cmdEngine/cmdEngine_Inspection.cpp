@@ -37,6 +37,7 @@
 // asiEngine includes
 #include <asiEngine_Curve.h>
 #include <asiEngine_Editing.h>
+#include <asiEngine_Isomorphism.h>
 #include <asiEngine_Part.h>
 #include <asiEngine_Thickness.h>
 #include <asiEngine_TolerantShapes.h>
@@ -52,7 +53,6 @@
 #include <asiAlgo_FeatureAttrBaseFace.h>
 #include <asiAlgo_FeatureType.h>
 #include <asiAlgo_FindVisibleFaces.h>
-#include <asiAlgo_Isomorphism.h>
 #include <asiAlgo_MeshConvert.h>
 #include <asiAlgo_RecognizeBlends.h>
 #include <asiAlgo_Timer.h>
@@ -3187,157 +3187,33 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
   Handle(asiEngine_Model)
     model = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
 
-  const bool toDump = interp->HasKeyword(argc, argv, "dump");
+  /* ===================
+   *  Find isomorphisms.
+   * =================== */
 
-  // Get problem graph.
-  Handle(asiAlgo_AAG) G = model->GetPartNode()->GetAAG();
+  asiEngine_Isomorphism isomorphism( cmdEngine::model,
+                                     interp->GetProgress(),
+                                     interp->GetPlotter() );
+
+  // Compose flags.
+  int flags = 0;
   //
-  if ( G.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "AAG is null.");
-    return TCL_ERROR;
-  }
-
-  // Get feature model.
-  Handle(asiData_IVTopoItemNode)
-    featureNode = Handle(asiData_IVTopoItemNode)::DownCast( model->FindNodeByName(argv[1]) );
-  //
-  if ( featureNode.IsNull() )
-  {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find topological object with name %1." << argv[1]);
-    return TCL_OK;
-  }
-  //
-  TopoDS_Shape        featureShape = featureNode->GetShape();
-  Handle(asiAlgo_AAG) P            = new asiAlgo_AAG(featureShape);
-
-  // Dump P.
-  if ( P->GetNumberOfNodes() < 50 ) // Limit for printing.
-  {
-    asiAlgo_AdjacencyMx::t_indexMap mapping;
-
-    std::stringstream buff;
-    buff << P->GetNeighborhood().AsEigenMx(mapping);
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "P:\n%1" << buff.str() );
-    std::cout << "P:\n" << buff.str() << std::endl;
-  }
-
-  /* =========================
-   *  Search for isomorphisms.
-   * ========================= */
-
-  TColStd_PackedMapOfInteger featureFaces;
+  if ( interp->HasKeyword(argc, argv, "dump") )
+    flags |= asiEngine_Isomorphism::Verbose;
+  if ( interp->HasKeyword(argc, argv, "noconvex") )
+    flags |= asiEngine_Isomorphism::ExcludeConvexOnly;
+  if ( interp->HasKeyword(argc, argv, "nobase") )
+    flags |= asiEngine_Isomorphism::ExcludeBase;
 
   TIMER_NEW
   TIMER_GO
 
-  // Reduce AAG if requested.
-  bool isReduced = false;
-  //
-  if ( interp->HasKeyword(argc, argv, "noconvex") )
+  // Find isomorphisms.
+  TColStd_PackedMapOfInteger featureFaces;
+  if ( !isomorphism.Compute(argv[1], featureFaces, flags) )
   {
-    TColStd_PackedMapOfInteger convexOnlyFaces;
-    G->FindConvexOnly(convexOnlyFaces);
-    G->PushSubgraphX(convexOnlyFaces);
-
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Num. of convex faces to exclude: %1."
-                                                          << convexOnlyFaces.Extent() );
-    isReduced = true;
+    return TCL_ERROR;
   }
-  //
-  if ( interp->HasKeyword(argc, argv, "nobase") )
-  {
-    TColStd_PackedMapOfInteger baseOnlyFaces;
-    G->FindBaseOnly(baseOnlyFaces);
-    G->PushSubgraphX(baseOnlyFaces);
-
-    interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Num. of base faces to exclude: %1."
-                                                          << baseOnlyFaces.Extent() );
-    isReduced = true;
-  }
-
-  NCollection_Vector<TColStd_PackedMapOfInteger> ccomps;
-  G->GetConnectedComponents(ccomps);
-
-  interp->GetProgress().SetMessageKey("Searching for isomorphisms");
-  interp->GetProgress().Init( ccomps.Length() );
-
-  // Enable events processing.
-  cmdEngine::cf->ProgressListener->SetProcessEvents(true);
-
-  std::cout << "There are " << ccomps.Length() << " connected components in the AAG to analyze." << std::endl;
-  interp->GetProgress().SendLogMessage( LogInfo(Normal) << "There are %1 connected components to analyze."
-                                                        << ccomps.Length() );
-
-  for ( int ccidx = 0; ccidx < ccomps.Length(); ++ccidx )
-  {
-    // Recognize features in each connected component separately.
-    G->PushSubgraph( ccomps(ccidx) );
-    {
-      if ( toDump )
-      {
-        interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Number of nodes in G: %1."
-                                                              << G->GetNumberOfNodes() );
-
-        // Dump G.
-        if ( G->GetNumberOfNodes() < 50 )
-        {
-          asiAlgo_AdjacencyMx::t_indexMap mapping;
-
-          std::stringstream buff;
-          buff << G->GetNeighborhood().AsEigenMx(mapping);
-          interp->GetProgress().SendLogMessage( LogInfo(Normal) << "G:\n%1" << buff.str() );
-          std::cout << "G:\n" << buff.str() << std::endl;
-        }
-      }
-
-      // Prepare isomorphism algo.
-      asiAlgo_Isomorphism isomorphism( G,
-                                       interp->GetProgress(),
-                                       interp->GetPlotter() );
-
-      // Find isomorphisms.
-      if ( !isomorphism.Perform(P) )
-      {
-        interp->GetProgress().SendLogMessage(LogErr(Normal) << "Failed to find isomorphisms.");
-        interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Failed);
-
-        // Disable events processing.
-        cmdEngine::cf->ProgressListener->SetProcessEvents(false);
-        return TCL_ERROR;
-      }
-
-      // Get bijection matrices.
-      const std::vector<Eigen::MatrixXd>& isos = isomorphism.GetIsomorphisms();
-
-      if ( toDump )
-      {
-        interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Found %1 isomorphism(s)."
-                                                              << int( isos.size() ) );
-      }
-
-      // Get all found feature faces.
-      featureFaces.Unite( isomorphism.GetAllFeatures() );
-    }
-    G->PopSubgraph();
-
-    // Step progress and check for cancellation.
-    interp->GetProgress().StepProgress(1);
-    //
-    if ( interp->GetProgress().IsCancelling() )
-    {
-      interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Canceled);
-
-      // Disable events processing.
-      cmdEngine::cf->ProgressListener->SetProcessEvents(false);
-      return TCL_OK;
-    }
-  }
-
-  interp->GetProgress().SetProgressStatus(ActAPI_ProgressStatus::Progress_Succeeded);
-
-  // Disable events processing.
-  cmdEngine::cf->ProgressListener->SetProcessEvents(false);
 
   TIMER_FINISH
   TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Find isomorphisms")
@@ -3356,10 +3232,6 @@ int ENGINE_FindIsomorphisms(const Handle(asiTcl_Interp)& interp,
 
   // Dump to result.
   *interp << featureFaces;
-
-  // Restore the full graph if it has been reduced.
-  if ( isReduced )
-    G->PopSubgraph();
 
   return TCL_OK;
 }

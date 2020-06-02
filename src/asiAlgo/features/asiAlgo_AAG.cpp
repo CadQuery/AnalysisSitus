@@ -116,7 +116,7 @@ void asiAlgo_AAG::PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep)
   // Gather all present face indices into a single map.
   TColStd_PackedMapOfInteger allFaces;
   for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(currentMx.mx); it.More(); it.Next() )
-    allFaces.Unite( it.Value() );
+    allFaces.Add( it.Key() );
 
   // Prepare a collection of face indices to eliminate.
   TColStd_PackedMapOfInteger face2Exclude;
@@ -142,15 +142,21 @@ void asiAlgo_AAG::PushSubgraphX(const int face2Exclude)
 void asiAlgo_AAG::PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude)
 {
   asiAlgo_AdjacencyMx& currentMx = m_neighborsStack.top();
-  asiAlgo_AdjacencyMx subgraphMx = currentMx; // Start with a copy.
+  asiAlgo_AdjacencyMx subgraphMx(m_alloc);
 
-  // Clean matrix rows.
-  for ( TColStd_MapIteratorOfPackedMapOfInteger fit(faces2Exclude); fit.More(); fit.Next() )
-    subgraphMx.mx.UnBind( fit.Key() );
+  // Compose new adjacency matrix.
+  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(currentMx.mx); it.More(); it.Next() )
+  {
+    const int fid = it.Key();
+    //
+    if ( faces2Exclude.Contains(fid) )
+      continue;
 
-  // Clean matrix columns.
-  for ( asiAlgo_AdjacencyMx::t_mx::Iterator it(subgraphMx.mx); it.More(); it.Next() )
-    it.ChangeValue().Subtract(faces2Exclude);
+    TColStd_PackedMapOfInteger row{ it.Value() };
+    row.Subtract(faces2Exclude);
+
+    subgraphMx.mx.Bind(fid, row);
+  }
 
   // Push sub-graph to stack.
   m_neighborsStack.push(subgraphMx);
@@ -161,6 +167,14 @@ void asiAlgo_AAG::PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude)
 void asiAlgo_AAG::PopSubgraph()
 {
   m_neighborsStack.pop();
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::PopSubgraphs()
+{
+  while ( m_neighborsStack.size() != 1 )
+    m_neighborsStack.pop();
 }
 
 //-----------------------------------------------------------------------------
@@ -1056,6 +1070,10 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
                        const double                      smoothAngularTol,
                        const int                         cachedMaps)
 {
+  // Prepare allocator.
+  m_alloc = new NCollection_IncAllocator;
+
+  // Set basic props.
   m_master            = masterCAD;
   m_bAllowSmooth      = allowSmooth;
   m_fSmoothAngularTol = smoothAngularTol;
@@ -1063,7 +1081,7 @@ void asiAlgo_AAG::init(const TopoDS_Shape&               masterCAD,
   //---------------------------------------------------------------------------
 
   // Put main adjacency matrix to the stack of graph states.
-  m_neighborsStack.push( asiAlgo_AdjacencyMx() );
+  m_neighborsStack.push( asiAlgo_AdjacencyMx(m_alloc) );
 
   //---------------------------------------------------------------------------
 

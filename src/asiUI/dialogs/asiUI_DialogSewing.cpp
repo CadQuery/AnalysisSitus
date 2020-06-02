@@ -164,6 +164,8 @@ void asiUI_DialogSewing::onPerform()
     if ( !asiAlgo_Utils::Sew(part, toler, sewnPart) )
     {
       m_progress.SendLogMessage(LogErr(Normal) << "Sewing failed.");
+
+      m_model->AbortCommand();
       this->close();
     }
     //

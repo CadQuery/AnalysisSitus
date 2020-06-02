@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 27 April 2020
+// Created on: 01 June 2020
 //-----------------------------------------------------------------------------
 // Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,78 +28,61 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_AdjacencyMx_h
-#define asiAlgo_AdjacencyMx_h
+#ifndef asiEngine_Isomorphism_h
+#define asiEngine_Isomorphism_h
 
-// asiAlgo includes
-#include <asiAlgo.h>
-
-// OpenCascade includes
-#include <NCollection_DataMap.hxx>
-#include <NCollection_DoubleMap.hxx>
-#include <TColStd_PackedMapOfInteger.hxx>
-
-// Standard includes
-#include <vector>
-
-// Eigen includes
-#ifdef _WIN32
-#pragma warning(disable : 4701 4702)
-#endif
-#include <Eigen/Dense>
-#ifdef _WIN32
-#pragma warning(default : 4701 4702)
-#endif
+// asiEngine includes
+#include <asiEngine_Model.h>
 
 //-----------------------------------------------------------------------------
 
-//! Adjacency matrix.
-class asiAlgo_AdjacencyMx
+//! Data Model API for finding isomorphisms of AAG.
+class asiEngine_Isomorphism
 {
 public:
 
-  //! Type definition for the internal data structure.
-  typedef NCollection_DataMap<t_topoId, TColStd_PackedMapOfInteger> t_mx;
-
-  //! Standard collections-driven adjacency matrix.
-  typedef std::vector< std::vector<int> > t_std_mx;
-
-  //! Map of indices for graph labeling.
-  typedef NCollection_DoubleMap<int, t_topoId> t_indexMap;
-
-public:
-
-  //! Default ctor.
-  //! \param[in] alloc optional heap memory allocator.
-  asiAlgo_AdjacencyMx(const Handle(NCollection_BaseAllocator)& alloc = nullptr) : mx(64, alloc)
-  {}
-
-  //! Assignment ctor.
-  //! \param[in] _amx other adjacency matrix to copy into this one.
-  asiAlgo_AdjacencyMx(const asiAlgo_AdjacencyMx& _amx)
+  //! Settings for isomorphism searching.
+  enum Flags
   {
-    this->mx = _amx.mx;
-  }
+    ExcludeConvexOnly = 0x001,
+    ExcludeBase       = 0x002,
+    Verbose           = 0x004
+  };
 
 public:
 
-  t_mx mx; //!< Adjacency rows.
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Isomorphism(const Handle(asiEngine_Model)& model,
+                        ActAPI_ProgressEntry           progress = nullptr,
+                        ActAPI_PlotterEntry            plotter  = nullptr)
+  //
+  : m_model(model), m_progress(progress), m_plotter(plotter) {}
 
 public:
 
-  //! Converts the adjacency matrix to the Eigen matrix.
-  //! \param[out] idxMap the mapping between the original face IDs and their corresponding indices
-  //!                    in the output Eigen matrix.
-  //! \return equivalent Eigen matrix.
-  asiAlgo_EXPORT Eigen::MatrixXd
-    AsEigenMx(t_indexMap& idxMap) const;
+  //! Finds all isomorphisms.
+  //! \param[in]  featureName  name of the data object representing the
+  //!                          feature to match.
+  //! \param[out] featureFaces found feature faces.
+  //! \param[in]  flags        optional flags to affect how isomorphisms
+  //!                          are to be found.
+  //! \return true in case of success, false -- otherwise.
+  asiEngine_EXPORT bool
+    Compute(const TCollection_AsciiString& featureName,
+            TColStd_PackedMapOfInteger&    featureFaces,
+            const int                      flags = 0);
 
-  //! Converts the adjacency matrix to the standard C++ matrix.
-  //! \param[out] idxMap the mapping between the original face IDs and their corresponding indices
-  //!                    in the output standard C++ matrix.
-  //! \return equivalent matrix driven by the standard C++ collections.
-  asiAlgo_EXPORT t_std_mx
-    AsStandard(t_indexMap& idxMap) const;
+protected:
+
+  Handle(asiEngine_Model) m_model; //!< Data Model instance.
+
+  /* Diagnostic tools */
+  mutable ActAPI_ProgressEntry m_progress; //!< Progress notifier.
+  mutable ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
+
 };
 
 #endif

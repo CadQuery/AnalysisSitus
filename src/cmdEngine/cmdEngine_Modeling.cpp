@@ -663,31 +663,53 @@ int ENGINE_InterpolatePoints(const Handle(asiTcl_Interp)& interp,
                              int                          argc,
                              const char**                 argv)
 {
-  if ( argc != 4 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
-  // Get Points Node.
-  Handle(asiData_IVPointSetNode)
-    pointsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdEngine::model->FindNodeByName(argv[2]) );
+  // Get points to interpolate.
+  Handle(asiAlgo_BaseCloud<double>) pts = new asiAlgo_BaseCloud<double>;
   //
-  if ( pointsNode.IsNull() )
+  for ( int k = 2; k < argc; ++k )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Points Node with name %1." << argv[2]);
-    return TCL_OK;
+    if ( !interp->IsKeyword(argv[k], "points") )
+      continue;
+
+    bool stop = false;
+    do
+    {
+      ++k;
+      if ( (k == argc) || interp->IsKeyword(argv[k], "") )
+      {
+        stop = true;
+      }
+      else
+      {
+        // Get Points Node.
+        Handle(asiData_IVPointSetNode)
+          pointsNode = Handle(asiData_IVPointSetNode)::DownCast( cmdEngine::model->FindNodeByName(argv[k]) );
+        //
+        if ( pointsNode.IsNull() )
+        {
+          interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find Points Node with name %1." << argv[k]);
+          return TCL_ERROR;
+        }
+
+        // Get Cartesian points to interpolate.
+        pts->Merge( pointsNode->GetPoints() );
+      }
+    }
+    while ( !stop );
   }
 
   // Get degree.
-  const int degree = atoi(argv[3]);
-
-  // Get Cartesian points to interpolate.
-  Handle(asiAlgo_BaseCloud<double>) ptsCloud = pointsNode->GetPoints();
+  int degree = 0;
+  if ( !interp->GetKeyValue<int>(argc, argv, "degree", degree) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Curve degree is not specified.");
+    return TCL_ERROR;
+  }
 
   // Interpolate.
   Handle(Geom_BSplineCurve) interpolant;
   //
-  if ( !asiAlgo_Utils::InterpolatePoints(ptsCloud, degree, interpolant) )
+  if ( !asiAlgo_Utils::InterpolatePoints(pts, degree, interpolant) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "Interpolation failed.");
     return TCL_OK;
@@ -1382,7 +1404,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("interpolate-points",
     //
-    "interpolate-points <curveName> <pointsName> <deg>\n"
+    "interpolate-points <curveName> -points <pointsName> -degree <deg>\n"
     "\t Creates a curve from the passed point series by interpolation.",
     //
     __FILE__, group, ENGINE_InterpolatePoints);

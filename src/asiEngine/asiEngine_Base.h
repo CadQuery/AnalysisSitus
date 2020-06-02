@@ -33,6 +33,8 @@
 
 // asiEngine includes
 #include <asiEngine_Model.h>
+
+// asiData includes
 #include <asiData_NodeFlags.h>
 
 //-----------------------------------------------------------------------------

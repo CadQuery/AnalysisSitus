@@ -2968,6 +2968,60 @@ int ENGINE_RefineTriangulation(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Sew(const Handle(asiTcl_Interp)& interp,
+               int                          argc,
+               const char**                 argv)
+{
+  if ( argc != 1 && argc != 3 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  //
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Get the sewing tolerance.
+  double toler = Precision::Confusion();
+  //
+  interp->GetKeyValue(argc, argv, "toler", toler);
+
+  // Sew part
+  cmdEngine::model->OpenCommand();
+  {
+    // Perform sewing
+    interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Sewing tolerance: %1." << toler);
+    //
+    TopoDS_Shape sewnPart;
+    //
+    if ( !asiAlgo_Utils::Sew(shape, toler, sewnPart) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Sewing failed.");
+      //
+      cmdEngine::model->AbortCommand();
+      return TCL_ERROR;
+    }
+    //
+    asiEngine_Part(cmdEngine::model).Update(sewnPart);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -3362,4 +3416,13 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     //
     __FILE__, group, ENGINE_RefineTriangulation);
 
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("sew",
+    //
+    "sew [-toler <toler>]\n"
+    "\t Stitches faces of the active part using the passed tolerance <toler>\n"
+    "\t that indicates the max allowed gaps between the edges. If no tolerance\n"
+    "\t is passed, the default value 1.e-7 is used.",
+    //
+    __FILE__, group, ENGINE_Sew);
 }

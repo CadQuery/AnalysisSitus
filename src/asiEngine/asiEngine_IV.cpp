@@ -369,7 +369,7 @@ Handle(asiData_IVPointSetNode)
 
   // Initialize
   item_n->Init();
-  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView);
+  item_n->SetUserFlags(NodeFlag_IsPresentedInPartView | NodeFlag_IsPresentationVisible);
   item_n->SetName(item_name);
   item_n->SetPoints(points);
 

@@ -86,10 +86,12 @@ int MISC_BuildCoonsLinear(const Handle(asiTcl_Interp)& interp,
                           int                          argc,
                           const char**                 argv)
 {
-  if ( argc != 6 )
+  if ( argc < 6 )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  const bool dump = interp->HasKeyword(argc, argv, "dump");
 
   // Get rail curves.
   Handle(Geom_BSplineCurve) c0 = FindBCurve(argv[2], interp);
@@ -111,15 +113,18 @@ int MISC_BuildCoonsLinear(const Handle(asiTcl_Interp)& interp,
                                            mobC0->D0( mobC0->GetMaxParameter() ),
                                            mobC1->D0( mobC1->GetMaxParameter() ) );
 
-    // Sample patch.
-    TCollection_AsciiString ptsName(argv[1]); ptsName += "-pts";
-    cmdMisc::DrawSurfPts(interp, coons, ptsName);
+    if ( dump )
+    {
+      // Sample patch.
+      TCollection_AsciiString ptsName(argv[1]); ptsName += "-pts";
+      cmdMisc::DrawSurfPts(interp, coons, ptsName);
+    }
   }
 
   // Build Coons patch.
   asiAlgo_BuildCoonsSurf buildCoons( c0, c1, b0, b1,
                                      interp->GetProgress(),
-                                     interp->GetPlotter() );
+                                     dump ? interp->GetPlotter() : nullptr );
   //
   if ( !buildCoons.Perform() )
   {
@@ -149,7 +154,7 @@ void cmdMisc::Commands_Coons(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("build-coons-linear",
     //
-    "build-coons-linear resSurf c0 c1 b0 b1\n"
+    "build-coons-linear <resSurf> <c0> <c1> <b0> <b1> [-dump]\n"
     "\t Builds bilinear Coons patch on the passed boundary curves.",
     //
     __FILE__, group, MISC_BuildCoonsLinear);

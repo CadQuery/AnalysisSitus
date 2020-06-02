@@ -40,6 +40,7 @@
 #include <stack>
 
 // OCCT includes
+#include <NCollection_IncAllocator.hxx>
 #include <NCollection_Vector.hxx>
 #include <Standard_OStream.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
@@ -406,6 +407,13 @@ public:
   //! recover the previous state of AAG.
   asiAlgo_EXPORT void
     PopSubgraph();
+
+  //! \brief Pops all subgraphs except for the top one.
+  //!
+  //! Use this method to get rid of any subgraphs that might persist
+  //! in the stack.
+  asiAlgo_EXPORT void
+    PopSubgraphs();
 
   //@}
 
@@ -904,6 +912,9 @@ protected:
 
   //! Angular tolerance to use for attribution of "smooth" dihedral edges.
   double m_fSmoothAngularTol;
+
+  //! Experimental allocator (does it make any sense?).
+  Handle(NCollection_IncAllocator) m_alloc;
 
 };
 

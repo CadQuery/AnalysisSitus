@@ -95,8 +95,10 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   // Reset the number of tests.
   m_iNumTests = 0;
 
+#if defined COUT_DEBUG
   TIMER_NEW
   TIMER_GO
+#endif
 
   // Convert to Eigen matrices. The mappings between the indices are preserved in the member-field maps.
   m_P = m_P_aag->GetNeighborhood().AsEigenMx(m_P_eigenMapping);
@@ -106,32 +108,39 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   m_P_std = m_P_aag->GetNeighborhood().AsStandard(m_P_stdMapping);
   m_G_std = m_G_aag->GetNeighborhood().AsStandard(m_G_stdMapping);
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Convert G and P to the computation-ready matrices")
 
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Initial bijection.
   Eigen::MatrixXd M0 = this->init_M0();
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Initialize M0")
 
   TIMER_RESET
   TIMER_GO
+#endif
 
   const int K = int( M0.rows() );
   const int N = int( M0.cols() );
 
+#if defined COUT_DEBUG
   std::cout << "Rows (K): "      << K         << std::endl;
   std::cout << "Columns (N): "   << N         << std::endl;
   std::cout << "N^K threshold: " << Pow(N, K) << std::endl;
+#endif
 
   // Find isomorphisms recursively.
   TColStd_PackedMapOfInteger usedCols;
   this->recurse(0, M0, usedCols);
 
+#if defined COUT_DEBUG
   std::cout << "Num. of conducted tests for isomorphism: " << m_iNumTests << std::endl;
   std::cout << "Num. of found isomorphisms: " << m_Ms.size() << std::endl;
 
@@ -140,12 +149,15 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
 
   TIMER_RESET
   TIMER_GO
+#endif
 
   // Collect the indices of the feature faces in `G`.
   this->collectFeatures();
 
+#if defined COUT_DEBUG
   TIMER_FINISH
   TIMER_COUT_RESULT_MSG("Collect feature faces")
+#endif
 
   return true; // Even if there are no isomorphisms, we return `true` to indicate success.
 }

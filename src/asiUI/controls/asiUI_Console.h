@@ -39,6 +39,7 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QCompleter>
 #include <QKeyEvent>
 #include <QTextLine>
 #pragma warning(pop)
@@ -62,6 +63,12 @@ public:
 
 public:
 
+  //! \return auto-completer.
+  QCompleter* completer() const;
+
+public:
+
+  //! \return size hint.
   QSize sizeHint() const;
 
 public:
@@ -90,6 +97,9 @@ protected:
   QTextLine
     currentTextLine(const QTextCursor& cursor) const;
 
+  QString
+    wordUnderCursor() const;
+
   bool adoptSourceCmd(const TCollection_AsciiString& cmd,
                       TCollection_AsciiString&       adopted) const;
 
@@ -97,10 +107,15 @@ protected:
 
   int promptSize() const { return m_prompt.size(); }
 
+private slots:
+
+  void insertCompletion(const QString& completion);
+
 protected:
 
-  QString               m_prompt; //!< Prompt prefix.
-  Handle(asiTcl_Interp) m_interp; //!< Tcl interpreter.
+  QString               m_prompt;     //!< Prompt prefix.
+  Handle(asiTcl_Interp) m_interp;     //!< Tcl interpreter.
+  QCompleter*           m_pCompleter; //!< Auto-completer.
 
 };
 

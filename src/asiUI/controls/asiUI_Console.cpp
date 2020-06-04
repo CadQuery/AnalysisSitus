@@ -45,7 +45,9 @@
 
 // Qt includes
 #pragma warning(push, 0)
+#include <QAbstractItemView>
 #include <QDesktopWidget>
+#include <QScrollBar>
 #include <QTextBlock>
 #pragma warning(pop)
 
@@ -60,19 +62,46 @@ asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
                              QWidget*                     parent)
 //
 : asiUI_StyledTextEdit (parent),
-  m_interp             (interp)
+  m_interp             (interp),
+  m_pCompleter         (nullptr)
 {
-  this->setUndoRedoEnabled( false );
-  this->setLineWrapMode( QTextEdit::WidgetWidth );
-  this->setWordWrapMode( QTextOption::WrapAnywhere );
-  this->setAcceptRichText( false );
-  this->setReadOnly( false );
+  this->setUndoRedoEnabled ( false );
+  this->setLineWrapMode    ( QTextEdit::WidgetWidth );
+  this->setWordWrapMode    ( QTextOption::WrapAnywhere );
+  this->setAcceptRichText  ( false );
+  this->setReadOnly        ( false );
+  this->setFont            ( QFont("monospace", 9) );
+  //
+  this->viewport()->unsetCursor(); // Unset busy cursor.
 
-   QFont f("monospace", 8);
-   this->setFont(f);
+  /* ========================
+   *  Prepare auto-completer.
+   * ======================== */
 
-  // unset busy cursor
-  this->viewport()->unsetCursor();
+  // Collect commands.
+  std::vector<asiTcl_CommandInfo> commands;
+  m_interp->GetAvailableCommands(commands);
+
+  // Gather all command names for sorting.
+  QStringList commandNames;
+  //
+  for ( int c = 0; c < (int) commands.size(); ++c )
+  {
+    commandNames << CStr2QStr( commands[c].Name.c_str() );
+  }
+
+  // Construct and initialize the completer.
+  m_pCompleter = new QCompleter(commandNames, this);
+  m_pCompleter->setWidget(this);
+  m_pCompleter->setCompletionMode(QCompleter::PopupCompletion);
+  m_pCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  //
+  QObject::connect(m_pCompleter, QOverload<const QString&>::of(&QCompleter::activated),
+                   this,         &asiUI_Console::insertCompletion);
+
+  /* =========================
+   *  Add initialization text.
+   * ========================= */
 
   this->addText( QString("Tcl version: %1 [%2.%3.%4.%5]\n"
                          "Type 'show-commands' to display available commands.\n***")
@@ -89,7 +118,13 @@ asiUI_Console::asiUI_Console(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
-//! \return size hint.
+QCompleter* asiUI_Console::completer() const
+{
+  return m_pCompleter;
+}
+
+//-----------------------------------------------------------------------------
+
 QSize asiUI_Console::sizeHint() const
 {
   QDesktopWidget desktop;
@@ -107,6 +142,28 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
 {
   QTextCursor c = this->textCursor();
 
+  if ( m_pCompleter && m_pCompleter->popup()->isVisible() )
+  {
+    // The following keys are forwarded by the completer to the widget
+    switch ( e->key() )
+    {
+      case Qt::Key_Enter:
+      case Qt::Key_Return:
+      case Qt::Key_Escape:
+      case Qt::Key_Tab:
+      case Qt::Key_Backtab:
+        e->ignore();
+        return; // let the completer do default behavior
+      default:
+        break;
+    }
+  }
+
+  /* =========================================
+   *  Executing commands, cursor moving logic.
+   * ========================================= */
+
+  bool isProcessed = false;
   switch ( e->key() )
   {
     case Qt::Key_Up:
@@ -116,6 +173,7 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       else
         asiUI_StyledTextEdit::keyPressEvent(e);
 
+      isProcessed = true;
       break;
     }
     case Qt::Key_Down:
@@ -125,6 +183,7 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
       else
         asiUI_StyledTextEdit::keyPressEvent(e);
 
+      isProcessed = true;
       break;
     }
     case Qt::Key_Return:
@@ -184,11 +243,54 @@ void asiUI_Console::keyPressEvent(QKeyEvent* e)
         }
       }
 
+      isProcessed = true;
       break;
     }
     default:
-      asiUI_StyledTextEdit::keyPressEvent(e);
+      break;
   }
+
+  /* =================================
+   *  Auto-completion stuff goes then.
+   * ================================= */
+
+  const bool
+    isShortcut = ( e->modifiers().testFlag(Qt::ControlModifier) && (e->key() == Qt::Key_Space) );
+
+  // Do not process the shortcut when we have a completer.
+  // Do not process the already processed key events.
+  if ( !isShortcut && !isProcessed )
+  {
+    asiUI_StyledTextEdit::keyPressEvent(e);
+  }
+
+  const bool ctrlOrShift = e->modifiers().testFlag(Qt::ControlModifier) ||
+                           e->modifiers().testFlag(Qt::ShiftModifier);
+  if ( ctrlOrShift && e->text().isEmpty() )
+    return;
+
+  static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;' []\\="); // end of word
+  const bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
+  QString completionPrefix = this->wordUnderCursor();
+
+  if ( !isShortcut && ( hasModifier ||
+                        e->text().isEmpty() ||
+                        completionPrefix.length() < 2 ||
+                        eow.contains( e->text().right(1) ) ) )
+  {
+    m_pCompleter->popup()->hide();
+    return;
+  }
+
+  if ( completionPrefix != m_pCompleter->completionPrefix() )
+  {
+    m_pCompleter->setCompletionPrefix(completionPrefix);
+    m_pCompleter->popup()->setCurrentIndex( m_pCompleter->completionModel()->index(0, 0) );
+  }
+  QRect cr = cursorRect();
+  cr.setWidth(  m_pCompleter->popup()->sizeHintForColumn(0)
+              + m_pCompleter->popup()->verticalScrollBar()->sizeHint().width() );
+  m_pCompleter->complete(cr); // popup it up!
 }
 
 //-----------------------------------------------------------------------------
@@ -251,6 +353,48 @@ QTextLine asiUI_Console::currentTextLine(const QTextCursor& cursor) const
 
 //-----------------------------------------------------------------------------
 
+QString asiUI_Console::wordUnderCursor() const
+{
+  QString result;
+
+  QTextCursor tc = this->textCursor();
+
+  bool endOfWord = false;
+  do
+  {
+    tc.movePosition(QTextCursor::PreviousCharacter);
+    tc.select(QTextCursor::WordUnderCursor);
+    QString selectedWord = tc.selectedText();
+    result.prepend(selectedWord);
+
+    if ( selectedWord == "-" )
+    {
+      tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor, 2);
+    }
+    else
+    {
+      tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor, 2);
+      tc.select(QTextCursor::WordUnderCursor);
+      QString prevWord = tc.selectedText();
+
+      if ( prevWord != "-" )
+      {
+        endOfWord = true;
+      }
+      else
+      {
+        result.prepend("-");
+        tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor, 2);
+      }
+    }
+  }
+  while ( !endOfWord );
+
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiUI_Console::adoptSourceCmd(const TCollection_AsciiString& cmd,
                                    TCollection_AsciiString&       adopted) const
 {
@@ -274,4 +418,19 @@ bool asiUI_Console::adoptSourceCmd(const TCollection_AsciiString& cmd,
 
   adopted = cmd; // Keep as-is.
   return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiUI_Console::insertCompletion(const QString& completion)
+{
+  QTextCursor cursor = this->textCursor();
+
+  const int extra = completion.length() - m_pCompleter->completionPrefix().length();
+
+  cursor.movePosition ( QTextCursor::Left );
+  cursor.movePosition ( QTextCursor::EndOfWord );
+  cursor.insertText   ( completion.right(extra) );
+  //
+  this->setTextCursor(cursor);
 }

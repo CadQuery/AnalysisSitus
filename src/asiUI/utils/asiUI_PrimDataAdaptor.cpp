@@ -34,9 +34,6 @@
 // asiUI includes
 #include <asiUI_Common.h>
 
-// Active Data includes
-#include <ActData_ParameterFactory.h>
-
 //! \return handled value as QVariant. This method takes care of conversion
 //!         of the persistent data type to the corresponding Qt type.
 QVariant asiUI_PrimDataAdaptor::GetValue() const

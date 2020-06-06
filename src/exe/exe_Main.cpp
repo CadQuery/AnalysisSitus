@@ -38,7 +38,6 @@
 
 // asiVisu includes
 #include <asiVisu_CalculusLawPrs.h>
-#include <asiVisu_ContourPrs.h>
 #include <asiVisu_CurvatureCombsPrs.h>
 #include <asiVisu_DeviationPrs.h>
 #include <asiVisu_FaceDomainPrs.h>
@@ -77,23 +76,11 @@
 #pragma warning(push, 0)
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QHBoxLayout>
-#include <QMainWindow>
-#include <QSurfaceFormat>
 #pragma warning(pop)
-
-// Qt-VTK includes
-#include <QVTKWidget.h>
 
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkCamera.h>
-#include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkOpenGLRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
 #pragma warning(pop)
 
 // VTK init
@@ -105,7 +92,9 @@
 // Qt includes
 #pragma warning(push, 0)
 #include <QDir>
+#include <QSplashScreen>
 #include <QTextStream>
+#include <QTimer>
 #pragma warning(pop)
 
 // Activate object factories
@@ -143,8 +132,24 @@ int main(int argc, char** argv)
   //
   QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
 
+  // Splash screen.
+  QSplashScreen* pSplash = nullptr;
+  //
+  if ( !isBatch )
+  {
+    pSplash = new QSplashScreen( QPixmap(":img/asitus/splash.png"), Qt::WindowStaysOnTopHint );
+    pSplash->show();
+  }
+
   // Construct main window but do not show it to allow off-screen batch.
   exe_MainWindow* pMainWindow = new exe_MainWindow(isBatch);
+
+  // Give splash screen some seconds, no matter how fast the main window appears.
+  if ( pSplash )
+  {
+    QTimer::singleShot( 3000, pSplash, SLOT( close() ) );
+    QTimer::singleShot( 3000, pMainWindow, SLOT( slInit() ) );
+  }
 
   //---------------------------------------------------------------------------
   // Set essential environment variables

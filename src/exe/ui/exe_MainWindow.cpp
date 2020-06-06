@@ -36,7 +36,6 @@
 #include <exe_Version.h>
 
 // asiUI includes
-#include <asiUI_Common.h>
 #include <asiUI_ParamEditorImpl.h>
 #include <asiUI_ParameterEditorListenerDefault.h>
 #include <asiUI_StatusBar.h>
@@ -51,7 +50,6 @@
 #include <QDesktopWidget>
 #include <QDir>
 #include <QDockWidget>
-#include <QStringList>
 #include <QTextStream>
 #pragma warning(pop)
 

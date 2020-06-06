@@ -37,25 +37,15 @@
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
-// asiAlgo includes
-#include <asiAlgo_Utils.h>
-
 // VTK includes
 #include <vtkAxis.h>
 #include <vtkChartXY.h>
 #include <vtkContextScene.h>
-#include <vtkContextView.h>
 #include <vtkGL2PSExporter.h>
 #include <vtkFloatArray.h>
-#include <vtkPen.h>
 #include <vtkPlot.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
-#include <vtkTextProperty.h>
 #include <vtkTable.h>
-#include <vtkVersion.h>
+#include <vtkTextProperty.h>
 
 // Qt includes
 #pragma warning(push, 0)

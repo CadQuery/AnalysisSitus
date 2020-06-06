@@ -1,4 +1,7 @@
 <RCC>
+  <qresource prefix="img">
+    <file>asitus/splash.png</file>
+  </qresource>
   <qresource prefix="icons">
     <file>asitus/asitus_icon_16x16.png</file>
     <file>asitus/asitus_cancel_icon_16x16.png</file>

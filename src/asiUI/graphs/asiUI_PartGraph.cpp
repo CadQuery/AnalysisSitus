@@ -36,28 +36,17 @@
 #include <asiUI_TopoGraphAdaptor.h>
 #include <asiUI_PartGraphItem.h>
 
-// asiVisu includes
-#include <asiVisu_Utils.h>
-
-// asiAlgo includes
-#include <asiAlgo_Utils.h>
-
 // asiEngine includes
 #include <asiEngine_Part.h>
 
 // OCCT includes
-#include <TopExp.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 
 // VTK includes
 #pragma warning(push, 0)
-#include <vtkActor.h>
-#include <vtkActor2D.h>
 #include <vtkCamera.h>
 #include <vtkContextActor.h>
 #include <vtkContextInteractorStyle.h>
-#include <vtkContextScene.h>
 #include <vtkContextTransform.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkGraphLayout.h>
@@ -67,9 +56,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSimple2DLayoutStrategy.h>
 #include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 #include <vtkTextActor.h>
-#include <vtkTextProperty.h>
 #include <vtkTextRepresentation.h>
 #include <vtkTextWidget.h>
 #pragma warning(pop)

@@ -34,9 +34,6 @@
 // asiAlgo includes
 #include <asiAlgo_Dictionary.h>
 
-// OCC includes
-#include <TColStd_SequenceOfAsciiString.hxx>
-
 //! Default constructor.
 asiUI_UnitManager::asiUI_UnitManager() 
 : QObject()

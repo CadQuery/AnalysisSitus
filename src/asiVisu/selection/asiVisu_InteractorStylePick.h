@@ -76,6 +76,9 @@ public:
     OnMouseMove();
 
   asiVisu_EXPORT virtual void
+    OnRightButtonDown();
+
+  asiVisu_EXPORT virtual void
     OnLeftButtonDown();
 
   asiVisu_EXPORT virtual void
@@ -86,6 +89,9 @@ public:
 
   asiVisu_EXPORT virtual void
     OnKeyPress();
+
+  asiVisu_EXPORT bool
+    IsControlPressed() const;
 
 public:
 

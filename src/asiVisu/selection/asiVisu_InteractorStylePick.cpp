@@ -45,9 +45,9 @@ vtkStandardNewMacro(asiVisu_InteractorStylePick)
 
 //! Default constructor.
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick()
-: vtkInteractorStyleTrackballCamera(),
-  m_bIsLeftButtonDown(false),
-  m_bIsRotation(false)
+: vtkInteractorStyleTrackballCamera (),
+  m_bIsLeftButtonDown               (false),
+  m_bIsRotation                     (false)
 {
   m_pPickInput = new asiVisu_PickInput();
   //
@@ -62,10 +62,10 @@ asiVisu_InteractorStylePick::~asiVisu_InteractorStylePick()
 
 //! Prohibited copy constructor.
 asiVisu_InteractorStylePick::asiVisu_InteractorStylePick(const asiVisu_InteractorStylePick&)
-: vtkInteractorStyleTrackballCamera(),
-  m_pPickInput(nullptr),
-  m_bIsLeftButtonDown(false),
-  m_bIsRotation(false)
+: vtkInteractorStyleTrackballCamera (),
+  m_pPickInput                      (nullptr),
+  m_bIsLeftButtonDown               (false),
+  m_bIsRotation                     (false)
 {
 }
 
@@ -124,6 +124,15 @@ void asiVisu_InteractorStylePick::OnMouseMove()
       this->InvokeEvent( it.Value() );
     }
   }
+}
+
+void asiVisu_InteractorStylePick::OnRightButtonDown()
+{
+  // Allow the default processing only if the control key is pressed.
+  // Otherwise, we'd like to use our custom behavior such as popping
+  // up context menus.
+  if ( this->Interactor->GetControlKey() )
+    vtkInteractorStyleTrackballCamera::OnRightButtonDown();
 }
 
 //! Callback for "Left Button Down" event.
@@ -196,6 +205,11 @@ void asiVisu_InteractorStylePick::OnKeyPress()
   //
   if ( this->Interactor->GetControlKey() && key == "t" )
     this->InvokeEvent(EVENT_REFINE_TESSELLATION);
+}
+
+bool asiVisu_InteractorStylePick::IsControlPressed() const
+{
+  return this->Interactor->GetControlKey();
 }
 
 //! Callback for rotation finishing action.

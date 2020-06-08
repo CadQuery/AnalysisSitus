@@ -83,6 +83,9 @@ void asiUI_Viewer3dListener::Connect()
 //! \param[in] globalPos click position in global coordinates.
 void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
 {
+  if ( m_pViewer->PrsMgr()->GetDefaultInteractorStyle()->IsControlPressed() )
+    return;
+
   // Context menu
   QMenu menu;
 
@@ -113,7 +116,7 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   //---------------------------------------------------------------------------
   // ACTION: set new focal point
   //---------------------------------------------------------------------------
-  if ( selectedItem && selectedItem == pPickRotationPoint )
+  if ( selectedItem && (selectedItem == pPickRotationPoint) )
   {
     // Take picked position from interactor
     double pickedX = 0.0, pickedY = 0.0;
@@ -137,7 +140,7 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
   //---------------------------------------------------------------------------
   // ACTION: set background color
   //---------------------------------------------------------------------------
-  else if ( selectedItem && selectedItem == pChangeBg )
+  else if ( selectedItem && (selectedItem == pChangeBg) )
   {
     asiUI_BgColorDialog* pChangeBgDlg = new asiUI_BgColorDialog(m_pViewer);
 
@@ -246,5 +249,8 @@ void asiUI_Viewer3dListener::onContextMenu(const QPoint& globalPos)
     const int visible = m_pViewer->PrsMgr()->GetTrihedron()->GetVisibility();
     //
     m_pViewer->PrsMgr()->GetTrihedron()->SetVisibility(visible > 0 ? 0 : 1);
+
+    // Update our render window.
+    m_pViewer->PrsMgr()->GetRenderWindow()->Render();
   }
 }

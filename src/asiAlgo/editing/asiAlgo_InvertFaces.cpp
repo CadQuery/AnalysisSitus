@@ -49,7 +49,7 @@ asiAlgo_InvertFaces::asiAlgo_InvertFaces(const Handle(asiAlgo_AAG)& aag,
 
 bool asiAlgo_InvertFaces::Perform(const TColStd_PackedMapOfInteger& faceIds)
 {
-  const TopoDS_Shape& master = m_aag->GetMasterCAD();
+  const TopoDS_Shape& master = m_aag->GetMasterShape();
 
   if ( master.ShapeType() == TopAbs_FACE )
   {

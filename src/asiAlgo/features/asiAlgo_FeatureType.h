@@ -44,6 +44,7 @@ enum asiAlgo_FeatureType
   //-------------------------------------------------------------------------//
   // Volumetric features
   FeatureType_HoleCylindrical, //!< Cylindrical hole.
+  FeatureType_Isolated,        //!< Isolated feature.
 
   //-------------------------------------------------------------------------//
   // Surface features

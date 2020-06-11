@@ -204,10 +204,10 @@ void QDS_Datum::Wrapper::setGeometry( int x, int y, int w, int h )
 QDS_Datum::QDS_Datum( const QString& id, QWidget* parent, const int flags, const QString& comp )
 : QObject( parent ),
   myId( id ),
+  myFlags( flags ),
   myLabel( 0 ),
   myUnits( 0 ),
   myControl( 0 ),
-  myFlags( flags ),
   myInitialised( false ),
   myTr( false )
 {

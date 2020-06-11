@@ -62,7 +62,7 @@ bool asiAlgo_SuppressBlendsInc::Perform(const Handle(asiAlgo_AAG)& aag,
     history = new asiAlgo_History(/*m_progress, m_plotter*/);
 
   // Initialize outputs.
-  result              = aag->GetMasterCAD();
+  result              = aag->GetMasterShape();
   numSuppressedChains = 0;
 
   TColStd_PackedMapOfInteger fids;

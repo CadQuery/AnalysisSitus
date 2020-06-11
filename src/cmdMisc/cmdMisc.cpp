@@ -215,9 +215,9 @@ namespace
 
   private:
 
-    gp_XYZ m_P;      //!< Source point.
-    bool   m_bFound; //!< Whether two points are coincident or not.
     double m_fTol;   //!< Resolution to check for coincidence.
+    bool   m_bFound; //!< Whether two points are coincident or not.
+    gp_XYZ m_P;      //!< Source point.
 
   };
 
@@ -1183,7 +1183,7 @@ int MISC_TestIneq(const Handle(asiTcl_Interp)& interp,
 
   TCollection_AsciiString SolRStr, SolXStr;
   //
-  for ( size_t k = 0; k < SolR.Dim; ++k )
+  for ( int k = 0; k < SolR.Dim; ++k )
   {
     SolRStr += SolR.V[k];
 
@@ -1191,7 +1191,7 @@ int MISC_TestIneq(const Handle(asiTcl_Interp)& interp,
       SolRStr += " ";
   }
   //
-  for ( size_t k = 0; k < SolX.Dim; ++k )
+  for ( int k = 0; k < SolX.Dim; ++k )
   {
     SolXStr += SolX.V[k];
 

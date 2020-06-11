@@ -32,11 +32,15 @@
 #define asiAlgo_Recognizer_h
 
 // asiAlgo includes
-#include <asiAlgo_AAG.h>
-#include <asiAlgo_FeatureFormulation.h>
+#include <asiAlgo_FeatureFaces.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
+
+// OpenCascade includes
+#include <TopTools_IndexedMapOfShape.hxx>
+
+class asiAlgo_AAG;
 
 //-----------------------------------------------------------------------------
 
@@ -85,20 +89,6 @@ public:
 
 public:
 
-  //! Formulation to search for features in the full master model.
-  asiAlgo_EXPORT void
-    SetFormulationFull();
-
-  //! Formulation to search for features growing on the given base base.
-  asiAlgo_EXPORT void
-    SetFormulationSupportFace(const TopoDS_Face& face);
-
-  //! Formulation to search for a feature containing the given guess face.
-  asiAlgo_EXPORT void
-    SetFormulationGuessFace(const TopoDS_Face& face);
-
-public:
-
   //! Initializes the recognition tool with the part shape in question.
   //! \param[in] masterCAD master CAD model.
   asiAlgo_EXPORT void
@@ -106,33 +96,22 @@ public:
 
 public:
 
-  //! \return detected faces.
-  const TopTools_IndexedMapOfShape& GetResultFaces() const
-  {
-    return m_result.faces;
-  }
+  //! \return result collection of detected faces as transient shapes.
+  asiAlgo_EXPORT const TopTools_IndexedMapOfShape&
+    GetResultFaces() const;
 
-  //! \return indices of the detected faces.
-  const TColStd_PackedMapOfInteger& GetResultIndices() const
-  {
-    return m_result.ids;
-  }
+  //! \return result collection of detected faces as integer ids.
+  asiAlgo_EXPORT const asiAlgo_Feature&
+    GetResultIndices() const;
 
-  //! \return AAG.
-  const Handle(asiAlgo_AAG)& GetAAG() const
-  {
-    return m_aag;
-  }
+  //! \return working AAG instance.
+  asiAlgo_EXPORT const Handle(asiAlgo_AAG)&
+    GetAAG() const;
 
-  //! Sets AAG.
-  void SetAAG(const Handle(asiAlgo_AAG)& aag)
-  {
-    m_aag = aag;
-  }
-
-private:
-
-  virtual void onFormulation(const asiAlgo_FeatureFormulation formulation) = 0;
+  //! Sets AAG to operate on.
+  //! \param[in] aag AAG instance to set.
+  asiAlgo_EXPORT void
+    SetAAG(const Handle(asiAlgo_AAG)& aag);
 
 protected:
 
@@ -140,10 +119,8 @@ protected:
   // IN
   //-------------------------------------------------------------------------//
 
-  asiAlgo_FeatureFormulation m_formulation; //!< Problem formulation.
-  TopoDS_Face                m_seedFace;    //!< Face for local formulation.
-  TopoDS_Shape               m_master;      //!< Master CAD.
-  Handle(asiAlgo_AAG)        m_aag;         //!< Master AAG.
+  TopoDS_Shape        m_master; //!< Master CAD.
+  Handle(asiAlgo_AAG) m_aag;    //!< Master AAG.
 
   //-------------------------------------------------------------------------//
   // OUT
@@ -152,7 +129,7 @@ protected:
   struct
   {
     TopTools_IndexedMapOfShape faces; //!< Detected feature faces.
-    TColStd_PackedMapOfInteger ids;   //!< Indices of the detected feature faces.
+    asiAlgo_Feature            ids;   //!< Indices of the detected feature faces.
 
     void Clear()
     {

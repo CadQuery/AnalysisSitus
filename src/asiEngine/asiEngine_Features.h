@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 October 2018
+// Created on: 11 June 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2018-present, Sergey Slyadnev
+// Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,41 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiAlgo_FeatureFormulation_h
-#define asiAlgo_FeatureFormulation_h
+#ifndef asiEngine_Features_h
+#define asiEngine_Features_h
 
-// asiAlgo includes
-#include <asiAlgo.h>
+// asiEngine includes
+#include <asiEngine_Base.h>
+
+// asiVisu includes
+#include <asiVisu_PrsManager.h>
 
 //-----------------------------------------------------------------------------
 
-//! Formulation for feature recognizers.
-enum asiAlgo_FeatureFormulation
+//! API for working with CAD model features.
+class asiEngine_Features : public asiEngine_Base
 {
-  FeatureFormulation_Full,        //!< Check each and every CAD face.
-  FeatureFormulation_SupportFace, //!< Find features growing from the base (support) face.
-  FeatureFormulation_GuessFace    //!< Find feature taking the picked face as a guess.
+public:
+
+  //! Ctor.
+  //! \param[in] model    Data Model instance.
+  //! \param[in] progress progress notifier.
+  //! \param[in] plotter  imperative plotter.
+  asiEngine_Features(const Handle(asiEngine_Model)& model,
+                     ActAPI_ProgressEntry           progress = nullptr,
+                     ActAPI_PlotterEntry            plotter  = nullptr)
+  //
+  : asiEngine_Base(model, progress, plotter)
+  {}
+
+public:
+
+  //! Finds isolated features starting from the passed base faces.
+  //! \param[in] baseFaces IDs of the base faces.
+  //! \return found feature faces.
+  asiEngine_EXPORT asiAlgo_Feature
+    FindIsolated(const asiAlgo_Feature& baseFaces) const;
+
 };
 
 #endif

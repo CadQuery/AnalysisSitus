@@ -62,7 +62,7 @@ asiAlgo_FindTermEdges::asiAlgo_FindTermEdges(const Handle(asiAlgo_AAG)& aag,
                                              ActAPI_ProgressEntry       progress,
                                              ActAPI_PlotterEntry        plotter)
 : ActAPI_IAlgorithm ( progress, plotter ),
-  m_master          ( aag->GetMasterCAD() ),
+  m_master          ( aag->GetMasterShape() ),
   m_aag             ( aag )
 {}
 

@@ -303,14 +303,14 @@ void asiUI_PartGraph::RenderAdjacency(const Handle(asiAlgo_AAG)&        aag,
 {
   // Populate graph data from topology graph
   vtkSmartPointer<vtkGraph>
-    graph = this->convertToGraph(aag->GetMasterCAD(),
+    graph = this->convertToGraph(aag->GetMasterShape(),
                                  aag,
                                  selectedFaces,
                                  Regime_AAG,
                                  TopAbs_SHAPE);
 
   // Render VTK graph
-  this->Render(graph, aag->GetMasterCAD(), Regime_AAG, false);
+  this->Render(graph, aag->GetMasterShape(), Regime_AAG, false);
 }
 
 //-----------------------------------------------------------------------------

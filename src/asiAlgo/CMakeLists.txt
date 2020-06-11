@@ -224,9 +224,10 @@ set (features_H_FILES
   features/asiAlgo_FeatureAttrAdjacency.h
   features/asiAlgo_FeatureAttrAngle.h
   features/asiAlgo_FeatureAttrFace.h
-  features/asiAlgo_FeatureFormulation.h
-  features/asiAlgo_FeatureType.h
+  features/asiAlgo_FeatureFaces.h
+        features/asiAlgo_FeatureType.h
   features/asiAlgo_Isomorphism.h
+  features/asiAlgo_RecognizeIsolated.h
   features/asiAlgo_Recognizer.h
   features/asiAlgo_ShapePartnerHasher.h
   features/asiAlgo_TopoAttr.h
@@ -243,6 +244,7 @@ set (features_CPP_FILES
   features/asiAlgo_ExtractFeatures.cpp
   features/asiAlgo_ExtractFeaturesResult.cpp
   features/asiAlgo_Isomorphism.cpp
+  features/asiAlgo_RecognizeIsolated.cpp
   features/asiAlgo_Recognizer.cpp
   features/asiAlgo_TopoGraph.cpp
 )

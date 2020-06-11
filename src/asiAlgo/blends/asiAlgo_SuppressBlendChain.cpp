@@ -350,7 +350,7 @@ bool asiAlgo_SuppressBlendChain::Perform(const int faceId)
   m_iSuppressedChains = 1;
 
   // Set history.
-  m_history->AddModified(m_aag->GetMasterCAD(), m_result);
+  m_history->AddModified(m_aag->GetMasterShape(), m_result);
 
   return true;
 }
@@ -469,7 +469,7 @@ bool
   asiAlgo_SuppressBlendChain::performTopoOperations(TopoDS_Shape& resultShape)
 {
   // Input shape.
-  resultShape = m_aag->GetMasterCAD();
+  resultShape = m_aag->GetMasterShape();
 
   // Process the initialized topological conditions.
   for ( asiAlgo_HBlendTopoConditionMap::Iterator cit(*m_workflow.topoCondition);

@@ -33,6 +33,7 @@
 
 // asiAlgo includes
 #include <asiAlgo_BVHFacets.h>
+#include <asiAlgo_FeatureFaces.h>
 
 // Active Data includes
 #include <ActAPI_IAlgorithm.h>
@@ -57,7 +58,7 @@ public:
   struct t_rayBundle
   {
     std::vector<gp_Lin> Rays;      //!< Ray bundle.
-    int                 FaceIndex; //!< Reference to the corresponding CAD face.
+    t_topoId            FaceIndex; //!< Reference to the corresponding CAD face.
 
     //! Default ctor leaving the face ID uninitialized.
     t_rayBundle() : FaceIndex(0) {}
@@ -65,7 +66,7 @@ public:
     //! Ctor with initialization.
     //! \param[in] _ray    single ray to pass.
     //! \param[in] _faceId reference to the CAD face.
-    t_rayBundle(const gp_Lin& _ray, const int _faceId)
+    t_rayBundle(const gp_Lin& _ray, const t_topoId _faceId)
     {
       Rays.push_back(_ray);
       FaceIndex = _faceId;
@@ -111,8 +112,10 @@ public:
   asiAlgo_EXPORT bool
     Perform();
 
+public:
+
   //! \return the accumulated collection of visible faces.
-  asiAlgo_EXPORT const NCollection_DataMap<int, t_score>&
+  asiAlgo_EXPORT const NCollection_DataMap<t_topoId, t_score>&
     GetResultScores() const;
 
   //! Gathers all visible faces. The second argument is used to
@@ -122,8 +125,8 @@ public:
   //! \param[out] faces   the collected visible faces.
   //! \param[in]  maxHits the max allowed number of hits.
   asiAlgo_EXPORT void
-    GetResultFaces(TColStd_PackedMapOfInteger& faces,
-                   const int                   maxHits = 0) const;
+    GetResultFaces(asiAlgo_Feature& faces,
+                   const int        maxHits = 0) const;
 
 protected:
 
@@ -142,7 +145,7 @@ protected:
     testLeaf(const gp_Lin&    ray,
              const double     length,
              const BVH_Vec4i& leaf,
-             const int        face2Skip,
+             const t_topoId   face2Skip,
              int&             resultFacet,
              double&          resultRayParamNormalized,
              gp_XYZ&          hitPoint) const;
@@ -170,9 +173,9 @@ protected:
 
 protected:
 
-  Handle(asiAlgo_BVHFacets)         m_bvh;        //!< BVH for facets.
-  std::vector<t_rayBundle>          m_rayBundles; //!< Rays to test.
-  NCollection_DataMap<int, t_score> m_scores;     //!< Intersection "score" for each face.
+  Handle(asiAlgo_BVHFacets)               m_bvh;        //!< BVH for facets.
+  std::vector<t_rayBundle>                m_rayBundles; //!< Rays to test.
+  NCollection_DataMap<t_topoId , t_score> m_scores;     //!< Intersection "score" for each face.
 
 };
 

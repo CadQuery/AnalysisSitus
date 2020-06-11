@@ -31,6 +31,9 @@
 // Own include
 #include <asiAlgo_Recognizer.h>
 
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
+
 //-----------------------------------------------------------------------------
 
 asiAlgo_Recognizer::asiAlgo_Recognizer(const TopoDS_Shape&        masterCAD,
@@ -39,7 +42,6 @@ asiAlgo_Recognizer::asiAlgo_Recognizer(const TopoDS_Shape&        masterCAD,
                                        ActAPI_PlotterEntry        plotter)
 //
 : ActAPI_IAlgorithm ( progress, plotter ),
-  m_formulation     ( FeatureFormulation_Full ), // Default formulation
   m_master          ( masterCAD ),
   m_aag             ( aag )
 {}
@@ -51,8 +53,7 @@ asiAlgo_Recognizer::asiAlgo_Recognizer(const Handle(asiAlgo_AAG)& aag,
                                        ActAPI_PlotterEntry        plotter)
 //
 : ActAPI_IAlgorithm ( progress, plotter ),
-  m_formulation     ( FeatureFormulation_Full ), // Default formulation
-  m_master          ( aag->GetMasterCAD() ),
+  m_master          ( aag->GetMasterShape() ),
   m_aag             ( aag )
 {}
 
@@ -61,8 +62,7 @@ asiAlgo_Recognizer::asiAlgo_Recognizer(const Handle(asiAlgo_AAG)& aag,
 asiAlgo_Recognizer::asiAlgo_Recognizer(ActAPI_ProgressEntry progress,
                                        ActAPI_PlotterEntry  plotter)
 //
-: ActAPI_IAlgorithm ( progress, plotter ),
-  m_formulation     ( FeatureFormulation_Full ) // Default formulation
+: ActAPI_IAlgorithm ( progress, plotter )
 {}
 
 //-----------------------------------------------------------------------------
@@ -72,43 +72,40 @@ asiAlgo_Recognizer::~asiAlgo_Recognizer()
 
 //-----------------------------------------------------------------------------
 
-void asiAlgo_Recognizer::SetFormulationFull()
-{
-  m_formulation = FeatureFormulation_Full;
-  m_seedFace.Nullify();
-
-  this->onFormulation(m_formulation);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiAlgo_Recognizer::SetFormulationSupportFace(const TopoDS_Face& face)
-{
-  m_formulation = FeatureFormulation_SupportFace;
-  m_seedFace    = face;
-
-  this->onFormulation(m_formulation);
-}
-
-//-----------------------------------------------------------------------------
-
-void asiAlgo_Recognizer::SetFormulationGuessFace(const TopoDS_Face& face)
-{
-  m_formulation = FeatureFormulation_GuessFace;
-  m_seedFace    = face;
-
-  this->onFormulation(m_formulation);
-}
-
-//-----------------------------------------------------------------------------
-
 void asiAlgo_Recognizer::Init(const TopoDS_Shape& masterCAD)
 {
   // Clean up and reinitialize inputs.
-  m_seedFace.Nullify();
   m_master = masterCAD;
   m_aag.Nullify(); // AAG is not relevant anymore.
 
   // Clean up result.
   m_result.Clear();
+}
+
+//-----------------------------------------------------------------------------
+
+const TopTools_IndexedMapOfShape& asiAlgo_Recognizer::GetResultFaces() const
+{
+  return m_result.faces;
+}
+
+//-----------------------------------------------------------------------------
+
+const asiAlgo_Feature& asiAlgo_Recognizer::GetResultIndices() const
+{
+  return m_result.ids;
+}
+
+//-----------------------------------------------------------------------------
+
+const Handle(asiAlgo_AAG)& asiAlgo_Recognizer::GetAAG() const
+{
+  return m_aag;
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_Recognizer::SetAAG(const Handle(asiAlgo_AAG)& aag)
+{
+  m_aag = aag;
 }

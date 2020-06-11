@@ -34,6 +34,7 @@
 // asiAlgo includes
 #include <asiAlgo_AdjacencyMx.h>
 #include <asiAlgo_FeatureAttr.h>
+#include <asiAlgo_FeatureFaces.h>
 #include <asiAlgo_Utils.h>
 
 // STL includes
@@ -41,9 +42,7 @@
 
 // OCCT includes
 #include <NCollection_IncAllocator.hxx>
-#include <NCollection_Vector.hxx>
 #include <Standard_OStream.hxx>
-#include <TColStd_PackedMapOfInteger.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -373,7 +372,7 @@ public:
   //!
   //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
   asiAlgo_EXPORT void
-    PushSubgraph(const TColStd_PackedMapOfInteger& faces2Keep);
+    PushSubgraph(const asiAlgo_Feature& faces2Keep);
 
   //! \brief Captures sub-graph.
   //!
@@ -386,7 +385,7 @@ public:
   //!
   //! \sa PopSubgraph() method to pop the created sub-graph from the stack.
   asiAlgo_EXPORT void
-    PushSubgraphX(const TColStd_PackedMapOfInteger& faces2Exclude);
+    PushSubgraphX(const asiAlgo_Feature& faces2Exclude);
 
   //! \brief Captures sub-graph.
   //!
@@ -419,9 +418,9 @@ public:
 
 public:
 
-  //! \return master CAD.
+  //! \return master CAD shape.
   asiAlgo_EXPORT const TopoDS_Shape&
-    GetMasterCAD() const;
+    GetMasterShape() const;
 
   //! \return number of graph nodes.
   asiAlgo_EXPORT int
@@ -436,7 +435,7 @@ public:
 
   //! Returns all selected faces.
   //! \return collection of 1-based indices of the selected faces.
-  asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
+  asiAlgo_EXPORT const asiAlgo_Feature&
     GetSelectedFaces() const;
 
   //! Returns true if the index is in range.
@@ -474,7 +473,7 @@ public:
   //! Returns neighbors for the face having the given internal index.
   //! \param[in] face_idx face index.
   //! \return indices of the neighbor faces.
-  asiAlgo_EXPORT const TColStd_PackedMapOfInteger&
+  asiAlgo_EXPORT const asiAlgo_Feature&
     GetNeighbors(const t_topoId face_idx) const;
 
   //! Returns only those neighbor faces which share the given edge with the
@@ -482,7 +481,7 @@ public:
   //! \param[in] face_idx ID of the face of interest.
   //! \param[in] edge     common edge.
   //! \return indices of the neighbor faces sharing the given edge.
-  asiAlgo_EXPORT TColStd_PackedMapOfInteger
+  asiAlgo_EXPORT asiAlgo_Feature
     GetNeighborsThru(const t_topoId face_idx, const TopoDS_Edge& edge);
 
   //! Returns neighbor faces for the given face of interest with additional
@@ -490,17 +489,18 @@ public:
   //! \param[in] face_idx index of the face of interest.
   //! \param[in] edge_ids indices of edges of interest.
   //! \return indices of the neighbor faces.
-  asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThru(const t_topoId                    face_idx,
-                     const TColStd_PackedMapOfInteger& edge_ids);
+  asiAlgo_EXPORT asiAlgo_Feature
+    GetNeighborsThru(const t_topoId         face_idx,
+                     const asiAlgo_Feature& edge_ids);
 
   //! Returns only those neighbor faces which do not share the given edges with
   //! the passed face of interest.
   //! \param[in] face_idx ID of the face of interest.
   //! \param[in] xEdges   edge where neighborhood is restricted.
   //! \return indices of the neighbor faces not sharing the given edges.
-  asiAlgo_EXPORT TColStd_PackedMapOfInteger
-    GetNeighborsThruX(const t_topoId face_idx, const TColStd_PackedMapOfInteger& xEdges);
+  asiAlgo_EXPORT asiAlgo_Feature
+    GetNeighborsThruX(const t_topoId         face_idx,
+                      const asiAlgo_Feature& xEdges);
 
   //! Returns full collection of neighbor faces.
   //! \return neighborhood data.
@@ -684,13 +684,13 @@ public:
   //! \param[out] resultFaceIds IDs of the found faces (if any).
   //! \return true if anything has been found, false -- otherwise.
   asiAlgo_EXPORT bool
-    FindBaseOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
+    FindBaseOnly(asiAlgo_Feature& resultFaceIds) const;
 
   //! Searches for the faces having ALL neighbors attributed with convex links.
   //! \param[out] resultFaceIds IDs of the found faces (if any).
   //! \return true if anything has been found, false -- otherwise.
   asiAlgo_EXPORT bool
-    FindConvexOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
+    FindConvexOnly(asiAlgo_Feature& resultFaceIds) const;
 
   //! Searches for the faces having ALL neighbors attributed with convex links.
   //! \param[out] resultFaces found faces (if any).
@@ -702,7 +702,7 @@ public:
   //! \param[out] resultFaceIds IDs of the found faces (if any).
   //! \return true if anything has been found, false -- otherwise.
   asiAlgo_EXPORT bool
-    FindConcaveOnly(TColStd_PackedMapOfInteger& resultFaceIds) const;
+    FindConcaveOnly(asiAlgo_Feature& resultFaceIds) const;
 
   //! Searches for the faces having ALL neighbors attributed with concave links.
   //! \param[out] resultFaces found faces (if any).
@@ -718,7 +718,7 @@ public:
   //! Removes the passed faces with all corresponding arcs from AAG.
   //! \param[in] faceIndices indices of faces to remove.
   asiAlgo_EXPORT void
-    Remove(const TColStd_PackedMapOfInteger& faceIndices);
+    Remove(const asiAlgo_Feature& faceIndices);
 
   //! Calculates number of the connected components.
   //! \return number of connected components in a graph.
@@ -727,18 +727,22 @@ public:
 
   //! Calculates the number of the connected components in AAG without the
   //! given faces represented by their indexes.
+  //! \param[in] excludedFaceIndices face indices to exclude from consideration.
   //! \return number of connected components in a graph.
   asiAlgo_EXPORT int
-    GetConnectedComponentsNb(const TColStd_PackedMapOfInteger& excludedFaceIndices);
+    GetConnectedComponentsNb(const asiAlgo_Feature& excludedFaceIndices);
 
   //! Calculates connected components for the given set of indexes.
+  //! \param[in]  seeds seed nodes for the detection.
+  //! \param[out] res   found connected components.
   asiAlgo_EXPORT void
-    GetConnectedComponents(const TColStd_PackedMapOfInteger&               seeds,
-                           NCollection_Vector<TColStd_PackedMapOfInteger>& res);
+    GetConnectedComponents(const asiAlgo_Feature&        seeds,
+                           std::vector<asiAlgo_Feature>& res);
 
   //! Calculates connected components for the full graph.
+  //! \param[out] res found connected components.
   asiAlgo_EXPORT void
-    GetConnectedComponents(NCollection_Vector<TColStd_PackedMapOfInteger>& res);
+    GetConnectedComponents(std::vector<asiAlgo_Feature>& res);
 
   //! Clears cached maps.
   asiAlgo_EXPORT void
@@ -859,7 +863,7 @@ protected:
   //! Selected faces. Selection is performed externally using any criterion
   //! which we do not care about here. One typical scenario is to select
   //! those faces corresponding to some feature in the model.
-  TColStd_PackedMapOfInteger m_selected;
+  asiAlgo_Feature m_selected;
 
   //! All sub-shapes.
   TopTools_IndexedMapOfShape m_subShapes;

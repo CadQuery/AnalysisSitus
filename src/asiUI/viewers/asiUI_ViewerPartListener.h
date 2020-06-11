@@ -47,6 +47,13 @@ class asiUI_EXPORT asiUI_ViewerPartListener : public asiUI_Viewer3dListener
 
 public:
 
+  //! Constructor accepting all necessary facilities.
+  //! \param[in] wViewerPart   part viewer.
+  //! \param[in] wViewerDomain domain viewer.
+  //! \param[in] wViewerHost   host viewer.
+  //! \param[in] model         Data Model instance.
+  //! \param[in] progress      progress notifier.
+  //! \param[in] plotter       imperative plotter.
   asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                            asiUI_ViewerDomain*            wViewerDomain,
                            asiUI_ViewerHost*              wViewerHost,
@@ -54,30 +61,42 @@ public:
                            ActAPI_ProgressEntry           progress,
                            ActAPI_PlotterEntry            plotter);
 
+  //! Dtor.
   virtual
     ~asiUI_ViewerPartListener();
 
 public:
 
+  //! Connects this listener to the target widget.
   virtual void
     Connect();
 
 protected slots:
 
+  //! Reaction on face picking.
+  //! \param[in] pickRes pick result.
   void
     onFacePicked(asiVisu_PickerResult* pickRes);
 
+  //! Reaction on edge picking.
+  //! \param[in] pickRes pick result.
   void
     onEdgePicked(asiVisu_PickerResult* pickRes);
 
+  //! Reaction on vertex picking.
+  //! \param[in] pickRes pick result.
   void
     onVertexPicked(asiVisu_PickerResult* pickRes);
 
 protected:
 
+  //! Populates the passed Qt menu with actions specific to Part viewer.
+  //! \param[in] menu Qt menu to populate.
   virtual void
     populateMenu(QMenu&);
 
+  //! Executes the passed Qt action.
+  //! \param[in] pAction Qt action to execute.
   virtual void
     executeAction(QAction*);
 
@@ -93,6 +112,7 @@ protected:
   QAction* m_pShowOriContourAction;
   QAction* m_pCopyAsStringAction;
   QAction* m_pSetAsVariableAction;
+  QAction* m_pFindIsolated;
 
 };
 

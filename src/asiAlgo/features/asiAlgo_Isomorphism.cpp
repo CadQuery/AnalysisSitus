@@ -127,10 +127,10 @@ bool asiAlgo_Isomorphism::Perform(const Handle(asiAlgo_AAG)& P_aag)
   TIMER_GO
 #endif
 
+#if defined COUT_DEBUG
   const int K = int( M0.rows() );
   const int N = int( M0.cols() );
 
-#if defined COUT_DEBUG
   std::cout << "Rows (K): "      << K         << std::endl;
   std::cout << "Columns (N): "   << N         << std::endl;
   std::cout << "N^K threshold: " << Pow(N, K) << std::endl;

@@ -89,23 +89,6 @@ public:
     Perform(const int    faceId,
             const double radius = 1e100);
 
-private:
-
-  //! Reaction to formulation changing.
-  //! \param[in] formulation activated formulation.
-  virtual void onFormulation(const asiAlgo_FeatureFormulation formulation)
-  {
-    switch ( formulation )
-    {
-      case FeatureFormulation_Full:
-      case FeatureFormulation_SupportFace:
-        Standard_ProgramError::Raise("Unsupported formulation");
-      //
-      case FeatureFormulation_GuessFace:
-      default: break;
-    }
-  }
-
 };
 
 #endif

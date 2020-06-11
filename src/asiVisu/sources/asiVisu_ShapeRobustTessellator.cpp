@@ -128,7 +128,7 @@ void asiVisu_ShapeRobustTessellator::Initialize(const Handle(asiAlgo_AAG)&      
                                                 ActAPI_PlotterEntry                     plotter)
 {
   m_aag   = aag;
-  m_shape = m_aag->GetMasterCAD();
+  m_shape = m_aag->GetMasterShape();
   //
   this->internalInit(linearDeflection,
                      angularDeflection_deg,

@@ -69,8 +69,6 @@ void cmdRE::ClearViewers(const bool repaint)
 void cmdRE::Factory(const Handle(asiTcl_Interp)&      interp,
                     const Handle(Standard_Transient)& data)
 {
-  static const char* group = "cmdRE";
-
   /* ==========================
    *  Initialize UI facilities
    * ========================== */

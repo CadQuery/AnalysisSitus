@@ -42,6 +42,7 @@
 #include <asiAlgo_Utils.h>
 
 // asiEngine includes
+#include <asiEngine_Features.h>
 #include <asiEngine_IV.h>
 #include <asiEngine_Part.h>
 
@@ -65,13 +66,6 @@
 
 //-----------------------------------------------------------------------------
 
-//! Constructor accepting all necessary facilities.
-//! \param[in] wViewerPart   part viewer.
-//! \param[in] wViewerDomain domain viewer.
-//! \param[in] wViewerHost   host viewer.
-//! \param[in] model         Data Model instance.
-//! \param[in] progress      progress notifier.
-//! \param[in] plotter       imperative plotter.
 asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*              wViewerPart,
                                                    asiUI_ViewerDomain*            wViewerDomain,
                                                    asiUI_ViewerHost*              wViewerHost,
@@ -87,18 +81,17 @@ asiUI_ViewerPartListener::asiUI_ViewerPartListener(asiUI_ViewerPart*            
   m_pInvertFacesAction    (nullptr),
   m_pShowOriContourAction (nullptr),
   m_pCopyAsStringAction   (nullptr),
-  m_pSetAsVariableAction  (nullptr)
+  m_pSetAsVariableAction  (nullptr),
+  m_pFindIsolated         (nullptr)
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Destructor.
 asiUI_ViewerPartListener::~asiUI_ViewerPartListener()
 {}
 
 //-----------------------------------------------------------------------------
 
-//! Connects this listener to the target widget.
 void asiUI_ViewerPartListener::Connect()
 {
   asiUI_Viewer3dListener::Connect(); // Connect basic reactions.
@@ -115,8 +108,6 @@ void asiUI_ViewerPartListener::Connect()
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on face picking.
-//! \param[in] pickRes pick result.
 void asiUI_ViewerPartListener::onFacePicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
@@ -165,8 +156,6 @@ void asiUI_ViewerPartListener::onFacePicked(asiVisu_PickerResult* pickRes)
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on edge picking.
-//! \param[in] pickRes pick result.
 void asiUI_ViewerPartListener::onEdgePicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
@@ -215,8 +204,6 @@ void asiUI_ViewerPartListener::onEdgePicked(asiVisu_PickerResult* pickRes)
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on vertex picking.
-//! \param[in] pickRes pick result.
 void asiUI_ViewerPartListener::onVertexPicked(asiVisu_PickerResult* pickRes)
 {
   // Check if part is picked
@@ -259,8 +246,6 @@ void asiUI_ViewerPartListener::onVertexPicked(asiVisu_PickerResult* pickRes)
 
 //-----------------------------------------------------------------------------
 
-//! Populates the passed Qt menu with actions specific to Part viewer.
-//! \param[in] menu Qt menu to populate.
 void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
 {
   // Get highlighted faces and edges.
@@ -292,6 +277,7 @@ void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
         m_pShowOriContourAction = menu.addAction("Show face oriented contour");
       //
       m_pInvertFacesAction = menu.addAction("Invert faces");
+      m_pFindIsolated      = menu.addAction("Find isolated");
     }
 
     menu.addSeparator();
@@ -309,8 +295,6 @@ void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
 
 //-----------------------------------------------------------------------------
 
-//! Executes the passed Qt action.
-//! \param[in] pAction Qt action to execute.
 void asiUI_ViewerPartListener::executeAction(QAction* pAction)
 {
   if ( !pAction )
@@ -508,5 +492,28 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
 
     // Add variable via the imperative plotter
     m_plotter.DRAW_SHAPE(shape2Var, Color_Yellow, "var");
+  }
+
+  //---------------------------------------------------------------------------
+  // ACTION: find isolated
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pFindIsolated )
+  {
+    asiEngine_Part partApi( m_model, m_pViewer->PrsMgr() );
+
+    // Get highlighted faces
+    asiAlgo_Feature faceIndices;
+    partApi.GetHighlightedFaces(faceIndices);
+
+    // Find features.
+    asiAlgo_Feature
+      isolated = asiEngine_Features(m_model,
+                            m_progress,
+                             m_plotter).FindIsolated(faceIndices);
+
+    if ( !isolated.IsEmpty() )
+      partApi.HighlightFaces(isolated);
+    else
+      m_progress.SendLogMessage(LogInfo(Normal) << "No isolated features found.");
   }
 }

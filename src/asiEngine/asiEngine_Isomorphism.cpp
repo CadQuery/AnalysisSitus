@@ -38,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 bool asiEngine_Isomorphism::Compute(const TCollection_AsciiString& featureName,
-                                    TColStd_PackedMapOfInteger&    featureFaces,
+                                    asiAlgo_Feature&               featureFaces,
                                     const int                      flags)
 {
   // Get problem graph.
@@ -79,14 +79,12 @@ bool asiEngine_Isomorphism::Compute(const TCollection_AsciiString& featureName,
    *  Reduce problem graph.
    * ====================== */
 
-  TColStd_PackedMapOfInteger faces2Exclude;
+  asiAlgo_Feature faces2Exclude;
 
   // Reduce AAG if requested.
-  bool isReduced = false;
-  //
   if ( flags & ExcludeConvexOnly )
   {
-    TColStd_PackedMapOfInteger convexOnlyFaces;
+    asiAlgo_Feature convexOnlyFaces;
     G->FindConvexOnly(convexOnlyFaces);
     faces2Exclude.Unite(convexOnlyFaces);
 
@@ -96,7 +94,7 @@ bool asiEngine_Isomorphism::Compute(const TCollection_AsciiString& featureName,
   //
   if ( flags & ExcludeBase )
   {
-    TColStd_PackedMapOfInteger baseOnlyFaces;
+    asiAlgo_Feature baseOnlyFaces;
     G->FindBaseOnly(baseOnlyFaces);
     faces2Exclude.Unite(baseOnlyFaces);
 
@@ -107,10 +105,9 @@ bool asiEngine_Isomorphism::Compute(const TCollection_AsciiString& featureName,
   if ( faces2Exclude.Extent() > 0 )
   {
     G->PushSubgraphX(faces2Exclude);
-    isReduced = true;
   }
 
-  NCollection_Vector<TColStd_PackedMapOfInteger> ccomps;
+  std::vector<asiAlgo_Feature> ccomps;
   G->GetConnectedComponents(ccomps);
 
   /* =====================================================
@@ -118,16 +115,16 @@ bool asiEngine_Isomorphism::Compute(const TCollection_AsciiString& featureName,
    * ===================================================== */
 
   m_progress.SetMessageKey("Searching for isomorphisms");
-  m_progress.Init( ccomps.Length() == 1 ? INT_MAX : ccomps.Length() );
+  m_progress.Init( ccomps.size() == 1 ? INT_MAX : int( ccomps.size() ) );
 
-  std::cout << "There are " << ccomps.Length() << " connected components in the AAG to analyze." << std::endl;
+  std::cout << "There are " << int( ccomps.size() )<< " connected components in the AAG to analyze." << std::endl;
   m_progress.SendLogMessage( LogInfo(Normal) << "There are %1 connected components to analyze."
-                                             << ccomps.Length() );
+                                             << int( ccomps.size() ) );
 
-  for ( int ccidx = 0; ccidx < ccomps.Length(); ++ccidx )
+  for ( auto cit = ccomps.cbegin(); cit != ccomps.cend(); ++cit )
   {
     // Recognize features in each connected component separately.
-    G->PushSubgraph( ccomps(ccidx) );
+    G->PushSubgraph(*cit);
     {
       if ( flags & Verbose )
       {

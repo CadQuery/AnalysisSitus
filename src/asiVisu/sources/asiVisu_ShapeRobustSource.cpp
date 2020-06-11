@@ -66,7 +66,7 @@ asiVisu_ShapeRobustSource::~asiVisu_ShapeRobustSource()
 void asiVisu_ShapeRobustSource::SetAAG(const Handle(asiAlgo_AAG)& aag)
 {
   m_aag   = aag;
-  m_shape = m_aag->GetMasterCAD();
+  m_shape = m_aag->GetMasterShape();
   //
   this->Modified();
 }

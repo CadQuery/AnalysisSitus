@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 June 2020
+// Created on: 11 June 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020-present, Sergey Slyadnev
+// Copyright (c) 2016-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,61 +28,40 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Isomorphism_h
-#define asiEngine_Isomorphism_h
+#ifndef asiAlgo_FeatureFaces_h
+#define asiAlgo_FeatureFaces_h
 
-// asiEngine includes
-#include <asiEngine_Model.h>
+// asiAlgo includes
+#include <asiAlgo_FeatureType.h>
+
+// OCCT includes
+#include <NCollection_DataMap.hxx>
+#include <Standard_GUID.hxx>
+#include <TColStd_PackedMapOfInteger.hxx>
 
 //-----------------------------------------------------------------------------
 
-//! Data Model API for finding isomorphisms of AAG.
-class asiEngine_Isomorphism
-{
-public:
+//! Feature ID.
+typedef int asiAlgo_FeatureId;
 
-  //! Settings for isomorphism searching.
-  enum Flags
-  {
-    ExcludeConvexOnly = 0x001,
-    ExcludeBase       = 0x002,
-    Verbose           = 0x004
-  };
+//-----------------------------------------------------------------------------
 
-public:
+//! Feature as a set of indices of faces.
+typedef TColStd_PackedMapOfInteger asiAlgo_Feature;
 
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_Isomorphism(const Handle(asiEngine_Model)& model,
-                        ActAPI_ProgressEntry           progress = nullptr,
-                        ActAPI_PlotterEntry            plotter  = nullptr)
-  //
-  : m_model(model), m_progress(progress), m_plotter(plotter) {}
+//-----------------------------------------------------------------------------
 
-public:
+//! Features by indices.
+typedef NCollection_DataMap<asiAlgo_FeatureId, asiAlgo_Feature> asiAlgo_Features;
 
-  //! Finds all isomorphisms.
-  //! \param[in]  featureName  name of the data object representing the
-  //!                          feature to match.
-  //! \param[out] featureFaces found feature faces.
-  //! \param[in]  flags        optional flags to affect how isomorphisms
-  //!                          are to be found.
-  //! \return true in case of success, false -- otherwise.
-  asiEngine_EXPORT bool
-    Compute(const TCollection_AsciiString& featureName,
-            asiAlgo_Feature&               featureFaces,
-            const int                      flags = 0);
+//-----------------------------------------------------------------------------
 
-protected:
+//! Handy typedef for indices of feature faces organized by feature types.
+typedef NCollection_DataMap<asiAlgo_FeatureType, asiAlgo_Features> asiAlgo_FeaturesByType;
 
-  Handle(asiEngine_Model) m_model; //!< Data Model instance.
+//-----------------------------------------------------------------------------
 
-  /* Diagnostic tools */
-  mutable ActAPI_ProgressEntry m_progress; //!< Progress notifier.
-  mutable ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
-
-};
+//! Undefined GUID.
+typedef Standard_GUID asiAlgo_BadGuid;
 
 #endif

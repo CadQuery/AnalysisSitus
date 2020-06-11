@@ -50,7 +50,7 @@ asiAlgo_CompleteEdgeLoop::asiAlgo_CompleteEdgeLoop(const Handle(asiAlgo_AAG)& aa
 bool asiAlgo_CompleteEdgeLoop::operator()(const int                   seedEdgeIndex,
                                           TColStd_PackedMapOfInteger& loopIndices)
 {
-  const TopoDS_Shape& model = m_aag->GetMasterCAD();
+  const TopoDS_Shape& model = m_aag->GetMasterShape();
 
   // Build auxiliary maps.
   if ( m_vertexEdgeMap.IsEmpty() )

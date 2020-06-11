@@ -345,7 +345,7 @@ asiAlgo_RecognizeBlends::asiAlgo_RecognizeBlends(const Handle(asiAlgo_AAG)& aag,
                                                  ActAPI_ProgressEntry       progress,
                                                  ActAPI_PlotterEntry        plotter)
 //
-: asiAlgo_Recognizer(aag->GetMasterCAD(), aag, progress, plotter)
+: asiAlgo_Recognizer(aag->GetMasterShape(), aag, progress, plotter)
 {}
 
 //-----------------------------------------------------------------------------

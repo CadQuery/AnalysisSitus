@@ -147,9 +147,8 @@ int MISC_BuildCoonsLinear(const Handle(asiTcl_Interp)& interp,
 void cmdMisc::Commands_Coons(const Handle(asiTcl_Interp)&      interp,
                              const Handle(Standard_Transient)& cmdMisc_NotUsed(data))
 {
-  static const char* group = "cmdMisc";
-
 #if defined USE_MOBIUS
+  static const char* group = "cmdMisc";
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("build-coons-linear",

@@ -84,7 +84,7 @@ bool asiAlgo_FindVisibleFaces::Perform()
 
 //-----------------------------------------------------------------------------
 
-const NCollection_DataMap<int, asiAlgo_FindVisibleFaces::t_score>&
+const NCollection_DataMap<t_topoId , asiAlgo_FindVisibleFaces::t_score>&
   asiAlgo_FindVisibleFaces::GetResultScores() const
 {
   return m_scores;
@@ -214,7 +214,7 @@ bool asiAlgo_FindVisibleFaces::isVisible(const t_rayBundle& rb) const
 bool asiAlgo_FindVisibleFaces::testLeaf(const gp_Lin&    ray,
                                         const double     length,
                                         const BVH_Vec4i& leaf,
-                                        const int        face2Skip,
+                                        const t_topoId   face2Skip,
                                         int&             resultFacet,
                                         double&          resultRayParamNormalized,
                                         gp_XYZ&          hitPoint) const
@@ -229,7 +229,7 @@ bool asiAlgo_FindVisibleFaces::testLeaf(const gp_Lin&    ray,
   resultFacet              = -1;
   resultRayParamNormalized = RealLast();
 
-  // Loop over the tentative facets
+  // Loop over the tentative facets.
   for ( int fidx = leaf.y(); fidx <= leaf.z(); ++fidx )
   {
     // Get facet to test.
@@ -388,7 +388,7 @@ bool asiAlgo_FindVisibleFaces::isIntersected(const gp_XYZ& rayStart,
                                              double&       hitParamNormalized,
                                              gp_XYZ&       hitPoint) const
 {
-  // Moller–Trumbore intersection algorithm
+  // Moller?Trumbore intersection algorithm
   // (T. Moller et al, Fast Minimum Storage Ray / Triangle Intersection)
   gp_Vec e1(pntTri1, pntTri2),
          e2(pntTri1, pntTri3);

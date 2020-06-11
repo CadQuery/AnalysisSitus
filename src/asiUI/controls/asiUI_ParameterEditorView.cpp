@@ -133,7 +133,6 @@ void asiUI_ParameterEditorView::SetParameters(const asiUI_ParamDataList& thePara
   QTreeWidgetItem* aGroupParent = aRootItem;
 
   // create tree
-  bool aHasGroups = false;
   bool isReadOnly = IsReadOnly();
 
   asiUI_ParameterEditorItem* anItemParam = 0;
@@ -150,8 +149,6 @@ void asiUI_ParameterEditorView::SetParameters(const asiUI_ParamDataList& thePara
       // disable editing
       aGroupParent->setFlags(aGroupParent->flags() & ~Qt::ItemIsEditable);
       aGroupParent->setFirstColumnSpanned(true);
-
-      aHasGroups = true;
     }
     else
     {

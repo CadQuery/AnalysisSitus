@@ -10,6 +10,7 @@ set (H_FILES
   asiEngine_Curve.h
   asiEngine_Domain.h
   asiEngine_Editing.h
+  asiEngine_Features.h
   asiEngine_Isomorphism.h
   asiEngine_IV.h
   asiEngine_Model.h
@@ -29,6 +30,7 @@ set (CPP_FILES
   asiEngine_Curve.cpp
   asiEngine_Domain.cpp
   asiEngine_Editing.cpp
+  asiEngine_Features.cpp
   asiEngine_Isomorphism.cpp
   asiEngine_IV.cpp
   asiEngine_Model.cpp

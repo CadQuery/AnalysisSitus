@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Created on: 01 June 2020
+// Created on: 11 June 2020
 //-----------------------------------------------------------------------------
 // Copyright (c) 2020-present, Sergey Slyadnev
 // All rights reserved.
@@ -28,61 +28,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiEngine_Isomorphism_h
-#define asiEngine_Isomorphism_h
+// Own include
+#include <asiEngine_Features.h>
 
-// asiEngine includes
-#include <asiEngine_Model.h>
+// asiAlgo includes
+#include <asiAlgo_RecognizeIsolated.h>
 
 //-----------------------------------------------------------------------------
 
-//! Data Model API for finding isomorphisms of AAG.
-class asiEngine_Isomorphism
+asiAlgo_Feature
+  asiEngine_Features::FindIsolated(const asiAlgo_Feature& baseFaces) const
 {
-public:
-
-  //! Settings for isomorphism searching.
-  enum Flags
-  {
-    ExcludeConvexOnly = 0x001,
-    ExcludeBase       = 0x002,
-    Verbose           = 0x004
-  };
-
-public:
-
-  //! Ctor.
-  //! \param[in] model    Data Model instance.
-  //! \param[in] progress progress notifier.
-  //! \param[in] plotter  imperative plotter.
-  asiEngine_Isomorphism(const Handle(asiEngine_Model)& model,
-                        ActAPI_ProgressEntry           progress = nullptr,
-                        ActAPI_PlotterEntry            plotter  = nullptr)
+  // Get part.
+  Handle(asiData_PartNode) partNode = m_model->GetPartNode();
   //
-  : m_model(model), m_progress(progress), m_plotter(plotter) {}
+  TopoDS_Shape        shape = partNode->GetShape();
+  Handle(asiAlgo_AAG) aag   = partNode->GetAAG();
 
-public:
+  // Perform recognition.
+  asiAlgo_RecognizeIsolated algo(shape, aag, m_progress, m_plotter);
+  //
+  if ( !algo.Perform(baseFaces) )
+  {
+    m_progress.SendLogMessage(LogErr(Normal) << "Recognition failed.");
+    return asiAlgo_Feature();
+  }
 
-  //! Finds all isomorphisms.
-  //! \param[in]  featureName  name of the data object representing the
-  //!                          feature to match.
-  //! \param[out] featureFaces found feature faces.
-  //! \param[in]  flags        optional flags to affect how isomorphisms
-  //!                          are to be found.
-  //! \return true in case of success, false -- otherwise.
-  asiEngine_EXPORT bool
-    Compute(const TCollection_AsciiString& featureName,
-            asiAlgo_Feature&               featureFaces,
-            const int                      flags = 0);
-
-protected:
-
-  Handle(asiEngine_Model) m_model; //!< Data Model instance.
-
-  /* Diagnostic tools */
-  mutable ActAPI_ProgressEntry m_progress; //!< Progress notifier.
-  mutable ActAPI_PlotterEntry  m_plotter;  //!< Imperative plotter.
-
-};
-
-#endif
+  return algo.GetResultIndices();
+}

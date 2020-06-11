@@ -91,7 +91,7 @@ public:
     GetFeatures() const;
 
   //! \return all found features in one map.
-  asiAlgo_EXPORT TColStd_PackedMapOfInteger
+  asiAlgo_EXPORT asiAlgo_Feature
     GetAllFeatures() const;
 
 protected:

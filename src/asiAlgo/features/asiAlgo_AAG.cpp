@@ -185,6 +185,13 @@ const TopoDS_Shape& asiAlgo_AAG::GetMasterShape() const
 
 //-----------------------------------------------------------------------------
 
+const TopoDS_Shape& asiAlgo_AAG::GetMasterCAD() const
+{
+  return m_master;
+}
+
+//-----------------------------------------------------------------------------
+
 int asiAlgo_AAG::GetNumberOfNodes() const
 {
   const asiAlgo_AdjacencyMx& neighborhood = this->GetNeighborhood();
@@ -987,6 +994,19 @@ void asiAlgo_AAG::GetConnectedComponents(std::vector<asiAlgo_Feature>& res)
 
   // Collect connected components using all faces as seeds.
   this->GetConnectedComponents(allFaces, res);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_AAG::GetConnectedComponents(NCollection_Vector<asiAlgo_Feature>& res)
+{
+  std::vector<asiAlgo_Feature> ccomps;
+  //
+  this->GetConnectedComponents(ccomps);
+
+  // Repack from the standard vector to the OpenCascade's collection.
+  for ( auto cit = ccomps.cbegin(); cit != ccomps.cend(); ++cit )
+    res.Append(*cit);
 }
 
 //-----------------------------------------------------------------------------

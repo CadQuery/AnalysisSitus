@@ -99,9 +99,9 @@ protected:
 
   t_widgets                           m_widgets;     //!< UI controls.
   QVBoxLayout*                        m_pMainLayout; //!< Layout of the widget.
-  asiUI_ViewerPart*                   m_pViewer;     //!< External reference to viewer.
   Handle(asiEngine_Model)             m_model;       //!< Data Model instance.
   vtkSmartPointer<asiVisu_PrsManager> m_prsMgr;      //!< Presentation Manager.
+  asiUI_ViewerPart*                   m_pViewer;     //!< External reference to viewer.
 
 };
 

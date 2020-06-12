@@ -151,11 +151,6 @@ void asiUI_DatumSpinBox::Editor::unitSystemChanged(const QString& theSystem)
     aSpinBox->setPrefix( prefix() );
   }
 
-  int aPreci = 1;
-  Handle(DDS_DicItem) aDicItem = dicItem();
-  if ( !aDicItem.IsNull() )
-    aPreci = aDicItem->GetPrecision();
-
   aSpinBox->setMinimum( INT_MIN );
   aSpinBox->setMaximum( INT_MAX );
 }

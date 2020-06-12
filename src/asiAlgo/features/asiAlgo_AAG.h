@@ -422,6 +422,13 @@ public:
   asiAlgo_EXPORT const TopoDS_Shape&
     GetMasterShape() const;
 
+  //! \deprecated Use GetMasterShape() instead.
+  //! \return master CAD shape.
+  //! \sa GetMasterShape()
+  [[deprecated("Use the GetMasterShape() method instead.")]]
+  asiAlgo_EXPORT const TopoDS_Shape&
+    GetMasterCAD() const;
+
   //! \return number of graph nodes.
   asiAlgo_EXPORT int
     GetNumberOfNodes() const;
@@ -743,6 +750,14 @@ public:
   //! \param[out] res found connected components.
   asiAlgo_EXPORT void
     GetConnectedComponents(std::vector<asiAlgo_Feature>& res);
+
+  //! \deprecated Kept for compatibility only (use std::vector version instead).
+  //!
+  //! Calculates connected components for the full graph.
+  //! \param[out] res found connected components.
+  [[deprecated("Use the overloaded version with std::vector instead.")]]
+  asiAlgo_EXPORT void
+    GetConnectedComponents(NCollection_Vector<asiAlgo_Feature>& res);
 
   //! Clears cached maps.
   asiAlgo_EXPORT void

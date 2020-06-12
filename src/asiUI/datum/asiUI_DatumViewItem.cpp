@@ -603,6 +603,10 @@ Handle(asiAlgo_DictionaryItem) asiUI_DatumViewItem::dictionaryItem() const
       aDatumId = index().isValid() ? aViewBaseApi->DatumId( index() ) : QString();
     }
     break;
+
+    case asiUI_DatumViewModel::Domain_Undefined:
+    default:
+      break;
   }
 
   if ( aDatumId.isEmpty() )

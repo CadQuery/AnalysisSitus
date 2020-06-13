@@ -36,7 +36,7 @@
 
 // Qt-VTK includes
 #pragma warning(push, 0)
-#include <QVTKWidget.h>
+#include <asiVisu_QVTKWidget.h>
 #pragma warning(pop)
 
 // Qt includes
@@ -74,8 +74,8 @@ asiUI_ViewerCurve2d::asiUI_ViewerCurve2d(vtkSmartPointer<asiVisu_PrsManager>& pr
   m_prs_mgr->SetSelectionMode(SelectionMode_Workpiece);
 
   // Widgets and layouts
-  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout*            pBaseLayout = new QVBoxLayout();
+  asiVisu_QVTKWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout*        pBaseLayout = new QVBoxLayout();
 
   // Configure layout
   pBaseLayout->setSpacing(0);

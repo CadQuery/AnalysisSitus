@@ -130,6 +130,8 @@ int main(int argc, char** argv)
   // Construct Qt application.
   QApplication app(argc, argv);
   //
+  app.setAttribute(Qt::AA_DontUseNativeMenuBar);
+  //
   QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
 
   // Splash screen.

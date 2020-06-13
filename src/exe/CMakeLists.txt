@@ -170,6 +170,8 @@ if (USE_MOBIUS)
   include_directories(SYSTEM ${3RDPARTY_mobius_INCLUDE_DIR})
 endif()
 
+COPY_RESOURCES_TO_BINARY_DIRS(resources/asiExeDictionary.xml)
+
 #------------------------------------------------------------------------------
 # Qt resources
 #------------------------------------------------------------------------------
@@ -183,10 +185,6 @@ source_group ("Generated" FILES "${RCC_FILE}")
 #------------------------------------------------------------------------------
 
 add_executable(asiExe ${ui_moc_files} ${src_files} ${RCC_FILE} resources/asiExeDictionary.xml)
-
-if (WIN32)
-  COPY_RESOURCES_TO_BINARY_DIRS(resources/asiExeDictionary.xml)
-endif()
 
 set (USE_CONSOLE OFF CACHE BOOL "Using of debug console")
 if (WIN32 AND MSVC)

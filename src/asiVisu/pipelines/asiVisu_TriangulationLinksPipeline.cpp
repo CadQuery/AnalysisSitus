@@ -32,6 +32,7 @@
 #include <asiVisu_TriangulationLinksPipeline.h>
 
 // asiVisu includes
+#include <asiVisu_MeshUtils.h>
 #include <asiVisu_TriangulationDataProvider.h>
 #include <asiVisu_TriangulationNodeInfo.h>
 #include <asiVisu_Utils.h>
@@ -45,7 +46,11 @@
 
 asiVisu_TriangulationLinksPipeline::asiVisu_TriangulationLinksPipeline(const vtkSmartPointer<asiVisu_TriangulationSource>& source)
 //
-: asiVisu_TriangulationPipelineBase(source)
+: asiVisu_TriangulationPipelineBase (source),
+  m_fPartRed                        (0.),
+  m_fPartGreen                      (0.),
+  m_fPartBlue                       (0.),
+  m_bScalarsOn                      (false)
 {
   m_dmFilter->SetDisplayMode(MeshDisplayMode_Wireframe);
 }
@@ -53,44 +58,69 @@ asiVisu_TriangulationLinksPipeline::asiVisu_TriangulationLinksPipeline(const vtk
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
-//! \param dataProvider [in] Data Provider.
+//! \param[in] dataProvider Data Provider.
 void asiVisu_TriangulationLinksPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(asiVisu_TriangulationDataProvider)
     DP = Handle(asiVisu_TriangulationDataProvider)::DownCast(dataProvider);
 
   /* ===========================
-   *  Validate input Parameters
+   *  Validate input Parameters.
    * =========================== */
 
   Handle(Poly_Triangulation) triangulation = DP->GetTriangulation();
   //
   if ( triangulation.IsNull() )
   {
-    // Pass empty data set in order to have valid pipeline
+    // Pass empty data set in order to have valid pipeline.
     vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
     this->SetInputData(dummyData);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
 
   /* ============================
-   *  Prepare polygonal data set
+   *  Prepare polygonal data set.
    * ============================ */
+
+  // Update part-wise colors.
+  DP->GetColor(m_fPartRed, m_fPartGreen, m_fPartBlue);
+
+  // Update use of scalars flag.
+  m_bScalarsOn = DP->HasScalars();
 
   if ( DP->MustExecute( this->GetMTime() ) )
   {
     // Clear cached data which is by design actual for the current state of
-    // source only. The source changes, so the cache needs nullification
+    // source only. The source changes, so the cache needs nullification.
     this->clearCache();
 
     // Bind to a Data Node using information key
     asiVisu_TriangulationNodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
-    // Initialize pipeline
+    // Initialize pipeline.
     this->SetInputConnection( m_source->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
+}
+//-----------------------------------------------------------------------------
+
+//! Callback for Update() routine.
+void asiVisu_TriangulationLinksPipeline::callback_update()
+{
+  if ( m_bScalarsOn )
+  {
+    asiVisu_MeshUtils::InitMapper(m_mapper,
+                                  ARRNAME_MESH_ITEM_TYPE,
+                                  m_fPartRed,
+                                  m_fPartGreen,
+                                  m_fPartBlue);
+  }
+  else
+  {
+    m_mapper->ScalarVisibilityOff();
+    m_mapper->Update();
+  }
 }

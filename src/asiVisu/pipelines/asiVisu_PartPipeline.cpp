@@ -54,7 +54,10 @@
 asiVisu_PartPipeline::asiVisu_PartPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source,
                                            const asiVisu_ShapeDisplayMode                    dm)
 //
-: asiVisu_PartPipelineBase(source), m_fPartRed(0.), m_fPartGreen(0.), m_fPartBlue(0.), m_bScalarsOn(false)
+: asiVisu_PartPipelineBase (source),
+  m_fPartRed               (0.),
+  m_fPartGreen             (0.),
+  m_fPartBlue              (0.)
 {
   m_dmFilter->SetDisplayMode(dm);
   m_dmFilter->SetAllowExtraScalars(true);
@@ -135,82 +138,6 @@ void asiVisu_PartPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProv
 
   // Update modification timestamp
   this->Modified();
-}
-
-//-----------------------------------------------------------------------------
-
-void asiVisu_PartPipeline::updateColors()
-{
-  if ( !m_bScalarsAllowed || !m_bScalarsOn )
-    return;
-
-  Handle(asiVisu_ShapeColorSource) colorSource = m_source->GetColorSource();
-  //
-  if ( colorSource.IsNull() )
-    return;
-
-  // Initialize the scalar generator for faces.
-  asiVisu_ShapeRobustTessellator::t_colorScalarGenerator*
-    pScalarGen = m_source->GetScalarGenerator();
-  //
-  if ( !pScalarGen )
-    return;
-
-  // Get polygonal data.
-  vtkPolyData*
-    pData = vtkPolyData::SafeDownCast( this->Mapper()->GetInputDataObject(0, 0) );
-  //
-  if ( !pData )
-    return;
-
-  // Get cell data.
-  vtkCellData* pCellData       = pData->GetCellData();
-  const int    numOfInputCells = pCellData->GetNumberOfTuples();
-
-  // Get array of pedigree IDs
-  vtkIdTypeArray*
-    pPedigreeArr = vtkIdTypeArray::SafeDownCast( pCellData->GetPedigreeIds() );
-
-  // Get array of cell types.
-  vtkIdTypeArray*
-    pShapePrimArr = vtkIdTypeArray::SafeDownCast( pCellData->GetArray(ARRNAME_PART_CELL_TYPES) );
-
-  // Mark cells
-  for ( vtkIdType cellId = 0; cellId < numOfInputCells; ++cellId )
-  {
-    // Check pedigree ID of the cell.
-    double pedigreeIdDbl;
-    pPedigreeArr->GetTuple(cellId, &pedigreeIdDbl);
-    const int pedigreeId = (int) pedigreeIdDbl;
-
-    Handle(asiAlgo_AAG) aag = m_source->GetAAG();
-    //
-    if ( aag.IsNull() )
-      continue;
-
-    const TopoDS_Shape& sh = aag->RequestMapOfSubShapes().FindKey(pedigreeId);
-    //
-    if ( sh.ShapeType() != TopAbs_FACE )
-      continue;
-
-    const int fid   = aag->GetFaceId( TopoDS::Face(sh) );
-    const int color = colorSource->GetFaceColor(fid);
-
-    if ( color != -1 )
-    {
-      const int scalar = pScalarGen->GetScalar(color);
-
-      // Set scalar value in array.
-      pShapePrimArr->SetTuple1(cellId, scalar);
-
-      // Update cached scalars.
-      if ( m_detectedCells.IsBound(cellId) )
-        m_detectedCells.ChangeFind(cellId) = scalar;
-      //
-      if ( m_selectedCells.IsBound(cellId) )
-        m_selectedCells.ChangeFind(cellId) = scalar;
-    }
-  }
 }
 
 //-----------------------------------------------------------------------------

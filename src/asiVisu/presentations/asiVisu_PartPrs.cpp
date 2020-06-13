@@ -109,9 +109,16 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // do not want to allow color blending (colors are too meaningful to be
   // changed).
   contour_pl->Actor()->GetProperty()->SetPointSize(8.0f);
-  contour_pl->Actor()->GetProperty()->SetLineWidth(.9f);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.25f);
+  contour_pl->Actor()->GetProperty()->SetColor(0.1, 0.1, 0.1); // Default color for edges w/o scalars.
   contour_pl->Actor()->SetPickable(0);
-  contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOff();
+  //
+  if ( partNode->GetRenderEdgesAsTubes() ) // Do not remove this if-statement
+                                           // to avoid troubles with tubes
+                                           // in headless mode.
+  {
+    contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOn();
+  }
   contour_pl->Actor()->GetProperty()->LightingOff();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
@@ -231,9 +238,13 @@ void asiVisu_PartPrs::SetDisplayMode(const asiVisu_ShapeDisplayMode displayMode,
 
   // Resolve coincident topology.
   if ( resolveCoincidentTopo )
+  {
     plContour->Mapper()->SetResolveCoincidentTopologyToPolygonOffset();
+  }
   else
+  {
     plContour->Mapper()->SetResolveCoincidentTopologyToOff();
+  }
 
   // Shading.
   if ( displayMode == ShapeDisplayMode_Shaded ||

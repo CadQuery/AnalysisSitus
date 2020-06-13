@@ -35,6 +35,7 @@
 #include <asiVisu_InteractorStylePick.h>
 #include <asiVisu_InteractorStylePick2d.h>
 #include <asiVisu_Prs.h>
+#include <asiVisu_QVTKWidget.h>
 #include <asiVisu_Utils.h>
 
 // asiData includes
@@ -421,7 +422,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-  asiVisu_EXPORT QVTKOpenGLNativeWidget*
+  asiVisu_EXPORT asiVisu_QVTKWidget*
     GetQVTKWidget() const;
 
   asiVisu_EXPORT const vtkSmartPointer<asiVisu_InteractorStylePick>&
@@ -525,7 +526,7 @@ private:
 private:
 
   //! QVTK widget.
-  QVTKOpenGLNativeWidget* m_widget;
+  asiVisu_QVTKWidget* m_widget;
 
   //! Active renderer.
   vtkSmartPointer<vtkRenderer> m_renderer;

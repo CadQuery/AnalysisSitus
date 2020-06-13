@@ -20,6 +20,12 @@ set(CMAKE_PREFIX_PATH ${3RDPARTY_QT_DIR})
 # Now we can apply standard CMake finder for Qt5. We do this mostly
 # to have qt5_wrap_cpp() function available
 find_package(Qt5 REQUIRED COMPONENTS Widgets Core)
+#
+if (NOT WIN32)
+  find_package(Qt5 REQUIRED COMPONENTS X11Extras)
+  mark_as_advanced (Qt5X11Extras_DIR)
+endif()
+#
 message (STATUS "... Qt cmake configuration at ${Qt5_DIR}")
 
 # Hide specific paths

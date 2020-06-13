@@ -54,6 +54,19 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
+protected:
+
+  asiVisu_EXPORT virtual void
+    callback_update();
+
+protected:
+
+  //! Components of part-wise color.
+  double m_fPartRed, m_fPartGreen, m_fPartBlue;
+
+  //! Indicates whether the scalars are enabled or not.
+  bool m_bScalarsOn;
+
 };
 
 #endif

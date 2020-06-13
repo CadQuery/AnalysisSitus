@@ -61,7 +61,9 @@ vtkSmartPointer<vtkLookupTable>
   colorTable->SetTableValue(MeshPrimitive_FreeLink,        0.75, 0.0, 0.0);
   colorTable->SetTableValue(MeshPrimitive_DanglingLink,    1.0,  0.0, 0.0);
   colorTable->SetTableValue(MeshPrimitive_BorderLink,      1.0,  0.0, 0.0);
-  colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    0.1,  0.1, 0.1);
+  colorTable->SetTableValue(MeshPrimitive_ManifoldLink,    ref_r / 4.,
+                                                           ref_g / 4.,
+                                                           ref_b / 4.);
   colorTable->SetTableValue(MeshPrimitive_NonManifoldLink, 1.0,  1.0, 0.0);
   //
   colorTable->SetTableValue(MeshPrimitive_CellTriangle,    ref_r, ref_g, ref_b);

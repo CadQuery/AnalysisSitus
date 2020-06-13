@@ -39,13 +39,17 @@
 // VTK includes
 #include <vtkActor.h>
 #include <vtkInformation.h>
+#include <vtkMapper.h>
 #include <vtkProperty.h>
 
 //-----------------------------------------------------------------------------
 
 asiVisu_PartEdgesPipeline::asiVisu_PartEdgesPipeline(const vtkSmartPointer<asiVisu_ShapeRobustSource>& source)
 //
-: asiVisu_PartPipelineBase(source)
+: asiVisu_PartPipelineBase (source),
+  m_fPartRed               (0.),
+  m_fPartGreen             (0.),
+  m_fPartBlue              (0.)
 {
   m_dmFilter->SetDisplayMode(ShapeDisplayMode_Wireframe);
 
@@ -85,6 +89,15 @@ void asiVisu_PartEdgesPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
   // Set transformation from the data provider.
   m_tranformFilter->SetTransform( DP->GetTransformation() );
 
+  // Pass color source.
+  m_source->SetColorSource( DP->PrepareColorSource(), false );
+
+  // Update part-wise colors.
+  DP->GetColor(m_fPartRed, m_fPartGreen, m_fPartBlue);
+
+  // Update use of scalars flag.
+  m_bScalarsOn = DP->HasScalars();
+
   // Lazy update.
   if ( DP->MustExecute( this->GetMTime() ) )
   {
@@ -101,4 +114,39 @@ void asiVisu_PartEdgesPipeline::SetInput(const Handle(asiVisu_DataProvider)& dat
 
   // Update modification timestamp
   this->Modified();
+}
+
+//-----------------------------------------------------------------------------
+
+//! Callback for Update() routine.
+void asiVisu_PartEdgesPipeline::callback_update()
+{
+  if ( m_bScalarsOn )
+  {
+    this->updateColors();
+
+    // Get extra scalars.
+    NCollection_DataMap<int, int> extraScalars;
+    m_source->GetExtraColorsScalars(extraScalars);
+    //
+    const int lastUnusedScalar = m_source->GetLastUnusedScalar();
+
+    // Initialize mapper and a lookup table to have not only the default
+    // colors for boundary elements, but also the custom colors. The part
+    // color is passed as the reference one for choosing scalar colors.
+    asiVisu_Utils::InitShapeMapper(m_mapper.Get(),
+                                   m_fPartRed,
+                                   m_fPartGreen,
+                                   m_fPartBlue,
+                                   extraScalars,
+                                   lastUnusedScalar);
+
+    if ( !m_bMapperColorsSet )
+      m_bMapperColorsSet = true;
+  }
+  else
+  {
+    m_mapper->ScalarVisibilityOff();
+    m_mapper->Update();
+  }
 }

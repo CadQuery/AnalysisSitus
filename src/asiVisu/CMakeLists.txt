@@ -385,11 +385,17 @@ set (utils_CPP_FILES
 # Widgets
 #------------------------------------------------------------------------------
 
+set (widgets_H_UI_FILES
+  widgets/asiVisu_QVTKWidget.h
+)
 set (widgets_H_FILES
   widgets/asiVisu_PlaneWidget.h
+  widgets/asiVisu_QVTKPaintEngine.h
 )
 set (widgets_CPP_FILES
   widgets/asiVisu_PlaneWidget.cpp
+  widgets/asiVisu_QVTKPaintEngine.cpp
+  widgets/asiVisu_QVTKWidget.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -534,6 +540,20 @@ foreach (FILE ${widgets_H_FILES})
   source_group ("Header Files\\Widgets" FILES "${FILE}")
 endforeach (FILE)
 
+foreach (FILE ${widgets_H_UI_FILES})
+  set (src_files ${src_files} ${FILE})
+  #
+  unset (MOC_FILE)
+  qt5_wrap_cpp(MOC_FILE ${FILE})
+  message (STATUS "... Info: next MOC file ${MOC_FILE}")
+  set (ui_moc_files ${ui_moc_files} ${MOC_FILE})
+  #
+  source_group ("Generated" FILES "${MOC_FILE}")
+
+  message (STATUS "... Info: next header file ${FILE}")
+  source_group ("Header Files\\Widgets" FILES "${FILE}")
+endforeach (FILE)
+
 foreach (FILE ${widgets_CPP_FILES})
   source_group ("Source Files\\Widgets" FILES "${FILE}")
 endforeach (FILE)
@@ -573,7 +593,7 @@ endif()
 #------------------------------------------------------------------------------
 
 add_library (asiVisu SHARED
-  ${H_FILES}               ${CPP_FILES}
+  ${H_FILES} ${CPP_FILES} ${ui_moc_files}
   ${filters_H_FILES}       ${filters_CPP_FILES}
   ${pipelines_H_FILES}     ${pipelines_CPP_FILES}
   ${presentations_H_FILES} ${presentations_CPP_FILES}
@@ -581,7 +601,7 @@ add_library (asiVisu SHARED
   ${selection_H_FILES}     ${selection_CPP_FILES}
   ${sources_H_FILES}       ${sources_CPP_FILES}
   ${utils_H_FILES}         ${utils_CPP_FILES}
-  ${widgets_H_FILES}       ${widgets_CPP_FILES}
+  ${widgets_H_FILES}       ${widgets_CPP_FILES} ${widgets_H_UI_FILES}
 )
 
 #------------------------------------------------------------------------------
@@ -591,6 +611,10 @@ add_library (asiVisu SHARED
 target_link_libraries(asiVisu asiAlgo asiData)
 
 qt5_use_modules(asiVisu Core Widgets)
+#
+if (NOT WIN32)
+  qt5_use_modules(asiVisu X11Extras)
+endif()
 
 if (3RDPARTY_tbb_LIBRARY_DIR_DEBUG)
   link_directories(${3RDPARTY_tbb_LIBRARY_DIR_DEBUG})
@@ -684,3 +708,4 @@ install (FILES ${selection_H_FILES}     DESTINATION framework/include)
 install (FILES ${sources_H_FILES}       DESTINATION framework/include)
 install (FILES ${utils_H_FILES}         DESTINATION framework/include)
 install (FILES ${widgets_H_FILES}       DESTINATION framework/include)
+install (FILES ${widgets_H_UI_FILES}    DESTINATION framework/include)

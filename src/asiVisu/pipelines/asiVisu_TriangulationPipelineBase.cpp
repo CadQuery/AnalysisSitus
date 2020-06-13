@@ -55,8 +55,8 @@
 
 asiVisu_TriangulationPipelineBase::asiVisu_TriangulationPipelineBase(const vtkSmartPointer<asiVisu_TriangulationSource>& source)
 //
-: asiVisu_Pipeline   ( vtkSmartPointer<vtkPolyDataMapper>::New(), vtkSmartPointer<vtkActor>::New() ),
-  m_bMapperColorsSet ( false )
+: asiVisu_Pipeline ( vtkSmartPointer<vtkPolyDataMapper>::New(),
+                     vtkSmartPointer<vtkActor>::New() )
 {
   /* ========================
    *  Prepare custom filters
@@ -226,9 +226,5 @@ void asiVisu_TriangulationPipelineBase::callback_remove_from_renderer(vtkRendere
 //! Callback for Update() routine.
 void asiVisu_TriangulationPipelineBase::callback_update()
 {
-  if ( !m_bMapperColorsSet )
-  {
-    asiVisu_MeshUtils::InitMapper(m_mapper, ARRNAME_MESH_ITEM_TYPE);
-    m_bMapperColorsSet = true;
-  }
+  asiVisu_MeshUtils::InitMapper(m_mapper, ARRNAME_MESH_ITEM_TYPE);
 }

@@ -62,11 +62,6 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
-protected:
-
-  //! Updates scalars associates with cells.
-  void updateColors();
-
 private:
 
   virtual void callback_update();
@@ -78,9 +73,6 @@ protected:
 
   //! Components of part-wise color.
   double m_fPartRed, m_fPartGreen, m_fPartBlue;
-
-  //! Indicates whether the scalars are enabled or not.
-  bool m_bScalarsOn;
 
 };
 

@@ -153,6 +153,8 @@ void exe_MainWindow::createDockWindows()
   {
     pDockDomain = new QDockWidget("Domain", this);
     pDockDomain->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockDomain->setAutoFillBackground(true);
+    pDockDomain->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetVerticalTitleBar);
     //
     Widgets.wViewerDomain = new asiUI_ViewerDomain(cf->Model, nullptr, nullptr, pDockDomain);
     pDockDomain->setWidget(Widgets.wViewerDomain);
@@ -169,6 +171,8 @@ void exe_MainWindow::createDockWindows()
   {
     pDockHost = new QDockWidget("Host", this);
     pDockHost->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockHost->setAutoFillBackground(true);
+    pDockHost->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetVerticalTitleBar);
     //
     Widgets.wViewerSurface = new asiUI_ViewerHost(cf->Model, nullptr, nullptr, pDockHost);
     pDockHost->setWidget(Widgets.wViewerSurface);
@@ -185,6 +189,7 @@ void exe_MainWindow::createDockWindows()
   {
     pDockBrowser = new QDockWidget("Data", this);
     pDockBrowser->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockBrowser->setAutoFillBackground(true);
     //
     Widgets.wBrowser = new asiUI_ObjectBrowser(cf->Model, cf->Progress, pDockBrowser);
     Widgets.wBrowser->AddAssociatedViewer(cf->ViewerPart);
@@ -223,6 +228,7 @@ void exe_MainWindow::createDockWindows()
   {
     pDockAnalysis = new QDockWidget("Analysis", this);
     pDockAnalysis->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockAnalysis->setAutoFillBackground(true);
     //
     Widgets.wControlsAnalysis = new asiUI_ControlsAnalysis(cf->Model,
                                                            cf->ViewerPart,
@@ -243,6 +249,7 @@ void exe_MainWindow::createDockWindows()
   {
     pDockModeling = new QDockWidget("Modeling", this);
     pDockModeling->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockModeling->setAutoFillBackground(true);
     //
     Widgets.wControlsModeling = new asiUI_ControlsModeling(cf->Model,
                                                            cf->ViewerPart,
@@ -262,6 +269,7 @@ void exe_MainWindow::createDockWindows()
   {
     pDockMesh = new QDockWidget("Mesh", this);
     pDockMesh->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockMesh->setAutoFillBackground(true);
     //
     Widgets.wControlsMesh = new asiUI_ControlsMesh(cf->Model,
                                                    cf->ViewerPart,
@@ -281,6 +289,7 @@ void exe_MainWindow::createDockWindows()
   {
     pDockPart = new QDockWidget("Part", this);
     pDockPart->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockPart->setAutoFillBackground(true);
     //
     Widgets.wControlsPart = new asiUI_ControlsPart(cf->Model,
                                                    cf->ViewerPart,
@@ -300,6 +309,11 @@ void exe_MainWindow::createDockWindows()
   {
     pDockParamEditor = new QDockWidget("Parameters", this);
     pDockParamEditor->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockParamEditor->setAutoFillBackground(true);
+    pDockDomain->setFeatures(QDockWidget::DockWidgetClosable |
+                             QDockWidget::DockWidgetMovable |
+                             QDockWidget::DockWidgetFloatable |
+                             QDockWidget::DockWidgetVerticalTitleBar);
     //
     Widgets.wParamEditor = new asiUI_ParameterEditor(cf->WidgetFactory,
                                                      pDockParamEditor);
@@ -382,12 +396,13 @@ void exe_MainWindow::createDockWindows()
   {
     pDockLogWindow = new QDockWidget("Logger", this);
     pDockLogWindow->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockLogWindow->setAutoFillBackground(true);
     //
     Widgets.wLogger = new asiUI_StyledTextEdit(pDockLogWindow);
     //
     pDockLogWindow->setWidget(Widgets.wLogger);
     //
-    this->addDockWidget(Qt::RightDockWidgetArea, pDockLogWindow);
+    this->addDockWidget(Qt::BottomDockWidgetArea, pDockLogWindow);
   }
 
   // Create status bar.
@@ -445,7 +460,8 @@ void exe_MainWindow::createDockWindows()
   QDockWidget* pDockConsoleWindow;
   {
     pDockConsoleWindow = new QDockWidget("Active Script", this);
-    pDockConsoleWindow->setAllowedAreas(Qt::BottomDockWidgetArea);
+    pDockConsoleWindow->setAllowedAreas(Qt::AllDockWidgetAreas);
+    pDockConsoleWindow->setAutoFillBackground(true);
     //
     Widgets.wConsole = new asiUI_Console(cf->Interp, pDockLogWindow);
     //

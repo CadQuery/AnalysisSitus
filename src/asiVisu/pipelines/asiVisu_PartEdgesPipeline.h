@@ -58,10 +58,17 @@ public:
   asiVisu_EXPORT virtual void
     SetInput(const Handle(asiVisu_DataProvider)& dataProvider);
 
+private:
+
+  virtual void callback_update();
+
 protected:
 
   //! Filter for transformation.
   vtkSmartPointer<vtkTransformPolyDataFilter> m_tranformFilter;
+
+  //! Components of part-wise color.
+  double m_fPartRed, m_fPartGreen, m_fPartBlue;
 
 };
 

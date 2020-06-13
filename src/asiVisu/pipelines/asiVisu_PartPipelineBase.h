@@ -105,6 +105,10 @@ public:
     return m_bScalarsAllowed;
   }
 
+protected:
+
+  void updateColors();
+
 private:
 
   virtual void callback_add_to_renderer      (vtkRenderer* renderer);
@@ -136,6 +140,9 @@ protected:
   //! Technical flag indicating whether a GL-mapper is initialized with the
   //! custom color scheme or not.
   bool m_bMapperColorsSet;
+
+  //! Indicates whether the scalars are enabled or not.
+  bool m_bScalarsOn;
 
   //! Data source.
   vtkSmartPointer<asiVisu_ShapeRobustSource> m_source;

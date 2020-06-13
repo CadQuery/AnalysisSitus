@@ -53,7 +53,7 @@
 #pragma warning(pop)
 
 // Qt-VTK includes
-#include <QVTKWidget.h>
+#include <asiVisu_QVTKWidget.h>
 
 // Qt includes
 #pragma warning(push, 0)
@@ -94,8 +94,8 @@ asiUI_ViewerDomain::asiUI_ViewerDomain(const Handle(asiEngine_Model)& model,
     m_prs_mgr->GetCellPicker()->SetTolerance(0.005);
 
   // Widgets and layouts
-  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout*            pBaseLayout = new QHBoxLayout(this);
+  asiVisu_QVTKWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout*        pBaseLayout = new QHBoxLayout(this);
 
   pBaseLayout->addWidget(pViewer);
 
@@ -427,8 +427,8 @@ void asiUI_ViewerDomain::onJoinEdges()
 
 void asiUI_ViewerDomain::onContextMenu(const QPoint& pos)
 {
-  QVTKOpenGLNativeWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
-  QPoint                  globalPos = pViewer->mapToGlobal(pos);
+  asiVisu_QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint              globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
 }

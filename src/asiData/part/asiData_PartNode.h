@@ -70,52 +70,53 @@ public:
   //! IDs for the underlying Parameters.
   enum ParamId
   {
-  //----------------------//
-  // Common               //
-  //----------------------//
-    PID_Name,             //!< Name of the Node.
-  //----------------------//
-  // Geometry             //
-  //----------------------//
-    PID_Geometry,         //!< B-Rep structure.
-    PID_AutoAAG,          //!< Whether to build AAG automatically.
-    PID_AAG,              //!< AAG structure.
-    PID_BVH,              //!< BVH structure.
-    PID_Naming,           //!< Topology naming service.
-  //----------------------//
-  // Transformation       //
-  //----------------------//
-    PID_GroupTrsf,        //!< Transformation group.
-    PID_TrsfTx,           //!< OX displacement.
-    PID_TrsfTy,           //!< OY displacement.
-    PID_TrsfTz,           //!< OZ displacement.
-    PID_TrsfRx,           //!< Rotation around OX.
-    PID_TrsfRy,           //!< Rotation around OY.
-    PID_TrsfRz,           //!< Rotation around OZ.
-    PID_TrsfMx,           //!< Matrix of transformation.
-  //----------------------//
-  // Facets               //
-  //----------------------//
-    PID_GroupTess,        //!< Tessellation group.
-    PID_TessLinDefl,      //!< Linear deflection of visualization tessellation.
-    PID_TessAngDefl,      //!< Angular deflection of visualization tessellation.
-    PID_KeepTessParams,   //!< Indicates whether to keep tessellation parameters frozen.
-  //----------------------//
-  // Presentation         //
-  //----------------------//
-    PID_GroupPrs,         //!< Presentation group.
-    PID_DisplayMode,      //!< Display mode.
-    PID_UseScalars,       //!< Indicates whether to use scalars for coloring.
-    PID_Color,            //!< Color.
-    PID_HasVertices,      //!< Indicates whether vertices are active.
-    PID_HasBackface,      //!< Indicates whether backface coloring is enabled.
-    PID_ShowFaultyFaces,  //!< Indicates whether to visualize faulty faces.
-    PID_IsCoincidentTopo, //!< Indicates whether to resolve coincident topoology in 3D.
-  //----------------------//
-  // References           //
-  //----------------------//
-    PID_MetadataElems,    //!< Metadata elements.
-  //----------------------//
+  //------------------------//
+  // Common                 //
+  //------------------------//
+    PID_Name,               //!< Name of the Node.
+  //------------------------//
+  // Geometry               //
+  //------------------------//
+    PID_Geometry,           //!< B-Rep structure.
+    PID_AutoAAG,            //!< Whether to build AAG automatically.
+    PID_AAG,                //!< AAG structure.
+    PID_BVH,                //!< BVH structure.
+    PID_Naming,             //!< Topology naming service.
+  //------------------------//
+  // Transformation         //
+  //------------------------//
+    PID_GroupTrsf,          //!< Transformation group.
+    PID_TrsfTx,             //!< OX displacement.
+    PID_TrsfTy,             //!< OY displacement.
+    PID_TrsfTz,             //!< OZ displacement.
+    PID_TrsfRx,             //!< Rotation around OX.
+    PID_TrsfRy,             //!< Rotation around OY.
+    PID_TrsfRz,             //!< Rotation around OZ.
+    PID_TrsfMx,             //!< Matrix of transformation.
+  //------------------------//
+  // Facets                 //
+  //------------------------//
+    PID_GroupTess,          //!< Tessellation group.
+    PID_TessLinDefl,        //!< Linear deflection of visualization tessellation.
+    PID_TessAngDefl,        //!< Angular deflection of visualization tessellation.
+    PID_KeepTessParams,     //!< Indicates whether to keep tessellation parameters frozen.
+  //------------------------//
+  // Presentation           //
+  //------------------------//
+    PID_GroupPrs,           //!< Presentation group.
+    PID_DisplayMode,        //!< Display mode.
+    PID_UseScalars,         //!< Indicates whether to use scalars for coloring.
+    PID_Color,              //!< Color.
+    PID_HasVertices,        //!< Indicates whether vertices are active.
+    PID_HasBackface,        //!< Indicates whether backface coloring is enabled.
+    PID_ShowFaultyFaces,    //!< Indicates whether to visualize faulty faces.
+    PID_IsCoincidentTopo,   //!< Indicates whether to resolve coincident topology in 3D.
+    PID_RenderEdgesAsTubes, //!< Indicates whether to render edges as tubes (using shaders).
+  //------------------------//
+  // References             //
+  //------------------------//
+    PID_MetadataElems,      //!< Metadata elements.
+  //------------------------//
     PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
   };
 
@@ -266,6 +267,12 @@ public:
 
   asiData_EXPORT bool
     IsResolveCoincidentTopo() const;
+
+  asiData_EXPORT void
+    SetRenderEdgesAsTubes(const bool);
+
+  asiData_EXPORT bool
+    GetRenderEdgesAsTubes() const;
 
   //-------------------------------------------------------------------------//
 

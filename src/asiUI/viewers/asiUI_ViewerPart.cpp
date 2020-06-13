@@ -47,7 +47,7 @@
 
 // Qt-VTK includes
 #pragma warning(push, 0)
-#include <QVTKWidget.h>
+#include <asiVisu_QVTKWidget.h>
 #pragma warning(pop)
 
 // Qt includes
@@ -134,8 +134,8 @@ asiUI_ViewerPart::asiUI_ViewerPart(const Handle(asiEngine_Model)& model,
   m_prs_mgr->SetSelectionMode(SelectionMode_Face);
 
   // Widgets and layouts
-  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
-  QVBoxLayout*            pBaseLayout = new QVBoxLayout(this);
+  asiVisu_QVTKWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QVBoxLayout*        pBaseLayout = new QVBoxLayout(this);
 
   // Create toolbar
   m_toolBar = new QToolBar(this);
@@ -509,8 +509,8 @@ void asiUI_ViewerPart::onRefineTessellation()
 
 void asiUI_ViewerPart::onContextMenu(const QPoint& pos)
 {
-  QVTKOpenGLNativeWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
-  QPoint                  globalPos = pViewer->mapToGlobal(pos);
+  asiVisu_QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint              globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
 }

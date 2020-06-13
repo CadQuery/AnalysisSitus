@@ -209,7 +209,7 @@ void asiVisu_InteractorStylePick::OnKeyPress()
 
 bool asiVisu_InteractorStylePick::IsControlPressed() const
 {
-  return this->Interactor->GetControlKey();
+  return this->Interactor ? this->Interactor->GetControlKey() : false;
 }
 
 //! Callback for rotation finishing action.

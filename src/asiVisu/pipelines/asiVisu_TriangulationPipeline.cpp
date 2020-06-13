@@ -58,33 +58,37 @@ asiVisu_TriangulationPipeline::asiVisu_TriangulationPipeline()
 {
   m_dmFilter->SetDisplayMode(MeshDisplayMode_Shaded);
 
-  // Apply lightning rules
+  // Apply lightning rules.
   asiVisu_Utils::ApplyLightingRules( this->Actor() );
 }
 
 //-----------------------------------------------------------------------------
 
 //! Sets input data for the pipeline.
-//! \param dataProvider [in] Data Provider.
+//! \param[in] dataProvider Data Provider.
 void asiVisu_TriangulationPipeline::SetInput(const Handle(asiVisu_DataProvider)& dataProvider)
 {
   Handle(asiVisu_TriangulationDataProvider)
     DP = Handle(asiVisu_TriangulationDataProvider)::DownCast(dataProvider);
 
   /* ===========================
-   *  Validate input Parameters
+   *  Validate input Parameters.
    * =========================== */
 
   Handle(Poly_Triangulation) triangulation = DP->GetTriangulation();
   //
   if ( triangulation.IsNull() )
   {
-    // Pass empty data set in order to have valid pipeline
+    // Pass empty data set in order to have valid pipeline.
     vtkSmartPointer<vtkPolyData> dummyData = vtkSmartPointer<vtkPolyData>::New();
     this->SetInputData(dummyData);
-    this->Modified(); // Update modification timestamp
-    return; // Do nothing
+    this->Modified(); // Update modification timestamp.
+    return; // Do nothing.
   }
+
+  /* ====================
+   *  Configure pipeline.
+   * ==================== */
 
   // Update part-wise colors.
   DP->GetColor(m_fPartRed, m_fPartGreen, m_fPartBlue);
@@ -92,27 +96,23 @@ void asiVisu_TriangulationPipeline::SetInput(const Handle(asiVisu_DataProvider)&
   // Update use of scalars flag.
   m_bScalarsOn = DP->HasScalars();
 
-  /* ====================
-   *  Configure pipeline
-   * ==================== */
-
   if ( DP->MustExecute( this->GetMTime() ) )
   {
     // Clear cached data which is by design actual for the current state of
-    // source only. The source changes, so the cache needs nullification
+    // source only. The source changes, so the cache needs nullification.
     this->clearCache();
 
     // Configure data source
     m_source->SetInputTriangulation(triangulation);
 
-    // Bind to a Data Node using information key
+    // Bind to a Data Node using information key.
     asiVisu_TriangulationNodeInfo::Store( DP->GetNodeID(), this->Actor() );
 
-    // Initialize pipeline
+    // Initialize pipeline.
     this->SetInputConnection( m_source->GetOutputPort() );
   }
 
-  // Update modification timestamp
+  // Update modification timestamp.
   this->Modified();
 }
 
@@ -128,9 +128,6 @@ void asiVisu_TriangulationPipeline::callback_update()
                                   m_fPartRed,
                                   m_fPartGreen,
                                   m_fPartBlue);
-
-    if ( !m_bMapperColorsSet )
-      m_bMapperColorsSet = true;
   }
   else
   {

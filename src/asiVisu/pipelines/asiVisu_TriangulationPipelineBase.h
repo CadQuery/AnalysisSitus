@@ -109,10 +109,6 @@ protected:
 
 protected:
 
-  //! Technical flag indicating whether a GL-mapper is initialized with the
-  //! custom color scheme or not.
-  bool m_bMapperColorsSet;
-
   //! Data source.
   vtkSmartPointer<asiVisu_TriangulationSource> m_source;
 

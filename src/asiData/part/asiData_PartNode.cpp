@@ -69,6 +69,7 @@ asiData_PartNode::asiData_PartNode() : ActData_BaseNode()
   REGISTER_PARAMETER(Bool,          PID_HasBackface);
   REGISTER_PARAMETER(Bool,          PID_ShowFaultyFaces);
   REGISTER_PARAMETER(Bool,          PID_IsCoincidentTopo);
+  REGISTER_PARAMETER(Bool,          PID_RenderEdgesAsTubes);
   //
   REGISTER_PARAMETER(ReferenceList, PID_MetadataElems);
 
@@ -103,12 +104,13 @@ void asiData_PartNode::Init(const bool resetNaming)
   this->SetAngularDeflection     (0.0);
   this->SetKeepTessParams        (false);
   this->SetUseScalars            (true);
-  this->SetColor                 (190 << 16 | 190 << 8 | 190); // Initial color.
+  this->SetColor                 (180 << 16 | 180 << 8 | 180); // Initial color.
   this->SetDisplayMode           (0x020);                      // Shading with edges.
   this->SetHasVertices           (false);
-  this->SetHasBackface           (false);
+  this->SetHasBackface           (true);
   this->SetShowFaultyFaces       (true);
-  this->SetResolveCoincidentTopo (true);
+  this->SetResolveCoincidentTopo (false);
+  this->SetRenderEdgesAsTubes    (true);
 
   // Set identity transformation.
   ActParamTool::AsRealArray( this->Parameter(PID_TrsfMx) )->SetArray( new HRealArray(0, 11, 0.) );
@@ -531,6 +533,19 @@ void asiData_PartNode::SetResolveCoincidentTopo(const bool on)
 bool asiData_PartNode::IsResolveCoincidentTopo() const
 {
   return ActParamTool::AsBool( this->Parameter(PID_IsCoincidentTopo) )->GetValue();
+}
+
+//! Sets a Boolean flag indicating whether to use shaders for rendering CAD edges.
+//! \param[in] on value to set.
+void asiData_PartNode::SetRenderEdgesAsTubes(const bool on)
+{
+  ActParamTool::AsBool( this->Parameter(PID_RenderEdgesAsTubes) )->SetValue(on);
+}
+
+//! \return Boolean flag indicating whether to use shaders for rendering CAD edges.
+bool asiData_PartNode::GetRenderEdgesAsTubes() const
+{
+  return ActParamTool::AsBool( this->Parameter(PID_RenderEdgesAsTubes) )->GetValue();
 }
 
 //-----------------------------------------------------------------------------

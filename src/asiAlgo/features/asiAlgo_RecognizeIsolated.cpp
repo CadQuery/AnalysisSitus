@@ -217,42 +217,41 @@ void asiAlgo_RecognizeIsolated::getFaceEdges(const TopoDS_Face&                 
 bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
                                               const asiAlgo_Feature&                         groupToCheck) const
 {
-  NCollection_IndexedMap<TopoDS_Edge> edges;
-
   TopoDS_Compound comp;
   BRep_Builder builder;
   builder.MakeCompound(comp);
 
-  // Iterate of the faces in the group of interest.
+  // Collect all edges of the group in question.
+  NCollection_IndexedMap<TopoDS_Edge> allEdgesInGroup;
+  //
   for ( asiAlgo_Feature::Iterator fit(groupToCheck); fit.More() ; fit.Next() )
   {
-    const TopoDS_Face& face = m_aag->GetFace( fit.Key() );
-
     TopTools_IndexedMapOfShape faceEdges;
-    TopExp::MapShapes(face, TopAbs_EDGE, faceEdges);
+    TopExp::MapShapes(m_aag->GetFace( fit.Key() ), TopAbs_EDGE, faceEdges);
 
     // Insert both orientations since hasher uses "IsEqual".
     for ( TopTools_IndexedMapOfShape::Iterator eit(faceEdges); eit.More(); eit.Next() )
     {
       const TopoDS_Edge& edge = TopoDS::Edge( eit.Value() );
-      edges.Add( TopoDS::Edge( edge.Oriented(TopAbs_FORWARD) ) );
-      edges.Add( TopoDS::Edge( edge.Oriented(TopAbs_REVERSED) ) );
+      allEdgesInGroup.Add( TopoDS::Edge( edge.Oriented(TopAbs_FORWARD) ) );
+      allEdgesInGroup.Add( TopoDS::Edge( edge.Oriented(TopAbs_REVERSED) ) );
 
       builder.Add(comp, edge);
     }
   }
 
+  // Check if the group in question contains all the inner edges.
   bool isPresent = false;
   for ( auto innerIt = innerEdges.cbegin(); innerIt != innerEdges.cend(); ++innerIt )
   {
-    const std::vector<TopoDS_Edge>& group = *innerIt;
+    const std::vector<TopoDS_Edge>& innerContour = *innerIt;
 
     isPresent = true;
-    for ( auto eit = group.cbegin(); eit != group.cend(); ++eit )
+    for ( auto eit = innerContour.cbegin(); eit != innerContour.cend(); ++eit )
     {
-      const TopoDS_Edge& edge = *eit;
+      const TopoDS_Edge& innerEdge = *eit;
 
-      if ( !edges.Contains(edge) )
+      if ( !allEdgesInGroup.Contains(innerEdge) )
       {
         isPresent = false;
         break;

@@ -121,16 +121,8 @@ int main(int argc, char** argv)
   // Create main window as (it will initialize all resources)
   //---------------------------------------------------------------------------
 
-  if ( !isBatch )
-  {
-    // Needed to ensure appropriate OpenGL context is created for VTK rendering.
-    QSurfaceFormat::setDefaultFormat( QVTKOpenGLNativeWidget::defaultFormat() );
-  }
-
   // Construct Qt application.
   QApplication app(argc, argv);
-  //
-  app.setAttribute(Qt::AA_DontUseNativeMenuBar);
   //
   QApplication::setWindowIcon( QIcon(":icons/asitus/asitus_icon_16x16.png") );
 

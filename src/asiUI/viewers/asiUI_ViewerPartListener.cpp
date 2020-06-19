@@ -36,6 +36,7 @@
 #include <asiUI_Common.h>
 
 // asiAlgo includes
+#include <asiAlgo_CheckDihedralAngle.h>
 #include <asiAlgo_InvertFaces.h>
 #include <asiAlgo_JSON.h>
 #include <asiAlgo_Timer.h>
@@ -278,6 +279,7 @@ void asiUI_ViewerPartListener::populateMenu(QMenu& menu)
       //
       m_pInvertFacesAction = menu.addAction("Invert faces");
       m_pFindIsolated      = menu.addAction("Find isolated");
+      m_pCheckDihAngle     = menu.addAction("Check dihedral angle");
     }
 
     menu.addSeparator();
@@ -508,12 +510,95 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
     // Find features.
     asiAlgo_Feature
       isolated = asiEngine_Features(m_model,
-                            m_progress,
-                             m_plotter).FindIsolated(faceIndices);
+                                    m_progress,
+                                    m_plotter).FindIsolated(faceIndices);
 
     if ( !isolated.IsEmpty() )
       partApi.HighlightFaces(isolated);
     else
       m_progress.SendLogMessage(LogInfo(Normal) << "No isolated features found.");
+  }
+
+  //---------------------------------------------------------------------------
+  // ACTION: check dihedral angle
+  //---------------------------------------------------------------------------
+  else if ( pAction == m_pCheckDihAngle )
+  {
+    asiEngine_Part partApi( m_model, m_pViewer->PrsMgr() );
+
+    // Get highlighted faces.
+    asiAlgo_Feature faceIndices;
+    partApi.GetHighlightedFaces(faceIndices);
+
+    if ( faceIndices.Extent() != 2 )
+    {
+      m_progress.SendLogMessage(LogWarn(Normal) << "There should be two faces to measure an angle.");
+      return;
+    }
+
+    // Get AAG to access faces by indices.
+    Handle(asiAlgo_AAG) aag = partApi.GetAAG();
+    //
+    if ( aag.IsNull() )
+    {
+      m_progress.SendLogMessage(LogErr(Normal) << "AAG is null.");
+      return;
+    }
+
+    // Get faces.
+    const TopoDS_Face& F = aag->GetFace( faceIndices.GetMinimalMapped() );
+    const TopoDS_Face& G = aag->GetFace( faceIndices.GetMaximalMapped() );
+
+    double xMin[2], yMin[2], zMin[2], xMax[2], yMax[2], zMax[2];
+    asiAlgo_Utils::Bounds(F, xMin[0], yMin[0], zMin[0], xMax[0], yMax[0], zMax[0]);
+    asiAlgo_Utils::Bounds(G, xMin[1], yMin[1], zMin[1], xMax[1], yMax[1], zMax[1]);
+    //
+    const double
+      faceSize[2] = { gp_Pnt(xMin[0], yMin[0], zMin[0]).Distance( gp_Pnt(xMax[0], yMax[0], zMax[0]) ),
+                      gp_Pnt(xMin[1], yMin[1], zMin[1]).Distance( gp_Pnt(xMax[1], yMax[1], zMax[1]) ) };
+    //
+    const double
+      glyphCoeff = Max(faceSize[0], faceSize[1])*0.1;
+
+    // Measure the angle.
+    double                     angleRad = 0.;
+    TopTools_IndexedMapOfShape commonEdges;
+    gp_Pnt                     FP, GP;
+    gp_Vec                     FN, GN;
+    //
+    asiAlgo_CheckDihedralAngle angChecker;
+    //
+    asiAlgo_FeatureAngleType
+      angleType = angChecker.AngleBetweenFaces(F, G, false, 1.0e-3,
+                                               commonEdges, angleRad,
+                                               FP, GP, FN, GN);
+
+    if ( !commonEdges.Extent() )
+    {
+      m_progress.SendLogMessage(LogWarn(Normal) << "The selected faces are not adjacent.");
+      return;
+    }
+
+    m_progress.SendLogMessage( LogInfo(Normal) << "Angle is %1 degrees, %2."
+                                               << Abs(angleRad)*180./M_PI
+                                               << asiAlgo_Utils::FeatureAngleToString(angleType) );
+
+    double colorR, colorG, colorB;
+    asiVisu_Utils::ColorForFeatureAngle(angleType, colorR, colorG, colorB);
+    //
+    for ( int eidx = 1; eidx <= commonEdges.Extent(); ++eidx )
+    {
+      m_plotter.REDRAW_SHAPE("vexity",
+                             commonEdges(eidx),
+                             ActAPI_Color(colorR,
+                                          colorG,
+                                          colorB,
+                                          Quantity_TOC_RGB),
+                             1.0,
+                             true);
+    }
+    //
+    m_plotter.REDRAW_VECTOR_AT("FN", FP, FN*glyphCoeff, Color_Red);
+    m_plotter.REDRAW_VECTOR_AT("GN", GP, GN*glyphCoeff, Color_Red);
   }
 }

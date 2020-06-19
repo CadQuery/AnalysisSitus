@@ -685,6 +685,20 @@ TopoDS_Shape asiEngine_Part::GetShape()
 
 //-----------------------------------------------------------------------------
 
+//! \return AAG stored in the Part Node.
+Handle(asiAlgo_AAG) asiEngine_Part::GetAAG()
+{
+  // Get Part Node
+  Handle(asiData_PartNode) part_n = m_model->GetPartNode();
+  //
+  if ( part_n.IsNull() || !part_n->IsWellFormed() )
+    return nullptr;
+
+  return part_n->GetAAG();
+}
+
+//-----------------------------------------------------------------------------
+
 //! Extracts sub-shape indices for the given collection of face indices.
 //! \param[in]  faceIndices indices of faces.
 //! \param[out] indices     their corresponding indices among all sub-shapes.

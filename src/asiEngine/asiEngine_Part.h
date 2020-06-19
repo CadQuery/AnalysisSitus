@@ -128,6 +128,9 @@ public:
   asiEngine_EXPORT TopoDS_Shape
     GetShape();
 
+  asiEngine_EXPORT Handle(asiAlgo_AAG)
+    GetAAG();
+
   asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       indices);

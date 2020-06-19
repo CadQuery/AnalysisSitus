@@ -113,6 +113,7 @@ protected:
   QAction* m_pCopyAsStringAction;
   QAction* m_pSetAsVariableAction;
   QAction* m_pFindIsolated;
+  QAction* m_pCheckDihAngle;
 
 };
 

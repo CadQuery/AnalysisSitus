@@ -196,7 +196,7 @@ namespace asiAlgo_Utils
 
   //! Converts the passed feature angle to string,
   asiAlgo_EXPORT TCollection_AsciiString
-    FeaturAngleToString(const asiAlgo_FeatureAngleType angle);
+    FeatureAngleToString(const asiAlgo_FeatureAngleType angle);
 
   //! Converts the passed named shape to string.
   asiAlgo_EXPORT TCollection_AsciiString

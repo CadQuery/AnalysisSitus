@@ -63,7 +63,11 @@ asiAlgo_FeatureAngleType
                                                 const bool                  allowSmooth,
                                                 const double                smoothAngularTol,
                                                 TopTools_IndexedMapOfShape& commonEdges,
-                                                double&                     angRad) const
+                                                double&                     angleRad,
+                                                gp_Pnt&                     FP,
+                                                gp_Pnt&                     GP,
+                                                gp_Vec&                     FN,
+                                                gp_Vec&                     GN) const
 {
   TopoDS_Edge commonEdge = m_commonEdge;
   bool        isSeam     = false;
@@ -219,7 +223,9 @@ asiAlgo_FeatureAngleType
     if ( F.Orientation() == TopAbs_REVERSED )
       N.Reverse();
 
-    //this->Plotter().DRAW_VECTOR_AT(A, N, Color_Blue, "Vz");
+    // Set sampling props.
+    FP = P;
+    FN = N;
 
     // Vy
     gp_Vec Vy = N.Crossed(Vx);
@@ -275,6 +281,10 @@ asiAlgo_FeatureAngleType
     if ( G.Orientation() == TopAbs_REVERSED )
       N.Reverse();
 
+    // Set sampling props.
+    GP = P;
+    GN = N;
+
     // Vy
     gp_Vec Vy = N.Crossed(Vx);
     if ( Vy.Magnitude() < RealEpsilon() )
@@ -286,10 +296,10 @@ asiAlgo_FeatureAngleType
   }
 
   // Calculate dihedral angle
-  angRad = TF.AngleWithRef(TG, Ref);
+  angleRad = TF.AngleWithRef(TG, Ref);
 
 #if defined COUT_DEBUG
-  std::cout << "Angle is " << angle << std::endl;
+  std::cout << "Angle is " << angleRad << std::endl;
 #endif
 
   bool isSmooth = false;
@@ -297,7 +307,7 @@ asiAlgo_FeatureAngleType
   // 3 degrees is the default angular tolerance to recognize smooth angles.
   const double ang_tol = Max(smoothAngularTol, 3.0/180.0*M_PI);
   //
-  if ( Abs(Abs(angRad) - M_PI) < ang_tol )
+  if ( Abs(Abs(angleRad) - M_PI) < ang_tol )
   {
     isSmooth = true;
 
@@ -364,17 +374,33 @@ asiAlgo_FeatureAngleType
     }
     //
     avrAngleRad /= inSamples;
-    angRad = avrAngleRad;
+    angleRad = avrAngleRad;
   }
 
   // Classify angle
   asiAlgo_FeatureAngleType angleType = FeatureAngleType_Undefined;
-  if ( angRad < 0 )
+  if ( angleRad < 0 )
     angleType = isSmooth ? FeatureAngleType_SmoothConvex : FeatureAngleType_Convex;
   else
     angleType = isSmooth ? FeatureAngleType_SmoothConcave : FeatureAngleType_Concave;
 
   return angleType;
+}
+
+//-----------------------------------------------------------------------------
+
+asiAlgo_FeatureAngleType
+  asiAlgo_CheckDihedralAngle::AngleBetweenFaces(const TopoDS_Face&          F,
+                                                const TopoDS_Face&          G,
+                                                const bool                  allowSmooth,
+                                                const double                smoothAngularTol,
+                                                TopTools_IndexedMapOfShape& commonEdges,
+                                                double&                     angleRad) const
+{
+  gp_Pnt FP, GP;
+  gp_Vec FN, GN;
+  return this->AngleBetweenFaces(F, G, allowSmooth, smoothAngularTol, commonEdges, angleRad,
+                                 FP, GP, FN, GN);
 }
 
 //-----------------------------------------------------------------------------

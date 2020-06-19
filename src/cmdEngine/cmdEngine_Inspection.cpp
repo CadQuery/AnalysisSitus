@@ -2172,7 +2172,7 @@ int ENGINE_CheckEdgeVexity(const Handle(asiTcl_Interp)& interp,
   *interp << angleType;
 
   interp->GetProgress().SendLogMessage( LogInfo(Normal) << "Edge vexity: %1."
-                                                        << asiAlgo_Utils::FeaturAngleToString(angleType) );
+                                                        << asiAlgo_Utils::FeatureAngleToString(angleType) );
 
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )

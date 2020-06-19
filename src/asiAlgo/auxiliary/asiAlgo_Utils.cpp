@@ -541,7 +541,7 @@ std::string asiAlgo_Utils::FaceGeometryName(const TopoDS_Face& face)
 //-----------------------------------------------------------------------------
 
 TCollection_AsciiString
-  asiAlgo_Utils::FeaturAngleToString(const asiAlgo_FeatureAngleType angle)
+  asiAlgo_Utils::FeatureAngleToString(const asiAlgo_FeatureAngleType angle)
 {
   TCollection_AsciiString result;
 

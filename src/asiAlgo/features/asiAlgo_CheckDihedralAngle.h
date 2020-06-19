@@ -58,10 +58,39 @@ public:
   //! \param[in] progress Progress Entry.
   //! \param[in] plotter  Imperative Plotter.
   asiAlgo_EXPORT
-    asiAlgo_CheckDihedralAngle(ActAPI_ProgressEntry progress,
-                               ActAPI_PlotterEntry  plotter);
+    asiAlgo_CheckDihedralAngle(ActAPI_ProgressEntry progress = nullptr,
+                               ActAPI_PlotterEntry  plotter  = nullptr);
 
 public:
+
+  //! Calculates angle between two faces using midpoints to query the normal
+  //! vectors. Orientation of faces is also taken into account.
+  //! \param[in]  F                first face.
+  //! \param[in]  G                second face.
+  //! \param[in]  allowSmooth      indicates whether to process C1 smooth joints.
+  //! \param[in]  smoothAngularTol angular tolerance used for recognition
+  //!                              of smooth dihedral angles. A smooth angle
+  //!                              may appear to be imperfect by construction,
+  //!                              but still smooth by the design intent. With
+  //!                              this parameter you're able to control it.
+  //! \param[out] commonEdges      common edges.
+  //! \param[out] angRad           angle in radians.
+  //! \param[out] FP               sample point at F.
+  //! \param[out] GP               sample point at G.
+  //! \param[out] FN               norm at F.
+  //! \param[out] GN               norm at G.
+  //! \return angle between faces.
+  asiAlgo_EXPORT asiAlgo_FeatureAngleType
+    AngleBetweenFaces(const TopoDS_Face&          F,
+                      const TopoDS_Face&          G,
+                      const bool                  allowSmooth,
+                      const double                smoothAngularTol,
+                      TopTools_IndexedMapOfShape& commonEdges,
+                      double&                     angleRad,
+                      gp_Pnt&                     FP,
+                      gp_Pnt&                     GP,
+                      gp_Vec&                     FN,
+                      gp_Vec&                     GN) const;
 
   //! Calculates angle between two faces using midpoints to query the normal
   //! vectors. Orientation of faces is also taken into account.

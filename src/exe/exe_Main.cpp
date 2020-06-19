@@ -81,6 +81,7 @@
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkCamera.h>
+#include <vtkOpenGLRenderWindow.h>
 #pragma warning(pop)
 
 // VTK init
@@ -120,6 +121,27 @@ int main(int argc, char** argv)
   //---------------------------------------------------------------------------
   // Create main window as (it will initialize all resources)
   //---------------------------------------------------------------------------
+
+#ifndef _WIN32
+  if ( !isBatch )
+  {
+    QSurfaceFormat fmt;
+    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+    fmt.setVersion(3, 2);
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    fmt.setRedBufferSize(1);
+    fmt.setGreenBufferSize(1);
+    fmt.setBlueBufferSize(1);
+    fmt.setDepthBufferSize(1);
+    fmt.setStencilBufferSize(0);
+    fmt.setAlphaBufferSize(1);
+    fmt.setStereo(false);
+    fmt.setSamples( vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples() );
+
+    QSurfaceFormat::setDefaultFormat(fmt);
+  }
+#endif
 
   // Construct Qt application.
   QApplication app(argc, argv);

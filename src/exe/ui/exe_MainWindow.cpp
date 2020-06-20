@@ -74,6 +74,7 @@ exe_MainWindow::exe_MainWindow(const bool offscreen)
   this->createPartViewer();
   this->createDockWindows();
   this->setCentralWidget(Widgets.wViewerPart);
+  this->createMenus();
 
   // Prepare application name with the version number.
   TCollection_AsciiString appName(ASITUS_APP_NAME);

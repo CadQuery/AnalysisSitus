@@ -622,7 +622,7 @@ void asiAlgo_Isomorphism::collectFeatures()
       Handle(asiAlgo_FeatureAttrAngle)
         P_angleAttr = m_P_aag->ATTR_NODE<asiAlgo_FeatureAttrAngle>(1);
 
-      const t_topoId imF = this->getDomainImage(m_P_eigenMapping.Find2(0), m_Ms[i]);
+      const t_topoId imF = this->getDomainImage(m_P_eigenMapping.Find2(1), m_Ms[i]);
 
       candidates.Add(imF);
 

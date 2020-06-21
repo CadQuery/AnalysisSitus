@@ -75,6 +75,7 @@ exe_MainWindow::exe_MainWindow(const bool offscreen)
   this->createDockWindows();
   this->setCentralWidget(Widgets.wViewerPart);
   this->createMenus();
+  this->createToolbar();
 
   // Prepare application name with the version number.
   TCollection_AsciiString appName(ASITUS_APP_NAME);
@@ -123,6 +124,24 @@ void exe_MainWindow::closeEvent(QCloseEvent* evt)
   Widgets.Release();
   //
   evt->accept();
+}
+
+//-----------------------------------------------------------------------------
+
+void exe_MainWindow::onUndo()
+{
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
+  //
+  cf->Interp->Eval("undo");
+}
+
+//-----------------------------------------------------------------------------
+
+void exe_MainWindow::onRedo()
+{
+  Handle(exe_CommonFacilities) cf = exe_CommonFacilities::Instance();
+  //
+  cf->Interp->Eval("redo");
 }
 
 //-----------------------------------------------------------------------------
@@ -480,4 +499,30 @@ void exe_MainWindow::createMenus()
 //! Creates toolbar.
 void exe_MainWindow::createToolbar()
 {
+  this->Toolbar.pToolbar = new QToolBar(this);
+  this->Toolbar.pToolbar->setMovable(false);
+  this->Toolbar.pToolbar->setOrientation(Qt::Vertical);
+  this->addToolBar(Qt::LeftToolBarArea, this->Toolbar.pToolbar);
+
+  // Undo.
+  const QIcon undoIcon   = QIcon(":icons/asitus/asitus_undo_icon.png");
+  QAction*    undoAction = new QAction(undoIcon, tr("&Undo"), this);
+  undoAction->setShortcuts(QKeySequence::Undo);
+  undoAction->setStatusTip("Undo");
+  //
+  connect( undoAction, SIGNAL( triggered() ), this, SLOT( onUndo() ) );
+  //
+  this->Toolbar.pToolbar->addAction(undoAction);
+
+  // Redo.
+  const QIcon redoIcon   = QIcon::fromTheme("edit-redo", QIcon(":icons/asitus/asitus_redo_icon.png"));
+  QAction*    redoAction = new QAction(redoIcon, tr("&Redo"), this);
+  redoAction->setShortcuts(QKeySequence::Redo);
+  redoAction->setStatusTip("Redo");
+  //
+  connect( redoAction, SIGNAL( triggered() ), this, SLOT( onRedo() ) );
+  //
+  this->Toolbar.pToolbar->addAction(redoAction);
+
+  this->Toolbar.pToolbar->setIconSize( QSize(16, 16) );
 }

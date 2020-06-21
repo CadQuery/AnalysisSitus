@@ -65,6 +65,11 @@ public:
 
   void closeEvent(QCloseEvent* evt);
 
+protected slots:
+
+  void onUndo();
+  void onRedo();
+
 private:
 
   void createPartViewer();
@@ -164,6 +169,7 @@ public:
   //! Toolbar items.
   struct t_toolbar
   {
+    QToolBar* pToolbar;
   };
 
   t_widgets   Widgets;

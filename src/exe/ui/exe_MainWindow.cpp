@@ -505,7 +505,7 @@ void exe_MainWindow::createToolbar()
   this->addToolBar(Qt::LeftToolBarArea, this->Toolbar.pToolbar);
 
   // Undo.
-  const QIcon undoIcon   = QIcon(":icons/asitus/asitus_undo_icon.png");
+  const QIcon undoIcon   = QIcon(":icons/asitus/asitus_undo_icon_16x16.png");
   QAction*    undoAction = new QAction(undoIcon, tr("&Undo"), this);
   undoAction->setShortcuts(QKeySequence::Undo);
   undoAction->setStatusTip("Undo");
@@ -515,7 +515,7 @@ void exe_MainWindow::createToolbar()
   this->Toolbar.pToolbar->addAction(undoAction);
 
   // Redo.
-  const QIcon redoIcon   = QIcon::fromTheme("edit-redo", QIcon(":icons/asitus/asitus_redo_icon.png"));
+  const QIcon redoIcon   = QIcon::fromTheme("edit-redo", QIcon(":icons/asitus/asitus_redo_icon_16x16.png"));
   QAction*    redoAction = new QAction(redoIcon, tr("&Redo"), this);
   redoAction->setShortcuts(QKeySequence::Redo);
   redoAction->setStatusTip("Redo");

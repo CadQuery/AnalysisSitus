@@ -82,6 +82,121 @@ int ENGINE_DisableNotifier(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_EnablePlotter(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiUI_IV)
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
+  //
+  if ( !IV.IsNull() )
+    IV->VISUALIZATION_ON();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DisablePlotter(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiUI_IV)
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
+  //
+  if ( !IV.IsNull() )
+    IV->VISUALIZATION_OFF();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_EnableTransactions(const Handle(asiTcl_Interp)& interp,
+                              int                          argc,
+                              const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  interp->GetModel()->EnableTransactions();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DisableTransactions(const Handle(asiTcl_Interp)& interp,
+                               int                          argc,
+                               const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  interp->GetModel()->DisableTransactions();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_EnableBrowser(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiUI_IV)
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
+  //
+  if ( !IV.IsNull() )
+    IV->BROWSER_ON();
+
+  if ( cmdEngine::cf->ObjectBrowser )
+    cmdEngine::cf->ObjectBrowser->Populate();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_DisableBrowser(const Handle(asiTcl_Interp)& interp,
+                          int                          argc,
+                          const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiUI_IV)
+    IV = Handle(asiUI_IV)::DownCast( interp->GetPlotter().Access() );
+  //
+  if ( !IV.IsNull() )
+    IV->BROWSER_OFF();
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_ShowCommands(const Handle(asiTcl_Interp)& interp,
                         int                          argc,
                         const char**                 argv)
@@ -189,6 +304,48 @@ void cmdEngine::Factory(const Handle(asiTcl_Interp)&      interp,
     "\t Disables notification messages.",
     //
     __FILE__, group, ENGINE_DisableNotifier);
+
+  interp->AddCommand("enable-plotter",
+    //
+    "enable-plotter\n"
+    "\t Enables imperative plotter.",
+    //
+    __FILE__, group, ENGINE_EnablePlotter);
+
+  interp->AddCommand("disable-plotter",
+    //
+    "disable-plotter\n"
+    "\t Disables imperative plotter.",
+    //
+    __FILE__, group, ENGINE_DisablePlotter);
+
+  interp->AddCommand("enable-transactions",
+    //
+    "enable-transactions\n"
+    "\t Enables data model transactions.",
+    //
+    __FILE__, group, ENGINE_EnableTransactions);
+
+  interp->AddCommand("disable-transactions",
+    //
+    "disable-transactions\n"
+    "\t Disables data model transactions.",
+    //
+    __FILE__, group, ENGINE_DisableTransactions);
+
+  interp->AddCommand("enable-browser",
+    //
+    "enable-browser\n"
+    "\t Enables object browser.",
+    //
+    __FILE__, group, ENGINE_EnableBrowser);
+
+  interp->AddCommand("disable-browser",
+    //
+    "disable-browser\n"
+    "\t Disables object browser.",
+    //
+    __FILE__, group, ENGINE_DisableBrowser);
 
   interp->AddCommand("show-commands",
     //

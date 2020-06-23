@@ -42,6 +42,7 @@
 
 // VTK includes
 #include <vtkCellData.h>
+#include <vtkIdTypeArray.h>
 
 //-----------------------------------------------------------------------------
 

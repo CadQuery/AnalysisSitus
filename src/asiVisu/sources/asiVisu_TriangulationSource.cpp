@@ -44,6 +44,7 @@
 // VTK includes
 #include <vtkCellData.h>
 #include <vtkDataObject.h>
+#include <vtkIdTypeArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>

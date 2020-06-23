@@ -90,7 +90,8 @@ ${3RDPARTY_tbb_DLL_DIR};\
 ${3RDPARTY_freetype_DLL_DIR};\
 ${3RDPARTY_freeimage_DLL_DIR};\
 ${3RDPARTY_gl2ps_DLL_DIR};\
-${3RDPARTY_QT_DIR}/bin;")
+${3RDPARTY_QT_DIR}/bin;\
+${3RDPARTY_vtk_DLL_DIR};")
 
 set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_PATH}")
 
@@ -100,10 +101,6 @@ endif()
 
 if (3RDPARTY_active_data_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_active_data_DLL_DIR_DEBUG}")
   set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_active_data_DLL_DIR_DEBUG}")
-endif()
-
-if (3RDPARTY_vtk_DLL_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_DLL_DIR_DEBUG}")
-  set (3RDPARTY_DLL_DEB_PATH "${3RDPARTY_DLL_DEB_PATH};${3RDPARTY_vtk_DLL_DIR_DEBUG}")
 endif()
 
 if (USE_MOBIUS)
@@ -116,8 +113,7 @@ endif()
 
 set (3RDPARTY_DLL_PATH "${3RDPARTY_DLL_PATH};\
 ${3RDPARTY_OCCT_DLL_DIR};\
-${3RDPARTY_active_data_DLL_DIR};\
-${3RDPARTY_vtk_DLL_DIR};")
+${3RDPARTY_active_data_DLL_DIR};")
 
 #-------------------------------------------------------------------------------
 string (REGEX REPLACE ";" " " 3RDPARTY_NOT_INCLUDED "${3RDPARTY_NOT_INCLUDED}")

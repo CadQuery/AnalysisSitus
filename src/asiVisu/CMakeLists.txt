@@ -386,16 +386,12 @@ set (utils_CPP_FILES
 #------------------------------------------------------------------------------
 
 set (widgets_H_UI_FILES
-  widgets/asiVisu_QVTKWidget.h
 )
 set (widgets_H_FILES
   widgets/asiVisu_PlaneWidget.h
-  widgets/asiVisu_QVTKPaintEngine.h
 )
 set (widgets_CPP_FILES
   widgets/asiVisu_PlaneWidget.cpp
-  widgets/asiVisu_QVTKPaintEngine.cpp
-  widgets/asiVisu_QVTKWidget.cpp
 )
 
 #------------------------------------------------------------------------------
@@ -441,29 +437,29 @@ set (TBB_LIB_FILES
 )
 #------------------------------------------------------------------------------
 set (VTK_LIB_FILES
-  vtkCommonCore-8.2
-  vtkCommonColor-8.2
-  vtkCommonDataModel-8.2
-  vtkCommonExecutionModel-8.2
-  vtkCommonMath-8.2
-  vtkCommonTransforms-8.2
-  vtkCommonMisc-8.2
-  vtkFiltersCore-8.2
-  vtkFiltersGeneral-8.2
-  vtkFiltersSources-8.2
-  vtkFiltersGeometry-8.2
-  vtkFiltersParallel-8.2
-  vtkFiltersExtraction-8.2
-  vtkFiltersModeling-8.2
-  vtkGUISupportQt-8.2
-  vtkIOCore-8.2
-  vtkIOImage-8.2
-  vtkImagingCore-8.2
-  vtkInteractionStyle-8.2
-  vtkInteractionWidgets-8.2
-  vtkRenderingAnnotation-8.2
-  vtkRenderingCore-8.2
-  vtkRenderingOpenGL2-8.2
+  vtkCommonCore-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonColor-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonDataModel-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonExecutionModel-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonMath-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonTransforms-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkCommonMisc-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersCore-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersGeneral-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersSources-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersGeometry-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersParallel-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersExtraction-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkFiltersModeling-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkGUISupportQt-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkIOCore-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkIOImage-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkImagingCore-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkInteractionStyle-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkInteractionWidgets-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkRenderingAnnotation-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkRenderingCore-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+  vtkRenderingOpenGL2-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
 )
 
 #------------------------------------------------------------------------------
@@ -654,16 +650,18 @@ endforeach()
 
 foreach (LIB_FILE ${VTK_LIB_FILES})
   if (WIN32)
-    set (LIB_FILENAME "${LIB_FILE}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (LIB_FILENAME_RELEASE "${LIB_FILE}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (LIB_FILENAME_DEBUG "${LIB_FILE}d${CMAKE_STATIC_LIBRARY_SUFFIX}")
   else()
-    set (LIB_FILENAME "lib${LIB_FILE}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    set (LIB_FILENAME_RELEASE "lib${LIB_FILE}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    set (LIB_FILENAME_DEBUG "lib${LIB_FILE}d${CMAKE_SHARED_LIBRARY_SUFFIX}")
   endif()
 
-  if (3RDPARTY_vtk_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME}")
-    target_link_libraries (asiVisu debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME})
-    target_link_libraries (asiVisu optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+  if (3RDPARTY_vtk_LIBRARY_DIR_DEBUG AND EXISTS "${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME_DEBUG}")
+    target_link_libraries (asiVisu debug ${3RDPARTY_vtk_LIBRARY_DIR_DEBUG}/${LIB_FILENAME_DEBUG})
+    target_link_libraries (asiVisu optimized ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME_RELEASE})
   else()
-    target_link_libraries (asiVisu ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME})
+    target_link_libraries (asiVisu ${3RDPARTY_vtk_LIBRARY_DIR}/${LIB_FILENAME_RELEASE})
   endif()
 endforeach()
 

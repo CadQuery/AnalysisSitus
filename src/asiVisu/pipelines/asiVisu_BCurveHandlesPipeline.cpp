@@ -37,6 +37,7 @@
 #include <asiVisu_NodeInfo.h>
 
 // VTK includes
+#include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 

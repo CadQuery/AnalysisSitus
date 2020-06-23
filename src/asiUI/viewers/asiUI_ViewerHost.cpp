@@ -39,7 +39,7 @@
 
 // Qt-VTK includes
 #pragma warning(push, 0)
-#include <asiVisu_QVTKWidget.h>
+#include <QVTKOpenGLNativeWidget.h>
 #pragma warning(pop)
 
 // Qt includes
@@ -69,8 +69,8 @@ asiUI_ViewerHost::asiUI_ViewerHost(const Handle(asiEngine_Model)& model,
   m_prs_mgr->SetInteractionMode(asiVisu_PrsManager::InteractionMode_3D);
 
   // Widgets and layouts
-  asiVisu_QVTKWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
-  QHBoxLayout*        pBaseLayout = new QHBoxLayout(this);
+  QVTKOpenGLNativeWidget* pViewer     = m_prs_mgr->GetQVTKWidget();
+  QHBoxLayout*            pBaseLayout = new QHBoxLayout(this);
 
   pBaseLayout->addWidget(pViewer);
 
@@ -135,7 +135,7 @@ QSize asiUI_ViewerHost::sizeHint() const
 //! Updates viewer.
 void asiUI_ViewerHost::Repaint()
 {
-  m_prs_mgr->GetQVTKWidget()->GetRenderWindow()->Render();
+  m_prs_mgr->GetQVTKWidget()->renderWindow()->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -151,8 +151,8 @@ void asiUI_ViewerHost::onResetView()
 
 void asiUI_ViewerHost::onContextMenu(const QPoint& pos)
 {
-  asiVisu_QVTKWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
-  QPoint              globalPos = pViewer->mapToGlobal(pos);
+  QVTKOpenGLNativeWidget* pViewer   = m_prs_mgr->GetQVTKWidget();
+  QPoint                  globalPos = pViewer->mapToGlobal(pos);
 
   emit contextMenu(globalPos);
 }

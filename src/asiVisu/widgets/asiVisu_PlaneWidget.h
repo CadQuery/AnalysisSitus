@@ -409,8 +409,8 @@ private:
   Handle(ActAPI_IModel)         m_model; //!< Data Model instance.
 
 private:
-  asiVisu_PlaneWidget(const asiVisu_PlaneWidget&) VTK_DELETE_FUNCTION;
-  void operator=(const asiVisu_PlaneWidget&) VTK_DELETE_FUNCTION;
+  asiVisu_PlaneWidget(const asiVisu_PlaneWidget&) = delete;
+  void operator=(const asiVisu_PlaneWidget&) = delete;
 };
 
 #pragma warning(default : 4251)

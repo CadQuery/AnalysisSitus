@@ -1027,14 +1027,14 @@ void asiVisu_PrsManager::Initialize(QWidget* pWidget, const bool isOffscreen)
   if ( !isOffscreen )
   {
     // Initialize widget.
-    m_widget = new asiVisu_QVTKWidget(pWidget);
+    m_widget = new QVTKOpenGLNativeWidget(pWidget);
 
     // Initialize render window.
-    m_renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    m_renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     //
     m_renderWindow->SetMultiSamples(64);
     m_renderWindow->SetLineSmoothing(true);
-    m_widget->SetRenderWindow(m_renderWindow);
+    m_widget->setRenderWindow(m_renderWindow);
 
     // Initialize renderer.
     m_renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -1110,7 +1110,7 @@ void asiVisu_PrsManager::InitializePickers(const Handle(ActAPI_INode)& node)
 
 //! Returns QVTK widget handled by Presentation Manager.
 //! \return QVTK widget.
-asiVisu_QVTKWidget* asiVisu_PrsManager::GetQVTKWidget() const
+QVTKOpenGLNativeWidget* asiVisu_PrsManager::GetQVTKWidget() const
 {
   return m_widget;
 }

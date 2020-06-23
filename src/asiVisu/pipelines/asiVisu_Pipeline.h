@@ -40,7 +40,8 @@
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkAlgorithm.h>
-#include <vtkPassThroughFilter.h>
+#include <vtkDataSet.h>
+#include <vtkPassThrough.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #pragma warning(pop)
@@ -189,7 +190,7 @@ protected:
   //! to the outputs of other external filtering procedures (e.g. some kinds
   //! of "data selectors"). This dummy filter performs simple shallow copying
   //! of input data to the output.
-  vtkSmartPointer<vtkPassThroughFilter> m_dummyFilter;
+  vtkSmartPointer<vtkPassThrough> m_dummyFilter;
 
   //! Modification timestamp for the Pipeline.
   Handle(ActAux_TimeStamp) m_MTime;

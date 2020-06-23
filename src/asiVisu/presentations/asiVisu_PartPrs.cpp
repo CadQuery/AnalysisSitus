@@ -78,6 +78,7 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   // Set point size and line width.
   pl->Actor()->GetProperty()->SetPointSize(5.0f);
   pl->Actor()->GetProperty()->SetLineWidth(1.5f);
+  pl->Actor()->GetProperty()->BackfaceCullingOn();
 
   /* =================================
    *  Pipeline for back side of shape.
@@ -113,13 +114,12 @@ asiVisu_PartPrs::asiVisu_PartPrs(const Handle(ActAPI_INode)& N) : asiVisu_Prs(N)
   contour_pl->Actor()->GetProperty()->SetColor(0.1, 0.1, 0.1); // Default color for edges w/o scalars.
   contour_pl->Actor()->SetPickable(0);
   //
-  if ( partNode->GetRenderEdgesAsTubes() ) // Do not remove this if-statement
-                                           // to avoid troubles with tubes
-                                           // in headless mode.
+  if ( partNode->GetRenderEdgesAsTubes() )
   {
-    contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOn();
+    contour_pl->Actor()->GetProperty()->SetRenderLinesAsTubes(1);
+    contour_pl->Actor()->GetProperty()->SetRenderPointsAsSpheres(1);
   }
-  contour_pl->Actor()->GetProperty()->LightingOff();
+  contour_pl->Actor()->GetProperty()->SetRepresentationToWireframe();
   //
   this->addPipeline        ( Pipeline_Contour, contour_pl );
   this->assignDataProvider ( Pipeline_Contour, dp );

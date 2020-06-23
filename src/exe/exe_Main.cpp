@@ -99,11 +99,9 @@
 #pragma warning(pop)
 
 // Activate object factories
-VTK_MODULE_INIT(vtkRenderingContextOpenGL2)
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
 VTK_MODULE_INIT(vtkInteractionStyle)
 VTK_MODULE_INIT(vtkRenderingFreeType)
-VTK_MODULE_INIT(vtkIOExportOpenGL2)
 VTK_MODULE_INIT(vtkRenderingGL2PSOpenGL2)
 
 //-----------------------------------------------------------------------------
@@ -122,26 +120,10 @@ int main(int argc, char** argv)
   // Create main window as (it will initialize all resources)
   //---------------------------------------------------------------------------
 
-#ifndef _WIN32
   if ( !isBatch )
   {
-    QSurfaceFormat fmt;
-    fmt.setRenderableType(QSurfaceFormat::OpenGL);
-    fmt.setVersion(3, 2);
-    fmt.setProfile(QSurfaceFormat::CoreProfile);
-    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-    fmt.setRedBufferSize(1);
-    fmt.setGreenBufferSize(1);
-    fmt.setBlueBufferSize(1);
-    fmt.setDepthBufferSize(1);
-    fmt.setStencilBufferSize(0);
-    fmt.setAlphaBufferSize(1);
-    fmt.setStereo(false);
-    fmt.setSamples( vtkOpenGLRenderWindow::GetGlobalMaximumNumberOfMultiSamples() );
-
-    QSurfaceFormat::setDefaultFormat(fmt);
+    QSurfaceFormat::setDefaultFormat( QVTKOpenGLNativeWidget::defaultFormat() );
   }
-#endif
 
   // Construct Qt application.
   QApplication app(argc, argv);

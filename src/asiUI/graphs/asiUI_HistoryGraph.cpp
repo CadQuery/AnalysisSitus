@@ -180,7 +180,7 @@ void asiUI_HistoryGraph::Render()
   // Create Qt window. NOTICE that interactor should be already given to
   // the render window at this stage
   m_pWidget = new asiUI_VtkWindow();
-  m_pWidget->SetRenderWindow( renderWindow.GetPointer() );
+  m_pWidget->setRenderWindow( renderWindow.GetPointer() );
 
   connect( m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
 
@@ -199,7 +199,7 @@ void asiUI_HistoryGraph::Render()
   textRep->SetTextActor(textActor);
   //
   m_textWidget->GetTextActor()->SetInput(LEGEND_TITLE_HISTORY);
-  m_textWidget->SetInteractor( m_pWidget->GetInteractor() );
+  m_textWidget->SetInteractor( m_pWidget->interactor() );
   m_textWidget->SetDefaultRenderer( renderer );
   m_textWidget->SetCurrentRenderer( renderer );
 
@@ -210,14 +210,14 @@ void asiUI_HistoryGraph::Render()
   renderWindow->SetLineSmoothing(true);
   renderWindow->SetWindowName("Modification history");
   //
-  graphItem->StartLayoutAnimation( m_pWidget->GetInteractor() );
+  graphItem->StartLayoutAnimation( m_pWidget->interactor() );
   //
-  m_pWidget->GetInteractor()->Initialize();
+  m_pWidget->interactor()->Initialize();
   m_pWidget->resize(400, 400);
   m_pWidget->show();
 
   // Set callback on rendering
-  m_pWidget->GetRenderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_HistoryGraph::RenderEventCallback);
+  m_pWidget->renderWindow()->AddObserver(vtkCommand::RenderEvent, this, &asiUI_HistoryGraph::RenderEventCallback);
 }
 
 //-----------------------------------------------------------------------------

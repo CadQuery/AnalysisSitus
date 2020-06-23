@@ -34,6 +34,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
+#include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
 
 // Qt includes

@@ -49,7 +49,7 @@ asiVisu_Pipeline::asiVisu_Pipeline(const vtkSmartPointer<vtkMapper>& mapper,
     m_bBuilt       ( false ),
     m_mapper       ( mapper ),
     m_actor        ( actor ),
-    m_dummyFilter  ( vtkSmartPointer<vtkPassThroughFilter>::New() )
+    m_dummyFilter  ( vtkSmartPointer<vtkPassThrough>::New() )
 {}
 
 //! Sets input data set for the pipeline.

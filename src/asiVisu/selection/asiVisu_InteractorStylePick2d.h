@@ -37,6 +37,7 @@
 // VTK includes
 #pragma warning(push, 0)
 #include <vtkInteractorStyleImage.h>
+#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #pragma warning(pop)
 

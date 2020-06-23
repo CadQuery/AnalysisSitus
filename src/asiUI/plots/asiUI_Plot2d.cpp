@@ -137,7 +137,7 @@ void asiUI_Plot2d::Render(const std::vector<double>& x,
   // Create Qt window. NOTICE that interactor should be already given to
   // the render window at this stage.
   m_pViewer = new asiUI_VtkWindow();
-  m_pViewer->SetRenderWindow( m_contextView->GetRenderWindow() );
+  m_pViewer->setRenderWindow( m_contextView->GetRenderWindow() );
 
   // Add multiple line plots, setting the colors, etc.
   vtkSmartPointer<vtkChartXY> chart = vtkSmartPointer<vtkChartXY>::New();

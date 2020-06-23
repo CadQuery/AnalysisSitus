@@ -36,6 +36,7 @@
 
 // VTK includes
 #include <vtkCellData.h>
+#include <vtkIdTypeArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>

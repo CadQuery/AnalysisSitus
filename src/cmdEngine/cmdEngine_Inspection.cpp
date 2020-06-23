@@ -3573,7 +3573,13 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     //
     "find-isomorphisms <varShape>\n"
     "\t Solves subgraph isomorphism problem for the part shape\n"
-    "\t and the passed feature descriptor encoded by <varShape>.",
+    "\t and the passed feature descriptor encoded by <varShape>.\n"
+    "\t Pass '-noconvex' key to reduce the dimension of the problem\n"
+    "\t graph by excluding faces with all convex edges.\n"
+    "\t Pass '-nobase' key to reduce the dimension of the problem\n"
+    "\t graph by excluding faces having internal contours. Both\n"
+    "\t keys can be used together. Pass '-dump' key to run the\n"
+    "\t algorithm in verbose mode.",
     //
     __FILE__, group, ENGINE_FindIsomorphisms);
 

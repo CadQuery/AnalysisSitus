@@ -98,7 +98,7 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
 
   // Adjust props
   contour_pl->Actor()->GetProperty()->SetOpacity(1.0);
-  contour_pl->Actor()->GetProperty()->SetLineWidth(1.0f);
+  contour_pl->Actor()->GetProperty()->SetLineWidth(1.25f);
   contour_pl->Actor()->GetProperty()->RenderLinesAsTubesOn();
   contour_pl->Actor()->SetPickable(0);
   //
@@ -123,9 +123,6 @@ asiVisu_TriangulationPrs::asiVisu_TriangulationPrs(const Handle(ActAPI_INode)& N
   //
   this->addPipeline        ( Pipeline_TriangulationNodes, nodes_pl );
   this->assignDataProvider ( Pipeline_TriangulationNodes, dp );
-
-  // Resolve coincident topology between shaded facets and border links
-  vtkMapper::SetResolveCoincidentTopologyToPolygonOffset();
 }
 
 //-----------------------------------------------------------------------------

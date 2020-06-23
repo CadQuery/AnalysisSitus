@@ -39,6 +39,7 @@
 // VTK includes
 #include <vtkActor.h>
 #include <vtkCellData.h>
+#include <vtkIdTypeArray.h>
 #include <vtkInformation.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>

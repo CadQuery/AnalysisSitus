@@ -150,7 +150,7 @@ void asiUI_PartGraph::Render(const vtkSmartPointer<vtkGraph>& graph,
   renderer->SetBackground(0.15, 0.15, 0.15);
 
   // Render window
-  vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderer->AddActor(actor);
 

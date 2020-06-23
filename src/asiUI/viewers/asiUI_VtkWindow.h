@@ -36,11 +36,11 @@
 
 // QVTK includes
 #pragma warning(push, 0)
-#include <QVTKOpenGLNativeWidget.h>
+#include <asiVisu_QVTKWidget.h>
 #pragma warning(pop)
 
 //! Sub-class for QVTKOpenGLNativeWidget to override its behavior.
-class asiUI_VtkWindow : public QVTKOpenGLNativeWidget
+class asiUI_VtkWindow : public asiVisu_QVTKWidget
 {
   Q_OBJECT
 

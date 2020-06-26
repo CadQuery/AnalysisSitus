@@ -515,7 +515,7 @@ void exe_MainWindow::createToolbar()
   this->Toolbar.pToolbar->addAction(undoAction);
 
   // Redo.
-  const QIcon redoIcon   = QIcon::fromTheme("edit-redo", QIcon(":icons/asitus/asitus_redo_icon_16x16.png"));
+  const QIcon redoIcon   = QIcon(":icons/asitus/asitus_redo_icon_16x16.png");
   QAction*    redoAction = new QAction(redoIcon, tr("&Redo"), this);
   redoAction->setShortcuts(QKeySequence::Redo);
   redoAction->setStatusTip("Redo");

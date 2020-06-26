@@ -37,12 +37,21 @@
 
 // OpenCascade includes
 #include <BRep_Builder.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
 #include <TopExp_Explorer.hxx>
+#include <TopoDS_Wire.hxx>
 
 #undef COUT_DEBUG
 #if defined COUT_DEBUG
   #pragma message("===== warning: COUT_DEBUG is enabled")
+#endif
+
+#undef DRAW_DEBUG
+#if defined DRAW_DEBUG
+  #pragma message("===== warning: DRAW_DEBUG is enabled")
 #endif
 
 //-----------------------------------------------------------------------------
@@ -59,7 +68,10 @@ asiAlgo_RecognizeIsolated::asiAlgo_RecognizeIsolated(const TopoDS_Shape&        
                                                      const Handle(asiAlgo_AAG)& aag,
                                                      ActAPI_ProgressEntry       progress,
                                                      ActAPI_PlotterEntry        plotter)
-: asiAlgo_Recognizer(shape, aag, progress, plotter)
+: asiAlgo_Recognizer(shape,
+                     aag,
+                     progress,
+                     plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -67,7 +79,10 @@ asiAlgo_RecognizeIsolated::asiAlgo_RecognizeIsolated(const TopoDS_Shape&        
 asiAlgo_RecognizeIsolated::asiAlgo_RecognizeIsolated(const Handle(asiAlgo_AAG)& aag,
                                                      ActAPI_ProgressEntry       progress,
                                                      ActAPI_PlotterEntry        plotter)
-: asiAlgo_Recognizer(aag->GetMasterShape(), aag, progress, plotter)
+: asiAlgo_Recognizer(aag->GetMasterShape(),
+                     aag,
+                     progress,
+                     plotter)
 {}
 
 //-----------------------------------------------------------------------------
@@ -101,67 +116,88 @@ bool asiAlgo_RecognizeIsolated::Perform(const asiAlgo_Feature& seeds)
 #endif
   }
 
-  // Initialize iterator to loop over the preselected seed faces.
-  Handle(asiAlgo_AAGSetIterator)
-    seed_it = new asiAlgo_AAGSetIterator(m_aag, seeds);
+  /* ========================
+   *  Check for separability.
+   * ======================== */
 
-  // Iterate over the seeds.
-  for ( ; seed_it->More(); seed_it->Next() )
+  const int c0 = m_aag->GetConnectedComponentsNb();
+  int       c1 = 0;
+
+  // Check the separability property.
+  m_aag->PushSubgraphX(seeds);
   {
-    const t_topoId     baseFaceId = seed_it->GetFaceId();
-    const TopoDS_Face& baseFace   = m_aag->GetFace(baseFaceId);
+    c1 = m_aag->GetConnectedComponentsNb();
+  }
+  m_aag->PopSubgraph();
 
-    // Get edges where features grow and the outer edges
-    // restricting the finder.
-    std::vector< TopoDS_Edge >              outerEdges;
-    std::vector< std::vector<TopoDS_Edge> > innerEdges;
+  if ( c1 >= c0 + 1 )
+    m_progress.SendLogMessage(LogInfo(Normal) << "Inner feature looks separable.");
+  else
+    m_progress.SendLogMessage(LogWarn(Normal) << "Inner feature is not separable.");
+
+  /* ==========================
+   *  Get inner/outer contours.
+   * ========================== */
+
+  std::vector< TopoDS_Edge >              outerEdges;
+  std::vector< std::vector<TopoDS_Edge> > innerEdges;
+  //
+  this->extractContours(seeds, outerEdges, innerEdges);
+
+  /* ===========================
+   *  Check for suppressibility.
+   * =========================== */
+
+  // Get all faces which should not pass to the isolated features.
+  asiAlgo_Feature neighborsOverOuterEdges;
+  for ( asiAlgo_Feature::Iterator fit(seeds); fit.More(); fit.Next() )
+  {
+    const int baseFaceId = fit.Key();
     //
-    this->getFaceEdges(baseFace, outerEdges, innerEdges);
-
-    // Get all faces which should not pass to the isolated features.
-    asiAlgo_Feature neighborsOverOuterEdges;
     for ( auto eit = outerEdges.cbegin(); eit != outerEdges.cend(); ++eit )
-      neighborsOverOuterEdges.Unite( m_aag->GetNeighborsThru(baseFaceId, *eit) );
-
-    // Eliminate base face from AAG to check the number of connected components.
-    m_aag->PushSubgraphX(baseFaceId);
     {
-      // Get all connected components
-      std::vector<asiAlgo_Feature> ccomps;
-      m_aag->GetConnectedComponents(ccomps);
+      neighborsOverOuterEdges.Unite( m_aag->GetNeighborsThru(baseFaceId, *eit) );
+    }
+  }
 
-      if ( !ccomps.empty() )
+  // Eliminate base faces from AAG to check connected components.
+  m_aag->PushSubgraphX(seeds);
+  {
+    // Get all connected components
+    std::vector<asiAlgo_Feature> ccomps;
+    m_aag->GetConnectedComponents(ccomps);
+
+    if ( !ccomps.empty() )
+    {
+      // For each connected component, check whether it contains candidate
+      // faces. If so, we are done.
+      for ( auto cit = ccomps.cbegin(); cit != ccomps.cend(); ++cit )
       {
-        // For each connected component, check whether it contains candidate
-        // faces. If so, we are done.
-        for ( auto cit = ccomps.cbegin(); cit != ccomps.cend(); ++cit )
-        {
-          const asiAlgo_Feature& ccomp = *cit;
+        const asiAlgo_Feature& ccomp = *cit;
 
-          // Isolated features should be adjacent to the base face via
-          // its internal contours. But that's not enough. It may happen
-          // that a face set adjacent to the outer contour propagates via
-          // adjacency to the internal contours. Therefore, it is necessary
-          // to check that the connected component does not contain faces
-          // adjacent to the base one via its outer contour. Moreover,
-          // full inner contour should be covered by adjacent faces.
+        // Isolated features should be adjacent to the base face via
+        // its internal contours. But that's not enough. It may happen
+        // that a face set adjacent to the outer contour propagates via
+        // adjacency to the internal contours. Therefore, it is necessary
+        // to check that the connected component does not contain faces
+        // adjacent to the base one via its outer contour. Moreover,
+        // full inner contour should be covered by adjacent faces.
 
-          if ( ccomp.HasIntersection(neighborsOverOuterEdges) )
-            continue;
+        if ( ccomp.HasIntersection(neighborsOverOuterEdges) )
+          continue;
 
-          if ( !this->checkPresence(innerEdges, ccomp) )
-            continue;
+        if ( !this->checkPresence(innerEdges, ccomp) )
+          continue;
 
-          m_result.ids.Unite(ccomp);
-        }
+        m_result.ids.Unite(ccomp);
       }
     }
-    m_aag->PopSubgraph();
-
-    // Handle cancellation request: exit safely.
-    if ( m_progress.IsCancelling() )
-      return false;
   }
+  m_aag->PopSubgraph();
+
+  /* ==========
+   *  Finalize.
+   * ========== */
 
   // Populate the result with the transient shape pointers.
   for ( asiAlgo_Feature::Iterator mit(m_result.ids); mit.More(); mit.Next() )
@@ -263,4 +299,111 @@ bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<Top
   }
 
   return isPresent;
+}
+
+//-----------------------------------------------------------------------------
+
+bool
+  asiAlgo_RecognizeIsolated::extractContours(const asiAlgo_Feature&                   seeds,
+                                             std::vector< TopoDS_Edge >&              outerEdges,
+                                             std::vector< std::vector<TopoDS_Edge> >& innerEdges) const
+{
+  if ( seeds.Extent() == 1 )
+  {
+    const t_topoId     baseFaceId = seeds.GetMinimalMapped();
+    const TopoDS_Face& baseFace   = m_aag->GetFace(baseFaceId);
+
+    // Get edges where features grow and the outer edges
+    // restricting the finder.
+    this->getFaceEdges(baseFace, outerEdges, innerEdges);
+  }
+  else /* Multibase case */
+  {
+    TopoDS_Shell shell;
+    BRep_Builder bb;
+    bb.MakeShell(shell);
+
+    // Compose a shell out of the seed faces.
+    for ( asiAlgo_Feature::Iterator fit(seeds); fit.More(); fit.Next() )
+    {
+      bb.Add( shell, m_aag->GetFace( fit.Key() ) );
+    }
+
+    // Build map of edges to extract open ("naked") ones.
+    TopTools_IndexedDataMapOfShapeListOfShape edgesFaces;
+    TopExp::MapShapesAndAncestors(shell, TopAbs_EDGE, TopAbs_FACE, edgesFaces);
+
+    // Find open edges.
+    Handle(TopTools_HSequenceOfShape) openEdgesSeq = new TopTools_HSequenceOfShape;
+    //
+    for ( int k = 1; k <= edgesFaces.Extent(); ++k )
+    {
+      const TopTools_ListOfShape& faces = edgesFaces(k);
+      //
+      if ( faces.Extent() == 1 )
+      {
+        const TopoDS_Edge& E = TopoDS::Edge( edgesFaces.FindKey(k) );
+        //
+        if ( BRep_Tool::Degenerated(E) )
+          continue;
+    
+        openEdgesSeq->Append(E);
+      }
+    }
+  
+    // Compose border wires from the naked edges.
+    Handle(TopTools_HSequenceOfShape) borderWires;
+    ShapeAnalysis_FreeBounds::ConnectEdgesToWires(openEdgesSeq, 1e-3, false, borderWires);
+    //
+    if ( borderWires.IsNull() || (borderWires->Length() < 2) )
+      return false;
+
+    // Repack to a standard vector and compute lengths.
+    std::vector<TopoDS_Wire> wires;
+    std::vector<double>      lengths;
+    std::vector<int>         nums;
+    //
+    for ( TopTools_HSequenceOfShape::Iterator wit(*borderWires); wit.More(); wit.Next() )
+    {
+      TopoDS_Wire wire = TopoDS::Wire( wit.Value() );
+      wires.push_back(wire);
+
+      nums.push_back( int( nums.size() ) );
+
+      // Compute wire's length.
+      GProp_GProps prop;
+      BRepGProp::LinearProperties(wire, prop);
+      lengths.push_back( prop.Mass() );
+    }
+
+    std::sort( nums.begin(), nums.end(),
+               [&](const int a, const int b)
+               {
+                 return lengths[a] > lengths[b];
+               } );
+
+    // Collect outer edges.
+    for ( TopExp_Explorer wexp(wires[nums[0]], TopAbs_EDGE); wexp.More(); wexp.Next() )
+    {
+      outerEdges.push_back( TopoDS::Edge( wexp.Current() ) );
+    }
+
+    // Collect inner edges.
+    for ( auto wit = nums.cbegin() + 1; wit != nums.cend(); ++wit )
+    {
+      std::vector<TopoDS_Edge> wireEdges;
+      for ( TopExp_Explorer wexp(wires[*wit], TopAbs_EDGE); wexp.More(); wexp.Next() )
+      {
+        wireEdges.push_back( TopoDS::Edge( wexp.Current() ) );
+      }
+      innerEdges.push_back(wireEdges);
+    }
+
+#if defined DRAW_DEBUG
+    m_plotter.REDRAW_SHAPE("outerWire", wires[nums[0]], Color_Blue, 1., true);
+    m_plotter.REDRAW_SHAPE("innerWire", wires[nums[1]], Color_Red, 1., true);
+#endif
+  }
+
+  return true;
 }

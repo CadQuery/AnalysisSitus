@@ -56,7 +56,7 @@ asiVisu_DomainPointsDataProvider::asiVisu_DomainPointsDataProvider(const Handle(
 //! \return global index of the OCCT face to be visualized.
 int asiVisu_DomainPointsDataProvider::GetFaceIndexAmongSubshapes() const
 {
-  const int globalId = Handle(asiData_FaceNode)::DownCast(m_node)->GetSelectedFace();
+  const int globalId = Handle(asiData_FaceNode)::DownCast(m_node)->GetAnySelectedFace();
 
   return globalId;
 }
@@ -152,7 +152,7 @@ Handle(ActAPI_HParameterList) asiVisu_DomainPointsDataProvider::translationSourc
   ActParamStream out;
 
   // Register Parameter as sensitive.
-  out << m_node->Parameter(asiData_FaceNode::PID_SelectedFace);
+  out << m_node->Parameter(asiData_FaceNode::PID_SelectedFaces);
 
   return out;
 }

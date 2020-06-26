@@ -574,11 +574,13 @@ TCollection_AsciiString
 
 TCollection_AsciiString
   asiAlgo_Utils::NamedShapeToString(const TopoDS_Shape&           subShape,
+                                    const int                     pedigreeId,
                                     const int                     globalId,
                                     const Handle(asiAlgo_Naming)& naming)
 {
   TCollection_AsciiString msg("Sub-shape: ");
   msg += ShapeTypeStr(subShape).c_str();
+  msg += "\n\t ID: ";        msg += pedigreeId;
   msg += "\n\t Global ID: "; msg += globalId;
   msg += "\n\t Address: ";   msg += ShapeAddr(subShape).c_str();
   //

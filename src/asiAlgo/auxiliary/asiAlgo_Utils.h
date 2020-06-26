@@ -186,7 +186,7 @@ namespace asiAlgo_Utils
 
     asiAlgo_EXPORT
       std::string GetVariable(const char* varName);
-  } // ENv namespace.
+  } // Env namespace.
 
   //! Returns geometry of a face as a string label.
   //! \param face [in] face to inspect.
@@ -201,6 +201,7 @@ namespace asiAlgo_Utils
   //! Converts the passed named shape to string.
   asiAlgo_EXPORT TCollection_AsciiString
     NamedShapeToString(const TopoDS_Shape&           subShape,
+                       const int                     pedigreeId,
                        const int                     globalId,
                        const Handle(asiAlgo_Naming)& naming);
 

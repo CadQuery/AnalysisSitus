@@ -37,10 +37,8 @@
 //-----------------------------------------------------------------------------
 
 //! Default constructor. Registers all involved Parameters.
-asiData_FaceNormsNode::asiData_FaceNormsNode() : ActData_BaseNode()
+asiData_FaceNormsNode::asiData_FaceNormsNode() : asiData_FaceNodeBase()
 {
-  REGISTER_PARAMETER(Name, PID_Name);
-  REGISTER_PARAMETER(Int,  PID_SelectedFace);
   REGISTER_PARAMETER(Real, PID_SampleRate);
 }
 
@@ -55,48 +53,10 @@ Handle(ActAPI_INode) asiData_FaceNormsNode::Instance()
 //! Performs initial actions required to make Node WELL-FORMED.
 void asiData_FaceNormsNode::Init()
 {
-  // Set default values to primitive Parameters.
-  this->SetSelectedFace(0);
+  asiData_FaceNodeBase::Init();
+
   this->SetSampleRate(0.05);
-
-  // Initialize Parameter flags.
-  this->InitParameter(PID_Name,        "Name",          "", ParameterFlag_IsVisible, true);
   this->InitParameter(PID_SampleRate,  "Sampling rate", "", ParameterFlag_IsVisible, true);
-}
-
-//-----------------------------------------------------------------------------
-// Generic naming
-//-----------------------------------------------------------------------------
-
-//! Accessor for the Node's name.
-//! \return name of the Node.
-TCollection_ExtendedString asiData_FaceNormsNode::GetName()
-{
-  return ActParamTool::AsName( this->Parameter(PID_Name) )->GetValue();
-}
-
-//! Sets name for the Node.
-//! \param name [in] name to set.
-void asiData_FaceNormsNode::SetName(const TCollection_ExtendedString& name)
-{
-  ActParamTool::AsName( this->Parameter(PID_Name) )->SetValue(name);
-}
-
-//-----------------------------------------------------------------------------
-// Handy accessors
-//-----------------------------------------------------------------------------
-
-//! Sets index of the active face.
-//! \param faceId [in] index of the active face.
-void asiData_FaceNormsNode::SetSelectedFace(const int faceId)
-{
-  ActParamTool::AsInt( this->Parameter(PID_SelectedFace) )->SetValue(faceId);
-}
-
-//! \return index of the selected face.
-int asiData_FaceNormsNode::GetSelectedFace() const
-{
-  return ActParamTool::AsInt( this->Parameter(PID_SelectedFace) )->GetValue();
 }
 
 //! Sets the sample rate value.

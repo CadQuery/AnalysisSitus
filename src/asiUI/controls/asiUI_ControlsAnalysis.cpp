@@ -458,7 +458,7 @@ void asiUI_ControlsAnalysis::onShowTopoGraph()
 
   // Access active face.
   Handle(asiData_FaceNode) FN = N->GetFaceRepresentation();
-  if ( FN.IsNull() || !FN->IsWellFormed() || FN->GetSelectedFace() <= 0 )
+  if ( FN.IsNull() || !FN->IsWellFormed() || FN->GetAnySelectedFace() <= 0 )
     targetShape = N->GetShape();
   else
   {

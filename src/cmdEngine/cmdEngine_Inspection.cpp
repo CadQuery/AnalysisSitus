@@ -720,7 +720,7 @@ int ENGINE_CheckContinuity(const Handle(asiTcl_Interp)& interp,
   }
 
   // Get ID of the selected face.
-  const int faceIdx = surfNode->GetSelectedFace();
+  const int faceIdx = surfNode->GetAnySelectedFace();
   //
   if ( faceIdx <= 0 )
   {

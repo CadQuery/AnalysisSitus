@@ -36,8 +36,9 @@
 
 // OCCT includes
 #include <Precision.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
+
+class TopoDS_Edge;
+class TopoDS_Face;
 
 //-----------------------------------------------------------------------------
 
@@ -111,6 +112,18 @@ protected:
   asiAlgo_EXPORT bool
     checkPresence(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
                   const asiAlgo_Feature&                         groupToCheck) const;
+
+  //! Extracts inner and outer wire from a shell composed of the passed
+  //! faces. If this method could not separate the outer contour from
+  //! the inner one(s), it returns `false`.
+  //! \param[in]  seeds      seed faces to compose a shell from.
+  //! \param[out] outerEdges extracted outer edges.
+  //! \param[out] innerEdges extracted inner edges.
+  //! \return true if the classification was successful, false -- otherwise.
+  asiAlgo_EXPORT bool
+    extractContours(const asiAlgo_Feature&                   seeds,
+                    std::vector< TopoDS_Edge >&              outerEdges,
+                    std::vector< std::vector<TopoDS_Edge> >& innerEdges) const;
 
 };
 

@@ -78,9 +78,9 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongSubshapes() const
   int globalId = 0;
 
   if ( m_node->IsInstance( STANDARD_TYPE(asiData_FaceNode) ) )
-    globalId = Handle(asiData_FaceNode)::DownCast(m_node)->GetSelectedFace();
+    globalId = Handle(asiData_FaceNode)::DownCast(m_node)->GetAnySelectedFace();
   else if ( m_node->IsInstance( STANDARD_TYPE(asiData_SurfNode) ) )
-    globalId = Handle(asiData_SurfNode)::DownCast(m_node)->GetSelectedFace();
+    globalId = Handle(asiData_SurfNode)::DownCast(m_node)->GetAnySelectedFace();
 
   return globalId;
 }
@@ -226,9 +226,9 @@ Handle(ActAPI_HParameterList) asiVisu_FaceDataProvider::translationSources() con
 {
   int PID = -1;
   if ( m_node->IsInstance( STANDARD_TYPE(asiData_FaceNode) ) )
-    PID = asiData_FaceNode::PID_SelectedFace;
+    PID = asiData_FaceNode::PID_SelectedFaces;
   else if ( m_node->IsInstance( STANDARD_TYPE(asiData_SurfNode) ) )
-    PID = asiData_SurfNode::PID_SelectedFace;
+    PID = asiData_SurfNode::PID_SelectedFaces;
 
   if ( PID == -1 )
     return nullptr;

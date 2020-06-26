@@ -362,10 +362,10 @@ void asiUI_ViewerPart::onSubShapesPicked()
       // Store index of the active face
       if ( picked_face_IDs.size() )
       {
-        geom_n->GetFaceRepresentation()    ->SetSelectedFace(picked_face_IDs[0]);
-        geom_n->GetNormsRepresentation()   ->SetSelectedFace(picked_face_IDs[0]);
-        geom_n->GetSurfaceRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
-        geom_n->GetContourRepresentation() ->SetSelectedFace(picked_face_IDs[0]);
+        geom_n->GetFaceRepresentation()    ->SetSelectedFaces(picked_face_IDs);
+        geom_n->GetNormsRepresentation()   ->SetSelectedFaces(picked_face_IDs);
+        geom_n->GetSurfaceRepresentation() ->SetSelectedFaces(picked_face_IDs);
+        geom_n->GetContourRepresentation() ->SetSelectedFaces(picked_face_IDs);
         //
         std::cout << "Active face has been stored..." << std::endl;
       }

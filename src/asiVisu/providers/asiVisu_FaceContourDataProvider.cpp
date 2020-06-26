@@ -53,7 +53,7 @@ asiVisu_FaceContourDataProvider::asiVisu_FaceContourDataProvider(const Handle(as
 //! \return working face.
 TopoDS_Face asiVisu_FaceContourDataProvider::GetFace() const
 {
-  const int globalId = m_source->GetSelectedFace();
+  const int globalId = m_source->GetAnySelectedFace();
   if ( !globalId )
     return TopoDS_Face();
 
@@ -85,7 +85,7 @@ Handle(ActAPI_HParameterList)
     return out;
 
   // Register Parameter as sensitive
-  out << m_source->Parameter(asiData_FaceContourNode::PID_SelectedFace)
+  out << m_source->Parameter(asiData_FaceContourNode::PID_SelectedFaces)
       << m_partNode->Parameter(asiData_PartNode::PID_Geometry)
       << m_partNode->Parameter(asiData_PartNode::PID_AAG);
 

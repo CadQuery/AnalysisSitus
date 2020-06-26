@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
-// Created on: 02 December 2015
+// Created on: 26 June 2020
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017, Sergey Slyadnev
+// Copyright (c) 2015-present, Sergey Slyadnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,35 +28,82 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------------------------------------
 
-#ifndef asiData_FaceNode_h
-#define asiData_FaceNode_h
+#ifndef asiData_FaceNodeBase_h
+#define asiData_FaceNodeBase_h
 
-// asiData includes
-#include <asiData_FaceNodeBase.h>
+// A-Situs includes
+#include <asiData.h>
+
+// Active Data includes
+#include <ActData_BaseNode.h>
+
+class TColStd_HPackedMapOfInteger;
 
 //-----------------------------------------------------------------------------
 
-//! Node representing a single b-rep face.
-class asiData_FaceNode : public asiData_FaceNodeBase
+//! Base class for all Data Nodes storing face indices.
+class asiData_FaceNodeBase : public ActData_BaseNode
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_FaceNode, asiData_FaceNodeBase)
-
-  // Automatic registration of Node type in global factory
-  DEFINE_NODE_FACTORY(asiData_FaceNode, Instance)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_FaceNodeBase, ActData_BaseNode)
 
 public:
 
-  asiData_EXPORT static Handle(ActAPI_INode)
-    Instance();
+  //! IDs for the underlying Parameters.
+  enum ParamId
+  {
+  //-------------------//
+  // Common            //
+  //-------------------//
+    PID_Name,          //!< Name of the Node.
+  //-------------------//
+  // Geometry          //
+  //-------------------//
+    PID_SelectedFaces, //!< IDs of the selected faces.
+  //-------------------//
+    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
+  };
+
+// Generic naming support:
+public:
+
+  asiData_EXPORT virtual TCollection_ExtendedString
+    GetName();
+
+  asiData_EXPORT virtual void
+    SetName(const TCollection_ExtendedString& name);
+
+// Handy accessors to the stored data:
+public:
+
+  asiData_EXPORT void
+    SetSelectedFace(const int faceId);
+
+  asiData_EXPORT void
+    SetSelectedFaces(const TColStd_PackedMapOfInteger& faceIds);
+
+  asiData_EXPORT void
+    SetSelectedFaces(const std::vector<int>& faceIds);
+
+  asiData_EXPORT int
+    GetAnySelectedFace() const;
+
+  asiData_EXPORT Handle(TColStd_HPackedMapOfInteger)
+    GetSelectedFaces() const;
+
+// Initialization:
+public:
+
+  asiData_EXPORT void
+    Init();
 
 protected:
 
   //! Allocation is allowed only via Instance() method.
   asiData_EXPORT
-    asiData_FaceNode();
+    asiData_FaceNodeBase();
 
 };
 

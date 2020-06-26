@@ -32,71 +32,27 @@
 #define asiData_FaceContourNode_h
 
 // asiData includes
-#include <asiData.h>
-
-// Active Data includes
-#include <ActData_BaseNode.h>
+#include <asiData_FaceNodeBase.h>
 
 //-----------------------------------------------------------------------------
 // Face contour
 //-----------------------------------------------------------------------------
 
 //! Node representing contour of a b-rep face.
-class asiData_FaceContourNode : public ActData_BaseNode
+class asiData_FaceContourNode : public asiData_FaceNodeBase
 {
 public:
 
   // OCCT RTTI
-  DEFINE_STANDARD_RTTI_INLINE(asiData_FaceContourNode, ActData_BaseNode)
+  DEFINE_STANDARD_RTTI_INLINE(asiData_FaceContourNode, asiData_FaceNodeBase)
 
   // Automatic registration of Node type in global factory
   DEFINE_NODE_FACTORY(asiData_FaceContourNode, Instance)
 
 public:
 
-  //! IDs for the underlying Parameters.
-  enum ParamId
-  {
-  //------------------//
-  // Common           //
-  //------------------//
-    PID_Name,         //!< Name of the Node.
-  //------------------//
-  // Geometry         //
-  //------------------//
-    PID_SelectedFace, //!< ID of the selected face.
-  //------------------//
-    PID_Last = PID_Name + ActData_BaseNode::RESERVED_PARAM_RANGE
-  };
-
-public:
-
   asiData_EXPORT static Handle(ActAPI_INode)
     Instance();
-
-// Generic naming support:
-public:
-
-  asiData_EXPORT virtual TCollection_ExtendedString
-    GetName();
-
-  asiData_EXPORT virtual void
-    SetName(const TCollection_ExtendedString& name);
-
-// Handy accessors to the stored data:
-public:
-
-  asiData_EXPORT void
-    SetSelectedFace(const int faceId);
-
-  asiData_EXPORT int
-    GetSelectedFace() const;
-
-// Initialization:
-public:
-
-  asiData_EXPORT void
-    Init();
 
 protected:
 

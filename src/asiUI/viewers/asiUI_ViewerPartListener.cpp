@@ -130,29 +130,49 @@ void asiUI_ViewerPartListener::onFacePicked(asiVisu_PickerResult* pickRes)
    * ============================= */
 
   // Get index of the active sub-shape.
-  const int
-    globalId = geom_n->GetFaceRepresentation()->GetSelectedFace();
+  Handle(TColStd_HPackedMapOfInteger)
+    gids = geom_n->GetFaceRepresentation()->GetSelectedFaces();
   //
-  if ( globalId == 0 )
+  if ( gids.IsNull() || gids->Map().IsEmpty() )
     return;
 
   // Get sub-shapes map.
   const TopTools_IndexedMapOfShape&
     allSubShapes = geom_n->GetAAG()->RequestMapOfSubShapes();
-  //
-  if ( globalId < 1 || globalId > allSubShapes.Extent() )
-    return;
 
-  // Get sub-shape.
-  const TopoDS_Shape& subShape = allSubShapes(globalId);
+  // Get map of faces.
+  const TopTools_IndexedMapOfShape&
+    allFaces = geom_n->GetAAG()->GetMapOfFaces();
 
-  // Send message to logger.
-  TCollection_AsciiString
-    msg = asiAlgo_Utils::NamedShapeToString( subShape,
-                                             globalId,
-                                             geom_n->GetNaming() );
+  // Loop over the selected faces.
+  TColStd_PackedMapOfInteger fids;
   //
-  m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
+  for ( TColStd_PackedMapOfInteger::Iterator git( gids->Map() ); git.More(); git.Next() )
+  {
+    const int globalId = git.Key();
+    //
+    if ( globalId < 1 || globalId > allSubShapes.Extent() )
+      continue;
+
+    // Get sub-shape.
+    const TopoDS_Shape& subShape = allSubShapes(globalId);
+
+    // Get pedigree index.
+    const int pedigreeId = allFaces.FindIndex(subShape);
+    fids.Add(pedigreeId);
+
+    // Send message to logger.
+    TCollection_AsciiString
+      msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                               pedigreeId,
+                                               globalId,
+                                               geom_n->GetNaming() );
+    //
+    m_progress.SendLogMessage( LogInfo(Normal) << msg.ToCString() );
+  }
+
+  if ( fids.Extent() > 1 )
+    m_progress.SendLogMessage( LogInfo(Normal) << "Selected faces: %1." << fids );
 }
 
 //-----------------------------------------------------------------------------
@@ -194,9 +214,16 @@ void asiUI_ViewerPartListener::onEdgePicked(asiVisu_PickerResult* pickRes)
   // Get sub-shape.
   const TopoDS_Shape& subShape = allSubShapes(globalId);
 
+  // Get map of edges.
+  const TopTools_IndexedMapOfShape&
+    allEdges = geom_n->GetAAG()->RequestMapOfEdges();
+  //
+  const int pedigreeId = allEdges.FindIndex(subShape);
+
   // Send message to logger.
   TCollection_AsciiString
     msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                             pedigreeId,
                                              globalId,
                                              geom_n->GetNaming() );
   //
@@ -236,9 +263,16 @@ void asiUI_ViewerPartListener::onVertexPicked(asiVisu_PickerResult* pickRes)
   // Get sub-shape.
   const TopoDS_Shape& subShape = allSubShapes(globalId);
 
+  // Get map of vertices.
+  const TopTools_IndexedMapOfShape&
+    allVertices = geom_n->GetAAG()->RequestMapOfVertices();
+  //
+  const int pedigreeId = allVertices.FindIndex(subShape);
+
   // Send message to logger.
   TCollection_AsciiString
     msg = asiAlgo_Utils::NamedShapeToString( subShape,
+                                             pedigreeId,
                                              globalId,
                                              geom_n->GetNaming() );
   //

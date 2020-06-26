@@ -103,7 +103,7 @@ double asiVisu_FaceNormalsDataProvider::GetMaxVectorModulus() const
 //! \return working face.
 TopoDS_Face asiVisu_FaceNormalsDataProvider::GetFace() const
 {
-  const int globalId = Handle(asiData_FaceNormsNode)::DownCast(m_source)->GetSelectedFace();
+  const int globalId = Handle(asiData_FaceNormsNode)::DownCast(m_source)->GetAnySelectedFace();
   if ( !globalId )
     return TopoDS_Face();
 
@@ -145,7 +145,7 @@ Handle(ActAPI_HParameterList) asiVisu_FaceNormalsDataProvider::translationSource
     return out;
 
   // Register Parameter as sensitive.
-  out << face_n->Parameter(asiData_FaceNormsNode::PID_SelectedFace)
+  out << face_n->Parameter(asiData_FaceNormsNode::PID_SelectedFaces)
       << face_n->Parameter(asiData_FaceNormsNode::PID_SampleRate)
       << m_partNode->Parameter(asiData_PartNode::PID_Geometry)
       << m_partNode->Parameter(asiData_PartNode::PID_AAG);

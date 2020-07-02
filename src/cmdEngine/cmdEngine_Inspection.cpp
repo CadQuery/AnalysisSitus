@@ -75,9 +75,12 @@
 #endif
 
 // OCCT includes
+#include <Bnd_Box.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepTools.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
@@ -1777,6 +1780,52 @@ int ENGINE_CheckArea(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_CheckAABB(const Handle(asiTcl_Interp)& interp,
+                     int                          argc,
+                     const char**                 argv)
+{
+  // Get shape to analyze.
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+  //
+  TopoDS_Shape partShape = M->GetPartNode()->GetShape();
+
+  TIMER_NEW
+  TIMER_GO
+
+  Bnd_Box bbox;
+  //
+  if ( interp->HasKeyword(argc, argv, "opt") )
+    BRepBndLib::AddOptimal(partShape, bbox, interp->HasKeyword(argc, argv, "tris"), false);
+  else
+    BRepBndLib::Add(partShape, bbox, interp->HasKeyword(argc, argv, "tris"));
+
+  TIMER_FINISH
+  TIMER_COUT_RESULT_NOTIFIER(interp->GetProgress(), "Compute AABB")
+
+  std::vector<double> dim = { fabs( bbox.CornerMax().X() - bbox.CornerMin().X() ),
+                              fabs( bbox.CornerMax().Y() - bbox.CornerMin().Y() ),
+                              fabs( bbox.CornerMax().Z() - bbox.CornerMin().Z() ) };
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Dx: %1." << dim[0]);
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Dy: %1." << dim[1]);
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Dz: %1." << dim[2]);
+
+  // Create bounding box to draw it.
+  TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt( bbox.CornerMin().X(),
+                                                     bbox.CornerMin().Y(),
+                                                     bbox.CornerMin().Z() ),
+                                             gp_Pnt( bbox.CornerMax().X(),
+                                                     bbox.CornerMax().Y(),
+                                                     bbox.CornerMax().Z() ) );
+  //
+  interp->GetPlotter().REDRAW_SHAPE("bounding box", bndbox, Color_Yellow, 1.0, true);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 int ENGINE_CheckValidity(const Handle(asiTcl_Interp)& interp,
                          int                          argc,
                          const char**                 argv)
@@ -3373,6 +3422,17 @@ void cmdEngine::Commands_Inspection(const Handle(asiTcl_Interp)&      interp,
     "\t Checks area of the selected faces.",
     //
     __FILE__, group, ENGINE_CheckArea);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("check-aabb",
+    //
+    "check-aabb\n"
+    "\t Checks AABB of the active part. If 'opt' key is passed,\n"
+    "\t the bounding box will be optimized to better fit the\n"
+    "\t part's shape. If 'tris' key is passed, the algorithm will\n"
+    "\t use triangulation (facets) of the part.",
+    //
+    __FILE__, group, ENGINE_CheckAABB);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("check-validity",

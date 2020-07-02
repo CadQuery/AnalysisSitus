@@ -1270,7 +1270,7 @@ void asiUI_ControlsAnalysis::onAABB()
   // Create bounding box to draw it.
   TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt(xMin, yMin, zMin), gp_Pnt(xMax, yMax, zMax) );
   //
-  m_plotter.DRAW_SHAPE(bndbox, Color_Yellow, 1.0, true, "bounding box");
+  m_plotter.REDRAW_SHAPE("bounding box", bndbox, Color_Yellow, 1.0, true);
 }
 
 //-----------------------------------------------------------------------------

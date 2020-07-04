@@ -401,12 +401,14 @@ set (utils_H_FILES
   utils/asiAlgo_Timer.h
   utils/asiAlgo_TimeStamp.h
   utils/asiAlgo_Variable.h
+  utils/MemTracker.h
 )
 set (utils_CPP_FILES
   utils/asiAlgo_FileDumper.cpp
   utils/asiAlgo_JSON.cpp
   utils/asiAlgo_Logger.cpp
   utils/asiAlgo_TimeStamp.cpp
+  utils/MemTracker.cpp
 )
 
 #------------------------------------------------------------------------------

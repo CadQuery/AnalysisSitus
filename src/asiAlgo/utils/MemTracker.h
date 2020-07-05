@@ -21,7 +21,7 @@
 //! A single checkpoint for memory tracking.
 struct t_memCheckPoint
 {
-  std::string name; //!< Domain-specific name of a checkpoint.
+  std::string name; //!< Domain-specific name of a checkpoint (kept for future).
   int         mem;  //!< Memory consumed by the process at a checkpoint.
 
   t_memCheckPoint() : mem(0) {} //!< Default ctor.
@@ -36,14 +36,10 @@ struct t_memCheckPoint
 class IMemTracker
 {
 public:
-  virtual void SetCurrentCheckPoint (const int)                   = 0;
-  virtual int  GetCurrentCheckPoint () const                      = 0;
-  virtual void AddCheckPoint        (const t_memCheckPoint&)      = 0;
+  virtual void AddCheckPoint        ()                            = 0;
   virtual void GetCheckPoint        (const int, t_memCheckPoint&) = 0;
   virtual int  GetNumCheckPoints    () const                      = 0;
-  virtual void SetCurrentMem        (const int)                   = 0;
-  virtual void AddCurrentMem        (const int)                   = 0;
-  virtual int  GetProcessMiB        () const                      = 0;
+  virtual int  GetProcessMiB        ()                            = 0;
 };
 
 EXPORT_MACRO IMemTracker& GetTracker();
@@ -53,9 +49,7 @@ EXPORT_MACRO IMemTracker& GetTracker();
 #define MEMCHECK \
 { \
   IMemTracker& TRACKER = GetTracker(); \
-  const int __mem = TRACKER.GetProcessMiB(); \
-  TRACKER.SetCurrentCheckPoint(TRACKER.GetCurrentCheckPoint() + 1); \
-  TRACKER.SetCurrentMem(__mem); \
+  TRACKER.AddCheckPoint(); \
 }
 
 #define MEMCHECK_DUMP(filename) \

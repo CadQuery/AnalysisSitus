@@ -2,6 +2,9 @@
 
 #if defined MEMTRACKER
 
+// OCCT includes
+#include <Standard_Mutex.hxx>
+
 // OS-dependent includes
 #include "windows.h"
 #include "psapi.h"
@@ -11,24 +14,14 @@ class MemTracker : public IMemTracker
 {
 public:
 
-  int                          currentCheckPoint; //!< Current CP.
-  std::vector<t_memCheckPoint> checkPoints;       //!< All collected CPs.
+  std::vector<t_memCheckPoint> checkPoints; //!< All collected CPs.
+  Standard_Mutex               MUTEX;
 
-  virtual void SetCurrentCheckPoint(const int id)
+  virtual void AddCheckPoint()
   {
-    this->currentCheckPoint = id;
-    while ( this->checkPoints.size() <= this->currentCheckPoint )
-      this->checkPoints.push_back( t_memCheckPoint() );
-  }
-
-  virtual int GetCurrentCheckPoint() const
-  {
-    return this->currentCheckPoint;
-  }
-
-  virtual void AddCheckPoint(const t_memCheckPoint& info)
-  {
-    this->checkPoints.push_back(info);
+    MUTEX.Lock();
+    this->checkPoints.push_back( t_memCheckPoint( "", this->GetProcessMiB() ) );
+    MUTEX.Unlock();
   }
 
   virtual void GetCheckPoint(const int id, t_memCheckPoint& info)
@@ -41,22 +34,15 @@ public:
     return int( this->checkPoints.size() );
   }
 
-  virtual void SetCurrentMem(const int mem)
+  virtual int GetProcessMiB()
   {
-    this->checkPoints[this->currentCheckPoint].mem = mem;
-  }
-
-  virtual void AddCurrentMem(const int mem)
-  {
-    this->checkPoints[this->currentCheckPoint].mem += mem;
-  }
-
-  virtual int GetProcessMiB() const
-  {
+    MUTEX.Lock();
     PROCESS_MEMORY_COUNTERS PMC;
     GetProcessMemoryInfo( GetCurrentProcess(), &PMC, sizeof(PMC) );
     SIZE_T physUsedBytes = PMC.WorkingSetSize;
-    return (int) ( physUsedBytes / (1024 * 1024) );
+    const int MiB = (int) ( physUsedBytes / (1024 * 1024) );
+    MUTEX.Unlock();
+    return MiB;
   }
 };
 

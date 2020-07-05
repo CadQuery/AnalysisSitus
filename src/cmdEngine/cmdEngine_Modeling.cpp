@@ -132,7 +132,7 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
 
     // Perform
     mkOffset.Perform();
-    // 
+    //
     if ( !mkOffset.IsDone() )
     {
       interp->GetProgress().SendLogMessage(LogErr(Normal) << "Simple offset not done.");

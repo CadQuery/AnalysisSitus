@@ -34,6 +34,9 @@
 // asiUI includes
 #include <asiUI_HistoryGraph.h>
 
+// asiEngine includes
+#include <asiEngine_Part.h>
+
 // asiVisu includes
 #include <asiVisu_Utils.h>
 
@@ -230,6 +233,31 @@ int ENGINE_Fit(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_SelectFaces(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  if ( argc < 2 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  if ( cmdEngine::cf.IsNull() )
+    return TCL_OK;
+
+  asiAlgo_Feature feature;
+  //
+  for ( int k = 1; k < argc; ++k )
+    feature.Add( atoi(argv[k]) );
+
+  asiEngine_Part partApi( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+  partApi.HighlightFaces(feature);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
                                 const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -308,4 +336,12 @@ void cmdEngine::Commands_Viewer(const Handle(asiTcl_Interp)&      interp,
     "\t Fits camera to the scene contents.",
     //
     __FILE__, group, ENGINE_Fit);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("select-faces",
+    //
+    "select-faces <fid1> [<fid2> ...]\n"
+    "\t Selects faces specified with their 1-based IDs.",
+    //
+    __FILE__, group, ENGINE_SelectFaces);
 }

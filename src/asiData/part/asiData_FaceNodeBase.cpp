@@ -129,7 +129,7 @@ int asiData_FaceNodeBase::GetAnySelectedFace() const
 {
   Handle(TColStd_HPackedMapOfInteger) hmap = this->GetSelectedFaces();
   //
-  if ( hmap.IsNull() )
+  if ( hmap.IsNull() || hmap->Map().IsEmpty() )
     return 0; // invalid face id
 
   return hmap->Map().GetMinimalMapped();

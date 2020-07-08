@@ -34,10 +34,16 @@
 // asiEngine includes
 #include <asiEngine_Base.h>
 
+// asiAlgo includes
+#include <asiAlgo_AAG.h>
+#include <asiAlgo_AAGIterator.h>
+
 // asiVisu includes
 #include <asiVisu_PrsManager.h>
 
 // OCCT includes
+#include <IntCurvesFace_ShapeIntersector.hxx>
+#include <math_BullardGenerator.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 //! Data Model API for geometric part.
@@ -69,6 +75,7 @@ public:
 
 public:
 
+  //! \return newly created Part Node.
   asiEngine_EXPORT Handle(asiData_PartNode)
     CreatePart();
 
@@ -79,29 +86,55 @@ public:
     CheckDeviation(const Handle(asiData_IVPointSetNode)& pcNode,
                    Handle(asiData_DeviationNode)&        devNode);
 
+  //! Creates metadata holder.
+  //! \return Metadata Node.
   asiEngine_EXPORT Handle(asiData_MetadataNode)
     CreateMetadata();
 
+  //! Creates elementary metadata holder.
+  //! \param[in] name  name of the Node.
+  //! \param[in] shape shape.
+  //! \return Element Metadata Node.
   asiEngine_EXPORT Handle(asiData_ElemMetadataNode)
     CreateElemMetadata(const TCollection_ExtendedString& name,
                        const TopoDS_Shape&               shape);
 
+  //! Cleans up metadata.
   asiEngine_EXPORT void
     CleanMetadata();
 
+  //! Updates metadata available for the Part Node according to the passed
+  //! modification history.
+  //! \param[in] history modification history.
   asiEngine_EXPORT void
     UpdateMetadata(const Handle(asiAlgo_History)& history);
 
+  //! \return number of metadata elements.
   asiEngine_EXPORT int
     GetNumOfMetadata() const;
 
+  //! Gathers all Metadata Element Nodes.
+  //! \param[out] nodes Metadata Element Nodes.
   asiEngine_EXPORT void
     GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const;
 
+  //! Finds or creates elemental metadata for the passed shape which is normally
+  //! a sub-shape of the part shape.
+  //! \param[in] shape  sub-shape in question.
+  //! \param[in] create whether to create the metadata element if it does not exist.
+  //! \return found or newly created metadata element.
   asiEngine_EXPORT Handle(asiData_ElemMetadataNode)
     FindElemMetadata(const TopoDS_Shape& shape,
                      const bool          create = false);
 
+  //! Updates part's geometry in a smart way, so all dependent attributes
+  //! are also actualized.
+  //! \param[in] model             CAD part to set.
+  //! \param[in] history           modification history (if available) to
+  //!                              actualize metadata.
+  //! \param[in] doResetTessParams indicates whether to reset tessellation
+  //!                              parameters.
+  //! \return Part Node.
   asiEngine_EXPORT Handle(asiData_PartNode)
     Update(const TopoDS_Shape&            model,
            const Handle(asiAlgo_History)& history = nullptr,
@@ -113,66 +146,238 @@ public:
   asiEngine_EXPORT void
     InitializeNaming();
 
+  //! Stores history in the Part Node.
+  //! \param[in] history history to store.
   asiEngine_EXPORT void
     StoreHistory(const Handle(asiAlgo_History)& history);
 
+  //! Constructs BVH structure for the visualization facets stored in the
+  //! part shape.
+  //! \param[in] store specifies whether to store BVH in the Node.
+  //! \return constructed BVH.
   asiEngine_EXPORT Handle(asiAlgo_BVHFacets)
     BuildBVH(const bool store = true);
 
+  //! Cleans up Data Model structure related to the Part Node.
   asiEngine_EXPORT void
     Clean(const bool cleanMeta = true);
 
+  //! Accessor for a transient pointer to a B-Rep face by its one-based index.
+  //! \param[in] oneBasedId one-based index of a face to access.
+  //! \return transient pointer to a face.
   asiEngine_EXPORT TopoDS_Face
     GetFace(const int oneBasedId);
 
+  //! \return shape stored in Part Node.
   asiEngine_EXPORT TopoDS_Shape
     GetShape();
 
+  //! \return AAG stored in the Part Node.
   asiEngine_EXPORT Handle(asiAlgo_AAG)
     GetAAG();
 
+  //! Extracts sub-shape indices for the given collection of face indices.
+  //! \param[in]  faceIndices indices of faces.
+  //! \param[out] indices     their corresponding indices among all sub-shapes.
+  asiEngine_EXPORT void
+    GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
+                                    TColStd_PackedMapOfInteger&       indices);
+
+  //! Extracts sub-shape indices for the given collection of edge indices.
+  //! \param[in]  edgeIndices indices of edges.
+  //! \param[out] indices     their corresponding indices among all sub-shapes.
+  asiEngine_EXPORT void
+    GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
+                                    TColStd_PackedMapOfInteger&       indices);
+
+  //! Extracts sub-shape indices for the given collection of sub-shapes.
+  //! \param[in]  subShapes sub-shapes of interest.
+  //! \param[out] indices   their corresponding IDs.
   asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       indices);
 
+  //! Extracts sub-shape indices for the given collection of sub-shapes. The
+  //! output is distributed by faces, edges and vertices.
+  //! \param[in]  subShapes     sub-shapes of interest.
+  //! \param[out] faceIndices   global indices for faces.
+  //! \param[out] edgeIndices   global indices for edges.
+  //! \param[out] vertexIndices global indices for vertices.
   asiEngine_EXPORT void
     GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                        TColStd_PackedMapOfInteger&       faceIndices,
                        TColStd_PackedMapOfInteger&       edgeIndices,
                        TColStd_PackedMapOfInteger&       vertexIndices);
 
-  asiEngine_EXPORT void
-    GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
-                                    TColStd_PackedMapOfInteger&       indices);
-
-  asiEngine_EXPORT void
-    GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
-                                    TColStd_PackedMapOfInteger&       indices);
-
+  //! Highlights a single face.
+  //! \param[in] faceIndex face to highlight.
   asiEngine_EXPORT void
     HighlightFace(const int faceIndex);
 
+  //! Highlights faces.
+  //! \param[in] faceIndices faces to highlight.
   asiEngine_EXPORT void
     HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices);
 
+  //! Highlights edges.
+  //! \param[in] edgeIndices edges to highlight.
   asiEngine_EXPORT void
     HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices);
 
+  //! Highlights the passed sub-shapes identified by their indices.
+  //! \param[in] subShapeIndices indices of the sub-shapes to highlight.
+  //! \param[in] selMode         selection mode.
   asiEngine_EXPORT void
     HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                        const asiVisu_SelectionMode       selMode);
 
+  //! Highlights the passed sub-shapes in Part Viewer.
+  //! \param[in] subShapes sub-shapes to highlight.
   asiEngine_EXPORT void
     HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes);
 
+  //! Retrieves highlighted sub-shapes from the viewer.
+  //! \param[out] subShapes result collection.
   asiEngine_EXPORT void
     GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes);
 
+  //! Retrieves indices of the highlighted faces in a collection
+  //! without repetitions.
+  //! \param[out] faceIndices indices of the highlighted faces.
   asiEngine_EXPORT void
     GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices);
 
+  //! Retrieves indices of the highlighted edges in a collection
+  //! without repetitions.
+  //! \param[out] edgeIndices indices of the highlighted edges.
   asiEngine_EXPORT void
     GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices);
+
+    //! Finds a pair face for the given seed face.
+  //! \param[in]  aag         the attributed adjacency graph to access faces by IDs.
+  //! \param[in]  seedId      the ID of the seed face.
+  //! \param[in]  excludedIds the IDs of the faces which are acceptable as mates.
+  //! \param[in]  numSamples  the number of sampled points for checking mates.
+  //! \param[in]  inside      indicates whether to cast a ray inside material.
+  //! \param[out] mateId      the ID of the found mate face.
+  //! \param[out] distance    the deduced distance between seed and mate faces.
+  //! \param[out] norm        the deduced norm vector.
+  //! \return false if the mate face could not be found.
+  template <typename TSurf>
+  static bool ComputeMateFace(const Handle(asiAlgo_AAG)& aag,
+                              const int                  seedId,
+                              const asiAlgo_Feature&     excludedIds,
+                              const unsigned             numSamples,
+                              const bool                 inside,
+                              int&                       mateId,
+                              double&                    distance,
+                              gp_Vec&                    norm)
+  {
+    if ( !numSamples )
+    {
+      return false;
+    }
+
+    // Working variables.
+    const TopoDS_Face&    seedFace = aag->GetFace(seedId);
+    BRepAdaptor_Surface   faceAdt(seedFace);
+    const bool            isReversed = (seedFace.Orientation() == TopAbs_REVERSED);
+    int                   closestIdx = -1;
+    gp_Vec                closestN;
+    std::vector<double>   minDists2(numSamples); // Squared min distances.
+    math_BullardGenerator RNG;
+
+    // The nearest face is computed several times.
+    for ( unsigned i = 0; i < numSamples; ++i )
+    {
+      double minDist2 = Precision::Infinite();
+
+      // Get a random sample point.
+      gp_Pnt2d uv;
+      if ( !asiAlgo_Utils::GetRandomPoint(seedFace, RNG, uv) )
+      {
+        return false;
+      }
+
+      // Evaluate surface in the sample point to take its norm.
+      gp_Pnt P;
+      gp_Vec D1U, D1V, N;
+      faceAdt.D1(uv.X(), uv.Y(), P, D1U, D1V);
+
+      // Choose norm.
+      N = ( inside ? D1V.Crossed(D1U) : D1U.Crossed(D1V) );
+      //
+      if ( isReversed )
+        N.Reverse(); // Reversed face norm.
+
+      // Sample ray.
+      gp_Lin sampleRay(P, N);
+
+      // Loop over the remaining faces to find a seed's mate.
+      Handle(asiAlgo_AAGRandomIterator) aagIt = new asiAlgo_AAGRandomIterator(aag);
+      //
+      for ( ; aagIt->More() ; aagIt->Next() )
+      {
+        // Check the next candidate face.
+        const int nextId = aagIt->GetFaceId();
+        //
+        if ( nextId == seedId || excludedIds.Contains(nextId) )
+          continue;
+
+        // Skip neighbor faces.
+        if ( aag->HasArc( asiAlgo_AAG::t_arc(seedId, nextId) ) )
+          continue;
+
+        // Skip faces of improper type.
+        const TopoDS_Face& nextFace = aag->GetFace(nextId);
+        //
+        if ( !asiAlgo_Utils::IsTypeOf<TSurf>(nextFace) )
+          continue;
+
+        // Check that the casted ray intersects the face's AABB. This check
+        // allows early filtering out geometrically unpromising candidates.
+        Bnd_Box nextFaceAABB;
+        asiAlgo_Utils::Bounds(nextFace, true, true, nextFaceAABB);
+        //
+        if ( nextFaceAABB.IsOut(sampleRay) )
+          continue; // Exclude face from consideration.
+
+        // Find precise intersection.
+        IntCurvesFace_ShapeIntersector interRayFace;
+        interRayFace.Load(nextFace, 1.0e-4);
+        interRayFace.Perform(sampleRay, 0.0, 1e100);
+        //
+        if ( !interRayFace.IsDone() )
+          continue;
+        //
+        if ( interRayFace.NbPnt() == 0 )
+          continue;
+
+        for ( int solId = 1; solId <= interRayFace.NbPnt(); ++solId )
+        {
+          const double nextDist2 = interRayFace.Pnt(solId).SquareDistance(P);
+          //
+          if ( nextDist2 < minDist2 )
+          {
+            closestIdx   = nextId;
+            closestN     = N;
+            minDist2     = nextDist2;
+            minDists2[i] = nextDist2;
+          }
+        }
+      }
+    }
+
+    // Sort distances.
+    std::sort( minDists2.begin(), minDists2.end() );
+
+    // Initialize the outputs.
+    distance = Sqrt( minDists2.back() );
+    mateId   = closestIdx;
+    norm     = closestN;
+    //
+    return mateId != -1;
+  }
 
 protected:
 

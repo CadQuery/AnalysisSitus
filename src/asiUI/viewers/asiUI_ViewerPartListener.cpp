@@ -548,7 +548,12 @@ void asiUI_ViewerPartListener::executeAction(QAction* pAction)
                                     m_plotter).FindIsolated(faceIndices);
 
     if ( !isolated.IsEmpty() )
+    {
       partApi.HighlightFaces(isolated);
+      //
+      m_progress.SendLogMessage(LogInfo(Normal) << "Isolated faces: %1."
+                                                << isolated);
+    }
     else
       m_progress.SendLogMessage(LogInfo(Normal) << "No isolated features found.");
   }

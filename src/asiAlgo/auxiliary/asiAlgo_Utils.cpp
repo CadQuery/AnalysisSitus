@@ -1089,6 +1089,24 @@ bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
 
 //-----------------------------------------------------------------------------
 
+bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
+                           const bool          useFacets,
+                           const bool          keepGap,
+                           Bnd_Box&            bndBox)
+{
+  if ( shape.IsNull() )
+    return false;
+
+  BRepBndLib::Add(shape, bndBox, useFacets);
+
+  if ( !keepGap )
+    bndBox.SetGap( Precision::Confusion() );
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 bool asiAlgo_Utils::Bounds(const Handle(Poly_Triangulation)& tris,
                            double& XMin, double& YMin, double& ZMin,
                            double& XMax, double& YMax, double& ZMax,
@@ -3678,4 +3696,56 @@ TopoDS_Wire asiAlgo_Utils::OuterWire(const TopoDS_Face& face)
     }
   }
   return Wres;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::GetRandomPoint(const TopoDS_Face&     face,
+                                   math_BullardGenerator& RNG,
+                                   gp_Pnt2d&              uv)
+{
+  // Prepare classification utility.
+  BRepClass_FClassifier faceClass2d;
+
+  // Prepare face adaptor to initialize the classifier.
+  BRepClass_FaceExplorer fe(face);
+
+  // Sample face iteratively.
+  gp_Pnt2d  sample;
+  bool      isOk     = false;
+  bool      stop     = false;
+  int       numIters = 0;
+  const int maxIters = 100;
+  //
+  do
+  {
+    ++numIters;
+    //
+    if ( numIters > maxIters )
+    {
+      stop = true;
+      continue; // Escape from the loop.
+    }
+
+    // Get a random point from the face's bounded area.
+    double umin, umax, vmin, vmax;
+    BRepTools::UVBounds(face, umin, umax, vmin, vmax);
+    //
+    sample.SetX( umin + (umax - umin)*RNG.NextReal() );
+    sample.SetY( vmin + (vmax - vmin)*RNG.NextReal() );
+
+    faceClass2d.Perform(fe, sample, 1.0e-4);
+
+    // Check if a point is inside the face.
+    if ( faceClass2d.State() == TopAbs_IN )
+      isOk = stop = true;
+
+  }
+  while ( !stop );
+
+  // Initialize the result.
+  if ( isOk )
+    uv = sample;
+
+  return isOk;
 }

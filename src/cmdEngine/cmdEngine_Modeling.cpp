@@ -63,6 +63,7 @@
 #include <BRepOffset_MakeSimpleOffset.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepPrimAPI_MakePrism.hxx>
 #include <Geom_Plane.hxx>
 #include <gp_Pln.hxx>
 #include <HLRBRep_Algo.hxx>
@@ -1298,6 +1299,111 @@ int ENGINE_BuildTriangulationOBB(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_Fill(const Handle(asiTcl_Interp)& interp,
+                int                          argc,
+                const char**                 argv)
+{
+  if ( (argc != 1) && (argc != 2) )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  Handle(asiEngine_Model)
+    M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
+
+  // Get part.
+  Handle(asiData_PartNode) partNode = M->GetPartNode();
+  Handle(asiAlgo_AAG)      partAAG  = partNode->GetAAG();
+  TopoDS_Shape             partSh   = partNode->GetShape();
+
+  // Get the base face.
+  int fidFrom = 0;
+  //
+  if ( argc == 2 )
+    fidFrom = atoi(argv[1]);
+  else
+  {
+    asiEngine_Part api( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
+
+    asiAlgo_Feature selectedFids;
+    api.GetHighlightedFaces(selectedFids);
+    //
+    if ( selectedFids.Extent() )
+      fidFrom = selectedFids.GetMinimalMapped();
+  }
+
+  // Check the base face.
+  if ( (fidFrom == 0) && !partAAG->HasFace(fidFrom) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face index %1 is invalid."
+                                                        << fidFrom);
+    return TCL_ERROR;
+  }
+
+  // Check face type.
+  const TopoDS_Face& faceFrom = partAAG->GetFace(fidFrom);
+  //
+  if ( !asiAlgo_Utils::IsTypeOf<Geom_Plane>(faceFrom) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face index %1 is not planar."
+                                                        << fidFrom);
+    return TCL_ERROR;
+  }
+
+  // Measure the distance between 'from' and 'to'.
+  int    fidTo = 0;
+  double dist  = 0.;
+  gp_Vec norm;
+  //
+  if ( !asiEngine_Part::ComputeMateFace<Geom_Plane>(partAAG,
+                                                    fidFrom,
+                                                    asiAlgo_Feature(),
+                                                    3,
+                                                    false,
+                                                    fidTo,
+                                                    dist,
+                                                    norm) )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a mate face for the face %1."
+                                                        << fidFrom);
+    return TCL_ERROR;
+  }
+
+  interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Distance to fill: %1."
+                                                       << dist);
+
+  // Make a tool object.
+  BRepPrimAPI_MakePrism mkPrism(faceFrom, norm.Normalized()*dist, true);
+  //
+  const TopoDS_Shape& toolSh = mkPrism.Shape();
+
+  // Fuse.
+  Handle(BRepTools_History) history;
+  //
+  TopTools_ListOfShape objects;
+  objects.Append(partSh);
+  objects.Append(toolSh);
+  //
+  TopoDS_Shape resultSh = asiAlgo_Utils::BooleanFuse(objects, true, history);
+
+  //interp->GetPlotter().REDRAW_SHAPE("tool", toolSh);
+
+  // Get result and update part.
+  cmdEngine::model->OpenCommand();
+  {
+    asiEngine_Part(cmdEngine::model).Update(resultSh);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
                                   const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -1504,4 +1610,13 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t Builds the oriented bounding box (OBB) for triangulation.",
     //
     __FILE__, group, ENGINE_BuildTriangulationOBB);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("fill",
+    //
+    "fill [<fid>]\n"
+    "\t Fills the cavity by fusing the part with a prismatic tool defined\n"
+    "\t with the <fid> face. There should be a mate face to fill until.",
+    //
+    __FILE__, group, ENGINE_Fill);
 }

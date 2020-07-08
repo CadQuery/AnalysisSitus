@@ -124,6 +124,9 @@ TopoDS_Face asiVisu_FaceDataProvider::ExtractFace() const
   const TopTools_IndexedMapOfShape&
     subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
+  if ( fIdx > subShapes.Extent() )
+    return TopoDS_Face();
+
   const TopoDS_Shape& shape = subShapes.FindKey(fIdx);
   //
   if ( shape.ShapeType() != TopAbs_FACE )

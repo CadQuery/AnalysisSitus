@@ -45,6 +45,7 @@
 #include <ActData_Mesh.h>
 
 // OCCT includes
+#include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
@@ -69,6 +70,7 @@
 #include <math_Function.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Wire.hxx>
@@ -273,16 +275,49 @@ namespace asiAlgo_Utils
     ShapeAddr(const TopoDS_Shape& shape);
 
   //! Checks face type.
+  //! \param[in]  face     face to check.
+  //! \param[out] basesurf base surface.
+  //! \return true/false.
+  template<typename TSurf>
+  bool IsTypeOf(const TopoDS_Face& face,
+                Handle(TSurf)&     basesurf)
+  {
+    if ( face.IsNull() )
+      return false;
+
+    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
+
+    // Check host surface directly.
+    if ( surf->IsInstance( STANDARD_TYPE(TSurf) ) )
+    {
+      basesurf = Handle(TSurf)::DownCast(surf);
+      return true;
+    }
+
+    // Check trimmed surface which may encapsulate the surface we're looking for.
+    if ( surf->IsInstance( STANDARD_TYPE(Geom_RectangularTrimmedSurface) ) )
+    {
+      Handle(Geom_RectangularTrimmedSurface)
+        RT = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
+
+      // Check basis surface.
+      basesurf = Handle(TSurf)::DownCast( RT->BasisSurface() );
+      //
+      if ( !basesurf.IsNull() )
+        return true;
+    }
+
+    return false;
+  }
+
+  //! Checks face type.
   //! \param[in] face face to check.
   //! \return true/false.
   template<typename TSurf>
-  static bool IsTypeOf(const TopoDS_Face& face)
+  bool IsTypeOf(const TopoDS_Face& face)
   {
-    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-    if ( surf->IsInstance( STANDARD_TYPE(TSurf) ) )
-      return true;
-
-    return false;
+    Handle(TSurf) basesurf;
+    return IsTypeOf<TSurf>(face, basesurf);
   }
 
   //! Checks whether the passed shape is empty.
@@ -374,6 +409,18 @@ namespace asiAlgo_Utils
            double& XMin, double& YMin, double& ZMin,
            double& XMax, double& YMax, double& ZMax,
            const double tolerance = 0.0);
+
+  //! Computes the axis-aligned bounding box for the passed shape.
+  //! \param[in]  shape     the shape of interest.
+  //! \param[in]  useFacets indicates whether to compute bounding box on facets.
+  //! \param[in]  keepGap   indicates whether to preserve "gap" of AABB set by OpenCascade.
+  //! \param[out] bndBox    the computed axis-aligned bounding box.
+  //! \return true in case of success, false -- otherwise.
+  asiAlgo_EXPORT bool
+    Bounds(const TopoDS_Shape& shape,
+           const bool          useFacets,
+           const bool          keepGap,
+           Bnd_Box&            bndBox);
 
   //! Calculates bounding box for the given triangulation.
   //! \param tris      [in]  input triangulation.
@@ -1158,6 +1205,18 @@ namespace asiAlgo_Utils
   //! \return outer wire.
   asiAlgo_EXPORT TopoDS_Wire
     OuterWire(const TopoDS_Face& face);
+
+  //! Computes random inner point on a face.
+  //! \param[in]     face the face of interest.
+  //! \param[in,out] RNG  the random number generator.
+  //! \param[out]    uv   the `(u,v)` coordinates of the random point in
+  //!                     the bounded face's parametric space.
+  //! \return false if an inner point cannot be queried (e.g., if the face is
+  //!         very invalid).
+  asiAlgo_EXPORT bool
+    GetRandomPoint(const TopoDS_Face&     face,
+                   math_BullardGenerator& RNG,
+                   gp_Pnt2d&              uv);
 
 } // asiAlgo_Utils namespace.
 

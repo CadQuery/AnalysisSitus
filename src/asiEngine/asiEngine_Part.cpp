@@ -61,7 +61,6 @@
 
 //-----------------------------------------------------------------------------
 
-//! \return newly created Part Node.
 Handle(asiData_PartNode) asiEngine_Part::CreatePart()
 {
   // Add Part Node to Partition
@@ -268,8 +267,6 @@ bool
 
 //-----------------------------------------------------------------------------
 
-//! Creates metadata holder.
-//! \return Metadata Node.
 Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 {
   Handle(ActAPI_INode) metadata_base = asiData_MetadataNode::Instance();
@@ -290,10 +287,6 @@ Handle(asiData_MetadataNode) asiEngine_Part::CreateMetadata()
 
 //-----------------------------------------------------------------------------
 
-//! Creates elementary metadata holder.
-//! \param[in] name  name of the Node.
-//! \param[in] shape shape.
-//! \return Element Metadata Node.
 Handle(asiData_ElemMetadataNode)
   asiEngine_Part::CreateElemMetadata(const TCollection_ExtendedString& name,
                                      const TopoDS_Shape&               shape)
@@ -320,7 +313,6 @@ Handle(asiData_ElemMetadataNode)
 
 //-----------------------------------------------------------------------------
 
-//! Cleans up metadata.
 void asiEngine_Part::CleanMetadata()
 {
   this->_cleanChildren( m_model->GetMetadataNode() );
@@ -328,9 +320,6 @@ void asiEngine_Part::CleanMetadata()
 
 //-----------------------------------------------------------------------------
 
-//! Updates metadata available for the Part Node according to the passed
-//! modification history.
-//! \param[in] history modification history.
 void asiEngine_Part::UpdateMetadata(const Handle(asiAlgo_History)& history)
 {
   std::vector<Handle(asiData_ElemMetadataDTO)> dtos;
@@ -393,7 +382,6 @@ void asiEngine_Part::UpdateMetadata(const Handle(asiAlgo_History)& history)
 
 //-----------------------------------------------------------------------------
 
-//! \return number of metadata elements.
 int asiEngine_Part::GetNumOfMetadata() const
 {
   Handle(ActData_ReferenceListParameter)
@@ -406,8 +394,6 @@ int asiEngine_Part::GetNumOfMetadata() const
 
 //-----------------------------------------------------------------------------
 
-//! Gathers all Metadata Element Nodes.
-//! \param[out] nodes Metadata Element Nodes.
 void asiEngine_Part::GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const
 {
   nodes = new ActAPI_HNodeList;
@@ -425,11 +411,6 @@ void asiEngine_Part::GetMetadataElems(Handle(ActAPI_HNodeList)& nodes) const
 
 //-----------------------------------------------------------------------------
 
-//! Finds or creates elemental metadata for the passed shape which is normally
-//! a sub-shape of the part shape.
-//! \param[in] shape  sub-shape in question.
-//! \param[in] create whether to create the metadata element if it does not exist.
-//! \return found or newly created metadata element.
 Handle(asiData_ElemMetadataNode)
   asiEngine_Part::FindElemMetadata(const TopoDS_Shape& shape,
                                    const bool          create)
@@ -453,14 +434,6 @@ Handle(asiData_ElemMetadataNode)
 
 //-----------------------------------------------------------------------------
 
-//! Updates part's geometry in a smart way, so all dependent attributes
-//! are also actualized.
-//! \param[in] model             CAD part to set.
-//! \param[in] history           modification history (if available) to
-//!                              actualize metadata.
-//! \param[in] doResetTessParams indicates whether to reset tessellation
-//!                              parameters.
-//! \return Part Node.
 Handle(asiData_PartNode) asiEngine_Part::Update(const TopoDS_Shape&            model,
                                                 const Handle(asiAlgo_History)& history,
                                                 const bool                     doResetTessParams)
@@ -568,8 +541,6 @@ void asiEngine_Part::InitializeNaming()
 
 //-----------------------------------------------------------------------------
 
-//! Stores history in the Part Node.
-//! \param[in] history history to store.
 void asiEngine_Part::StoreHistory(const Handle(asiAlgo_History)& history)
 {
   // Get Part Node.
@@ -587,10 +558,6 @@ void asiEngine_Part::StoreHistory(const Handle(asiAlgo_History)& history)
 
 //-----------------------------------------------------------------------------
 
-//! Constructs BVH structure for the visualization facets stored in the
-//! part shape.
-//! \param[in] store specifies whether to store BVH in the Node.
-//! \return constructed BVH.
 Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH(const bool store)
 {
   // Get Part Node
@@ -616,7 +583,6 @@ Handle(asiAlgo_BVHFacets) asiEngine_Part::BuildBVH(const bool store)
 
 //-----------------------------------------------------------------------------
 
-//! Cleans up Data Model structure related to the Part Node.
 void asiEngine_Part::Clean(const bool cleanMeta)
 {
   // Get Part Node.
@@ -645,9 +611,6 @@ void asiEngine_Part::Clean(const bool cleanMeta)
 
 //-----------------------------------------------------------------------------
 
-//! Accessor for a transient pointer to a B-Rep face by its one-based index.
-//! \param[in] oneBasedId one-based index of a face to access.
-//! \return transient pointer to a face.
 TopoDS_Face asiEngine_Part::GetFace(const int oneBasedId)
 {
   // Get Part Node
@@ -671,7 +634,6 @@ TopoDS_Face asiEngine_Part::GetFace(const int oneBasedId)
 
 //-----------------------------------------------------------------------------
 
-//! \return shape stored in Part Node.
 TopoDS_Shape asiEngine_Part::GetShape()
 {
   // Get Part Node
@@ -685,7 +647,6 @@ TopoDS_Shape asiEngine_Part::GetShape()
 
 //-----------------------------------------------------------------------------
 
-//! \return AAG stored in the Part Node.
 Handle(asiAlgo_AAG) asiEngine_Part::GetAAG()
 {
   // Get Part Node
@@ -699,9 +660,6 @@ Handle(asiAlgo_AAG) asiEngine_Part::GetAAG()
 
 //-----------------------------------------------------------------------------
 
-//! Extracts sub-shape indices for the given collection of face indices.
-//! \param[in]  faceIndices indices of faces.
-//! \param[out] indices     their corresponding indices among all sub-shapes.
 void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfInteger& faceIndices,
                                                      TColStd_PackedMapOfInteger&       indices)
 {
@@ -723,9 +681,6 @@ void asiEngine_Part::GetSubShapeIndicesByFaceIndices(const TColStd_PackedMapOfIn
 
 //-----------------------------------------------------------------------------
 
-//! Extracts sub-shape indices for the given collection of edge indices.
-//! \param[in]  edgeIndices indices of edges.
-//! \param[out] indices     their corresponding indices among all sub-shapes.
 void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfInteger& edgeIndices,
                                                      TColStd_PackedMapOfInteger&       indices)
 {
@@ -747,9 +702,7 @@ void asiEngine_Part::GetSubShapeIndicesByEdgeIndices(const TColStd_PackedMapOfIn
 
 //-----------------------------------------------------------------------------
 
-//! Extracts sub-shape indices for the given collection of sub-shapes.
-//! \param[in]  subShapes sub-shapes of interest.
-//! \param[out] indices   their corresponding IDs.
+
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       indices)
 {
@@ -766,12 +719,6 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 
 //-----------------------------------------------------------------------------
 
-//! Extracts sub-shape indices for the given collection of sub-shapes. The
-//! output is distributed by faces, edges and vertices.
-//! \param[in]  subShapes     sub-shapes of interest.
-//! \param[out] faceIndices   global indices for faces.
-//! \param[out] edgeIndices   global indices for edges.
-//! \param[out] vertexIndices global indices for vertices.
 void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subShapes,
                                         TColStd_PackedMapOfInteger&       faceIndices,
                                         TColStd_PackedMapOfInteger&       edgeIndices,
@@ -803,8 +750,6 @@ void asiEngine_Part::GetSubShapeIndices(const TopTools_IndexedMapOfShape& subSha
 
 //-----------------------------------------------------------------------------
 
-//! Highlights a single face.
-//! \param[in] faceIndex face to highlight.
 void asiEngine_Part::HighlightFace(const int faceIndex)
 {
   // Prepare a fictive collection
@@ -817,8 +762,6 @@ void asiEngine_Part::HighlightFace(const int faceIndex)
 
 //-----------------------------------------------------------------------------
 
-//! Highlights faces.
-//! \param[in] faceIndices faces to highlight.
 void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndices)
 {
   // Convert face indices to sub-shape indices
@@ -831,8 +774,6 @@ void asiEngine_Part::HighlightFaces(const TColStd_PackedMapOfInteger& faceIndice
 
 //-----------------------------------------------------------------------------
 
-//! Highlights edges.
-//! \param[in] edgeIndices edges to highlight.
 void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndices)
 {
   // Convert edge indices to sub-shape indices
@@ -845,9 +786,6 @@ void asiEngine_Part::HighlightEdges(const TColStd_PackedMapOfInteger& edgeIndice
 
 //-----------------------------------------------------------------------------
 
-//! Highlights the passed sub-shapes identified by their indices.
-//! \param[in] subShapeIndices indices of the sub-shapes to highlight.
-//! \param[in] selMode         selection mode.
 void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subShapeIndices,
                                         const asiVisu_SelectionMode       selMode)
 {
@@ -875,8 +813,6 @@ void asiEngine_Part::HighlightSubShapes(const TColStd_PackedMapOfInteger& subSha
 
 //-----------------------------------------------------------------------------
 
-//! Highlights the passed sub-shapes in Part Viewer.
-//! \param[in] subShapes sub-shapes to highlight.
 void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subShapes)
 {
   // Get global relative indices of the sub-shapes in the CAD model
@@ -896,8 +832,6 @@ void asiEngine_Part::HighlightSubShapes(const TopTools_IndexedMapOfShape& subSha
 
 //-----------------------------------------------------------------------------
 
-//! Retrieves highlighted sub-shapes from the viewer.
-//! \param[out] subShapes result collection.
 void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShapes)
 {
   Handle(asiAlgo_AAG) aag = m_model->GetPartNode()->GetAAG();
@@ -940,8 +874,6 @@ void asiEngine_Part::GetHighlightedSubShapes(TopTools_IndexedMapOfShape& subShap
 
 //-----------------------------------------------------------------------------
 
-//! Retrieves indices of the highlighted faces.
-//! \param[out] faceIndices indices of the highlighted faces.
 void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices)
 {
   TopTools_IndexedMapOfShape subShapes;
@@ -975,8 +907,6 @@ void asiEngine_Part::GetHighlightedFaces(TColStd_PackedMapOfInteger& faceIndices
 
 //-----------------------------------------------------------------------------
 
-//! Retrieves indices of the highlighted edges.
-//! \param[out] edgeIndices indices of the highlighted edges.
 void asiEngine_Part::GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices)
 {
   TopTools_IndexedMapOfShape subShapes;

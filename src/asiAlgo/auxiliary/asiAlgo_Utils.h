@@ -67,6 +67,7 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <gp_Trsf.hxx>
+#include <math_BullardGenerator.hxx>
 #include <math_Function.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>

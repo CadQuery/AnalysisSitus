@@ -80,6 +80,7 @@
 #include <BRepCheck_Result.hxx>
 #include <BRepCheck_Status.hxx>
 #include <BRepCheck_Wire.hxx>
+#include <BRepClass_FClassifier.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepTools.hxx>

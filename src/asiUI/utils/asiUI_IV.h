@@ -103,6 +103,9 @@ public:
     ERASE(const TCollection_AsciiString&);
 
   asiUI_EXPORT virtual void
+    DONLY(const TCollection_AsciiString&);
+
+  asiUI_EXPORT virtual void
     DUMP_PNG3D(const char* filename);
 
   asiUI_EXPORT virtual void

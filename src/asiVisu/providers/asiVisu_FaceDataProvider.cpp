@@ -103,7 +103,8 @@ int asiVisu_FaceDataProvider::GetFaceIndexAmongFaces() const
     const TopTools_IndexedMapOfShape&
       subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
 
-    return faces.FindIndex( subShapes.FindKey(globalId) );
+    if ( globalId <= subShapes.Extent() )
+      return faces.FindIndex( subShapes.FindKey(globalId) );
   }
 
   return 0;

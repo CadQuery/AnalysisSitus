@@ -1243,7 +1243,10 @@ void asiUI_ControlsAnalysis::onAABB()
   double xMin, yMin, zMin, xMax, yMax, zMax;
   asiAlgo_Utils::Bounds(part, xMin, yMin, zMin, xMax, yMax, zMax);
   //
-  const double maxSide = Max(Abs(xMax - xMin), Max(Abs(yMax - yMin), Abs(zMax - zMin)));
+  const double dx      = Abs(xMax - xMin);
+  const double dy      = Abs(yMax - yMin);
+  const double dz      = Abs(zMax - zMin);
+  const double maxSide = Max( dx, Max(dy, dz) );
   //
   m_notifier.SendLogMessage( LogInfo(Normal) << "Bounding box:\n"
                                                 "\t X min = %1\n"
@@ -1253,10 +1256,14 @@ void asiUI_ControlsAnalysis::onAABB()
                                                 "\t Y max = %5\n"
                                                 "\t Z max = %6\n"
                                                 "\t Max side = %7\n"
-                                                "\t 1 percent of max side = %8"
+                                                "\t 1 percent of max side = %8\n"
+                                                "\t Dx = %9\n"
+                                                "\t Dy = %10\n"
+                                                "\t Dz = %11"
                                              << xMin << yMin << zMin
                                              << xMax << yMax << zMax
-                                             << maxSide << 0.01*maxSide );
+                                             << maxSide << 0.01*maxSide
+                                             << dx << dy << dz );
 
   const double inf = Precision::Infinite()*0.1;
   //
@@ -1265,6 +1272,19 @@ void asiUI_ControlsAnalysis::onAABB()
   {
     m_notifier.SendLogMessage(LogWarn(Normal) << "Bounding box is infitine.");
     return;
+  }
+
+  // Protect from degenerated bbox.
+  if ( ( xMin - xMax ) < Precision::Confusion() ||
+       ( yMin - yMax ) < Precision::Confusion() ||
+       ( zMin - zMax ) < Precision::Confusion() )
+  {
+    xMin -= Precision::Confusion();
+    yMin -= Precision::Confusion();
+    zMin -= Precision::Confusion();
+    xMax += Precision::Confusion();
+    yMax += Precision::Confusion();
+    zMax += Precision::Confusion();
   }
 
   // Create bounding box to draw it.

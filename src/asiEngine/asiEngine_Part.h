@@ -253,7 +253,7 @@ public:
   asiEngine_EXPORT void
     GetHighlightedEdges(TColStd_PackedMapOfInteger& edgeIndices);
 
-    //! Finds a pair face for the given seed face.
+  //! Finds a pair face for the given seed face.
   //! \param[in]  aag         the attributed adjacency graph to access faces by IDs.
   //! \param[in]  seedId      the ID of the seed face.
   //! \param[in]  excludedIds the IDs of the faces which are acceptable as mates.

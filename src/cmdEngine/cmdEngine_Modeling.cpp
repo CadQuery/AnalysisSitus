@@ -55,6 +55,7 @@
 // OCCT includes
 #include <BOPAlgo_Splitter.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepFilletAPI_MakeFillet.hxx>
@@ -70,7 +71,59 @@
 #include <HLRBRep_PolyAlgo.hxx>
 #include <HLRBRep_PolyHLRToShape.hxx>
 #include <Precision.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+
+//-----------------------------------------------------------------------------
+
+bool MakeOffset(const TopoDS_Shape&  shape,
+                const double         offsetVal,
+                const bool           isSimple,
+                const bool           isSolid,
+                const double         toler,
+                ActAPI_ProgressEntry progress,
+                TopoDS_Shape&        offsetShape)
+{
+  if ( isSimple )
+  {
+    // Initialize
+    BRepOffset_MakeSimpleOffset mkOffset;
+    mkOffset.Initialize(shape, offsetVal);
+    mkOffset.SetBuildSolidFlag(isSolid);
+    //
+    if ( toler )
+      mkOffset.SetTolerance(toler);
+
+    // Perform
+    mkOffset.Perform();
+    //
+    if ( !mkOffset.IsDone() )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "Simple offset not done.");
+      return false;
+    }
+    offsetShape = mkOffset.GetResultShape();
+  }
+  else
+  {
+    BRepOffset_MakeOffset mkOffset;
+    mkOffset.Initialize(shape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, isSolid);
+    //
+    if ( isSolid )
+      mkOffset.MakeThickSolid();
+    else
+      mkOffset.MakeOffsetShape();
+    //
+    if ( !mkOffset.IsDone() )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "Offset not done.");
+      return false;
+    }
+    offsetShape = mkOffset.Shape();
+  }
+
+  return true;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -119,44 +172,47 @@ int ENGINE_OffsetShell(const Handle(asiTcl_Interp)& interp,
                                                          << toler);
   }
 
+  const bool isByFaces = interp->HasKeyword(argc, argv, "faces");
+
   // Make offset
   TopoDS_Shape offsetShape;
-  if ( isSimple )
+  //
+  if ( isByFaces )
   {
-    // Initialize
-    BRepOffset_MakeSimpleOffset mkOffset;
-    mkOffset.Initialize(partShape, offsetVal);
-    mkOffset.SetBuildSolidFlag(isSolid);
+    TopoDS_Compound offsetShapeComp;
+    BRep_Builder().MakeCompound(offsetShapeComp);
     //
-    if ( toler )
-      mkOffset.SetTolerance(toler);
-
-    // Perform
-    mkOffset.Perform();
-    //
-    if ( !mkOffset.IsDone() )
+    for ( TopExp_Explorer fexp(partShape, TopAbs_FACE); fexp.More(); fexp.Next() )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Simple offset not done.");
-      return TCL_OK;
+      TopoDS_Shape offsetFace;
+      TopoDS_Shape baseFace = BRepBuilderAPI_Copy( fexp.Current() ); // To detach face.
+
+      if ( !MakeOffset(baseFace,
+                       offsetVal,
+                       isSimple,
+                       isSolid,
+                       toler,
+                       interp->GetProgress(),
+                       offsetFace) )
+        continue;
+
+      BRep_Builder().Add(offsetShapeComp, offsetFace);
     }
-    offsetShape = mkOffset.GetResultShape();
+    //
+    offsetShape = offsetShapeComp;
   }
   else
   {
-    BRepOffset_MakeOffset mkOffset;
-    mkOffset.Initialize(partShape, offsetVal, 1.0e-3, BRepOffset_Skin, true, false, GeomAbs_Arc, isSolid);
-    //
-    if ( isSolid )
-      mkOffset.MakeThickSolid();
-    else
-      mkOffset.MakeOffsetShape();
-    //
-    if ( !mkOffset.IsDone() )
+    if ( !MakeOffset(partShape,
+                     offsetVal,
+                     isSimple,
+                     isSolid,
+                     toler,
+                     interp->GetProgress(),
+                     offsetShape) )
     {
-      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Offset not done.");
-      return TCL_OK;
+      return TCL_ERROR;
     }
-    offsetShape = mkOffset.Shape();
   }
 
   TopoDS_Shape resultShape;
@@ -1412,7 +1468,7 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
   //-------------------------------------------------------------------------//
   interp->AddCommand("offset-shell",
     //
-    "offset-shell <offset> [-simple] [-solid] [-keep] [-toler <val>]\n"
+    "offset-shell <offset> [-simple] [-solid] [-keep] [-toler <val>] [-faces]\n"
     "\t Offsets part (it should be a topological shell) on the given offset\n"
     "\t value. Offsetting is performed in the direction of face normals. If the\n"
     "\t option '-simple' is passed, this operation will attempt to preserve\n"
@@ -1421,7 +1477,9 @@ void cmdEngine::Commands_Modeling(const Handle(asiTcl_Interp)&      interp,
     "\t '-keep' is passed, the original part is not substituted with the offset\n"
     "\t shape, and the offset is added to the part. If the option '-toler' is\n"
     "\t passed and '-simple' key is used, an optional tolerance for suppressing\n"
-    "\t singularities on triangular surface patches is used.",
+    "\t singularities on triangular surface patches is used. If the key '-faces'\n"
+    "\t is passed, the input shell will be broken down to faces, and each face\n"
+    "\t will be offset individually.",
     //
     __FILE__, group, ENGINE_OffsetShell);
 

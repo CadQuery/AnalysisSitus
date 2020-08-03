@@ -175,6 +175,65 @@ void asiUI_IV::ERASE(const TCollection_AsciiString& name)
 
 //---------------------------------------------------------------------------//
 
+void asiUI_IV::DONLY(const TCollection_AsciiString& name)
+{
+  /* ============================
+   *  Gather the Nodes to affect.
+   * ============================ */
+
+  Handle(ActAPI_HNodeList) allNodes = new ActAPI_HNodeList; // Nodes to affect.
+
+  // Remove visibility flags from all Nodes.
+  Handle(ActAPI_INode) root_n = m_model->GetRootNode();
+  //
+  for ( Handle(ActAPI_IChildIterator) cit = root_n->GetChildIterator(true);
+        cit->More();
+        cit->Next() )
+  {
+    Handle(ActAPI_INode) N = cit->Value();
+    //
+    if ( !N.IsNull() &&
+          N->HasUserFlags(NodeFlag_IsPresentationVisible) &&
+          N->HasUserFlags(NodeFlag_IsPresentedInPartView) )
+    {
+      allNodes->Append(N);
+    }
+  }
+
+  /* =================================
+   *  Perform Data Model modification.
+   * ================================= */
+
+  m_model->OpenCommand();
+  {
+    for ( ActAPI_HNodeList::Iterator nit(*allNodes); nit.More(); nit.Next() )
+    {
+      const Handle(ActAPI_INode)& N = nit.Value();
+
+      // Set inivisible state in the Data Model.
+      N->RemoveUserFlags(NodeFlag_IsPresentationVisible);
+
+      // Derender all presentations.
+      if ( m_prsMgr3d )
+        m_prsMgr3d->DeRenderPresentation(N);
+    }
+
+    // For the Node to keep visible, do the opposite.
+    Handle(ActAPI_INode) N = m_model->FindNodeByName(name);
+    //
+    if ( !N.IsNull() && N->IsWellFormed() )
+    {
+      N->AddUserFlags(NodeFlag_IsPresentationVisible);
+
+      if ( m_prsMgr3d && m_prsMgr3d->IsPresented(N) )
+        m_prsMgr3d->Actualize(N);
+    }
+  }
+  m_model->CommitCommand();
+}
+
+//---------------------------------------------------------------------------//
+
 void asiUI_IV::DUMP_PNG3D(const char* filename)
 {
   if ( m_prsMgr3d )

@@ -91,14 +91,15 @@ int asiVisu_DomainPointsDataProvider::GetFaceIndexAmongFaces() const
 TopoDS_Face asiVisu_DomainPointsDataProvider::ExtractFace() const
 {
   const int fIdx = this->GetFaceIndexAmongSubshapes();
-  if ( !fIdx )
-    return TopoDS_Face();
 
   if ( m_partNode->GetAAG().IsNull() )
     return TopoDS_Face();
 
   const TopTools_IndexedMapOfShape&
     subShapes = m_partNode->GetAAG()->RequestMapOfSubShapes();
+
+  if ( !fIdx || fIdx > subShapes.Extent() )
+    return TopoDS_Face();
 
   const TopoDS_Shape& shape = subShapes.FindKey(fIdx);
   //

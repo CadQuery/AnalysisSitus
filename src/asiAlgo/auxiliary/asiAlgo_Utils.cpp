@@ -1070,10 +1070,9 @@ bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
 {
   Bnd_Box bndBox;
 
-  // Yeah, BRepBndLib::Add() may throw exceptions, did you know that?!
   try
   {
-    BRepBndLib::Add(shape, bndBox);
+    BRepBndLib::AddOptimal(shape, bndBox, false, false);
   }
   catch ( ... )
   {

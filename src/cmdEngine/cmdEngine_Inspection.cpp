@@ -1811,6 +1811,14 @@ int ENGINE_CheckAABB(const Handle(asiTcl_Interp)& interp,
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Dy: %1." << dim[1]);
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Dz: %1." << dim[2]);
 
+  // Protect from degenerated bbox.
+  if ( ( bbox.CornerMin().X() - bbox.CornerMax().X() ) < Precision::Confusion() ||
+       ( bbox.CornerMin().Y() - bbox.CornerMax().Y() ) < Precision::Confusion() ||
+       ( bbox.CornerMin().Z() - bbox.CornerMax().Z() ) < Precision::Confusion() )
+  {
+    bbox.Enlarge( Precision::Confusion() );
+  }
+
   // Create bounding box to draw it.
   TopoDS_Shape bndbox = BRepPrimAPI_MakeBox( gp_Pnt( bbox.CornerMin().X(),
                                                      bbox.CornerMin().Y(),

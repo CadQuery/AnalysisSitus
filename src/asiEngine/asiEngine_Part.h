@@ -282,15 +282,16 @@ public:
     const TopoDS_Face&    seedFace = aag->GetFace(seedId);
     BRepAdaptor_Surface   faceAdt(seedFace);
     const bool            isReversed = (seedFace.Orientation() == TopAbs_REVERSED);
-    int                   closestIdx = -1;
-    gp_Vec                closestN;
-    std::vector<double>   minDists2(numSamples); // Squared min distances.
     math_BullardGenerator RNG;
+
+    // Probes:
+    // <probe index | face id | distance>
+    std::map<int, std::pair<int, gp_Vec>> probes;
 
     // The nearest face is computed several times.
     for ( unsigned i = 0; i < numSamples; ++i )
     {
-      double minDist2 = Precision::Infinite();
+      double minDist = Precision::Infinite();
 
       // Get a random sample point.
       gp_Pnt2d uv;
@@ -355,28 +356,57 @@ public:
 
         for ( int solId = 1; solId <= interRayFace.NbPnt(); ++solId )
         {
-          const double nextDist2 = interRayFace.Pnt(solId).SquareDistance(P);
+          const double nextDist = interRayFace.Pnt(solId).Distance(P);
           //
-          if ( nextDist2 < minDist2 )
+          if ( nextDist < minDist )
           {
-            closestIdx   = nextId;
-            closestN     = N;
-            minDist2     = nextDist2;
-            minDists2[i] = nextDist2;
+            probes[i] = std::pair<int, gp_Vec>(nextId, gp_Vec(N)*nextDist);
+            minDist   = nextDist;
           }
         }
       }
     }
 
-    // Sort distances.
-    std::sort( minDists2.begin(), minDists2.end() );
+    /* ==============================================
+     *  Votes: take a face that's the most voted for.
+     * ============================================== */
 
-    // Initialize the outputs.
-    distance = Sqrt( minDists2.back() );
-    mateId   = closestIdx;
-    norm     = closestN;
+    // Count votes:
+    // <face id | occurrences>
+    std::map<int, int> dup;
     //
-    return mateId != -1;
+    for ( auto probe : probes )
+    {
+      const int fid = probe.second.first;
+      dup[fid]++;
+    }
+
+    // Select the winner face id.
+    int maxVotes = 0;
+    int maxVotedFid = 0;
+    for ( auto tuple : dup )
+    {
+      if ( tuple.second > maxVotes )
+      {
+        maxVotedFid = tuple.first;
+        maxVotes    = tuple.second;
+      }
+    }
+
+    // Initialize the outputs: mate id, distance.
+    mateId = maxVotedFid;
+    for ( auto probe : probes )
+    {
+      const int fid = probe.second.first;
+      if ( fid == maxVotedFid )
+      {
+        distance = probe.second.second.Magnitude();
+        norm     = probe.second.second.Normalized();
+        break; // Let's take just the first distance for now.
+      }
+    }
+
+    return mateId > 0;
   }
 
 protected:

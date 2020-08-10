@@ -36,6 +36,8 @@
 #include <asiAlgo_HitFacet.h>
 
 // OpenCascade includes
+#include <gp_Ax3.hxx>
+#include <math_BullardGenerator.hxx>
 #include <Precision.hxx>
 
 //-----------------------------------------------------------------------------
@@ -43,9 +45,16 @@
 asiAlgo_FindVisibleFaces::asiAlgo_FindVisibleFaces(const TopoDS_Shape&  shape,
                                                    ActAPI_ProgressEntry progress,
                                                    ActAPI_PlotterEntry  plotter)
-: ActAPI_IAlgorithm(progress, plotter)
+: ActAPI_IAlgorithm(progress, plotter), m_iNumRays(10)
 {
   this->init(shape);
+}
+
+//-----------------------------------------------------------------------------
+
+void asiAlgo_FindVisibleFaces::SetNumRaysInBundle(const int numRays)
+{
+  m_iNumRays = numRays;
 }
 
 //-----------------------------------------------------------------------------
@@ -63,19 +72,20 @@ bool asiAlgo_FindVisibleFaces::Perform()
     const t_rayBundle& rb = m_rayBundles[rbIdx];
 
     // Test for intersections.
-    const bool isVisible = this->isVisible(rb);
+    int numHits = 0, numVoids = 0;
+    this->checkHits(rb, numHits, numVoids);
 
     // Store the result.
     t_score* pScore = m_scores.ChangeSeek(rb.FaceIndex);
     //
     if ( pScore == nullptr )
     {
-      m_scores.Bind( rb.FaceIndex, t_score(isVisible ? 0 : 1,
-                                           isVisible ? 1 : 0) );
+      m_scores.Bind( rb.FaceIndex, t_score(numHits, numVoids) );
     }
     else
     {
-      isVisible ? (pScore->NumVoids++) : (pScore->NumHits++);
+      pScore->NumHits  += numHits;
+      pScore->NumVoids += numVoids;
     }
   }
 
@@ -94,16 +104,20 @@ const NCollection_DataMap<t_topoId , asiAlgo_FindVisibleFaces::t_score>&
 
 void
   asiAlgo_FindVisibleFaces::GetResultFaces(TColStd_PackedMapOfInteger& faces,
-                                           const int                   maxHits) const
+                                           const double                visiblePercent) const
 {
   for ( NCollection_DataMap<int, t_score>::Iterator it(m_scores);
         it.More(); it.Next() )
   {
+    const int      fid   = it.Key();
     const t_score& score = it.Value();
     //
-    if ( (score.NumVoids > 0) && (score.NumHits <= maxHits) )
+    const double perc = 100. * score.NumVoids / (score.NumVoids + score.NumHits);
+    //
+    //std::cout << "fid / perc " << fid << " / " << perc << std::endl;
+    //
+    if ( perc >= visiblePercent )
     {
-      const int fid = it.Key();
       faces.Add(fid);
     }
   }
@@ -117,21 +131,64 @@ void asiAlgo_FindVisibleFaces::init(const TopoDS_Shape& shape)
   // with the corresponding triangles.
   m_bvh = new asiAlgo_BVHFacets(shape);
 
+  // Random number generator.
+  math_BullardGenerator rng;
+
+  // Elevation for the eta angle.
+  const double etaElevDeg = 5.;
+
   // Initialize ray bundles.
   for ( int facetIdx = 0; facetIdx < m_bvh->Size(); ++facetIdx )
   {
     const asiAlgo_BVHFacets::t_facet& facet = m_bvh->GetFacet(facetIdx);
 
     BVH_Vec3d Pm = (facet.P0 + facet.P1 + facet.P2) / 3.;
-    gp_Lin ray( gp_Pnt( Pm.x(), Pm.y(), Pm.z() ), facet.N);
 
-    m_rayBundles.push_back( t_rayBundle(ray, facet.FaceIndex) );
+    // Prepare ray bundle.
+    t_rayBundle bundle;
+    bundle.FaceIndex = facet.FaceIndex;
+
+    gp_Ax3 facetAxes(gp_Pnt( Pm.x(), Pm.y(), Pm.z() ), facet.N);
+    //
+    gp_Trsf facetTransform;
+    facetTransform.SetTransformation(facetAxes);
+    facetTransform.Invert();
+
+    // Emit random rays in hemisphere. We reserve one ray for the
+    // pure normal direction that should always be taken into account.
+    for ( int k = 1; k < m_iNumRays; ++k )
+    {
+      const double r1 = rng.NextReal();
+      const double r2 = rng.NextReal();
+
+      const double ksiDeg = 360.*r1;
+      const double etaDeg = (90. - etaElevDeg)*r2 + etaElevDeg;
+
+      const double x = Cos(etaDeg*M_PI/180.)*Cos(ksiDeg*M_PI/180.);
+      const double y = Cos(etaDeg*M_PI/180.)*Sin(ksiDeg*M_PI/180.);
+      const double z = Sin(etaDeg*M_PI/180.);
+
+      gp_Lin ray( gp::Origin(), gp_Vec(x, y, z) );
+      ray.Transform(facetTransform);
+
+      //m_plotter.DRAW_VECTOR_AT(ray.Location(), ray.Direction(), Color_Red, "ray");
+
+      bundle.Rays.push_back(ray);
+    }
+
+    // Add normal ray.
+    bundle.Rays.push_back( gp_Lin( gp_Pnt( Pm.x(), Pm.y(), Pm.z() ), facet.N ) );
+
+    // Add bundle.
+    m_rayBundles.push_back(bundle);
   }
 }
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_FindVisibleFaces::isVisible(const t_rayBundle& rb) const
+void asiAlgo_FindVisibleFaces::checkHits(const t_rayBundle& rb,
+                                         int&               numHits,
+                                         int&               numVoids) const
 {
   const opencascade::handle< BVH_Tree<double, 3> >& bvh = m_bvh->BVH();
 
@@ -140,6 +197,9 @@ bool asiAlgo_FindVisibleFaces::isVisible(const t_rayBundle& rb) const
 
   // Precision for fast intersection test on AABB.
   const double prec = Precision::Confusion();
+
+  // Nullify the results.
+  numHits = numVoids = 0;
 
   // Test each ray.
   for ( size_t iray = 0; iray < rb.Rays.size(); ++iray )
@@ -202,11 +262,11 @@ bool asiAlgo_FindVisibleFaces::isVisible(const t_rayBundle& rb) const
       }
     }
 
-    if ( facetId != -1 )
-      return false;
+    if ( facetId == -1 )
+      numVoids++;
+    else
+      numHits++;
   }
-
-  return true;
 }
 
 //-----------------------------------------------------------------------------

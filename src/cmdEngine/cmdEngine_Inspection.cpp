@@ -3194,11 +3194,6 @@ int ENGINE_FindVisibleFaces(const Handle(asiTcl_Interp)& interp,
                             int                          argc,
                             const char**                 argv)
 {
-  if ( argc != 1 )
-  {
-    return interp->ErrorOnWrongArgs(argv[0]);
-  }
-
   // Get part.
   Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
   //
@@ -3223,7 +3218,7 @@ int ENGINE_FindVisibleFaces(const Handle(asiTcl_Interp)& interp,
 
   // Get visible faces.
   TColStd_PackedMapOfInteger resIndices;
-  FindVisible.GetResultFaces(resIndices, 0);
+  FindVisible.GetResultFaces(resIndices, (argc > 1) ? atof(argv[1]) : 0.1 );
 
   // Highlight the detected faces.
   if ( !cmdEngine::cf.IsNull() && cmdEngine::cf->ViewerPart )

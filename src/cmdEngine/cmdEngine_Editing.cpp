@@ -83,6 +83,7 @@
 #include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_Shape.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeUpgrade_ShapeDivideClosed.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
@@ -1550,6 +1551,40 @@ int ENGINE_SplitByContinuity(const Handle(asiTcl_Interp)& interp,
   // Update UI.
   if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
     cmdEngine::cf->ViewerPart->PrsMgr()->Actualize( cmdEngine::model->GetPartNode() );
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
+int ENGINE_SplitClosed(const Handle(asiTcl_Interp)& interp,
+                       int                          argc,
+                       const char**                 argv)
+{
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  //
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Split faces.
+  cmdEngine::model->OpenCommand();
+  {
+    ShapeUpgrade_ShapeDivideClosed divider(shape);
+    divider.Perform();
+    //
+    asiEngine_Part(cmdEngine::model).Update( divider.Result() );
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
 
   return TCL_OK;
 }
@@ -3216,6 +3251,14 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t Splits part by continuity.",
     //
     __FILE__, group, ENGINE_SplitByContinuity);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("split-closed",
+    //
+    "split-closed\n"
+    "\t Splits closed faces in the active part.",
+    //
+    __FILE__, group, ENGINE_SplitClosed);
 
   //-------------------------------------------------------------------------//
   interp->AddCommand("extend-surf",

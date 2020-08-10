@@ -114,19 +114,24 @@ public:
 
 public:
 
+  //! Sets the number of random rays in a bundle for visibility test.
+  //! \param[in] numRays the number of rays to emit from each face.
+  asiAlgo_EXPORT void
+    SetNumRaysInBundle(const int numRays);
+
   //! \return the accumulated collection of visible faces.
   asiAlgo_EXPORT const NCollection_DataMap<t_topoId, t_score>&
     GetResultScores() const;
 
   //! Gathers all visible faces. The second argument is used to
   //! control how many intersections we allow for a single face.
-  //! If zero is passed (that is the default value), the faces should
-  //! have no hits in their score.
-  //! \param[out] faces   the collected visible faces.
-  //! \param[in]  maxHits the max allowed number of hits.
+  //! It is enough to have `visiblePercent` of non-intersecting rays
+  //! to deduce that a face is visible.
+  //! \param[out] faces          the collected visible faces.
+  //! \param[in]  visiblePercent the min allowed percentage of non-intersecting rays.
   asiAlgo_EXPORT void
     GetResultFaces(asiAlgo_Feature& faces,
-                   const int        maxHits = 0) const;
+                   const double     visiblePercent = 0.1) const;
 
 protected:
 
@@ -137,10 +142,15 @@ protected:
     init(const TopoDS_Shape& shape);
 
   //! Tests whether the argument ray bundle is visible or not.
-  //! \param[in] rb the ray bundle to test.
-  asiAlgo_EXPORT bool
-    isVisible(const t_rayBundle& rb) const;
+  //! \param[in]  rb       the ray bundle to test.
+  //! \param[out] numHits  the number of intersections.
+  //! \param[out] numVoids the number of non-intersecting rays (void tests).
+  asiAlgo_EXPORT void
+    checkHits(const t_rayBundle& rb,
+              int&               numHits,
+              int&               numVoids) const;
 
+  //! Tests a BVH leaf for intersection with a ray.
   asiAlgo_EXPORT bool
     testLeaf(const gp_Lin&    ray,
              const double     length,
@@ -155,6 +165,7 @@ protected:
   //! \param[in] L      line to test.
   //! \param[in] boxMin lower corner of the box to test.
   //! \param[in] boxMax upper corner of the box to test.
+  //! \param[in] prec   precision to use.
   //! \return true/false.
   asiAlgo_EXPORT bool
     isOut(const gp_Lin&    ray,
@@ -162,6 +173,8 @@ protected:
           const BVH_Vec3d& boxMax,
           const double     prec) const;
 
+  //! \return true if the triangles specified with its nodes is intersected
+  //!         with the passed ray, false -- otherwise.
   asiAlgo_EXPORT bool
     isIntersected(const gp_XYZ& rayStart,
                   const gp_XYZ& rayFinish,
@@ -174,6 +187,7 @@ protected:
 protected:
 
   Handle(asiAlgo_BVHFacets)               m_bvh;        //!< BVH for facets.
+  int                                     m_iNumRays;   //!< Number of random rays to emit.
   std::vector<t_rayBundle>                m_rayBundles; //!< Rays to test.
   NCollection_DataMap<t_topoId , t_score> m_scores;     //!< Intersection "score" for each face.
 

@@ -85,7 +85,6 @@ protected:
 
 protected slots:
 
-  void onViewerClosed();
   void onVertexPicked(const int, const vtkIdType);
 
 protected:

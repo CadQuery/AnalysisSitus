@@ -331,6 +331,16 @@ namespace asiAlgo_Utils
   asiAlgo_EXPORT bool
     IsBasisCircular(const Handle(Geom_Curve)& curve);
 
+  //! Checks if the passed planar surfaces are parallel.
+  //! \param[in] S1      the first surface to check.
+  //! \param[in] S2      the second surface to check.
+  //! \param[in] angPrec the angular precision to use.
+  //! \return true/false.
+  asiAlgo_EXPORT bool
+    AreParallel(const Handle(Geom_Plane)& S1,
+                const Handle(Geom_Plane)& S2,
+                const double              angPrec);
+
   //! Applies the passed transformation to the given shape. Returns another shape
   //! as a result (no deep copy of geometry is performed, only location is
   //! changed).

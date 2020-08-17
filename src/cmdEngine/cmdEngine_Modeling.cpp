@@ -1355,14 +1355,79 @@ int ENGINE_BuildTriangulationOBB(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+namespace
+{
+  //! Computes the unsigned distance between the two passed planes.
+  //! \param[in]  S1 the first plane.
+  //! \param[in]  S2 the second plane.
+  //! \param[out] d  the computed distance value.
+  //! \return true in case of success, false if the passed surfaces
+  //!         are not parallel.
+  bool DistanceBetweenPlanes(const Handle(Geom_Plane)& S1,
+                             const Handle(Geom_Plane)& S2,
+                             double&                   d)
+  {
+    if ( !asiAlgo_Utils::AreParallel(S1, S2, 1.*M_PI/180.) )
+      return false;
+
+    d = S1->Pln().Distance( S2->Pln() );
+    return true;
+  }
+
+  //! Contructs a Boolean common for the passed two planar faces.
+  //! The faces `F` and `G` should have non-empty overlapping if
+  //! translated onto each other along their normals.
+  //! \param[in] F the first base face.
+  //! \param[in] G the second base face.
+  //! \return true if the intersection zone has been computed,
+  //!         false -- otherwise.
+  bool FindCommonBase(const TopoDS_Face&   F,
+                      const TopoDS_Face&   G,
+                      ActAPI_ProgressEntry progress)
+  {
+    // Contract check 1.
+    Handle(Geom_Plane) FP;
+    //
+    if ( !asiAlgo_Utils::IsTypeOf<Geom_Plane>(F, FP) )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "The first passed base face is not planar.");
+      return false;
+    }
+
+    // Contract check 2.
+    Handle(Geom_Plane) GP;
+    //
+    if ( !asiAlgo_Utils::IsTypeOf<Geom_Plane>(G, GP) )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "The second passed base face is not planar.");
+      return false;
+    }
+
+    // Compute the distance.
+    double d = 0.;
+    if ( !DistanceBetweenPlanes(FP, GP, d) )
+    {
+      progress.SendLogMessage(LogErr(Normal) << "Cannot compute plane-to-plane distance."
+                                                "Are the selected planes parallel?");
+      return false;
+    }
+
+    // TODO: NYI
+  }
+}
+
 int ENGINE_Fill(const Handle(asiTcl_Interp)& interp,
                 int                          argc,
                 const char**                 argv)
 {
-  if ( (argc != 1) && (argc != 2) )
+  if ( (argc != 1) && (argc != 2) && (argc != 3) )
   {
     return interp->ErrorOnWrongArgs(argv[0]);
   }
+
+  /* =====================
+   *  Prepare for filling.
+   * ===================== */
 
   Handle(asiEngine_Model)
     M = Handle(asiEngine_Model)::DownCast( interp->GetModel() );
@@ -1373,10 +1438,19 @@ int ENGINE_Fill(const Handle(asiTcl_Interp)& interp,
   TopoDS_Shape             partSh   = partNode->GetShape();
 
   // Get the base face.
-  int fidFrom = 0;
+  bool isBetweenMode = false;
+  int fidFrom = 0, fidTo = 0;
   //
   if ( argc == 2 )
+  {
     fidFrom = atoi(argv[1]);
+  }
+  else if ( argc == 3 )
+  {
+    isBetweenMode = true;
+    fidFrom       = atoi(argv[1]);
+    fidTo         = atoi(argv[2]);
+  }
   else
   {
     asiEngine_Part api( cmdEngine::model, cmdEngine::cf->ViewerPart->PrsMgr() );
@@ -1389,49 +1463,74 @@ int ENGINE_Fill(const Handle(asiTcl_Interp)& interp,
   }
 
   // Check the base face.
-  if ( (fidFrom == 0) && !partAAG->HasFace(fidFrom) )
+  if ( (fidFrom == 0) || !partAAG->HasFace(fidFrom) )
   {
     interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face index %1 is invalid."
                                                         << fidFrom);
     return TCL_ERROR;
   }
 
-  // Check face type.
-  const TopoDS_Face& faceFrom = partAAG->GetFace(fidFrom);
-  //
-  if ( !asiAlgo_Utils::IsTypeOf<Geom_Plane>(faceFrom) )
+  // Check the second face for the in-between filling mode.
+  if ( isBetweenMode && ( (fidTo == 0) || !partAAG->HasFace(fidTo) ) )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face index %1 is not planar."
-                                                        << fidFrom);
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "The passed face index %1 is invalid."
+                                                        << fidTo);
     return TCL_ERROR;
   }
 
-  // Measure the distance between 'from' and 'to'.
-  int    fidTo = 0;
-  double dist  = 0.;
+  // The first base face.
+  const TopoDS_Face& faceFrom = partAAG->GetFace(fidFrom);
+
+  // The second base face (optional).
+  TopoDS_Face faceTo;
+  if ( isBetweenMode )
+    faceTo = partAAG->GetFace(fidTo);
+
+  /* ==========================
+   *  Construct the tool prism.
+   * ========================== */
+
+  // Variables to build the tool prism.
+  TopoDS_Face prismBase;
+  double dist = 0.;
   gp_Vec norm;
-  //
-  if ( !asiEngine_Part::ComputeMateFace<Geom_Plane>(partAAG,
-                                                    fidFrom,
-                                                    asiAlgo_Feature(),
-                                                    3,
-                                                    false,
-                                                    fidTo,
-                                                    dist,
-                                                    norm) )
+
+  if ( isBetweenMode )
   {
-    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a mate face for the face %1."
-                                                        << fidFrom);
+    // TODO: NYI
     return TCL_ERROR;
+  }
+  else
+  {
+    // Measure the distance between 'from' and 'to'.
+    if ( !asiEngine_Part::ComputeMateFace<Geom_Plane>(partAAG,
+                                                      fidFrom,
+                                                      asiAlgo_Feature(),
+                                                      3,
+                                                      false,
+                                                      fidTo,
+                                                      dist,
+                                                      norm) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Cannot find a mate face for the face %1."
+                                                          << fidFrom);
+      return TCL_ERROR;
+    }
+
+    prismBase = faceFrom;
   }
 
   interp->GetProgress().SendLogMessage(LogInfo(Normal) << "Distance to fill: %1."
                                                        << dist);
 
   // Make a tool object.
-  BRepPrimAPI_MakePrism mkPrism(faceFrom, norm.Normalized()*dist, true);
+  BRepPrimAPI_MakePrism mkPrism(prismBase, norm.Normalized()*dist, true);
   //
   const TopoDS_Shape& toolSh = mkPrism.Shape();
+
+  /* ======================
+   *  Perform Boolean fuse.
+   * ====================== */
 
   // Fuse.
   Handle(BRepTools_History) history;

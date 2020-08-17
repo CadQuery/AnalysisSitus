@@ -186,7 +186,7 @@ bool asiAlgo_RecognizeIsolated::Perform(const asiAlgo_Feature& seeds)
         if ( ccomp.HasIntersection(neighborsOverOuterEdges) )
           continue;
 
-        if ( !this->checkPresence(innerEdges, ccomp) )
+        if ( !this->checkInnerBoundaryInclusion(innerEdges, ccomp) )
           continue;
 
         m_result.ids.Unite(ccomp);
@@ -226,6 +226,10 @@ void asiAlgo_RecognizeIsolated::getFaceEdges(const TopoDS_Face&                 
   for ( TopExp_Explorer expWE(outerWire, TopAbs_EDGE); expWE.More(); expWE.Next() )
   {
     outerEdges.push_back( TopoDS::Edge( expWE.Current() ) );
+
+#if defined DRAW_DEBUG
+    m_plotter.DRAW_SHAPE(expWE.Current(), Color_Blue, 1., true, "outerEdges");
+#endif
   }
 
   // Explore inner wires to collect inner edges.
@@ -242,6 +246,10 @@ void asiAlgo_RecognizeIsolated::getFaceEdges(const TopoDS_Face&                 
     for ( TopExp_Explorer expWE(currentWire, TopAbs_EDGE); expWE.More(); expWE.Next() )
     {
       edgesOnWire.push_back( TopoDS::Edge( expWE.Current() ) );
+
+#if defined DRAW_DEBUG
+      m_plotter.DRAW_SHAPE(expWE.Current(), Color_Red, 1., true, "innerEdges");
+#endif
     }
 
     innerEdges.push_back(edgesOnWire);
@@ -250,13 +258,9 @@ void asiAlgo_RecognizeIsolated::getFaceEdges(const TopoDS_Face&                 
 
 //-----------------------------------------------------------------------------
 
-bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
-                                              const asiAlgo_Feature&                         groupToCheck) const
+bool asiAlgo_RecognizeIsolated::checkInnerBoundaryInclusion(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
+                                                            const asiAlgo_Feature&                         groupToCheck) const
 {
-  TopoDS_Compound comp;
-  BRep_Builder builder;
-  builder.MakeCompound(comp);
-
   // Collect all edges of the group in question.
   NCollection_IndexedMap<TopoDS_Edge> allEdgesInGroup;
   //
@@ -271,10 +275,12 @@ bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<Top
       const TopoDS_Edge& edge = TopoDS::Edge( eit.Value() );
       allEdgesInGroup.Add( TopoDS::Edge( edge.Oriented(TopAbs_FORWARD) ) );
       allEdgesInGroup.Add( TopoDS::Edge( edge.Oriented(TopAbs_REVERSED) ) );
-
-      builder.Add(comp, edge);
     }
   }
+
+#if defined DRAW_DEBUG
+  m_plotter.DRAW_SHAPE(comp, Color_Yellow, 1., true, "allEdgesInGroup");
+#endif
 
   // Check if the group in question contains all the inner edges.
   bool isPresent = false;
@@ -282,6 +288,10 @@ bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<Top
   {
     const std::vector<TopoDS_Edge>& innerContour = *innerIt;
 
+    // At least one inner contour should be present in the edge set for the
+    // connected component `C`. For a base face with multiple holes, it is
+    // invalid to expect that all inner edges are a subset for the connected
+    // component being tested.
     isPresent = true;
     for ( auto eit = innerContour.cbegin(); eit != innerContour.cend(); ++eit )
     {
@@ -290,10 +300,14 @@ bool asiAlgo_RecognizeIsolated::checkPresence(const std::vector< std::vector<Top
       if ( !allEdgesInGroup.Contains(innerEdge) )
       {
         isPresent = false;
+
+#if defined DRAW_DEBUG
+        m_plotter.DRAW_SHAPE(innerEdge, Color_Blue, 1., true, "nonPresent");
+#endif
         break;
       }
     }
-
+    //
     if ( isPresent )
       break;
   }
@@ -350,7 +364,7 @@ bool
         openEdgesSeq->Append(E);
       }
     }
-  
+
     // Compose border wires from the naked edges.
     Handle(TopTools_HSequenceOfShape) borderWires;
     ShapeAnalysis_FreeBounds::ConnectEdgesToWires(openEdgesSeq, 1e-3, false, borderWires);

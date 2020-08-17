@@ -180,9 +180,8 @@ void asiUI_HistoryGraph::Render()
   // Create Qt window. NOTICE that interactor should be already given to
   // the render window at this stage
   m_pWidget = new asiUI_VtkWindow();
+  m_pWidget->setAttribute( Qt::WA_DeleteOnClose );
   m_pWidget->SetRenderWindow( renderWindow.GetPointer() );
-
-  connect( m_pWidget, SIGNAL( windowClosed() ), this, SLOT( onViewerClosed() ) );
 
   /* ========================
    *  Add legend and summary
@@ -239,19 +238,6 @@ vtkSmartPointer<vtkGraph> asiUI_HistoryGraph::convertToGraph()
     result = asiUI_HistoryGraphAdaptor::Convert(m_history, m_naming, m_progress);
 
   return result;
-}
-
-//-----------------------------------------------------------------------------
-
-//! Reaction on closing the viewer.
-void asiUI_HistoryGraph::onViewerClosed()
-{
-  // NOTE: the important point is to remove widget after all items which
-  //       may listen to it
-  m_textWidget->Delete();
-
-  delete m_pWidget;
-  delete this;
 }
 
 //-----------------------------------------------------------------------------

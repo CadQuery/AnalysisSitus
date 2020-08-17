@@ -103,15 +103,15 @@ protected:
                  std::vector<TopoDS_Edge>&                outerEdges,
                  std::vector< std::vector<TopoDS_Edge> >& innerEdges) const;
 
-  //! Checks whether all edges from some inner wire are present in
+  //! Checks whether all edges from SOME inner wire are present in
   //! the passed group of faces.
   //! \param[in] innerEdges   inner edges, one vector for each inner wire.
   //! \param[in] groupToCheck face group of interest.
   //! \return true if `groupToCheck` has all edges from particular group,
   //!         false -- otherwise.
   asiAlgo_EXPORT bool
-    checkPresence(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
-                  const asiAlgo_Feature&                         groupToCheck) const;
+    checkInnerBoundaryInclusion(const std::vector< std::vector<TopoDS_Edge> >& innerEdges,
+                                const asiAlgo_Feature&                         groupToCheck) const;
 
   //! Extracts inner and outer wire from a shell composed of the passed
   //! faces. If this method could not separate the outer contour from

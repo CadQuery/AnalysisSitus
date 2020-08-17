@@ -129,7 +129,6 @@ protected:
 
 protected slots:
 
-  void onViewerClosed();
   void onVertexPicked(const int, const int, const TopAbs_ShapeEnum, const vtkIdType);
 
 protected:

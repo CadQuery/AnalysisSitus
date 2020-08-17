@@ -105,6 +105,7 @@
 #include <GeomPlate_BuildPlateSurface.hxx>
 #include <GeomPlate_MakeApprox.hxx>
 #include <gp_Circ.hxx>
+#include <gp_Pln.hxx>
 #include <gp_Quaternion.hxx>
 #include <gp_Vec.hxx>
 #include <math_Matrix.hxx>
@@ -945,6 +946,22 @@ bool asiAlgo_Utils::IsBasisCircular(const Handle(Geom_Curve)& curve)
     if ( tcurve->BasisCurve()->IsKind( STANDARD_TYPE(Geom_Circle) ) )
       return true;
   }
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool asiAlgo_Utils::AreParallel(const Handle(Geom_Plane)& S1,
+                                const Handle(Geom_Plane)& S2,
+                                const double              angPrec)
+{
+  const gp_Dir& planeDirS1 = S1->Pln().Axis().Direction();
+  const gp_Dir& planeDirS2 = S2->Pln().Axis().Direction();
+
+  if ( planeDirS1.IsParallel(planeDirS2, angPrec) ||
+       planeDirS1.IsOpposite(planeDirS2, angPrec) )
+    return true;
 
   return false;
 }

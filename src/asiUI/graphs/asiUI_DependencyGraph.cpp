@@ -234,19 +234,6 @@ vtkSmartPointer<vtkGraph> asiUI_DependencyGraph::convertToGraph()
 
 //-----------------------------------------------------------------------------
 
-//! Reaction on closing the viewer.
-void asiUI_DependencyGraph::onViewerClosed()
-{
-  // NOTE: the important point is to remove widget after all items which
-  //       may listen to it
-  m_textWidget->Delete();
-
-  delete m_pWidget;
-  delete this;
-}
-
-//-----------------------------------------------------------------------------
-
 void asiUI_DependencyGraph::onVertexPicked(const vtkIdType)
 {
   // NYI

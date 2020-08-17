@@ -73,13 +73,11 @@ protected:
 
 protected slots:
 
-  void onViewerClosed();
   void onVertexPicked(const vtkIdType);
 
 protected:
 
   Handle(asiEngine_Model) m_model;      //!< Data Model instance.
-  asiUI_VtkWindow*        m_pWidget;    //!< Widget.
   vtkTextWidget*          m_textWidget; //!< Text.
 };
 

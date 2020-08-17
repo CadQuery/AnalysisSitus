@@ -37,7 +37,7 @@
 
 #define ASITUS_VERSION_MAJOR 0 // Major: incremented by major releases
 #define ASITUS_VERSION_MINOR 4 // Minor: incremented by minor releases
-#define ASITUS_VERSION_PATCH 0 // Patch: incremented with bug-fix releases
+#define ASITUS_VERSION_PATCH 1 // Patch: incremented with bug-fix releases
 
 //-----------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@
 #define ASITUS_VERSION_HEX \
 ( (ASITUS_VERSION_MAJOR << 16) | (ASITUS_VERSION_MINOR << 8) | ASITUS_VERSION_PATCH )
 
-#define ASITUS_VERSION_STRING "0.4.0dev"
+#define ASITUS_VERSION_STRING "0.4.1dev"
 #define ASITUS_APP_NAME "Analysis Situs"
 
 #endif

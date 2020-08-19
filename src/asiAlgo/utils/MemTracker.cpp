@@ -1,6 +1,6 @@
 #include <MemTracker.h>
 
-#if defined MEMTRACKER
+#if defined MEMTRACKER && defined _WIN32
 
 // OCCT includes
 #include <Standard_Mutex.hxx>

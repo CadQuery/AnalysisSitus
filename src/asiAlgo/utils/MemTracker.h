@@ -9,7 +9,7 @@
 
 //-----------------------------------------------------------------------------
 
-#define MEMTRACKER
+#undef MEMTRACKER
 #if defined MEMTRACKER
 #pragma message("===== warning: MEMTRACKER is enabled")
 

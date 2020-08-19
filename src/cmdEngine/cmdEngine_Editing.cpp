@@ -3057,6 +3057,50 @@ int ENGINE_Sew(const Handle(asiTcl_Interp)& interp,
 
 //-----------------------------------------------------------------------------
 
+int ENGINE_MaximizeFaces(const Handle(asiTcl_Interp)& interp,
+                         int                          argc,
+                         const char**                 argv)
+{
+  if ( argc != 1 )
+  {
+    return interp->ErrorOnWrongArgs(argv[0]);
+  }
+
+  // Get Part Node.
+  Handle(asiData_PartNode) partNode = cmdEngine::model->GetPartNode();
+  //
+  if ( partNode.IsNull() || !partNode->IsWellFormed() )
+  {
+    interp->GetProgress().SendLogMessage(LogErr(Normal) << "Part Node is null or ill-defined.");
+    return TCL_ERROR;
+  }
+  //
+  TopoDS_Shape shape = partNode->GetShape();
+
+  // Modify shape.
+  cmdEngine::model->OpenCommand();
+  {
+    if ( !asiAlgo_Utils::MaximizeFaces(shape) )
+    {
+      interp->GetProgress().SendLogMessage(LogErr(Normal) << "Face maximization failed.");
+      //
+      cmdEngine::model->AbortCommand();
+      return TCL_ERROR;
+    }
+    //
+    asiEngine_Part(cmdEngine::model).Update(shape);
+  }
+  cmdEngine::model->CommitCommand();
+
+  // Update UI.
+  if ( cmdEngine::cf && cmdEngine::cf->ViewerPart )
+    cmdEngine::cf->ViewerPart->PrsMgr()->Actualize(partNode);
+
+  return TCL_OK;
+}
+
+//-----------------------------------------------------------------------------
+
 void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
                                  const Handle(Standard_Transient)& cmdEngine_NotUsed(data))
 {
@@ -3468,4 +3512,12 @@ void cmdEngine::Commands_Editing(const Handle(asiTcl_Interp)&      interp,
     "\t is passed, the default value 1.e-7 is used.",
     //
     __FILE__, group, ENGINE_Sew);
+
+  //-------------------------------------------------------------------------//
+  interp->AddCommand("maximize-faces",
+    //
+    "maximize-faces\n"
+    "\t Maximizes canonical faces.",
+    //
+    __FILE__, group, ENGINE_MaximizeFaces);
 }

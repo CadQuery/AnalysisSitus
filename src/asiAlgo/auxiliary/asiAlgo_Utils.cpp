@@ -1083,13 +1083,17 @@ TopoDS_Shape
 bool asiAlgo_Utils::Bounds(const TopoDS_Shape& shape,
                            double& XMin, double& YMin, double& ZMin,
                            double& XMax, double& YMax, double& ZMax,
-                           const double tolerance)
+                           const double tolerance,
+                           const bool isPrecise)
 {
   Bnd_Box bndBox;
 
   try
   {
-    BRepBndLib::AddOptimal(shape, bndBox, false, false);
+    if ( isPrecise )
+      BRepBndLib::AddOptimal(shape, bndBox, false, false);
+    else
+      BRepBndLib::Add(shape, bndBox);
   }
   catch ( ... )
   {

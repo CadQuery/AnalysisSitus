@@ -98,7 +98,7 @@ vtkSmartPointer<vtkMutableUndirectedGraph>
 
     // Fill property arrays
     std::string faceName = asiAlgo_Utils::FaceGeometryName(face);
-    faceName += ":";
+    faceName += ": ";
     faceName += asiAlgo_Utils::Str::ToString<int>(f_idx).c_str();
 
     // Classify node depending on whether any attributes are available

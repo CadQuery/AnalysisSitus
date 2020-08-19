@@ -52,6 +52,7 @@ public:
   //! \param[in] featureId feature ID.
   asiAlgo_FeatureAttrFace(const int featureId)
   : asiAlgo_FeatureAttr (),
+    m_iFaceId           (0),
     m_iFeatureId        (featureId)
   {}
 
@@ -73,7 +74,7 @@ public:
     return m_iFaceId;
   }
 
-private:
+protected:
 
   int m_iFaceId;    //!< 1-based face ID.
   int m_iFeatureId; //!< 1-based feature ID.

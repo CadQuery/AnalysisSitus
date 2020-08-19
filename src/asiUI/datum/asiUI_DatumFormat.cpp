@@ -374,8 +374,8 @@ protected:
     }
 
     /* ======================================================================= *
-    /* compute exponent and point position using the step, e.g E(+-aExponent)  *
-    /* ======================================================================= */
+     * compute exponent and point position using the step, e.g E(+-aExponent)  *
+     * ======================================================================= */
 
     // correction for negative exponent
     int aCorExp = anExp;

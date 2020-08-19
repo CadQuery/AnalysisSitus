@@ -42,6 +42,7 @@
 #include <asiVisu_PrsManager.h>
 
 // OCCT includes
+#include <BRepAdaptor_Surface.hxx>
 #include <IntCurvesFace_ShapeIntersector.hxx>
 #include <math_BullardGenerator.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>

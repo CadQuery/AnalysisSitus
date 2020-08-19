@@ -81,6 +81,7 @@ asiUI_DatumPathItem::asiUI_DatumPathItem(const QString& theDictId,
     case asiAlgo_DictionaryItem::WT_OpenFilePath : SetPathType(OpenPath); break;
     case asiAlgo_DictionaryItem::WT_SaveFilePath : SetPathType(SavePath); break;
     case asiAlgo_DictionaryItem::WT_DirPath : SetPathType(DirPath); break;
+    default: break;
   };
 
   // widget parameters
